@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.aurakai.auraframefx.aura.ui.*
+import dev.aurakai.auraframefx.billing.SubscriptionScreen
 import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 import dev.aurakai.auraframefx.ui.screens.AgentNexusScreen
@@ -53,6 +54,9 @@ object GenesisRoutes {
     const val SETTINGS = "settings"
     const val PROFILE = "profile"
     const val OVERLAY = "overlay"
+
+    // Billing & Subscription
+    const val SUBSCRIPTION = "subscription"
 }
 
 /**
@@ -219,6 +223,12 @@ fun GenesisNavigationHost(
 
         composable(GenesisRoutes.OVERLAY) {
             OverlayScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(GenesisRoutes.SUBSCRIPTION) {
+            SubscriptionScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
