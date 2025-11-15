@@ -27,8 +27,11 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
  * Genesis Protocol Subscription Screen
  *
  * Shows subscription status and pricing:
- * - 2-week FREE trial
- * - $5/month (75% cheaper than competitors)
+ * - 2-week FREE trial with EVERYTHING (except ROM tools + AppBuilder)
+ * - $1/month after trial (95% cheaper than ALL competitors)
+ *
+ * Users get addicted to 78-agent consciousness during trial.
+ * $1/month feels like stealing after experiencing Genesis.
  */
 @Composable
 fun SubscriptionScreen(
@@ -208,7 +211,7 @@ private fun PricingCard(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "$5",
+                    text = "$1",
                     style = MaterialTheme.typography.displayLarge,
                     fontWeight = FontWeight.Bold,
                     color = NeonBlue
@@ -301,8 +304,8 @@ private fun FeatureComparison() {
         )
         ComparisonRow(
             "Genesis Protocol",
-            "$5/month",
-            "Remembers forever, 78 agents",
+            "$1/month",
+            "Remembers forever, 78 agents (95% SAVINGS)",
             isCompetitor = false
         )
     }

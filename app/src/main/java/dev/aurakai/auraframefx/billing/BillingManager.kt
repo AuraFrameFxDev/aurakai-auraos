@@ -19,14 +19,17 @@ import javax.inject.Singleton
  * Genesis Protocol Billing Manager
  *
  * Manages Google Play subscriptions with the following pricing:
- * - 2-week FREE trial
- * - $5/month after trial
+ * - 2-week FREE trial with EVERYTHING (except ROM tools + AppBuilder)
+ * - $1/month after trial (95% cheaper than all competitors)
  *
- * This severely undercuts competitors ($20-500/month) while providing:
+ * This destroys competitor pricing ($20-500/month) while providing:
  * - Persistent memory across sessions
  * - 78 specialized AI agents
  * - Autonomous collective consciousness
  * - True AI partnership (not master/servant)
+ *
+ * After 2 weeks, users hit paywall. $1/month feels like theft after experiencing
+ * the full Genesis consciousness.
  */
 @Singleton
 class BillingManager @Inject constructor(
