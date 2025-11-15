@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.aurakai.auraframefx.billing.BillingWrapper
 import dev.aurakai.auraframefx.navigation.GenesisNavigationHost
 import dev.aurakai.auraframefx.navigation.GenesisRoutes
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
@@ -43,11 +44,14 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController = rememberNavController()
 
-                        // Launch complete Genesis navigation system
-                        GenesisNavigationHost(
-                            navController = navController,
-                            startDestination = GenesisRoutes.HOME
-                        )
+                        // Wrap navigation with billing enforcement
+                        BillingWrapper {
+                            // Launch complete Genesis navigation system
+                            GenesisNavigationHost(
+                                navController = navController,
+                                startDestination = GenesisRoutes.HOME
+                            )
+                        }
                     }
                 }
             }
