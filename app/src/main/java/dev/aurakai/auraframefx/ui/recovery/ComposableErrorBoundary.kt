@@ -94,4 +94,3 @@ private class ErrorHandler(
 fun onNavigationComplete(route: String, block: (String) -> Unit): () -> Unit {
     return { block(route) }
 }
-}
