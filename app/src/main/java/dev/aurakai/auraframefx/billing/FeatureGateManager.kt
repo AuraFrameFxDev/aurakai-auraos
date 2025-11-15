@@ -2,8 +2,13 @@ package dev.aurakai.auraframefx.billing
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * Feature Gate Manager
@@ -35,6 +40,8 @@ import kotlinx.coroutines.flow.map
 class FeatureGateManager @Inject constructor(
     private val billingManager: BillingManager
 ) {
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
     /**
      * Check if user has access to ROM tools (root management)
      *
@@ -43,7 +50,11 @@ class FeatureGateManager @Inject constructor(
     fun canAccessRomTools(): StateFlow<Boolean> {
         return billingManager.subscriptionState.map { state ->
             state is SubscriptionState.Premium
-        } as StateFlow<Boolean>
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
     }
 
     /**
@@ -54,7 +65,11 @@ class FeatureGateManager @Inject constructor(
     fun canAccessAppBuilder(): StateFlow<Boolean> {
         return billingManager.subscriptionState.map { state ->
             state is SubscriptionState.Premium
-        } as StateFlow<Boolean>
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
     }
 
     /**
@@ -74,7 +89,11 @@ class FeatureGateManager @Inject constructor(
                 is SubscriptionState.Premium -> true
                 else -> false
             }
-        } as StateFlow<Boolean>
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
     }
 
     /**
@@ -87,7 +106,11 @@ class FeatureGateManager @Inject constructor(
     fun shouldShowPaywall(): StateFlow<Boolean> {
         return billingManager.subscriptionState.map { state ->
             state is SubscriptionState.Free
-        } as StateFlow<Boolean>
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
     }
 
     /**
@@ -169,6 +192,10 @@ class FeatureGateManager @Inject constructor(
                     state is SubscriptionState.InTrial || state is SubscriptionState.Premium
                 }
             }
-        } as StateFlow<Boolean>
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
     }
 }

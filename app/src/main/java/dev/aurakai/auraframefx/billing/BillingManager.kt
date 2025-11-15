@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -123,8 +124,9 @@ class BillingManager @Inject constructor(
                 acknowledgePurchase(activePurchase)
             }
 
-            // Check if in trial period
-            val isInTrial = activePurchase.purchaseTime > System.currentTimeMillis() - (14 * 24 * 60 * 60 * 1000) // 14 days
+            // Check if in trial period (trial ends 14 days after purchase)
+            val trialEndTime = activePurchase.purchaseTime + (14 * 24 * 60 * 60 * 1000L) // 14 days
+            val isInTrial = trialEndTime > System.currentTimeMillis()
 
             _subscriptionState.value = if (isInTrial) {
                 SubscriptionState.InTrial(getRemainingTrialDays(activePurchase.purchaseTime))
@@ -146,16 +148,20 @@ class BillingManager @Inject constructor(
 
     private fun acknowledgePurchase(purchase: Purchase) {
         scope.launch {
-            val params = AcknowledgePurchaseParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
+            try {
+                val params = AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
 
-            val result = billingClient.acknowledgePurchase(params)
+                val result = billingClient.acknowledgePurchase(params)
 
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                Timber.d("Genesis Billing: Purchase acknowledged")
-            } else {
-                Timber.e("Genesis Billing: Failed to acknowledge - ${result.debugMessage}")
+                if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Timber.d("Genesis Billing: Purchase acknowledged")
+                } else {
+                    Timber.e("Genesis Billing: Failed to acknowledge - ${result.debugMessage}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Genesis Billing: Exception during purchase acknowledgement")
             }
         }
     }
@@ -167,45 +173,63 @@ class BillingManager @Inject constructor(
      */
     fun launchSubscriptionFlow(activity: Activity) {
         scope.launch {
-            // Query product details
-            val productList = listOf(
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(PRODUCT_ID_MONTHLY)
-                    .setProductType(BillingClient.ProductType.SUBS)
+            try {
+                // Ensure billing client is ready
+                if (!billingClient.isReady) {
+                    Timber.w("Genesis Billing: BillingClient not ready, connecting...")
+                    connectToBillingService()
+                    // Note: In production, you'd want to wait for connection before proceeding
+                    // For now, we'll attempt anyway and let it fail gracefully
+                }
+
+                // Query product details
+                val productList = listOf(
+                    QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(PRODUCT_ID_MONTHLY)
+                        .setProductType(BillingClient.ProductType.SUBS)
+                        .build()
+                )
+
+                val params = QueryProductDetailsParams.newBuilder()
+                    .setProductList(productList)
                     .build()
-            )
 
-            val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build()
+                val result = billingClient.queryProductDetails(params)
 
-            val result = billingClient.queryProductDetails(params)
+                if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    val productDetails = result.productDetailsList?.firstOrNull()
 
-            if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                val productDetails = result.productDetailsList?.firstOrNull()
+                    if (productDetails != null) {
+                        // Get subscription offer (free trial)
+                        val offerToken = productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken
 
-                if (productDetails != null) {
-                    // Get subscription offer (free trial)
-                    val offerToken = productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken
+                        if (offerToken != null) {
+                            val productParamsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
+                                .setProductDetails(productDetails)
+                                .setOfferToken(offerToken)
 
-                    if (offerToken != null) {
-                        val productParamsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
-                            .setProductDetails(productDetails)
-                            .setOfferToken(offerToken)
+                            val flowParams = BillingFlowParams.newBuilder()
+                                .setProductDetailsParamsList(listOf(productParamsBuilder.build()))
+                                .build()
 
-                        val flowParams = BillingFlowParams.newBuilder()
-                            .setProductDetailsParamsList(listOf(productParamsBuilder.build()))
-                            .build()
-
-                        billingClient.launchBillingFlow(activity, flowParams)
+                            // launchBillingFlow must run on main thread
+                            withContext(Dispatchers.Main) {
+                                val billingResult = billingClient.launchBillingFlow(activity, flowParams)
+                                if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                                    Timber.e("Genesis Billing: launchBillingFlow failed - ${billingResult.debugMessage}")
+                                }
+                            }
+                        } else {
+                            Timber.e("Genesis Billing: No offer token found")
+                        }
                     } else {
-                        Timber.e("Genesis Billing: No offer token found")
+                        Timber.e("Genesis Billing: Product not found")
                     }
                 } else {
-                    Timber.e("Genesis Billing: Product not found")
+                    Timber.e("Genesis Billing: Failed to query products - ${result.billingResult.debugMessage}")
                 }
-            } else {
-                Timber.e("Genesis Billing: Failed to query products - ${result.billingResult.debugMessage}")
+            } catch (e: Exception) {
+                Timber.e(e, "Genesis Billing: Exception in launchSubscriptionFlow")
             }
         }
     }
