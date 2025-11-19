@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -27,7 +28,7 @@ configurations.all {
 // MUST match the target used in GenesisApplicationPlugin and GenesisLibraryHiltPlugin (JVM 24)
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_24)
+        jvmTarget.set(JVM_24)
         // Add other compiler options as needed
     }
 }
