@@ -49,7 +49,7 @@ from genesis_ethical_governor import EthicalGovernor
 from genesis_evolutionary_conduit import EvolutionaryConduit
 from genesis_profile import GENESIS_PROFILE
 
-I'm# Initialize logger
+# Initialize logger
 logger = logging.getLogger("GenesisConnector")
 
 # ============================================================================
