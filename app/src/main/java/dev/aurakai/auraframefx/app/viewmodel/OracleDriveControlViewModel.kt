@@ -39,6 +39,12 @@ class OracleDriveControlViewModel @Inject constructor(
     private var serviceBinder: IOracleDriveService? = null
 
     private val serviceConnection = object : ServiceConnection {
+        /**
+         * Handles service connection by obtaining an IOracleDriveService from the provided binder, marking the ViewModel as connected, and initiating a status refresh.
+         *
+         * @param name The ComponentName of the connected service, or null.
+         * @param service The raw Binder returned by the service connection, or null.
+         */
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Timber.d("Oracle Drive service connected")
             serviceBinder = IOracleDriveService.Stub.asInterface(service)
@@ -46,6 +52,13 @@ class OracleDriveControlViewModel @Inject constructor(
             viewModelScope.launch { refreshStatus() }
         }
 
+        /**
+         * Handles the service disconnection event from the system.
+         *
+         * Clears the cached service binder, marks the ViewModel as not connected, and updates the public status to "Disconnected".
+         *
+         * @param name The ComponentName of the disconnected service, or null if not available.
+         */
         override fun onServiceDisconnected(name: ComponentName?) {
             Timber.w("Oracle Drive service disconnected")
             serviceBinder = null
@@ -54,6 +67,13 @@ class OracleDriveControlViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Initiates a binding to the Oracle Drive service and updates the ViewModel's connection state and diagnostics.
+     *
+     * Attempts to bind to the explicit Oracle Drive service component. On successful binding it records a diagnostic log entry.
+     * If the bind call fails it records a diagnostic error and sets the exposed status to "Bind Failed".
+     * If an exception occurs while attempting to bind it records the exception message in diagnostics and sets the exposed status to "Error: <message>".
+     */
     fun bindService() {
         try {
             val intent = Intent().apply {
@@ -76,6 +96,12 @@ class OracleDriveControlViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Unbinds from the Oracle Drive service if currently connected and updates connection state and status.
+     *
+     * If a service is bound, clears the service binder, sets the connection state to false, updates the status to "Disconnected",
+     * and appends a diagnostics log entry. Exceptions thrown during unbinding are caught and recorded in the diagnostics log.
+     */
     fun unbindService() {
         try {
             if (_isServiceConnected.value) {
@@ -91,6 +117,14 @@ class OracleDriveControlViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Refreshes the ViewModel's high-level and detailed status from the bound Oracle Drive service.
+     *
+     * If no service is bound, sets `status` to "Not Connected", `detailedStatus` to "Service not bound",
+     * and records a diagnostics entry. When bound, updates `status` and `detailedStatus` with values
+     * returned by the service (using safe fallbacks) and appends a diagnostics log. On exception,
+     * sets `status` to "Error: <message>" and records the error in diagnostics.
+     */
     suspend fun refreshStatus() {
         val binder = serviceBinder ?: run {
             _status.value = "Not Connected"
@@ -114,6 +148,14 @@ class OracleDriveControlViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Toggles a module's enabled state via the bound Oracle Drive service.
+     *
+     * @param packageName The application package name of the module to toggle.
+     * @param enable `true` to enable the module, `false` to disable it.
+     * @throws IllegalStateException If the service is not connected.
+     * @throws Exception If the toggle operation fails or an unexpected error occurs.
+     */
     suspend fun toggleModule(packageName: String, enable: Boolean) {
         val binder = serviceBinder ?: run {
             addLog("ERROR: Cannot toggle module - service not connected")
@@ -139,12 +181,20 @@ class OracleDriveControlViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Prepends a timestamp to the given message and appends it as a new entry to the diagnostics log.
+     *
+     * @param message The log message to record; stored with an `HH:mm:ss` timestamp. 
+     */
     private fun addLog(message: String) {
         val timestamp = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
             .format(java.util.Date())
         _diagnosticsLog.value = "${_diagnosticsLog.value}[$timestamp] $message\n"
     }
 
+    /**
+     * Unbinds from the Oracle Drive service and releases related resources when the ViewModel is cleared.
+     */
     override fun onCleared() {
         super.onCleared()
         unbindService()
@@ -152,11 +202,39 @@ class OracleDriveControlViewModel @Inject constructor(
 }
 
 interface IOracleDriveService {
-    fun getStatus(): String?
-    fun getDetailedStatus(): String?
-    fun toggleModule(packageName: String, enable: Boolean): Boolean
+    /**
+ * Retrieve the service's high-level, human-readable status.
+ *
+ * @return The status message as a `String`, or `null` if the status is unavailable.
+ */
+fun getStatus(): String?
+    /**
+ * Provides a detailed human-readable status description from the Oracle Drive service.
+ *
+ * @return The detailed status string, or `null` if unavailable.
+ */
+fun getDetailedStatus(): String?
+    /**
+ * Enable or disable a module in the bound Oracle Drive service.
+ *
+ * @param packageName The package name of the module to toggle.
+ * @param enable `true` to enable the module, `false` to disable it.
+ * @return `true` if the service reported the operation succeeded, `false` otherwise.
+ * @throws IllegalStateException If the Oracle Drive service is not bound.
+ * @throws Exception If the underlying service call fails; the original exception is propagated.
+ */
+fun toggleModule(packageName: String, enable: Boolean): Boolean
 
     object Stub {
+        /**
+         * Convert an Android `IBinder` from the bound service into an `IOracleDriveService` instance.
+         *
+         * This function is currently a placeholder and always returns `null`; it is intended to perform
+         * the AIDL binder-to-interface conversion once implemented.
+         *
+         * @param binder The `IBinder` obtained from the service connection, or `null`.
+         * @return An `IOracleDriveService` if the binder can be converted, `null` otherwise (currently always `null`).
+         */
         fun asInterface(binder: IBinder?): IOracleDriveService? {
             return null // TODO: Implement AIDL binding
         }

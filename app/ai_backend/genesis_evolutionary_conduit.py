@@ -169,7 +169,11 @@ class EvolutionaryConduit:
         }
 
     async def initialize(self):
-        """Initialize the evolutionary conduit"""
+        """
+        Perform startup initialization for the EvolutionaryConduit.
+        
+        Prepares the conduit for operation and emits an initialization log.
+        """
         logger.info("🧬 EvolutionaryConduit initialized")
 
     async def log_interaction(self, interaction_data: Dict[str, Any]):
@@ -205,12 +209,12 @@ class EvolutionaryConduit:
 
     async def implement_evolution(self, proposal: Dict[str, Any]):
         """
-        Execute the implementation for an approved growth proposal.
-
+        Apply an approved growth proposal to the conduit.
+        
         Parameters:
-            proposal (Dict[str, Any]): Dictionary representation of a GrowthProposal. Expected keys include
-                'title' (str) for human-readable identification. The function performs implementation actions
-                for the provided proposal; current observable behavior logs the proposal title.
+            proposal (Dict[str, Any]): Dictionary representation of a GrowthProposal (as produced by GrowthProposal.to_dict()).
+                Expected to include 'title' (str) for human-readable identification; other proposal fields may be present and
+                will be used by the implementation.
         """
         logger.info(f"✨ Implementing evolution: {proposal.get('title', 'Unknown')}")
 
@@ -233,7 +237,9 @@ class EvolutionaryConduit:
         }
 
     async def shutdown(self):
-        """Shutdown the evolutionary conduit"""
+        """
+        Stop the evolutionary feedback loop and mark the conduit as inactive.
+        """
         self.evolution_active = False
         logger.info("💤 EvolutionaryConduit shutting down")
 
