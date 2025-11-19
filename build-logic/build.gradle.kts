@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,7 +7,7 @@ plugins {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CRITICAL: Exclude ALL Android AAR dependencies from build-logic
+// CRITICAL: Exclude AAALL Android AAR dependencies from build-logic
 // ═══════════════════════════════════════════════════════════════════════════
 // build-logic is JVM-only and cannot consume Android AAR (Android Archive) files.
 // hilt-android-gradle-plugin incorrectly depends on hilt-android (runtime library),
