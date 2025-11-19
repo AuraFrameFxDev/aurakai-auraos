@@ -5,19 +5,19 @@
 
 // Apply plugin version management to all projects
 plugins {
-    // Base plugins with versions - Using stable versions for production
-    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0" apply false
-    id("org.jetbrains.kotlin.plugin.parcelize") version "2.1.0" apply false
+    // Base plugins with versions
+    id("org.jetbrains.kotlin.android") version "2.3.0-RC" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0-RC" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0-RC" apply false
+    id("org.jetbrains.kotlin.plugin.parcelize") version "2.3.0-RC" apply false
 
-    // Android plugins - Using stable AGP version
-    id("com.android.application") version "8.7.3" apply false
-    id("com.android.library") version "8.7.3" apply false
+    // Android plugins
+    id("com.android.application") version "9.0.0-beta01" apply false
+    id("com.android.library") version "9.0.0-beta01" apply false
 
     // Other plugins
     id("com.google.dagger.hilt.android") version "2.57.2" apply false
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29" apply false
+    id("com.google.devtools.ksp") version "2.3.2" apply false
     id("com.google.gms.google-services") version "4.4.4" apply false
     id("com.google.firebase.crashlytics") version "3.0.6" apply false
 }
