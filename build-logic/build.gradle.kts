@@ -1,7 +1,5 @@
-import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.toString
 
 plugins {
     `kotlin-dsl`        // applies java-gradle-plugin
