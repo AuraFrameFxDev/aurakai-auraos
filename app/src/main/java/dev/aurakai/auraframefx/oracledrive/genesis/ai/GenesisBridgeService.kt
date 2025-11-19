@@ -22,11 +22,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
-import dev.aurakai.auraframefx.ai.models.AiRequest
-import dev.aurakai.auraframefx.ai.models.AgentResponse
+import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.context.ContextManager
 import dev.aurakai.auraframefx.security.SecurityContext
-import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.aura.AuraFxLogger
 import javax.inject.Inject
 import javax.inject.Singleton
 
