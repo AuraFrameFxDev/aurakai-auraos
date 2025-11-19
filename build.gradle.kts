@@ -33,18 +33,23 @@ allprojects {
     group = "dev.aurakai.auraframefx"
     version = "0.1.0"
 
-    // Disable all test tasks by default
-    tasks.withType<AbstractTestTask> {
-        enabled = false
-    }
+    // Make tests configurable via project property
+    // Usage: ./gradlew test -PenableTests=false (to disable)
+    // Or add 'enableTests=false' to gradle.properties to disable by default
+    val enableTests = project.findProperty("enableTests")?.toString()?.toBoolean() ?: true
 
-    // Disable test tasks for specific test types
-    tasks.matching { task ->
-        task.name.startsWith("test") ||
-        task.name.endsWith("Test") ||
-        task.name.contains("androidTest")
-    }.configureEach {
-        enabled = false
+    if (!enableTests) {
+        tasks.withType<AbstractTestTask> {
+            enabled = false
+        }
+
+        tasks.matching { task ->
+            task.name.startsWith("test") ||
+            task.name.endsWith("Test") ||
+            task.name.contains("androidTest")
+        }.configureEach {
+            enabled = false
+        }
     }
 }
 

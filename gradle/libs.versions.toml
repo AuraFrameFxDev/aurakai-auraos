@@ -1,8 +1,8 @@
 [versions]
 # ============================================================================
-# Core Build Tools (AGP 9.0.0-alpha14 + Kotlin 2.3.0-Beta2)
+# Core Build Tools (AGP 9.0.0-beta01 + Kotlin 2.3.0-RC)
 # ============================================================================
-# Android Gradle Plugin - Latest: 9.0.0-alpha14 (requires Gradle 9.2.0+)
+# Android Gradle Plugin - Latest: 9.0.0-beta01 (requires Gradle 9.2.0+)
 agp = "9.0.0-beta01"
 
 # Gradle - Latest: 9.2.0
@@ -25,7 +25,7 @@ hilt = "2.57.2"
 # AndroidX Hilt Work - Latest: 1.3.0 (September 10, 2025)
 hiltWork = "1.3.0"
 
-# Kotlin - Latest beta: 2.3.0-Beta2 (bleeding-edge for Compose improvements)
+# Kotlin - Latest RC: 2.3.0-RC (bleeding-edge for Compose improvements)
 kotlin = "2.3.0-RC"
 
 # Kotlin DSL

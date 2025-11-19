@@ -30,7 +30,18 @@ object NetworkModule {
     @Provides
     @BaseUrl
     @Singleton
-    fun provideBaseUrl(): String = "https://api.auraframefx.com/v1/"
+    fun provideBaseUrl(): String {
+        // Environment-based URL configuration
+        // Debug builds use local development server
+        // Release builds use production API
+        return if (BuildConfig.DEBUG) {
+            // For local development, you can override this with:
+            // BuildConfig field or environment variable
+            System.getenv("API_BASE_URL") ?: "http://10.0.2.2:5000/api/v1/"
+        } else {
+            "https://api.auraframefx.com/v1/"
+        }
+    }
 
     @Provides
     @Singleton

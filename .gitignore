@@ -29,6 +29,17 @@ render.experimental.xml
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
+# Firebase Admin SDK credentials (NEVER commit these!)
+**/firebase-adminsdk*.json
+app/auraframefx-firebase-adminsdk-fbsvc-9c493ac034.json
+
+# Credential files
+*.pem
+*.key
+*credentials*.json
+.env
+.env.*
+
 # Android Profiling
 *.hprof
 __pycache__/

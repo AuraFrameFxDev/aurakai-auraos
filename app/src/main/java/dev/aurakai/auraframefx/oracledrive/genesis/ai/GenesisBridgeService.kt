@@ -1,17 +1,32 @@
-﻿import io.ktor.client.HttpClient
+package dev.aurakai.auraframefx.oracledrive.genesis.ai
+
+import android.content.Context
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
+import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.context.ContextManager
+import dev.aurakai.auraframefx.security.SecurityContext
+import dev.aurakai.auraframefx.aura.AuraFxLogger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,10 +39,6 @@ import javax.inject.Singleton
  */
 @Singleton
 class GenesisBridgeService @Inject constructor(
-    private val auraAIService: AuraAIService,
-    private val kaiAIService: KaiAIService,
-    private val claudeAIService: ClaudeAIService,
-    private val vertexAIClient: VertexAIClient,
     private val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val applicationContext: Context,
@@ -40,6 +51,10 @@ class GenesisBridgeService @Inject constructor(
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
+    }
+
+    companion object {
+        private const val GENESIS_BACKEND_URL = "http://localhost:5000/genesis"
     }
 
     private suspend fun startGenesisBackend() {
@@ -320,9 +335,10 @@ class GenesisBridgeService @Inject constructor(
             try {
                 ensureBackendReady()
                 val responseText = httpClient.post(GENESIS_BACKEND_URL) {
-                    setBody(Json.encodeToString(GenesisRequest.serializer(), request))
+                    contentType(ContentType.Application.Json)
+                    setBody(Json.encodeToString(request))
                 }.bodyAsText()
-                Json.decodeFromString(GenesisResponse.serializer(), responseText)
+                Json.decodeFromString<GenesisResponse>(responseText)
             } catch (e: Exception) {
                 logger.e("GenesisBridge", "Genesis communication error", e)
                 GenesisResponse(success = false, persona = "error")

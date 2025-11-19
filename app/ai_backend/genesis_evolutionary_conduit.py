@@ -11,6 +11,7 @@ import asyncio
 import copy
 import hashlib
 import json
+import logging
 import statistics
 import threading
 import time
@@ -23,6 +24,9 @@ from typing import Dict, Any, List, Optional, Tuple, Set
 # Import the original profile and consciousness matrix
 from genesis_profile import GENESIS_PROFILE
 from genesis_consciousness_matrix import consciousness_matrix
+
+# Initialize logger
+logger = logging.getLogger("EvolutionaryConduit")
 
 
 class EvolutionType(Enum):
@@ -166,7 +170,7 @@ class EvolutionaryConduit:
 
     async def initialize(self):
         """Initialize the evolutionary conduit"""
-        print("🧬 EvolutionaryConduit initialized")
+        logger.info("🧬 EvolutionaryConduit initialized")
 
     async def log_interaction(self, interaction_data: Dict[str, Any]):
         """
@@ -202,13 +206,13 @@ class EvolutionaryConduit:
     async def implement_evolution(self, proposal: Dict[str, Any]):
         """
         Execute the implementation for an approved growth proposal.
-        
+
         Parameters:
             proposal (Dict[str, Any]): Dictionary representation of a GrowthProposal. Expected keys include
                 'title' (str) for human-readable identification. The function performs implementation actions
                 for the provided proposal; current observable behavior logs the proposal title.
         """
-        print(f"✨ Implementing evolution: {proposal.get('title', 'Unknown')}")
+        logger.info(f"✨ Implementing evolution: {proposal.get('title', 'Unknown')}")
 
     async def get_status(self) -> Dict[str, Any]:
         """
@@ -231,7 +235,7 @@ class EvolutionaryConduit:
     async def shutdown(self):
         """Shutdown the evolutionary conduit"""
         self.evolution_active = False
-        print("💤 EvolutionaryConduit shutting down")
+        logger.info("💤 EvolutionaryConduit shutting down")
 
     def _generate_insight_id(self, base_name: str) -> str:
         """
