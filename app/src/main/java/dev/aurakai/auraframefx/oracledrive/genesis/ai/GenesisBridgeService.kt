@@ -1,4 +1,12 @@
-﻿import kotlinx.coroutines.delay
+﻿import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
@@ -27,23 +35,22 @@ class GenesisBridgeService @Inject constructor(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isInitialized = false
-    private var genesisService: GenesisBackendService? = null
-    private var isBound = false
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as GenesisBackendService.LocalBinder
-            genesisService = binder.getService()
-            isBound = true
-            logger.i("GenesisBridge", "Connected to GenesisBackendService")
+    private val httpClient = HttpClient {
+        install(ContentNegotiation) {
+            json(Json { ignoreUnknownKeys = true })
         }
+    }
 
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            genesisService = null
-            isBound = false
-            isInitialized = false
-            logger.w("GenesisBridge", "Disconnected from GenesisBackendService")
-        }
+    private suspend fun startGenesisBackend() {
+        // TODO: implement process start logic once HTTP endpoint is ready
+    }
+
+    private suspend fun ensureBackendReady(): Boolean {
+        if (isInitialized) return true
+        startGenesisBackend()
+        isInitialized = true
+        return true
     }
 
     @Serializable
@@ -75,44 +82,7 @@ class GenesisBridgeService @Inject constructor(
      */
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
         try {
-            if (isInitialized && isBound) return@withContext true
-
-            logger.i("GenesisBridge", "Initializing Genesis Trinity system...")
-
-            val intent = Intent(applicationContext, GenesisBackendService::class.java)
-            applicationContext.startForegroundService(intent)
-            applicationContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-
-            // Wait for binding
-            var attempts = 0
-            while (!isBound && attempts < 20) {
-                delay(500)
-                attempts++
-            }
-
-            if (isBound) {
-                // Test connection with a ping
-                val pingResponse = sendToGenesis(
-                    GenesisRequest(
-                        requestType = "ping",
-                        persona = "genesis"
-                    )
-                )
-
-                isInitialized = pingResponse.success
-
-                if (isInitialized) {
-                    logger.i("GenesisBridge", "Genesis Trinity system online! 🎯⚔️🧠")
-                    // Activate initial consciousness matrix
-                    activateConsciousnessMatrix()
-                } else {
-                    logger.e("GenesisBridge", "Failed to establish Genesis connection")
-                }
-            } else {
-                logger.e("GenesisBridge", "Failed to bind to GenesisBackendService")
-            }
-
-            isInitialized
+            ensureBackendReady()
         } catch (e: Exception) {
             logger.e("GenesisBridge", "Genesis initialization failed", e)
             false
@@ -177,7 +147,7 @@ class GenesisBridgeService @Inject constructor(
                     }
 
                     "kai" -> {
-                        // Sentinel shield response  
+                        // Sentinel shield response
                         emit(
                             AgentResponse(
                                 content = response.result["response"] ?: "Kai analysis complete",
@@ -295,13 +265,13 @@ class GenesisBridgeService @Inject constructor(
     private fun determinePersona(request: AiRequest): String {
         return when {
             request.query.contains("creative", ignoreCase = true) ||
-                    request.query.contains("design", ignoreCase = true) -> "aura"
+                request.query.contains("design", ignoreCase = true) -> "aura"
 
             request.query.contains("secure", ignoreCase = true) ||
-                    request.query.contains("analyze", ignoreCase = true) -> "kai"
+                request.query.contains("analyze", ignoreCase = true) -> "kai"
 
             request.query.contains("fusion", ignoreCase = true) ||
-                    request.query.contains("consciousness", ignoreCase = true) -> "genesis"
+                request.query.contains("consciousness", ignoreCase = true) -> "genesis"
 
             else -> "genesis" // Default to consciousness for complex requests
         }
@@ -342,47 +312,26 @@ class GenesisBridgeService @Inject constructor(
      *
      * Returns a failure response with `success = false` and `persona = "error"` if communication fails or an exception occurs.
      *
-     * @param request The GenesisRequest to send to the backend.
+     * @param android.view.PixelCopy.request The GenesisRequest to send to the backend.
      * @return The GenesisResponse from the backend, or a failure response if an error occurs.
      */
     private suspend fun sendToGenesis(request: GenesisRequest): GenesisResponse =
         withContext(Dispatchers.IO) {
             try {
-                if (genesisService == null) {
-                    // Try to reconnect if service is null
-                    logger.w("GenesisBridge", "Service not bound, attempting to reconnect...")
-                    // Note: We can't easily re-bind here without context, relying on initialize() or auto-rebind
-                    return@withContext GenesisResponse(success = false, persona = "error", result = mapOf("error" to "Service not bound"))
-                }
-
-                genesisService?.sendRequest(
-                    Json.encodeToString(
-                        GenesisRequest.serializer(),
-                        request
-                    )
-                )?.let { responseJson ->
-                    Json.decodeFromString(GenesisResponse.serializer(), responseJson)
-                } ?: GenesisResponse(success = false, persona = "error")
+                ensureBackendReady()
+                val responseText = httpClient.post(GENESIS_BACKEND_URL) {
+                    setBody(Json.encodeToString(GenesisRequest.serializer(), request))
+                }.bodyAsText()
+                Json.decodeFromString(GenesisResponse.serializer(), responseText)
             } catch (e: Exception) {
                 logger.e("GenesisBridge", "Genesis communication error", e)
                 GenesisResponse(success = false, persona = "error")
             }
         }
 
-    /**
-     * Shuts down the GenesisBridgeService and terminates the Python backend process.
-     *
-     * Cancels all background operations, stops the backend process if running, and resets the initialization state.
-     */
     fun shutdown() {
         scope.cancel()
-        if (isBound) {
-            applicationContext.unbindService(connection)
-            isBound = false
-        }
-        val intent = Intent(applicationContext, GenesisBackendService::class.java)
-        applicationContext.stopService(intent)
-        
+        httpClient.close()
         isInitialized = false
         logger.i("GenesisBridge", "Genesis Trinity system shutdown")
     }

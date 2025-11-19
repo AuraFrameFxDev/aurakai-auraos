@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx
 
+import com.highcapable.yukihookapi.hook.xposed.proxy.IYukiHookXposedInit
 import timber.log.Timber
 
 /**
@@ -18,7 +19,7 @@ class YukiHookApiInitializer : IYukiHookXposedInit {
      * Called by the Xposed framework when the module is loaded.
      * Delegates to GenesisHookEntry for actual hook registration.
      */
-    fun onInit() {
+    override fun onInit() {
         try {
             Timber.i("YukiHookApiInitializer: Initializing Genesis Protocol Xposed module")
 
@@ -31,13 +32,3 @@ class YukiHookApiInitializer : IYukiHookXposedInit {
         }
     }
 }
-
-/**
- * Annotation marker for YukiHook Xposed initialization classes.
- *
- * Classes annotated with this marker are recognized by the YukiHook
- * framework as entry points for Xposed module initialization.
- */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class IYukiHookXposedInit
