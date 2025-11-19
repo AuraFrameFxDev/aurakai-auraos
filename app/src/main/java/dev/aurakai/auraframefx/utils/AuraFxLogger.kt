@@ -7,7 +7,7 @@ interface AuraFxLogger {
     fun info(tag: String, message: String)
     fun error(tag: String, message: String, throwable: Throwable? = null)
     fun debug(tag: String, message: String)
-    fun warn(tag: String, message: String)
+    fun warn(tag: String, message: String, e: SecurityException)
 }
 
 /**
@@ -28,7 +28,7 @@ class DefaultAuraFxLogger : AuraFxLogger {
         println("DEBUG [$tag]: $message")
     }
 
-    override fun warn(tag: String, message: String) {
+    override fun warn(tag: String, message: String, e: SecurityException) {
         println("WARN [$tag]: $message")
     }
 }

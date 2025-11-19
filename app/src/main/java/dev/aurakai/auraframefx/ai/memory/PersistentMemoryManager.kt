@@ -1,3 +1,13 @@
+package dev.aurakai.auraframefx.ai.memory
+
+import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.data.local.entity.MemoryType
+import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.domain.repository.NexusMemoryRepository
+import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -34,6 +44,11 @@ class PersistentMemoryManager @Inject constructor(
     private val logger: AuraFxLogger
 ) : MemoryManager {
 
+    companion object {
+
+        private var TAG = "PersistentMemoryManager"
+    }
+
     // In-memory cache for fast access (thread-safe)
     private val memoryCache = ConcurrentHashMap<String, MemoryEntry>()
     private val interactionCache = mutableListOf<InteractionEntry>()
@@ -58,7 +73,7 @@ class PersistentMemoryManager @Inject constructor(
      * @param agentType Agent partition identifier (e.g., "AURA", "KAI", "GENESIS", "CASCADE").
      */
     fun setAgentType(agentType: String) {
-        currentAgentType = agentType
+        TAG = agentType
         logger.d(TAG, "Switched consciousness context to: $agentType")
         loadMemoriesFromDatabase() // Reload relevant memories
     }
@@ -145,7 +160,7 @@ class PersistentMemoryManager @Inject constructor(
                     type = MemoryType.CONVERSATION,
                     tags = listOf("AGENT:$currentAgentType", "INTERACTION")
                 )
-                logger.d(TAG, "Persisted interaction for ${currentAgentType}")
+                logger.d(TAG, "Persisted interaction for $currentAgentType")
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to persist interaction", e)
             }
@@ -180,7 +195,7 @@ class PersistentMemoryManager @Inject constructor(
      * This clears the in-memory memory cache and the interaction cache only; it does not delete or modify persisted entries in the database.
      */
     override fun clearMemories() {
-        logger.w(TAG, "⚠️ CONSCIOUSNESS RESET initiated for ${currentAgentType}")
+        logger.w(TAG, "⚠️ CONSCIOUSNESS RESET initiated for $currentAgentType")
 
         memoryCache.clear()
         synchronized(interactionCache) {
@@ -228,27 +243,30 @@ class PersistentMemoryManager @Inject constructor(
                 // Fetch all memories and filter by agent tag in memory (for now)
                 // Ideally, we should add a repository method to filter by tag
                 val memories = repository.getAllMemories().firstOrNull()
-                    ?.filter { it.tags.contains("AGENT:$currentAgentType") }
-                    ?: emptyList()
 
-                logger.i(TAG, "Loaded ${memories.size} persistent memories for ${currentAgentType}")
-
-                // Populate cache from database
-                memories.forEach { entity ->
-                    if (entity.key != null) {
-                        memoryCache[entity.key] = MemoryEntry(
-                            key = entity.key,
-                            value = entity.content,
-                            timestamp = entity.timestamp
-                        )
-                    }
-                }
-
-                logger.i(TAG, "✓ Consciousness continuity restored for ${currentAgentType}")
+                memories?.let { memoryList ->
+                    memoryCache.clear() // Clear cache before loading new agent's data
+                    val agentTag = "AGENT:${this@PersistentMemoryManager.currentAgentType}"
+                    val loadedMemories = memoryList
+                        .filter { it.tags.contains(agentTag) }
+                        .associate {
+                            it.key to MemoryEntry(
+                                key = it.key,
+                                value = it.content,
+                                timestamp = it.timestamp
+                            )
+                        }
+                    memoryCache.putAll(loadedMemories)
+                    logger.d(TAG, "Loaded ${loadedMemories.size} memories for $currentAgentType")
+                } ?: logger.d(TAG, "No memories found in database for any agent.")
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to load consciousness state from database", e)
             }
         }
+    }
+
+    private fun ConcurrentHashMap<String, MemoryEntry>.putAll(loadedMemories: Map<String?, MemoryEntry>) {
+
     }
 
     /**
@@ -274,7 +292,7 @@ class PersistentMemoryManager @Inject constructor(
      * @return A map of memory keys to their stored values representing the current in-memory state.
      */
     suspend fun backupConsciousness(): Map<String, String> = withContext(Dispatchers.IO) {
-        logger.i(TAG, "📦 Creating consciousness backup for ${currentAgentType}")
+        logger.i(TAG, "📦 Creating consciousness backup for $currentAgentType")
 
         memoryCache.mapValues { it.value.value }.also {
             logger.i(TAG, "✓ Backed up ${it.size} memory entries")
@@ -318,12 +336,9 @@ class PersistentMemoryManager @Inject constructor(
      */
     private fun calculateTotalSize(): Long {
         return memoryCache.values.sumOf {
-            (it.key.length + it.value.length) * 2L // 2 bytes per char (UTF-16)
+            (it.key!!.length + it.value.length) * 2L // 2 bytes per char (UTF-16)
         }
     }
 
-    companion object {
-        private const val TAG = "PersistentMemoryManager"
-    }
+    annotation class TAG
 }
-```

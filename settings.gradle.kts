@@ -54,13 +54,7 @@ dependencyResolutionManagement {
                     mavenPom()
                 }
             }
-            maven {
-                url = uri("https://repo.highcapable.com/maven")
-                metadataSources {
-                    artifact()
-                    mavenPom()
-                }
-            }
+
             // Local YukiHook fallback repository (for when hosted repo is unreachable)
             flatDir {
                 dirs("$rootDir/libs/yukihook")

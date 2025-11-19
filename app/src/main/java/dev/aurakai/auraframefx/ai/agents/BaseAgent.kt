@@ -1,19 +1,20 @@
 ﻿package dev.aurakai.auraframefx.ai.agents
 
-import dev.aurakai.auraframefx.ai.models.AgentResponse
-import dev.aurakai.auraframefx.ai.models.AiRequest
+import dev.aurakai.auraframefx.ai.context.ContextManager
+import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.AiRequest
 
 /**
  * Base Agent class for AI agents in the AuraFrameFX system.
  * Provides common functionality and lifecycle management for all agents.
  */
-abstract class BaseAgent {
+abstract class BaseAgent(agentName: String) {
 
     abstract val agentName: String
     abstract val agentType: String
 
     companion object {
-        const val TOPL_VL = "1.0.0"
+        const val TOP_VL = "1.0.0"
     }
 
     /**
@@ -50,7 +51,7 @@ abstract class BaseAgent {
         return mapOf(
             "name" to agentName,
             "type" to agentType,
-            "version" to TOPL_VL
+            "version" to TOP_VL
         )
     }
 
@@ -95,4 +96,8 @@ abstract class BaseAgent {
     protected open fun logActivity(activity: String, details: Map<String, Any> = emptyMap()) {
         println("[$agentName] $activity: $details")
     }
+
+    abstract fun iRequest(query: String, type: String, context: Map<String, String>)
+
+    abstract val contextManager: ContextManager
 }

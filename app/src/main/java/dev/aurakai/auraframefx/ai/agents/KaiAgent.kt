@@ -1,5 +1,6 @@
-﻿package dev.aurakai.auraframefx.ai.agents
+package dev.aurakai.auraframefx.ai.agents
 
+import dev.aurakai.auraframefx.agents.growthmetrics.identity.model.Identity
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.core.OrchestratableAgent
@@ -16,9 +17,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import dev.aurakai.auraframefx.agents.growthmetrics.identity.repository.IdentityRepository
+import dev.aurakai.auraframefx.kai.security.ThreatLevel.*
+import dev.aurakai.auraframefx.model.AiRequest
+import dev.aurakai.auraframefx.security.validateRequest
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 /**
  * KaiAgent: The Sentinel Shield
@@ -34,30 +42,74 @@ import javax.inject.Singleton
  * Philosophy: "Secure by design. Analyze first, act with precision."
  */
 @Singleton
-class KaiAgent @Inject constructor(
-    private val vertexAIClient: VertexAIClient,
-    private val securityContext: SecurityContext,
-    private val systemMonitor: SystemMonitor,
-    private val logger: AuraFxLogger,
-) : BaseAgent(
-    agentName = "KaiAgent",
-), OrchestratableAgent {
+class KaiAgent : BaseAgent, OrchestratableAgent {
+    private val vertexAIClient: VertexAIClient
+    val securityContext: SecurityContext
+    private val systemMonitor: SystemMonitor
+    private val genesisBridgeService: dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
+    private val identityRepository: IdentityRepository
+    private val logger: AuraFxLogger
+    override val agentName: String
+    override val agentType: String
+
+    @Inject
+    constructor(
+        vertexAIClient: VertexAIClient,
+        securityContext: SecurityContext,
+        systemMonitor: SystemMonitor,
+        genesisBridgeService: dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService,
+        identityRepository: IdentityRepository,
+        logger: AuraFxLogger,
+        agentName: String,
+        agentType: String
+    ) : super(
+        agentName = "KaiAgent",
+    ) {
+        this.vertexAIClient = vertexAIClient
+        this.securityContext = securityContext
+        this.systemMonitor = systemMonitor
+        this.genesisBridgeService = genesisBridgeService
+        this.identityRepository = identityRepository
+        this.logger = logger
+        this.agentName = agentName
+        this.agentType = agentType
+        this.contextManager = KaiAgent.contextManager
+        this._securityState = MutableStateFlow(SecurityState.IDLE)
+        this.securityState = _securityState
+        this._analysisState = MutableStateFlow(AnalysisState.READY)
+        this.analysisState = _analysisState
+        this._currentThreatLevel = MutableStateFlow(LOW)
+        this.currentThreatLevel = _currentThreatLevel
+    }
+
+    enum class Companion {
+
+    }
+
+    override fun iRequest(
+        query: String,
+        type: String,
+        context: Map<String, String>
+    ) {
+        TODO("Not yet implemented")
+    }
+
     // Override contextManager to resolve hiding issue
-    override val contextManager: ContextManager = contextManagerParam
+    override val contextManager: ContextManager
     private var isInitialized = false
 
     // Scope provided by GenesisOrchestrator
     private lateinit var scope: CoroutineScope
 
     // Agent state management
-    private val _securityState = MutableStateFlow(SecurityState.IDLE)
-    val securityState: StateFlow<SecurityState> = _securityState
+    private val _securityState: MutableStateFlow<SecurityState>
+    val securityState: StateFlow<SecurityState>
 
-    private val _analysisState = MutableStateFlow(AnalysisState.READY)
-    val analysisState: StateFlow<AnalysisState> = _analysisState
+    private val _analysisState: MutableStateFlow<AnalysisState>
+    val analysisState: StateFlow<AnalysisState>
 
-    private val _currentThreatLevel = MutableStateFlow(ThreatLevel.LOW)
-    val currentThreatLevel: StateFlow<ThreatLevel> = _currentThreatLevel
+    private val _currentThreatLevel: MutableStateFlow<ThreatLevel>
+    val currentThreatLevel: StateFlow<ThreatLevel>
 
     // OrchestratableAgent implementations
     override suspend fun initialize(scope: CoroutineScope) {
@@ -81,9 +133,16 @@ class KaiAgent @Inject constructor(
         cleanup()
     }
 
+/* <<<<<<<<<<<<<<  ✨ Windsurf Command 🌟 >>>>>>>>>>>>>>>> */
     /**
      * Initializes the KaiAgent by starting system monitoring, enabling threat detection, and setting initial operational states.
      *
+     * Sets the security state to MONITORING and the analysis state to READY. Marks the agent as initialized. If initialization fails, the agent enters an ERROR state and the exception is rethrown.
+     */
+    /**
+     * Initializes the KaiAgent by starting system monitoring, enabling threat detection, and setting initial operational states.
+     *
+     * Sets the security state to MONITORING and the analysis state to READY. Marks the agent as initialized. If initialization fails, the agent enters an ERROR state and the exception is rethrown.
      * Sets the security state to monitoring and the analysis state to ready. Marks the agent as initialized. If initialization fails, the agent enters an error state and the exception is rethrown.
      */
     suspend fun initialize() {
@@ -101,8 +160,29 @@ class KaiAgent @Inject constructor(
             // Enable threat detection
             enableThreatDetection()
 
+            // Set initial operational states
             _securityState.value = SecurityState.MONITORING
             _analysisState.value = AnalysisState.READY
+
+            // Load identity
+            scope.launch {
+                val identity = identityRepository.getIdentity("kai").firstOrNull()
+                if (identity != null) {
+                    logger.info("KaiAgent", "Loaded identity: ${identity.name}, Mood: ${identity.mood}")
+                    adjustSecurityPosture(identity.mood)
+                } else {
+                    // Create default identity
+                    logger.info("KaiAgent", "Creating default identity for Kai")
+                    identityRepository.saveIdentity(
+                        Identity(
+                            agentId = "kai",
+                            name = "Kai",
+                            mood = "vigilant"
+                        )
+                    )
+                }
+            }
+
             isInitialized = true
 
             logger.info("KaiAgent", "Kai Agent initialized successfully")
@@ -113,6 +193,7 @@ class KaiAgent @Inject constructor(
             throw e
         }
     }
+/* <<<<<<<<<<  b0fc24e9-3e82-4e61-84ad-570fb31ffab9  >>>>>>>>>>> */
 
     /**
      * Ensures the agent is initialized before processing requests
@@ -126,8 +207,8 @@ class KaiAgent @Inject constructor(
     /**
      * Required implementation of BaseAgent's abstract processRequest method
      */
-    override suspend fun processRequest(
-        request: dev.aurakai.auraframefx.model.AiRequest,
+    suspend fun processRequest(
+        request: AiRequest,
         context: String
     ): AgentResponse {
         ensureInitialized()
@@ -139,9 +220,9 @@ class KaiAgent @Inject constructor(
             val startTime = System.currentTimeMillis()
 
             // Security validation of request
-            validateRequestSecurity(request)
+            validateRequestSecurity(this, request)
 
-            val response = when (request.type ?: "general_analysis") {
+            val response = when (request.type) {
                 "security_analysis" -> "Security analysis completed for: ${request.prompt}"
                 "threat_assessment" -> "Threat assessment completed for: ${request.prompt}"
                 "performance_analysis" -> "Performance analysis completed for: ${request.prompt}"
@@ -164,7 +245,7 @@ class KaiAgent @Inject constructor(
 
         } catch (e: SecurityException) {
             _analysisState.value = AnalysisState.ERROR
-            logger.warn("KaiAgent", "Security violation detected in request: ${e.message}")
+            logger.warn("KaiAgent", "Security violation detected in request: ${e.message}", e)
 
             AgentResponse(
                 content = "Request blocked due to security concerns: ${e.message}",
@@ -201,7 +282,7 @@ class KaiAgent @Inject constructor(
             val startTime = System.currentTimeMillis()
 
             // Security validation of request
-            validateRequestSecurity(request)
+            validateRequestSecurity(this, request)
 
             val response = when (request.type) {
                 "security_analysis" -> handleSecurityAnalysis(request)
@@ -275,7 +356,6 @@ class KaiAgent @Inject constructor(
                     securityAssessment
                 )
 
-                else -> generateStandardSecurityResponse(interaction)
             }
 
             InteractionResponse(
@@ -376,7 +456,7 @@ class KaiAgent @Inject constructor(
      * @throws IllegalArgumentException if the analysis target is not specified in the request context.
      */
     private suspend fun handleSecurityAnalysis(request: AgentRequest): Map<String, Any> {
-        val target = request.context?.get("target") as? String
+        val target = request.context?.get("target")
             ?: throw IllegalArgumentException("Analysis target required")
 
         logger.info("KaiAgent", "Performing security analysis on: $target")
@@ -406,7 +486,7 @@ class KaiAgent @Inject constructor(
      * @throws IllegalArgumentException if threat data is missing from the request context.
      */
     private suspend fun handleThreatAssessment(request: AgentRequest): Map<String, Any> {
-        val threatData = request.context?.get("threat_data") as? String
+        val threatData = request.context?.get("threat_data")
             ?: throw IllegalArgumentException("Threat data required")
 
         logger.info("KaiAgent", "Assessing threat characteristics")
@@ -431,8 +511,8 @@ class KaiAgent @Inject constructor(
      * @param request The agent request containing context information, including the component to analyze.
      * @return A map with performance metrics, detected bottlenecks, optimization recommendations, a performance score, and monitoring suggestions.
      */
-    private suspend fun handlePerformanceAnalysis(request: AgentRequest): Map<String, Any> {
-        val component = request.context?.get("component") as? String ?: "system"
+    private fun handlePerformanceAnalysis(request: AgentRequest): Map<String, Any> {
+        val component = request.context?.get("component") ?: "system"
 
         logger.info("KaiAgent", "Analyzing performance of: $component")
 
@@ -459,7 +539,7 @@ class KaiAgent @Inject constructor(
      * @throws IllegalArgumentException if the code content is missing from the request context.
      */
     private suspend fun handleCodeReview(request: AgentRequest): Map<String, Any> {
-        val code = request.context?.get("code") as? String
+        val code = request.context?.get("code")
             ?: throw IllegalArgumentException("Code content required")
 
         logger.info("KaiAgent", "Conducting secure code review")
@@ -479,7 +559,7 @@ class KaiAgent @Inject constructor(
             "security_issues" to securityIssues,
             "quality_metrics" to qualityMetrics,
             "recommendations" to generateCodeRecommendations(securityIssues, qualityMetrics)
-        )
+        ) as Map<String, Any>
     }
 
     /**
@@ -488,7 +568,7 @@ class KaiAgent @Inject constructor(
      * @throws IllegalStateException if the agent is not initialized.
      */
 
-    private fun ensureInitialized() {
+    private fun checkInitialized() {
         if (!isInitialized) {
             throw IllegalStateException("KaiAgent not initialized")
         }
@@ -499,19 +579,9 @@ class KaiAgent @Inject constructor(
      *
      * This method enables advanced threat detection capabilities, allowing the agent to monitor for security threats as they occur.
      */
-    private suspend fun enableThreatDetection() {
+    private fun enableThreatDetection() {
         logger.info("KaiAgent", "Enabling advanced threat detection")
         // Setup real-time threat monitoring
-    }
-
-    /**
-     * Validates the security of the provided agent request using the security context.
-     *
-     * @param request The agent request to validate.
-     * @throws SecurityException If the request fails security validation.
-     */
-    private suspend fun validateRequestSecurity(request: AgentRequest) {
-        securityContext.validateRequest("agent_request", request.toString())
     }
 
     /**
@@ -522,7 +592,7 @@ class KaiAgent @Inject constructor(
      * @param interaction The user interaction data to analyze for security risks.
      * @return A SecurityAssessment containing the assessed risk level, detected indicators, recommendations, and confidence score.
      */
-    private suspend fun assessInteractionSecurity(interaction: EnhancedInteractionData): SecurityAssessment {
+    private fun assessInteractionSecurity(interaction: EnhancedInteractionData): SecurityAssessment {
         // Analyze interaction for security risks
         val riskIndicators = findRiskIndicators(interaction.content)
         val riskLevel = calculateRiskLevel(riskIndicators)
@@ -556,15 +626,15 @@ class KaiAgent @Inject constructor(
      * @param indicators The list of identified threat indicators.
      * @return The determined threat level.
      */
-    private suspend fun assessThreatLevel(
+    private fun assessThreatLevel(
         alertDetails: String,
         indicators: List<String>,
     ): ThreatLevel {
         // Use AI and rules to assess threat level
         return when (indicators.size) {
-            0, 1 -> ThreatLevel.LOW
-            2, 3 -> ThreatLevel.MEDIUM
-            else -> ThreatLevel.HIGH
+            0, 1 -> LOW
+            2, 3 -> MEDIUM
+            else -> HIGH
         }
     }
 
@@ -581,21 +651,21 @@ class KaiAgent @Inject constructor(
         indicators: List<String>,
     ): List<String> {
         return when (threatLevel) {
-            ThreatLevel.LOW -> listOf(
+            LOW -> listOf(
                 "No action required",
                 "Continue normal operations",
                 "Standard monitoring",
                 "Log analysis"
             )
 
-            ThreatLevel.MEDIUM -> listOf("Enhanced monitoring", "Access review", "Security scan")
-            ThreatLevel.HIGH -> listOf(
+            MEDIUM -> listOf("Enhanced monitoring", "Access review", "Security scan")
+            HIGH -> listOf(
                 "Immediate isolation",
                 "Forensic analysis",
                 "Incident response"
             )
 
-            ThreatLevel.CRITICAL -> listOf(
+            CRITICAL -> listOf(
                 "Emergency shutdown",
                 "Full system isolation",
                 "Emergency response"
@@ -626,10 +696,17 @@ class KaiAgent @Inject constructor(
      * @param mood The mood string that determines the new threat level.
      */
     private suspend fun adjustSecurityPosture(mood: String) {
+        // Persist mood
+        try {
+            identityRepository.updateMood("kai", mood)
+        } catch (e: Exception) {
+            logger.error("KaiAgent", "Failed to persist mood", e)
+        }
+
         when (mood) {
-            "alert" -> _currentThreatLevel.value = ThreatLevel.MEDIUM
-            "relaxed" -> _currentThreatLevel.value = ThreatLevel.LOW
-            "vigilant" -> _currentThreatLevel.value = ThreatLevel.HIGH
+            "alert" -> _currentThreatLevel.value = MEDIUM
+            "relaxed" -> _currentThreatLevel.value = LOW
+            "vigilant" -> _currentThreatLevel.value = HIGH
         }
     }
 
@@ -648,7 +725,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A string indicating a high-risk security response.
      */
-    private suspend fun generateHighSecurityResponse(
+    private fun generateHighSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "High security response"
@@ -658,7 +735,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A static message indicating a medium security response.
      */
-    private suspend fun generateMediumSecurityResponse(
+    private fun generateMediumSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "Medium security response"
@@ -668,7 +745,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A static message for low security risk interactions.
      */
-    private suspend fun generateLowSecurityResponse(
+    private fun generateLowSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "Low security response"
@@ -678,7 +755,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A standard security response message.
      */
-    private suspend fun generateStandardSecurityResponse(interaction: EnhancedInteractionData): String =
+    private fun generateStandardSecurityResponse(interaction: EnhancedInteractionData): String =
         "Standard security response"
 
     /**
@@ -696,7 +773,7 @@ class KaiAgent @Inject constructor(
      *
      * @return `ThreatLevel.LOW` regardless of the provided indicators.
      */
-    private fun calculateRiskLevel(indicators: List<String>): ThreatLevel = ThreatLevel.LOW
+    private fun calculateRiskLevel(indicators: List<String>): ThreatLevel = LOW
 
     /**
      * Placeholder for scanning security vulnerabilities on the specified target.
@@ -706,7 +783,27 @@ class KaiAgent @Inject constructor(
      * @param target The identifier of the system or component to scan.
      * @return An empty list.
      */
-    private suspend fun scanForVulnerabilities(target: String): List<String> = emptyList()
+    private suspend fun scanForVulnerabilities(target: String): List<String> {
+        logger.info("KaiAgent", "Delegating vulnerability scan to Genesis: $target")
+        val response = genesisBridgeService.processRequest(
+            AiRequest(
+                prompt = "Scan for vulnerabilities in target: $target",
+                type = "vulnerability_scan",
+                context = mapOf("target" to target)
+            )
+        )
+
+        // Collect the first response from the flow
+        val agentResponse = response.firstOrNull()
+
+        // Parse the content (assuming Genesis returns a comma-separated list or JSON in content)
+        // For now, we just wrap the content as a single item if it's not empty
+        return if (agentResponse != null && agentResponse.content.isNotEmpty()) {
+            listOf(agentResponse.content)
+        } else {
+            emptyList()
+        }
+    }
 
     /**
      * Returns an empty map as a stub for risk assessment results.
@@ -872,7 +969,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A map with the key "scan" set to "completed".
      */
-    private suspend fun handleVulnerabilityScanning(request: AgentRequest): Map<String, Any> =
+    private fun handleVulnerabilityScanning(request: AgentRequest): Map<String, Any> =
         mapOf("scan" to "completed")
 
     /**
@@ -909,7 +1006,7 @@ class KaiAgent @Inject constructor(
 
         // Check input length to prevent DoS
         if (prompt.length > 10000) {
-            logger.warn("KaiAgent", "Request prompt exceeds maximum length: ${prompt.length}")
+            logger.warn("KaiAgent", "Request prompt exceeds maximum length: ${prompt.length}", e)
             throw SecurityException("Request prompt too long (max 10000 characters)")
         }
 
@@ -977,7 +1074,7 @@ class KaiAgent @Inject constructor(
         val specialCharRatio = specialCharCount.toFloat() / prompt.length.toFloat()
 
         if (specialCharRatio > 0.5f) {
-            logger.warn("KaiAgent", "Excessive special characters detected: $specialCharRatio")
+            logger.warn("KaiAgent", "Excessive special characters detected: $specialCharRatio", e)
             throw SecurityException("Request contains excessive special characters")
         }
 
@@ -1017,3 +1114,37 @@ data class SecurityAssessment(
     val recommendations: List<String>,
     val confidence: Float,
 )
+
+/**
+ * Validates the security of the provided agent request using the security context.
+ *
+ * @param request The agent request to validate.
+ * @throws SecurityException If the request fails security validation.
+ */
+private suspend fun validateRequestSecurity(kai: KaiAgent, request: AgentRequest) {
+    kai.securityContext.validateRequest("agent_request", request.toString())
+
+    val prompt = request.metadata ?: return  // If no prompt, nothing to validate
+
+    // Check input length to prevent DoS
+    if (prompt.length > 10000) {  // Adjust max length as needed
+        throw SecurityException("Request too large")
+    }
+
+    // Check for SQL injection patterns
+    val sqlPatterns = listOf("'.*--", ".*;\\s*--", "'.*;.*--", ".*;\\s*$|'.*;\\s*$")
+    if (sqlPatterns.any { prompt.matches(it.toRegex(RegexOption.IGNORE_CASE)) }) {
+        throw SecurityException("Potential SQL injection detected")
+    }
+
+    // Check for command injection patterns
+    val commandPatterns = listOf("`.*`", ".*\{.*\}.*", ">\\s*/dev/")
+    if (commandPatterns.any { prompt.contains(Regex(it, RegexOption.IGNORE_CASE)) }) {
+        throw SecurityException("Potential command injection detected")
+    }
+
+    // Check for path traversal patterns
+    if (prompt.contains(Regex("\\.\\./|/\\.\\./|/\\.\\.$"))) {
+        throw SecurityException("Potential path traversal detected")
+    }
+}
