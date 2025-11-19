@@ -24,6 +24,10 @@ dependencies {
     // Expose core KTX as API
     api(libs.androidx.core.ktx)
 
+    // YukiHook API 1.3.0+ stack
+    implementation(libs.yukihookapi.api)
+    api(libs.yukihookapi.ksp)
+
     // Compose UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.ui)

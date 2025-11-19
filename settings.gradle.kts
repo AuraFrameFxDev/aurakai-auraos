@@ -16,6 +16,9 @@ pluginManagement {
     }
     // Plugin versions are now managed in the root build.gradle.kts
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 dependencyResolutionManagement {
         repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
@@ -43,7 +46,7 @@ dependencyResolutionManagement {
                     mavenPom()
                 }
             }
-            // HighCapable Maven - Required for YukiHookAPI
+            // HighCapable Maven repositories (primary + legacy fallback)
             maven {
                 url = uri("https://maven.highcapable.dev/releases")
                 metadataSources {
@@ -51,7 +54,17 @@ dependencyResolutionManagement {
                     mavenPom()
                 }
             }
-
+            maven {
+                url = uri("https://repo.highcapable.com/maven")
+                metadataSources {
+                    artifact()
+                    mavenPom()
+                }
+            }
+            // Local YukiHook fallback repository (for when hosted repo is unreachable)
+            flatDir {
+                dirs("$rootDir/libs/yukihook")
+            }
             // Dynamically add every module's libs/ directory as a file-based maven repository
             // This discovers local jars placed in module/libs (including nested modules) and registers them so artifacts like
             // de.robv.android.xposed:api and local JARs can be resolved.

@@ -30,6 +30,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // YukiHook API 1.3.0+ stack
+    implementation(libs.yukihookapi.api)
+    api(libs.yukihookapi.ksp)
+
     // ═══════════════════════════════════════════════════════════════════════
     // AUTO-PROVIDED by genesis.android.library:
     // - androidx-core-ktx, appcompat, timber

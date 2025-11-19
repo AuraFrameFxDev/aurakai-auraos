@@ -103,8 +103,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     // MultiDex support for 64K+ methods
-    implementation("androidx.multidex:multidex:2.0.1")
-
+        //STOP ADDING IT ONLY NEEDS TO BE PLACED IN TOML
     // Compose BOM & UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.ui)
@@ -138,7 +137,7 @@ dependencies {
     implementation(libs.androidx.datastore.core)
 
     // Google Play Billing - Subscription Management
-    implementation("com.android.billingclient:billing-ktx:7.1.1")
+    implementation("com.android.billingclient:billing-ktx:8.1.0")
 
     // Security
     implementation(libs.androidx.security.crypto)
@@ -148,9 +147,13 @@ dependencies {
     implementation(libs.libsu.io)
     implementation(libs.libsu.service)
 
-    // YukiHook API
-    compileOnly(libs.yukihookapi.api)
-    ksp(libs.yukihookapi.ksp)
+    // YukiHook API with KavaRef
+    implementation(libs.yukihook.api)
+    ksp(libs.yukihook.ksp) {
+        exclude(group = "com.highcapable.yukihookapi", module = "api")
+    }
+
+    // KavaRef for YukiHook
 
     // Firebase BOM (Bill of Materials) for version management
     implementation(platform(libs.firebase.bom))

@@ -31,6 +31,9 @@ dependencies {
     // Xposed API (compile-only, not bundled in APK)
     compileOnly(files("$projectDir/libs/api-82.jar"))
 
-    // YukiHook API Code Generation (Xposed framework)
-    ksp(libs.yukihookapi.ksp)
+    // YukiHook API 1.3.0+ with KavaRef
+    implementation(libs.yukihookapi.api)
+    api(libs.yukihookapi.ksp)
+
 }
+

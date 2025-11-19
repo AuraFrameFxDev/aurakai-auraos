@@ -26,6 +26,11 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // YukiHook API 1.3.0+ with KavaRef
+    implementation(libs.yukihookapi.api)
+    api(libs.yukihookapi.ksp)
+
+
     // ═══════════════════════════════════════════════════════════════════════════
     // NOTE: The following are AUTOMATICALLY provided by genesis.android.library:
     // - Hilt Android + Compiler (DI)

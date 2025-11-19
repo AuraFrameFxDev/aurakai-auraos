@@ -60,13 +60,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.Canvas
-import androidx.compose.runtime.livedata.observeAsState // REMOVED THIS IMPORT as it's not what we use
-import dev.aurakai.auraframefx.embodiment.retrobackdrop.BackdropState
-import dev.aurakai.auraframefx.embodiment.retrobackdrop.CardExplosionEffect
-import dev.aurakai.auraframefx.embodiment.retrobackdrop.MegaManBackdropRenderer
+import dev.aurakai.auraframefx.romtools.backdrop.BackdropState
+import dev.aurakai.auraframefx.romtools.backdrop.CardExplosionEffect
+import dev.aurakai.auraframefx.romtools.backdrop.MegaManBackdropRenderer
 import dev.aurakai.auraframefx.romtools.BackupInfo
 import dev.aurakai.auraframefx.romtools.RomCapabilities
 import dev.aurakai.auraframefx.romtools.RomToolsManager
@@ -85,11 +84,11 @@ import timber.log.Timber
 @Composable
 fun RomToolsScreen(
     modifier: Modifier = Modifier,
-    romToolsManager: RomToolsManager = hiltViewModel<RomToolsManager>()
+    romToolsViewModel: dev.aurakai.auraframefx.romtools.RomToolsViewModel = hiltViewModel()
 ) {
-    val romToolsState by romToolsManager.romToolsState.collectAsStateWithLifecycle()
-    // Access delegated property correctly in composable scope
-    val operationProgress by romToolsManager.operationProgress.collectAsStateWithLifecycle()
+    val romToolsState by romToolsViewModel.romToolsState.collectAsStateWithLifecycle()
+    val operationProgressState by romToolsViewModel.operationProgress.collectAsStateWithLifecycle()
+    val romToolsManager = romToolsViewModel.romToolsManager
     val coroutineScope = rememberCoroutineScope()
 
     // Backdrop state management
@@ -122,7 +121,8 @@ fun RomToolsScreen(
     }
 
     // Detect operation start and trigger explosion
-    val isOperationRunning = operationProgress != null && operationProgress.progress < 100f
+    val op = operationProgressState // avoid smart-cast issues on delegated property
+    val isOperationRunning = op != null && op.progress < 100f
     LaunchedEffect(isOperationRunning, backdropState) {
         if (isOperationRunning && !wasOperationRunning && backdropState == BackdropState.STATIC) {
             // Operation just started - trigger explosion!
@@ -149,8 +149,8 @@ fun RomToolsScreen(
     }
 
     // Handle operation completion
-    LaunchedEffect(operationProgress?.progress) {
-        if (operationProgress != null && operationProgress.progress >= 100f && backdropState == BackdropState.ACTIVE) {
+    LaunchedEffect(op?.progress) {
+        if (op != null && op.progress >= 100f && backdropState == BackdropState.ACTIVE) {
             backdropState = BackdropState.COMPLETING
             delay(500)  // Brief pause
             backdropState = BackdropState.VICTORY
@@ -187,7 +187,7 @@ fun RomToolsScreen(
                 BackdropState.VICTORY -> {
                     // Full animated backdrop or Freeze frame with victory pose
                     MegaManBackdropRenderer(
-                        operationProgress = operationProgress,
+                        operationProgress = op,
                         enabled = true
                     )
                     // TODO: Add victory overlay when in COMPLETING/VICTORY states
@@ -234,7 +234,7 @@ fun RomToolsScreen(
             // Main content
             MainContent(
                 romToolsState = romToolsState,
-                operationProgress = operationProgress,
+                operationProgress = op,
                 onActionClick = { actionType ->
                     when (actionType) {
                         RomActionType.FLASH_ROM -> {

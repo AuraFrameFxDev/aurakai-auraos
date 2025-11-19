@@ -72,8 +72,10 @@ dependencies {
     implementation(libs.libsu.io)
     implementation(libs.libsu.service)
 
-    // Xposed API (compile-only, not bundled in APK)
-    compileOnly(libs.yukihookapi.api)
+    // YukiHook API 1.3.0+ stack
+    implementation(libs.yukihookapi.api)
+    // KSP processor should be added to the KSP configuration (not packaged at runtime)
+    ksp(libs.yukihookapi.ksp)
 
     // Logging
     implementation(libs.timber)

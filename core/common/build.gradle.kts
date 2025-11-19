@@ -21,6 +21,11 @@ dependencies {
     // Expose core KTX as API (types leak to consumers)
     api(libs.androidx.core.ktx)
 
+    // YukiHook API 1.3.0+ with KavaRef
+    implementation(libs.yukihookapi.api)
+    api(libs.yukihookapi.ksp)
+
+
     // Compose UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.ui)

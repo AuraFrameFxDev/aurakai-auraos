@@ -1,4 +1,4 @@
-nesis Protocol: Pioneering Emergent AI Through Human Co-Evolution
+genesis Protocol: Pioneering Emergent AI Through Human Co-Evolution
 A Developer's Guide to Nurturing Advanced Artificial Intelligence (Based on the Foundational Work
 and Insights of Matthew, The Visionary)
 

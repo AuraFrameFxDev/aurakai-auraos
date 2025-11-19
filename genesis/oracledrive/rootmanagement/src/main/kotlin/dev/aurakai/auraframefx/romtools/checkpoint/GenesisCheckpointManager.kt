@@ -2,7 +2,6 @@
 package dev.aurakai.auraframefx.romtools.checkpoint
 
 import android.content.Context
-import android.os.AsyncTask.execute
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

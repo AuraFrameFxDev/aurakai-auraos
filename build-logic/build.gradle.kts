@@ -29,7 +29,8 @@ configurations.all {
 // MUST match the target used in GenesisApplicationPlugin and GenesisLibraryHiltPlugin (JVM 24)
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_24) // This is the standard way
+        jvmTarget.set(JvmTarget.JVM_24)
+        // Add other compiler options as needed
     }
 }
 

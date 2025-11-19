@@ -34,8 +34,8 @@ kotlinDsl = "5.1.2"
 # KSP - Latest: 2.3.2 (decoupled from Kotlin version since 2.3.0)
 ksp = "2.3.2"
 
-# KavaRef - Reflection API for YukiHookAPI
-kavaref = "1.0.2"
+# YukiHook and KavaRef versions
+yukihook = "1.3.1"
 
 # ============================================================================
 # Android SDK Versions
@@ -174,7 +174,7 @@ libsu = "6.0.0"
 xposed = "82"
 
 # YukiHookAPI - Latest: 1.3.1 (Sept 13, 2025)
-yukihookapi = "1.3.1"
+yukihookapi.ksp = "1.3.1"
 
 # Xposed Bridge (if using custom builds)
 xposed-bridge = "1.3.1"
@@ -240,6 +240,15 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# ============================================================================
+# YukiHook API & KavaRef
+# ============================================================================
+yukihookapi-api = { group = "com.highcapable.yukihookapi", name = "api", version.ref = "yukihook" }
+yukihookapi-ksp = { group = "com.highcapable.yukihookapi", name = "ksp-xposed", version.ref = "yukihook" }
+# keep legacy aliases for backwards compatibility
+yukihook-api = { group = "com.highcapable.yukihookapi", name = "api", version.ref = "yukihook" }
+yukihook-ksp = { group = "com.highcapable.yukihookapi", name = "ksp-xposed", version.ref = "yukihook" }
 
 # ============================================================================
 # Compose (via BOM)
@@ -323,9 +332,6 @@ libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref 
 libsu-io = { group = "com.github.topjohnwu.libsu", name = "io", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
 
-# KavaRef - Reflection utilities for YukiHook (hosted on HighCapable Maven)
-kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
-kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref" }
 
 # ============================================================================
 # Testing
@@ -336,14 +342,11 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
-
 # ============================================================================
 # Xposed & Hooking
 # ============================================================================
 # Xposed API (original, provided by LSPosed)
 xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposed" }
-yukihookapi-api = { group = "com.highcapable.yukihookapi", name = "api", version.ref = "yukihookapi" }
-yukihookapi-ksp = { group = "com.highcapable.yukihookapi", name = "ksp", version.ref = "yukihookapi" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 # ============================================================================
@@ -392,6 +395,12 @@ compose-ui = [
 compose-tooling = [
     "compose-ui-tooling",
     "compose-ui-tooling-preview",
+]
+
+# YukiHook and KavaRef dependencies
+yukihook-dependencies = [
+    "yukihookapi-api",
+    "yukihookapi-ksp"
 ]
 
 androidx-integrations = [
@@ -484,6 +493,5 @@ system-root = [
     "libsu-core",
     "libsu-io",
     "libsu-service",
-    "xposed-api",
-    "yukihookapi-api",
+    "xposed-api"
 ]

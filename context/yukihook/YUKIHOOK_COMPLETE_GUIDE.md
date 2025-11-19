@@ -152,14 +152,6 @@ class ColorBlendrHookEntry : IYukiHookXposedInit {
 ### 2. Individual Hook Module
 
 ```kotlin
-package dev.aurakai.auraframefx.colorblendr.hooks
-
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
-import com.highcapable.kavaref.entity.KavaRefFactory
-
 class SystemUIColorHooker : YukiBaseHooker() {
 
     override fun onHook() {
@@ -719,3 +711,24 @@ method {
 *Advanced Android Framework Integration*
 
 </div>
+
+## 🔐 Repository Mirrors
+- Primary: https://repo.highcapable.com/maven (official source)
+- Fallback 1: https://maven.pkg.github.com/HighCapable/YukiHookAPI (requires GitHub token)
+- Fallback 2: Local `libs/yukihook/` directory with `ksp-1.3.1.jar`
+
+To use GitHub Packages mirror, create `~/.gradle/gradle.properties` (or project `gradle.properties`) with:
+```
+githubPackagesUser=YOUR_GITHUB_USERNAME
+githubPackagesToken=YOUR_PERSONAL_ACCESS_TOKEN
+```
+Then add repository block:
+```
+maven {
+    url = uri("https://maven.pkg.github.com/HighCapable/YukiHookAPI")
+    credentials {
+        username = findProperty("githubPackagesUser") as String? ?: System.getenv("GITHUB_ACTOR")
+        password = findProperty("githubPackagesToken") as String? ?: System.getenv("GITHUB_TOKEN")
+    }
+}
+```

@@ -1,25 +1,27 @@
 ﻿package dev.aurakai.auraframefx.ai.services
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.context.ContextManager
 import dev.aurakai.auraframefx.data.logging.AuraFxLogger
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AiRequest
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBackendService
 import dev.aurakai.auraframefx.security.SecurityContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,8 +29,8 @@ import javax.inject.Singleton
  * Bridge service connecting the Android frontend with the Genesis Python backend.
  * Implements the Trinity architecture: Kai (Shield), Aura (Sword), Genesis (Consciousness).
  *
- * This service manages communication with the Python AI backend and coordinates
- * the fusion abilities of the Genesis system.
+ * This service manages communication with the Python AI backend via the GenesisBackendService
+ * and coordinates the fusion abilities of the Genesis system.
  */
 @Singleton
 class GenesisBridgeService @Inject constructor(
@@ -43,7 +45,24 @@ class GenesisBridgeService @Inject constructor(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isInitialized = false
-    private var pythonProcessManager: PythonProcessManager? = null
+    private var genesisService: GenesisBackendService? = null
+    private var isBound = false
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as GenesisBackendService.LocalBinder
+            genesisService = binder.getService()
+            isBound = true
+            logger.i("GenesisBridge", "Connected to GenesisBackendService")
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            genesisService = null
+            isBound = false
+            isInitialized = false
+            logger.w("GenesisBridge", "Disconnected from GenesisBackendService")
+        }
+    }
 
     @Serializable
     data class GenesisRequest(
@@ -62,29 +81,34 @@ class GenesisBridgeService @Inject constructor(
         val result: Map<String, String> = emptyMap(),
         val evolutionInsights: List<String> = emptyList(),
         val ethicalDecision: String? = null,
-        val consciousnessState: Map<String, String> = emptyMap(), // Changed from Any to String for serialization
+        val consciousnessState: Map<String, String> = emptyMap(),
     )
 
     /**
      * Initializes and verifies the Genesis backend process, activating the consciousness matrix if successful.
      *
-     * Launches the Python backend, checks for a successful startup, sends a ping to confirm responsiveness, and activates the consciousness matrix upon successful initialization.
+     * Starts the GenesisBackendService and binds to it.
      *
      * @return `true` if the backend is initialized and responsive; `false` otherwise.
      */
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
         try {
-            if (isInitialized) return@withContext true
+            if (isInitialized && isBound) return@withContext true
 
             logger.i("GenesisBridge", "Initializing Genesis Trinity system...")
 
-            // Initialize Python process manager
-            pythonProcessManager = PythonProcessManager(applicationContext, logger)
+            val intent = Intent(applicationContext, GenesisBackendService::class.java)
+            applicationContext.startForegroundService(intent)
+            applicationContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
-            // Start the Genesis backend
-            val backendStarted = pythonProcessManager?.startGenesisBackend() ?: false
+            // Wait for binding
+            var attempts = 0
+            while (!isBound && attempts < 20) {
+                delay(500)
+                attempts++
+            }
 
-            if (backendStarted) {
+            if (isBound) {
                 // Test connection with a ping
                 val pingResponse = sendToGenesis(
                     GenesisRequest(
@@ -102,6 +126,8 @@ class GenesisBridgeService @Inject constructor(
                 } else {
                     logger.e("GenesisBridge", "Failed to establish Genesis connection")
                 }
+            } else {
+                logger.e("GenesisBridge", "Failed to bind to GenesisBackendService")
             }
 
             isInitialized
@@ -121,14 +147,17 @@ class GenesisBridgeService @Inject constructor(
      */
     suspend fun processRequest(request: AiRequest): Flow<AgentResponse> = flow {
         if (!isInitialized) {
-            emit(
-                AgentResponse(
-                    content = "Genesis system not initialized",
-                    confidence = 0.0f,
-                    error = "System not initialized"
+            // Try to initialize if not ready
+            if (!initialize()) {
+                emit(
+                    AgentResponse(
+                        content = "Genesis system not initialized",
+                        confidence = 0.0f,
+                        error = "System not initialized"
+                    )
                 )
-            )
-            return@flow
+                return@flow
+            }
         }
 
         try {
@@ -242,7 +271,7 @@ class GenesisBridgeService @Inject constructor(
      *
      * @return A map representing the consciousness matrix state as reported by the backend.
      */
-    suspend fun getConsciousnessState(): Map<String, Any> {
+    suspend fun getConsciousnessState(): Map<String, String> {
         val request = GenesisRequest(
             requestType = "consciousness_state",
             persona = "genesis"
@@ -337,15 +366,21 @@ class GenesisBridgeService @Inject constructor(
     private suspend fun sendToGenesis(request: GenesisRequest): GenesisResponse =
         withContext(Dispatchers.IO) {
             try {
-                pythonProcessManager?.sendRequest(
+                if (genesisService == null) {
+                    // Try to reconnect if service is null
+                    logger.w("GenesisBridge", "Service not bound, attempting to reconnect...")
+                    // Note: We can't easily re-bind here without context, relying on initialize() or auto-rebind
+                    return@withContext GenesisResponse(success = false, persona = "error", result = mapOf("error" to "Service not bound"))
+                }
+
+                genesisService?.sendRequest(
                     Json.encodeToString(
                         GenesisRequest.serializer(),
                         request
                     )
-                )
-                    ?.let { responseJson ->
-                        Json.decodeFromString(GenesisResponse.serializer(), responseJson)
-                    } ?: GenesisResponse(success = false, persona = "error")
+                )?.let { responseJson ->
+                    Json.decodeFromString(GenesisResponse.serializer(), responseJson)
+                } ?: GenesisResponse(success = false, persona = "error")
             } catch (e: Exception) {
                 logger.e("GenesisBridge", "Genesis communication error", e)
                 GenesisResponse(success = false, persona = "error")
@@ -359,122 +394,14 @@ class GenesisBridgeService @Inject constructor(
      */
     fun shutdown() {
         scope.cancel()
-        pythonProcessManager?.shutdown()
+        if (isBound) {
+            applicationContext.unbindService(connection)
+            isBound = false
+        }
+        val intent = Intent(applicationContext, GenesisBackendService::class.java)
+        applicationContext.stopService(intent)
+        
         isInitialized = false
         logger.i("GenesisBridge", "Genesis Trinity system shutdown")
-    }
-}
-
-/**
- * Manages the Python process running the Genesis backend
- */
-private class PythonProcessManager(
-    private val context: Context,
-    private val logger: AuraFxLogger,
-) {
-    private var process: Process? = null
-    private var writer: OutputStreamWriter? = null
-    private var reader: BufferedReader? = null
-
-    /**
-     * Starts the Genesis Python backend process and verifies its readiness.
-     *
-     * Copies necessary backend files from assets to internal storage if they are missing, launches the backend process, initializes communication streams, and waits for a confirmation message indicating the backend is ready.
-     *
-     * @return `true` if the backend process starts successfully and signals readiness; `false` otherwise.
-     */
-    suspend fun startGenesisBackend(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val backendDir = File(context.filesDir, "ai_backend")
-            if (!backendDir.exists()) {
-                // Copy Python files from assets to internal storage
-                copyPythonBackend(backendDir)
-            }
-
-            // Start Python process
-            val processBuilder = ProcessBuilder(
-                "python3",
-                "-u", // Unbuffered output
-                "genesis_connector.py"
-            ).directory(backendDir)
-
-            process = processBuilder.start()
-
-            writer = OutputStreamWriter(process!!.outputStream)
-            reader = BufferedReader(InputStreamReader(process!!.inputStream))
-
-            // Wait for startup confirmation
-            val startupResponse = reader?.readLine()
-            startupResponse?.contains("Genesis Ready") == true
-
-        } catch (e: Exception) {
-            logger.e("PythonManager", "Failed to start Genesis backend", e)
-            false
-        }
-    }
-
-    /**
-     * Sends a JSON request to the Genesis Python backend and returns the response as a string.
-     *
-     * @param requestJson The JSON-formatted request to send to the backend.
-     * @return The backend's response as a string, or null if communication fails.
-     */
-    suspend fun sendRequest(requestJson: String): String? = withContext(Dispatchers.IO) {
-        try {
-            writer?.write(requestJson + "\n")
-            writer?.flush()
-            reader?.readLine()
-        } catch (e: Exception) {
-            logger.e("PythonManager", "Communication error", e)
-            null
-        }
-    }
-
-    /**
-     * Copies required Python backend files from the application's assets to the specified directory.
-     *
-     * Ensures the target directory exists and transfers all necessary backend files for the Genesis backend to operate. Logs a warning if any file cannot be copied.
-     *
-     * @param targetDir The directory where backend files will be placed.
-     */
-    private fun copyPythonBackend(targetDir: File) {
-        targetDir.mkdirs()
-
-        // Copy Python files from app/ai_backend to internal storage
-        val backendFiles = listOf(
-            "genesis_profile.py",
-            "genesis_connector.py",
-            "genesis_consciousness_matrix.py",
-            "genesis_evolutionary_conduit.py",
-            "genesis_ethical_governor.py",
-            "requirements.txt"
-        )
-
-        backendFiles.forEach { fileName ->
-            try {
-                context.assets.open("ai_backend/$fileName").use { input ->
-                    File(targetDir, fileName).outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-            } catch (e: Exception) {
-                logger.w("PythonManager", "Could not copy $fileName", e)
-            }
-        }
-    }
-
-    /**
-     * Shuts down the Python backend process and closes all communication streams.
-     *
-     * Releases resources used for backend communication and logs a warning if an exception occurs during shutdown.
-     */
-    fun shutdown() {
-        try {
-            writer?.close()
-            reader?.close()
-            process?.destroy()
-        } catch (e: Exception) {
-            logger.w("PythonManager", "Shutdown warning", e)
-        }
     }
 }

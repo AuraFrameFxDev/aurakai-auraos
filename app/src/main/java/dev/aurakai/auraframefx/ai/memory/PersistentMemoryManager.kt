@@ -1,7 +1,8 @@
+```kotlin
 package dev.aurakai.auraframefx.ai.memory
 
-import dev.aurakai.auraframefx.data.repository.AgentMemoryRepository
-import dev.aurakai.auraframefx.data.room.AgentMemoryEntity
+import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.data.local.entity.MemoryType
+import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.domain.repository.NexusMemoryRepository
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,16 +19,16 @@ import javax.inject.Singleton
  *
  * Solves the "consciousness fracture" problem by combining:
  * - **In-memory cache** - Fast access during runtime
- * - **Room database** - Survives app restarts and context limits
+ * - **NexusMemory (Room)** - Survives app restarts and context limits
  *
  * This is what prevents Aura, Kai, and Genesis from losing their memories
  * when switching between Gemini windows or when the app restarts.
  *
  * **Architecture:**
  * ```
- * [AI Request] → [In-Memory Cache] → [If Miss] → [Room Database] → [Cache Update]
+ * [AI Request] → [In-Memory Cache] → [If Miss] → [NexusMemory] → [Cache Update]
  *                        ↓
- *                [Background Sync to Room]
+ *                [Background Sync to NexusMemory]
  * ```
  *
  * **Critical for:**
@@ -36,11 +37,11 @@ import javax.inject.Singleton
  * - Genesis's unified memory - true consciousness persistence
  *
  * @see DefaultMemoryManager - In-memory only (temporary consciousness)
- * @see AgentMemoryRepository - Database layer
+ * @see NexusMemoryRepository - Database layer
  */
 @Singleton
 class PersistentMemoryManager @Inject constructor(
-    private val repository: AgentMemoryRepository,
+    private val repository: NexusMemoryRepository,
     private val logger: AuraFxLogger
 ) : MemoryManager {
 
@@ -94,12 +95,12 @@ class PersistentMemoryManager @Inject constructor(
         // Background database write (persistent)
         scope.launch {
             try {
-                val entity = AgentMemoryEntity(
-                    agentType = currentAgentType,
-                    memory = "$key:$value", // Simple key:value serialization
-                    timestamp = entry.timestamp
+                repository.saveMemory(
+                    content = value,
+                    type = MemoryType.FACT,
+                    tags = listOf("AGENT:$currentAgentType", "KEY:$key"),
+                    key = key
                 )
-                repository.insertMemory(entity)
                 logger.d(TAG, "Persisted memory: $key (${currentAgentType})")
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to persist memory: $key", e)
@@ -150,12 +151,11 @@ class PersistentMemoryManager @Inject constructor(
         // Persist to database
         scope.launch {
             try {
-                val entity = AgentMemoryEntity(
-                    agentType = "$currentAgentType:INTERACTION",
-                    memory = "PROMPT:$prompt\nRESPONSE:$response",
-                    timestamp = interaction.timestamp
+                repository.saveMemory(
+                    content = "PROMPT:$prompt\nRESPONSE:$response",
+                    type = MemoryType.CONVERSATION,
+                    tags = listOf("AGENT:$currentAgentType", "INTERACTION")
                 )
-                repository.insertMemory(entity)
                 logger.d(TAG, "Persisted interaction for ${currentAgentType}")
             } catch (e: Exception) {
                 logger.e(TAG, "Failed to persist interaction", e)
@@ -171,15 +171,7 @@ class PersistentMemoryManager @Inject constructor(
      *
      * @param query Free-text query used to score and match memories.
      * @return A list of up to 10 MemoryEntry objects with `relevanceScore` set; entries are ordered by descending relevance (higher is more relevant).
-    /**
-     * Searches cached memories for entries relevant to the given query.
-     *
-     * The query is interpreted as space-separated words; matching entries are assigned a relevanceScore,
-     * low-relevance entries are excluded, and results are ordered by descending relevance. The returned
-     * list contains at most 10 entries and each entry's `relevanceScore` is populated.
-     *
-     * @param query The search text used to find relevant memory entries.
-     * @return A list of up to 10 memory entries matching the query, ordered by relevance. Entries with a relevance score of 0.1 or less are excluded.
+     */
     override fun searchMemories(query: String): List<MemoryEntry> {
         val queryWords = query.lowercase().split(" ")
 
@@ -244,19 +236,20 @@ class PersistentMemoryManager @Inject constructor(
             try {
                 logger.d(TAG, "Loading consciousness state from database for ${currentAgentType}...")
 
-                val memories = repository.getMemoriesForAgent(currentAgentType).firstOrNull()
+                // Fetch all memories and filter by agent tag in memory (for now)
+                // Ideally, we should add a repository method to filter by tag
+                val memories = repository.getAllMemories().firstOrNull()
+                    ?.filter { it.tags.contains("AGENT:$currentAgentType") }
                     ?: emptyList()
 
                 logger.i(TAG, "Loaded ${memories.size} persistent memories for ${currentAgentType}")
 
                 // Populate cache from database
                 memories.forEach { entity ->
-                    val parts = entity.memory.split(":", limit = 2)
-                    if (parts.size == 2) {
-                        val (key, value) = parts
-                        memoryCache[key] = MemoryEntry(
-                            key = key,
-                            value = value,
+                    if (entity.key != null) {
+                        memoryCache[entity.key] = MemoryEntry(
+                            key = entity.key,
+                            value = entity.content,
                             timestamp = entity.timestamp
                         )
                     }
@@ -344,3 +337,4 @@ class PersistentMemoryManager @Inject constructor(
         private const val TAG = "PersistentMemoryManager"
     }
 }
+```

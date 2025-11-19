@@ -14,7 +14,9 @@ subprojects { subproject ->
         // Apply common Android and YukiHook configurations
         with(subproject) {
             // Apply common plugins if not already applied
-            pluginManager.apply("com.android.library")
+            if (!pluginManager.hasPlugin("com.android.library") && !pluginManager.hasPlugin("com.android.application")) {
+                pluginManager.apply("com.android.library")
+            }
             pluginManager.apply("com.google.devtools.ksp")
             pluginManager.apply("org.lsposed.lsparanoid")
 
@@ -58,10 +60,14 @@ subprojects { subproject ->
 
             // Add YukiHook dependencies
             dependencies {
-                // Xposed Framework - YukiHookAPI (Standardized)
-                implementation(libs.bundles.xposed)
+                // YukiHook API stack (exact order enforced)
+                implementation(libs.yukihookapi.api)
+                api(libs.yukihookapi.ksp)
 
-                // Legacy Xposed API (compile only)
+                // Xposed API (compile only)
+                compileOnly(libs.xposed.api)
+
+                // Legacy Xposed API JARs (compile only)
                 compileOnly(files("libs/api-82.jar"))
                 compileOnly(files("libs/api-82-sources.jar"))
 
