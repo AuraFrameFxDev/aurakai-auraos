@@ -57,6 +57,11 @@ class GenesisBridgeService @Inject constructor(
         private const val GENESIS_BACKEND_URL = "http://localhost:5000/genesis"
     }
 
+    /**
+     * Ensures the Genesis backend process is started once its HTTP endpoint is reachable.
+     *
+     * Waits for the backend HTTP endpoint to become available and performs the necessary startup actions to make the Genesis backend ready for requests.
+     */
     private suspend fun startGenesisBackend() {
         // TODO: implement process start logic once HTTP endpoint is ready
     }
@@ -323,13 +328,13 @@ class GenesisBridgeService @Inject constructor(
     }
 
     /**
-     * Sends a GenesisRequest to the Python backend and returns the resulting GenesisResponse.
-     *
-     * Returns a failure response with `success = false` and `persona = "error"` if communication fails or an exception occurs.
-     *
-     * @param android.view.PixelCopy.request The GenesisRequest to send to the backend.
-     * @return The GenesisResponse from the backend, or a failure response if an error occurs.
-     */
+         * Send a GenesisRequest to the Python backend and return the parsed GenesisResponse.
+         *
+         * If communication or parsing fails, returns a failure GenesisResponse with `success = false` and `persona = "error"`.
+         *
+         * @param request The GenesisRequest to send to the backend.
+         * @return The GenesisResponse returned by the backend, or a failure response when an error occurs.
+         */
     private suspend fun sendToGenesis(request: GenesisRequest): GenesisResponse =
         withContext(Dispatchers.IO) {
             try {

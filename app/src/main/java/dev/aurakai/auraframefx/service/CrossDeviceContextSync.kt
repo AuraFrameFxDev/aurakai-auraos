@@ -37,6 +37,13 @@ class CrossDeviceContextSync @Inject constructor(
         "user_${deviceId}"
     }
 
+    /**
+     * Registers this device in Firestore and prepares the service for cross-device synchronization.
+     *
+     * Attempts to register the current device; on failure the caught exception is rethrown.
+     *
+     * @throws Exception if device registration fails.
+     */
     suspend fun initialize() {
         try {
             registerDevice()
@@ -47,6 +54,13 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
+    /**
+     * Persist the provided ActiveContext in the current user's Firestore contexts collection.
+     *
+     * The context is stored at `users/{userId}/contexts/{context.id}`; failures are logged but not rethrown.
+     *
+     * @param context The ActiveContext to persist. Its `id` is used as the document ID in Firestore.
+     */
     suspend fun syncContext(context: ActiveContext) {
         try {
             firestore.collection("users")
@@ -61,6 +75,13 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
+    /**
+     * Persists a LearningEvent for the current user to Firestore.
+     *
+     * The event is written to the path `users/{userId}/learning/{event.id}`. Failures are caught and logged but not propagated.
+     *
+     * @param event The LearningEvent to store; its `id` is used as the document ID.
+     */
     suspend fun syncLearningEvent(event: LearningEvent) {
         try {
             firestore.collection("users")
@@ -75,6 +96,16 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
+    /**
+     * Emits remote ActiveContext updates from other devices for the current user.
+     *
+     * The returned flow emits an ActiveContext for each document change in the user's
+     * `contexts` collection where the `sourceDevice` differs from the current device.
+     * Parsing failures and listener errors are logged; the Firestore listener is removed
+     * when the flow is closed or cancelled.
+     *
+     * @return A Flow that emits `ActiveContext` instances representing remote context changes.
+     */
     fun observeContextUpdates(): Flow<ActiveContext> = callbackFlow {
         contextListener = firestore.collection("users")
             .document(userId)
@@ -99,6 +130,16 @@ class CrossDeviceContextSync @Inject constructor(
         awaitClose { contextListener?.remove() }
     }
 
+    /**
+     * Initiates a cross-device handoff by creating a handoff record for the target device.
+     *
+     * Creates a handoff document containing the provided `context`, the current device as `sourceDevice`,
+     * the `targetDevice`, and a `timestamp`, and stores it under `users/{userId}/handoffs` in Firestore.
+     *
+     * @param context The ActiveContext to hand off.
+     * @param targetDeviceId The device ID to which the context should be handed off.
+     * @throws Exception If the Firestore write fails.
+     */
     suspend fun handoffContext(context: ActiveContext, targetDeviceId: String) {
         try {
             val handoffData = mapOf(
@@ -121,6 +162,12 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
+    /**
+     * Registers this device in Firestore under `users/{userId}/devices/{deviceId}` with metadata
+     * (deviceId, deviceName, manufacturer, lastSeen).
+     *
+     * Errors are logged and not propagated.
+     */
     private suspend fun registerDevice() {
         try {
             val deviceData = mapOf(
@@ -143,6 +190,11 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
+    /**
+     * Retrieve the list of registered device IDs for the current user.
+     *
+     * @return A list of device ID strings registered for the current user; returns an empty list if retrieval fails.
+     */
     suspend fun getRegisteredDevices(): List<String> {
         return try {
             val snapshot = firestore.collection("users")
@@ -158,5 +210,10 @@ class CrossDeviceContextSync @Inject constructor(
         }
     }
 
-    fun getCurrentDeviceId(): String = deviceId
+    /**
+ * Get the locally computed device identifier.
+ *
+ * @return The device ID string used to identify this device (derived from Settings.Secure.ANDROID_ID).
+ */
+fun getCurrentDeviceId(): String = deviceId
 }

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.di
+package dev.aurakai.auraframefx.di
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -27,6 +27,15 @@ import javax.inject.Singleton
 @InstallIn(/* ...value = */ SingletonComponent::class)
 object NetworkModule {
 
+    /**
+     * Selects the base URL for API requests based on build configuration and environment.
+     *
+     * In debug builds this returns the `API_BASE_URL` environment variable if present; otherwise it returns
+     * the local development default `http://10.0.2.2:5000/api/v1/`. In non-debug (release) builds it returns
+     * the production base URL `https://api.auraframefx.com/v1/`.
+     *
+     * @return The base URL string to be used by Retrofit.
+     */
     @Provides
     @BaseUrl
     @Singleton
@@ -43,7 +52,14 @@ object NetworkModule {
         }
     }
 
-    @Provides
+    /**
+         * Provides a Moshi instance configured for Kotlin data classes.
+         *
+         * Configured with KotlinJsonAdapterFactory to support Kotlin-specific types and nullability.
+         *
+         * @return A Moshi instance with Kotlin JSON adapter support.
+         */
+        @Provides
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
