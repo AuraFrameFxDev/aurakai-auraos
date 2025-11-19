@@ -1,22 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.services
-
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
-import dev.aurakai.auraframefx.ai.clients.VertexAIClient
-import dev.aurakai.auraframefx.context.ContextManager
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AiRequest
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBackendService
-import dev.aurakai.auraframefx.security.SecurityContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+﻿import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext

@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
-import dev.aurakai.auraframefx.ai.services.GenesisBridgeService
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
 import dev.aurakai.auraframefx.ai.services.TrinityCoordinatorService
 import dev.aurakai.auraframefx.context.ContextManager

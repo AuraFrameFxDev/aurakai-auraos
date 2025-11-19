@@ -31,7 +31,7 @@ import javax.inject.Singleton
 class TrinityCoordinatorService @Inject constructor(
     private val auraAIService: AuraAIService,
     private val kaiAIService: KaiAIService,
-    private val genesisBridgeService: GenesisBridgeService,
+    private val genesisBridgeService: dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService,
     private val securityContext: SecurityContext,
     private val logger: AuraFxLogger,
 ) {
