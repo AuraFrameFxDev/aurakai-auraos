@@ -33,7 +33,7 @@ dependencies {
 
     // YukiHook API 1.3.0+ with KavaRef
     implementation(libs.yukihookapi.api)
-    api(libs.yukihookapi.ksp)
+    ksp(libs.yukihookapi.ksp)
 
 }
 
