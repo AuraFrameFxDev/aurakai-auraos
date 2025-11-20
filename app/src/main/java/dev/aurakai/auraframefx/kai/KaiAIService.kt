@@ -11,7 +11,7 @@ import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.model.AiRequest
-import dev.aurakai.auraframefx.task.TaskExecutionManager
+import dev.aurakai.auraframefx.ai.TaskExecutionManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
