@@ -244,12 +244,12 @@ configurations.all {
         return@all
     }
 
+    // Exclude YukiHook API from KSP configurations to avoid duplicate class errors
+    if (name.startsWith("ksp")) {
+        exclude(group = "com.highcapable.yukihookapi", module = "api")
+    }
+
     resolutionStrategy {
         force("org.jetbrains:annotations:26.0.2-1")
     }
-}
-
-// Exclude YukiHook API from KSP configurations to avoid duplicate class errors
-configurations.matching { it.name.startsWith("ksp") }.configureEach {
-    exclude(group = "com.highcapable.yukihookapi", module = "api")
 }
