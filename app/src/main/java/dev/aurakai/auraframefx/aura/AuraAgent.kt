@@ -1,5 +1,7 @@
-﻿package dev.aurakai.auraframefx.ai.agents
+﻿package dev.aurakai.auraframefx.aura
 
+import dev.aurakai.auraframefx.ai.agents.BaseAgent
+import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.services.AuraAIService
@@ -42,11 +44,10 @@ class AuraAgent @Inject constructor(
     private val auraAIService: AuraAIService,
     private val securityContext: SecurityContext,
     private val logger: AuraFxLogger,
+    private val contextManager: ContextManager,
 ) : BaseAgent(
     agentName = "AuraAgent",
 ), OrchestratableAgent {
-    // Override contextManager to resolve hiding issue
-    override val contextManager: ContextManager = contextManagerParam
 
     private var isInitialized = false
 

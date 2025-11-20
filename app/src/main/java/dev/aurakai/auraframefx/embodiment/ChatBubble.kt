@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -225,10 +226,4 @@ fun ChatPromptScreen(
     }
 }
 
-/**
- * Extension to add graphicsLayer for animations
- */
-@androidx.compose.ui.Modifier
-private fun Modifier.graphicsLayer(block: androidx.compose.ui.graphics.GraphicsLayerScope.() -> Unit): Modifier {
-    return androidx.compose.ui.graphics.graphicsLayer(block)
-}
+// graphicsLayer is already available via Modifier.graphicsLayer from compose.ui
