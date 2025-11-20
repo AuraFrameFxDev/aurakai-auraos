@@ -62,7 +62,7 @@ subprojects { subproject ->
             dependencies {
                 // YukiHook API stack (exact order enforced)
                 implementation(libs.yukihookapi.api)
-                api(libs.yukihookapi.ksp)
+                ksp(libs.yukihookapi.ksp)
 
                 // Xposed API (compile only)
                 compileOnly(libs.xposed.api)
