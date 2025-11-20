@@ -23,7 +23,6 @@ dependencies {
 
     // YukiHook API 1.3.0+ stack
     implementation(libs.yukihookapi.api)
-    ksp(libs.yukihookapi.ksp)
 
     // Compose UI
     implementation(platform(libs.androidx.compose.bom))
