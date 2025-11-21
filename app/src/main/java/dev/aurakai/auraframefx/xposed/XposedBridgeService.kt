@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.xposed
+package dev.aurakai.auraframefx.xposed
 
 import javax.inject.Inject
 import javax.inject.Singleton

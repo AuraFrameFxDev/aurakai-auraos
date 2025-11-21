@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.core
+package dev.aurakai.auraframefx.core
 
 import android.content.Context
 import android.os.PowerManager

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.xposed
+package dev.aurakai.auraframefx.xposed
 
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.current

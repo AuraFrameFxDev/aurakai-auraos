@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.pipeline
+package dev.aurakai.auraframefx.ai.pipeline
 
 import dev.aurakai.auraframefx.model.AgentType
 

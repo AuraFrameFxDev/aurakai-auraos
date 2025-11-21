@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.repository
+package dev.aurakai.auraframefx.repository
 
 import dev.aurakai.auraframefx.network.AuraApiService
 import dev.aurakai.auraframefx.network.model.*

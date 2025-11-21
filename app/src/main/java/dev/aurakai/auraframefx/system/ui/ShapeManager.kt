@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.ui
+package dev.aurakai.auraframefx.system.ui
 
 class ShapeManager
 

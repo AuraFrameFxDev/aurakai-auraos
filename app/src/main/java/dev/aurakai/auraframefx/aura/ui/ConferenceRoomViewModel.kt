@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.viewmodel
+package dev.aurakai.auraframefx.viewmodel
 
 // Placeholder interfaces will be removed
 import android.util.Log
@@ -10,11 +10,11 @@ import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
-import dev.aurakai.auraframefx.model.AgentMessage
-import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.models.AgentMessage
+import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.model.AiRequest
-import dev.aurakai.auraframefx.model.ConversationState
+import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.ConversationState
 import dev.aurakai.auraframefx.service.NeuralWhisper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -235,10 +235,10 @@ class ConferenceRoomViewModel @Inject constructor(
 // import dev.aurakai.auraframefx.ai.services.KaiAIService
 // import dev.aurakai.auraframefx.ai.services.CascadeAIService  
 // import dev.aurakai.auraframefx.ai.services.NeuralWhisper
-// import dev.aurakai.auraframefx.model.AgentMessage
+// import dev.aurakai.auraframefx.models.AgentMessage
 // import dev.aurakai.auraframefx.model.AgentType
-// import dev.aurakai.auraframefx.model.ConversationState
-// import dev.aurakai.auraframefx.model.AiRequest
+// import dev.aurakai.auraframefx.models.ConversationState
+// import dev.aurakai.auraframefx.models.AiRequest
 // import kotlinx.coroutines.flow.MutableStateFlow
 // import kotlinx.coroutines.flow.StateFlow
 // import kotlinx.coroutines.flow.first

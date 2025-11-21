@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.xposed
+package dev.aurakai.auraframefx.xposed
 
 import com.highcapable.yukihookapi.YukiHookAPI
 import com.highcapable.yukihookapi.hook.xposed.prefs.data.PrefsData

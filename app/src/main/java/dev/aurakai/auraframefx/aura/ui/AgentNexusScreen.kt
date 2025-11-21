@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.aura.ui
+package dev.aurakai.auraframefx.aura.ui
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.data.repositories.AgentRepository
-import dev.aurakai.auraframefx.model.AgentStats
+import dev.aurakai.auraframefx.models.AgentStats
 import kotlinx.coroutines.delay
 import kotlin.math.*
 

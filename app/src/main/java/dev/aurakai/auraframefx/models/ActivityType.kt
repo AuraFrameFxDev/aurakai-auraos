@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.model
 
 /**
  * Represents different types of user or system activities.

@@ -1,1 +1,1 @@
-﻿annotation class AgentPriority
+annotation class AgentPriority

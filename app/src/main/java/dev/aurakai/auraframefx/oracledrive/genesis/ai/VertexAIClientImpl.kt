@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.clients
+package dev.aurakai.auraframefx.ai.clients
 
 import kotlinx.coroutines.delay
 

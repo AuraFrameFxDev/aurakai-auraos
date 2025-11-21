@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.core
+package dev.aurakai.auraframefx.oracle.drive.core
 
 import dev.aurakai.auraframefx.oracle.drive.model.OracleDriveFile
 import java.io.File

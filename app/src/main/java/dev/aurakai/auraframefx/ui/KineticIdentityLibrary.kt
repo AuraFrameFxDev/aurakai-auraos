@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.animations
+package dev.aurakai.auraframefx.ui.animations
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas

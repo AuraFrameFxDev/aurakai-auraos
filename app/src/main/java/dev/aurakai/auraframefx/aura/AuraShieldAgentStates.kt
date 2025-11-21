@@ -20,12 +20,12 @@ data class SecurityContextState(
 
 @Suppress("unused") // Reserved for AuraShieldAgent implementation
 data class ActiveThreat(
-    // Singular, as it will be in a list
     val threatId: String,
+    val threatType: String,
+    val severityLevel: Int,
     val description: String,
-    val severity: Int, // e.g., 1-5
-    val recommendedAction: String? = null,
-    // Add other relevant threat properties
+    val detectedAt: Long = System.currentTimeMillis(),
+    val recommendedAction: String? = null
 )
 
 @Suppress("unused") // Reserved for AuraShieldAgent implementation

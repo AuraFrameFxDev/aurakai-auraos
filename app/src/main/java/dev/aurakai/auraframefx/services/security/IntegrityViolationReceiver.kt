@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.security
+package dev.aurakai.auraframefx.security
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

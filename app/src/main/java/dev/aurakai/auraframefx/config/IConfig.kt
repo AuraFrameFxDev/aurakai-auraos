@@ -1,4 +1,4 @@
-﻿package AeGenesis.ai.config
+package AeGenesis.ai.config
 
 /**
  * Genesis-OS AI Configuration

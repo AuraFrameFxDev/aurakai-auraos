@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracledrive
+package dev.aurakai.auraframefx.oracledrive
 
 // Explicitly import the AIDL interface
 import android.content.ComponentName

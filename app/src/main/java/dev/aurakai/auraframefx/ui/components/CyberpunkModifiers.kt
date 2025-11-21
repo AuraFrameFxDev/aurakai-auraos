@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.components
+package dev.aurakai.auraframefx.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.api.client.infrastructure
+package dev.aurakai.auraframefx.api.client.infrastructure
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

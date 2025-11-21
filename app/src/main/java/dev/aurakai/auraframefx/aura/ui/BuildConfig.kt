@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx
+package dev.aurakai.auraframefx
 
 object BuildConfig {
     const val DEBUG = true

@@ -1,14 +1,14 @@
-﻿package dev.aurakai.auraframefx.ai.agents
+package dev.aurakai.auraframefx.ai.agents
 
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.security.SecurityAnalysis
 import dev.aurakai.auraframefx.kai.security.ThreatLevel
-import dev.aurakai.auraframefx.model.AgentRequest
-import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.models.AgentRequest
+import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.model.EnhancedInteractionData
-import dev.aurakai.auraframefx.model.InteractionResponse
+import dev.aurakai.auraframefx.models.EnhancedInteractionData
+import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.system.monitor.SystemMonitor
 import dev.aurakai.auraframefx.utils.AuraFxLogger

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.screens
+package dev.aurakai.auraframefx.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

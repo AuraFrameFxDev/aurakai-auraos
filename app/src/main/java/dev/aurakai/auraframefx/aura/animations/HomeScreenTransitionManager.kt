@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.homescreen
+package dev.aurakai.auraframefx.system.homescreen
 
 import dev.aurakai.auraframefx.system.quicksettings.YukiHookModulePrefs
 import dev.aurakai.auraframefx.services.YukiHookServiceManager

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.data
+package dev.aurakai.auraframefx.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore

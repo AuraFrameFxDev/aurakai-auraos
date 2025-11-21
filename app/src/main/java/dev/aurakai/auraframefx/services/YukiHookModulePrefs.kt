@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.quicksettings
+package dev.aurakai.auraframefx.system.quicksettings
 
 import timber.log.Timber
 import javax.inject.Inject
