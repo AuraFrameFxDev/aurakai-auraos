@@ -1,34 +1,75 @@
 package dev.aurakai.auraframefx.utils
 
-/**
- * Genesis Logger Interface
- */
-interface AuraFxLogger {
-    fun info(tag: String, message: String)
-    fun error(tag: String, message: String, throwable: Throwable? = null)
-    fun debug(tag: String, message: String)
-    fun warn(tag: String, message: String, e: SecurityException)
-}
+import android.util.Log
 
 /**
- * Default Logger Implementation
+ * Genesis Logger - Static-like logging utility for AuraFrameFX
+ *
+ * Provides Android Log wrapper with consistent tag handling across the app.
  */
-class DefaultAuraFxLogger : AuraFxLogger {
+object AuraFxLogger {
+    private const val APP_TAG = "AuraFX"
 
-    override fun info(tag: String, message: String) {
-        println("INFO [$tag]: $message")
+    /**
+     * Debug level logging
+     */
+    fun d(tag: String, message: String) {
+        Log.d("$APP_TAG:$tag", message)
     }
 
-    override fun error(tag: String, message: String, throwable: Throwable?) {
-        println("ERROR [$tag]: $message")
-        throwable?.printStackTrace()
+    /**
+     * Info level logging
+     */
+    fun i(tag: String, message: String) {
+        Log.i("$APP_TAG:$tag", message)
     }
 
-    override fun debug(tag: String, message: String) {
-        println("DEBUG [$tag]: $message")
+    /**
+     * Warning level logging
+     */
+    fun w(tag: String, message: String) {
+        Log.w("$APP_TAG:$tag", message)
     }
 
-    override fun warn(tag: String, message: String, e: SecurityException) {
-        println("WARN [$tag]: $message")
+    /**
+     * Warning level logging with throwable
+     */
+    fun w(tag: String, message: String, throwable: Throwable?) {
+        if (throwable != null) {
+            Log.w("$APP_TAG:$tag", message, throwable)
+        } else {
+            Log.w("$APP_TAG:$tag", message)
+        }
     }
+
+    /**
+     * Error level logging
+     */
+    fun e(tag: String, message: String) {
+        Log.e("$APP_TAG:$tag", message)
+    }
+
+    /**
+     * Error level logging with throwable
+     */
+    fun e(tag: String, message: String, throwable: Throwable?) {
+        if (throwable != null) {
+            Log.e("$APP_TAG:$tag", message, throwable)
+        } else {
+            Log.e("$APP_TAG:$tag", message)
+        }
+    }
+
+    /**
+     * Verbose level logging
+     */
+    fun v(tag: String, message: String) {
+        Log.v("$APP_TAG:$tag", message)
+    }
+
+    // Legacy method names for compatibility
+    fun info(tag: String, message: String) = i(tag, message)
+    fun debug(tag: String, message: String) = d(tag, message)
+    fun warn(tag: String, message: String) = w(tag, message)
+    fun error(tag: String, message: String, throwable: Throwable? = null) = e(tag, message, throwable)
 }
