@@ -1,14 +1,17 @@
 package dev.aurakai.auraframefx.ui.components.colorpicker
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.mahmud.colorblendr.ColorBlendr
-import com.mahmud.colorblendr.rememberColorBlendrState
+import dev.aurakai.colorblendr.ColorBlendr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +43,8 @@ fun ColorBlendrPicker(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // ColorBlendr component
-                    ColorBlendr(
+                    // ChromaCore color picker
+                    ChromaCoreColorPicker(
                         color = selectedColor,
                         onColorChange = { color ->
                             selectedColor = color
@@ -64,7 +67,108 @@ fun ColorBlendrPicker(
     }
 }
 
+/**
+ * ChromaCore color picker component using local ColorBlendr utilities
+ */
 @Composable
-fun rememberColorBlendrState(initialColor: Color) = remember {
-    com.mahmud.colorblendr.rememberColorBlendrState(initialColor)
+fun ChromaCoreColorPicker(
+    color: Color,
+    onColorChange: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var hue by remember { mutableFloatStateOf(0f) }
+    var saturation by remember { mutableFloatStateOf(1f) }
+    var brightness by remember { mutableFloatStateOf(1f) }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Color preview
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(color, MaterialTheme.shapes.medium)
+                .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium)
+        )
+
+        // Hue slider
+        Text("Hue", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = hue,
+            onValueChange = { newHue ->
+                hue = newHue
+                val newColor = Color.hsv(newHue * 360f, saturation, brightness)
+                onColorChange(newColor)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            Color.Red, Color.Yellow, Color.Green,
+                            Color.Cyan, Color.Blue, Color.Magenta, Color.Red
+                        )
+                    ),
+                    MaterialTheme.shapes.small
+                )
+        )
+
+        // Saturation slider
+        Text("Saturation", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = saturation,
+            onValueChange = { newSaturation ->
+                saturation = newSaturation
+                val newColor = Color.hsv(hue * 360f, newSaturation, brightness)
+                onColorChange(newColor)
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Brightness slider
+        Text("Brightness", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = brightness,
+            onValueChange = { newBrightness ->
+                brightness = newBrightness
+                val newColor = Color.hsv(hue * 360f, saturation, newBrightness)
+                onColorChange(newColor)
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Quick color presets using ColorBlendr
+        Text("Presets", style = MaterialTheme.typography.labelMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            val presetColors = listOf(
+                Color.Red, Color.Green, Color.Blue,
+                Color.Cyan, Color.Magenta, Color.Yellow
+            )
+            presetColors.forEach { presetColor ->
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(presetColor, MaterialTheme.shapes.small)
+                        .clickable {
+                            onColorChange(presetColor)
+                        }
+                        .border(
+                            1.dp,
+                            if (color == presetColor) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            MaterialTheme.shapes.small
+                        )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun rememberColorBlendrState(initialColor: Color): MutableState<Color> = remember {
+    mutableStateOf(initialColor)
 }

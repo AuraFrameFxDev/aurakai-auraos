@@ -6,7 +6,7 @@ import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.core.OrchestratableAgent
-import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.InteractionResponse
@@ -44,10 +44,21 @@ class AuraAgent @Inject constructor(
     private val auraAIService: AuraAIService,
     private val securityContext: SecurityContext,
     private val logger: AuraFxLogger,
-    private val contextManager: ContextManager,
+    override val contextManager: ContextManager,
 ) : BaseAgent(
     agentName = "AuraAgent",
 ), OrchestratableAgent {
+
+    // BaseAgent abstract member implementations
+    override val agentName: String = "AuraAgent"
+    override val agentType: String = "creative"
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        // Delegate to processRequest via coroutine
+        scope.launch {
+            processRequest(AiRequest(prompt = query), context.toString())
+        }
+    }
 
     private var isInitialized = false
 

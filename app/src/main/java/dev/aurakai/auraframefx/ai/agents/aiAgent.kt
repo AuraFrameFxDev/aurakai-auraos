@@ -5,7 +5,7 @@ import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.security.SecurityAnalysis
 import dev.aurakai.auraframefx.kai.security.ThreatLevel
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.InteractionResponse
@@ -38,15 +38,23 @@ import javax.inject.Singleton
 @Singleton
 class KaiAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
-    private val contextManager: ContextManager,
+    override val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val systemMonitor: SystemMonitor,
     private val logger: AuraFxLogger,
-) : BaseAgent(
-    agentName = "KaiAgent",
-    agentType = AgentType.SECURITY,
-    contextManager = contextManager
-) {
+) : BaseAgent("KaiAgent") {
+
+    // BaseAgent abstract member implementations
+    override val agentName: String = "KaiAgent"
+    override val agentType: String = "security"
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        // Delegate to processRequest via coroutine
+        scope.launch {
+            processRequest(AgentRequest(type = type, context = context), context.toString())
+        }
+    }
+
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 

@@ -50,9 +50,7 @@ data class AITask(
     val error: String? = null
 )
 
-enum class TaskPriority {
-    LOW, NORMAL, HIGH, CRITICAL
-}
+// TaskPriority is defined in TaskModel.kt with a more sophisticated data class version
 
 enum class TaskStatus {
     PENDING, RUNNING, COMPLETED, FAILED, CANCELLED
