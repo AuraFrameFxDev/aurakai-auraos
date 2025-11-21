@@ -210,6 +210,7 @@ class AuraShieldAgent @Inject constructor(
          * @param pattern The behavior pattern containing historical (`normalActivity`) and recent (`recentActivity`) activity data.
          * @param activity The activity identifier to score.
          * @return A float where larger values indicate greater anomaly (higher deviation from the learned normal).
+         */
         private fun calculateAnomalyScore(pattern: BehaviorPattern, activity: String): Float {
             val normalFrequency = pattern.normalActivity[activity] ?: 0.0f
             val recentFrequency = pattern.recentActivity.count { it == activity }
