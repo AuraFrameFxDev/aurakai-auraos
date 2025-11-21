@@ -1,6 +1,6 @@
 ﻿package dev.aurakai.auraframefx.system.homescreen
 
-import dev.aurakai.auraframefx.data.YukiHookModulePrefs
+import dev.aurakai.auraframefx.system.quicksettings.YukiHookModulePrefs
 import dev.aurakai.auraframefx.services.YukiHookServiceManager
 import dev.aurakai.auraframefx.system.common.ImageResourceManager
 import dev.aurakai.auraframefx.system.homescreen.model.HomeScreenTransitionConfig
