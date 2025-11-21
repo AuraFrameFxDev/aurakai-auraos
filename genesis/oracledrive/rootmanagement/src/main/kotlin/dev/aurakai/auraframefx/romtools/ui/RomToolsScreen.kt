@@ -3,8 +3,8 @@ package dev.aurakai.auraframefx.romtools.ui
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
@@ -40,8 +37,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -62,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.foundation.Canvas
 import dev.aurakai.auraframefx.romtools.backdrop.BackdropState
 import dev.aurakai.auraframefx.romtools.backdrop.CardExplosionEffect
 import dev.aurakai.auraframefx.romtools.backdrop.MegaManBackdropRenderer
@@ -443,7 +437,7 @@ private fun MainContentPreview() {
         androidVersion = "14",
         securityPatchLevel = "2023-10-01"
     )
-    val romToolsState = dev.aurakai.auraframefx.romtools.RomToolsState(
+    val romToolsState = RomToolsState(
         capabilities = capabilities,
         isInitialized = true,
         availableRoms = listOf(
@@ -471,8 +465,8 @@ private fun MainContentPreview() {
             )
         )
     )
-    val operationProgress = dev.aurakai.auraframefx.romtools.OperationProgress(
-        operation = dev.aurakai.auraframefx.romtools.RomOperation.FLASHING_ROM,
+    val operationProgress = OperationProgress(
+        operation = RomOperation.FLASHING_ROM,
         progress = 75f
     )
     MainContent(romToolsState = romToolsState, operationProgress = operationProgress)
@@ -904,7 +898,6 @@ private fun AvailableRomCard(rom: dev.aurakai.auraframefx.romtools.AvailableRom)
     }
 }
 
-@Preview
 @Composable
 private fun BackupCard(backup: BackupInfo) {
     // Implementation for backup card

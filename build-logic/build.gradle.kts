@@ -67,8 +67,8 @@ gradlePlugin {
 }
 
 dependencies {
-    // IMPORTANT: build-logic cannot use version catalog (libs.*) - builds BEFORE catalog available!
-    // Use hardcoded versions matching settings.gradle.kts plugin declarations
+    // CRITICAL: All versions MUST match root build.gradle.kts and gradle/libs.versions.toml
+    // Kotlin 2.2.21 is the stable version declared in the root build
     implementation("com.android.tools.build:gradle:9.0.0-beta01")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.21")
 
@@ -81,13 +81,6 @@ dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.3")
     implementation("com.google.gms:google-services:4.4.4")
     testImplementation(kotlin("test"))
-}
-
-// After applying plugins
-dependencies {
-    add("implementation", "com.google.dagger:hilt-android:2.57.2")
-    add("implementation", "com.google.dagger:hilt-android-compiler:2.57.2")
-    add("implementation", "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.21")
 }
 // ═══════════════════════════════════════════════════════════════════════════
 // Genesis Convention Plugins Registration

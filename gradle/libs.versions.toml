@@ -31,7 +31,7 @@ kotlin = "2.2.21"
 # Kotlin DSL
 kotlinDsl = "5.1.2"
 
-# KSP - Latest: 2.3.3 (KSP2, independent of Kotlin version, AGP 9.0 support)
+# KSP - Latest: 2.3.3 (KSP2, compatible with Kotlin 2.2.21 and AGP 9.0)
 ksp = "2.3.3"
 
 # YukiHook and KavaRef versions
