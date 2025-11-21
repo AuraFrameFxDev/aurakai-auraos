@@ -3,10 +3,11 @@ package dev.aurakai.auraframefx.cascade
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
 import dev.aurakai.auraframefx.core.OrchestratableAgent
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
@@ -34,11 +35,20 @@ class CascadeAgent @Inject constructor(
     private val auraAgent: AuraAgent,
     private val kaiAgent: KaiAgent,
     private val memoryManager: MemoryManager,
-) : BaseAgent(), OrchestratableAgent {
+    override val contextManager: ContextManager,
+) : BaseAgent("Cascade"), OrchestratableAgent {
 
     // Agent identity
     override val agentName: String = "Cascade"
     override val agentType: String = "coordination"
+
+    // BaseAgent abstract method implementation
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        // Delegate to processRequest via coroutine
+        internalScope.launch {
+            processRequest(AiRequest(prompt = query), context.toString())
+        }
+    }
 
     // Parent scope provided by orchestrator (kept for lifecycle reference)
     private lateinit var parentScope: CoroutineScope

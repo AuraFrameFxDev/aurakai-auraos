@@ -1,10 +1,11 @@
 package dev.aurakai.auraframefx.ui.components.colorpicker
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -99,7 +100,7 @@ fun ThemeEditor(
                 onDismissRequest = { selectedColorType = null },
                 title = { Text("Select ${colorType.label} Color") },
                 text = {
-                    ColorBlendr(
+                    ChromaCoreColorPicker(
                         color = when (colorType) {
                             ColorType.PRIMARY -> colors.primary
                             ColorType.SECONDARY -> colors.secondary
