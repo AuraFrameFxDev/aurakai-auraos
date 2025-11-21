@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.utils
+package dev.aurakai.auraframefx.oracle.drive.utils
 
 /**
  * Placeholder implementation of EncryptionManager for build compatibility

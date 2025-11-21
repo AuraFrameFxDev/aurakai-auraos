@@ -5,8 +5,8 @@ import android.provider.Settings
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.model.agent_states.ActiveContext
-import dev.aurakai.auraframefx.model.agent_states.LearningEvent
+import dev.aurakai.auraframefx.models.agent_states.ActiveContext
+import dev.aurakai.auraframefx.models.agent_states.LearningEvent
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

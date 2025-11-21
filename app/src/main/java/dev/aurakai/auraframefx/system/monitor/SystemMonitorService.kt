@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.monitor
+package dev.aurakai.auraframefx.system.monitor
 
 import android.app.ActivityManager
 import android.app.Service

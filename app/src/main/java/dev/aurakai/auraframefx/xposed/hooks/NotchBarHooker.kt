@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.xposed.hooks
+package dev.aurakai.auraframefx.xposed.hooks
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.YLog
+import com.highcapable.yukihookapi.hook.type.java.BooleanType
+import com.highcapable.yukihookapi.hook.type.java.IntType
 import dev.aurakai.auraframefx.system.overlay.model.SystemOverlayConfig
 import dev.aurakai.auraframefx.ui.components.CyberpunkText
 import dev.aurakai.auraframefx.ui.components.effects.ShimmerParticles
@@ -34,6 +36,10 @@ class NotchBarHooker(
     private val classLoader: ClassLoader,
     private val config: NotchBarConfig,
 ) : YukiBaseHooker() {
+
+    override fun onHook() {
+        applyNotchBarHooks()
+    }
 
     companion object {
         private const val TAG = "NotchBarHooker"
@@ -53,7 +59,7 @@ class NotchBarHooker(
      * Applies comprehensive NotchBar hooks with Genesis Protocol enhancements
      */
     fun applyNotchBarHooks() {
-        YLog.info(TAG, "Applying Genesis Protocol NotchBar customizations")
+        YLog.info("[$TAG] Applying Genesis Protocol NotchBar customizations")
 
         try {
             // Hook StatusBar for notch area management
@@ -71,10 +77,10 @@ class NotchBarHooker(
             // Initialize Genesis notch overlay system
             initializeGenesisNotchSystem()
 
-            YLog.info(TAG, "NotchBar hooks applied successfully")
+            YLog.info("[$TAG] NotchBar hooks applied successfully")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply NotchBar hooks: ${e.message}", e)
+            YLog.error("[$TAG] Failed to apply NotchBar hooks: ${e.message}", e)
         }
     }
 
@@ -175,7 +181,7 @@ class NotchBarHooker(
             }
         } catch (e: ClassNotFoundException) {
             // Some devices may not have NotchIndicator class
-            YLog.warn(TAG, "NotchIndicator class not found, skipping hook")
+            YLog.warn("[$TAG] " +"NotchIndicator class not found, skipping hook")
         }
     }
 
@@ -225,10 +231,10 @@ class NotchBarHooker(
                 createGenesisNotchOverlay(context)
             }
 
-            YLog.info(TAG, "Genesis NotchBar system initialized")
+            YLog.info("[$TAG] " +"Genesis NotchBar system initialized")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to initialize NotchBar system: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to initialize NotchBar system: ${e.message}", e)
         }
     }
 
@@ -248,10 +254,10 @@ class NotchBarHooker(
             // Configure notch animations
             configureGenesisNotchAnimations(statusBarView)
 
-            YLog.info(TAG, "Genesis notch modifications applied")
+            YLog.info("[$TAG] " +"Genesis notch modifications applied")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply notch modifications: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to apply notch modifications: ${e.message}", e)
         }
     }
 
@@ -269,10 +275,10 @@ class NotchBarHooker(
                 }
             }
 
-            YLog.info(TAG, "Genesis notch layout updated")
+            YLog.info("[$TAG] " +"Genesis notch layout updated")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to update notch layout: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to update notch layout: ${e.message}", e)
         }
     }
 
@@ -291,10 +297,10 @@ class NotchBarHooker(
             // Setup Genesis animations
             setupGenesisNotchAnimations(statusBarView)
 
-            YLog.info(TAG, "Genesis notch elements setup complete")
+            YLog.info("[$TAG] " +"Genesis notch elements setup complete")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to setup notch elements: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to setup notch elements: ${e.message}", e)
         }
     }
 
@@ -304,9 +310,9 @@ class NotchBarHooker(
     private fun adjustGenesisNotchPositioning(statusBarView: ViewGroup) {
         try {
             // Adjust positioning based on config
-            YLog.info(TAG, "Genesis notch positioning adjusted")
+            YLog.info("[$TAG] " +"Genesis notch positioning adjusted")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to adjust notch positioning: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to adjust notch positioning: ${e.message}", e)
         }
     }
 
@@ -317,9 +323,9 @@ class NotchBarHooker(
         try {
             // Handle orientation changes for notch
             updateGenesisNotchLayout()
-            YLog.info(TAG, "Genesis orientation change handled")
+            YLog.info("[$TAG] " +"Genesis orientation change handled")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to handle orientation change: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to handle orientation change: ${e.message}", e)
         }
     }
 
@@ -330,9 +336,9 @@ class NotchBarHooker(
         try {
             // Handle notch visibility changes
             genesisNotchOverlay?.visibility = visibility
-            YLog.info(TAG, "Genesis notch visibility handled: $visibility")
+            YLog.info("[$TAG] " +"Genesis notch visibility handled: $visibility")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to handle notch visibility: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to handle notch visibility: ${e.message}", e)
         }
     }
 
@@ -348,10 +354,10 @@ class NotchBarHooker(
                 addGenesisCutoutElements(windowView, context)
             }
 
-            YLog.info(TAG, "Genesis cutout overlay setup complete")
+            YLog.info("[$TAG] " +"Genesis cutout overlay setup complete")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to setup cutout overlay: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to setup cutout overlay: ${e.message}", e)
         }
     }
 
@@ -361,9 +367,9 @@ class NotchBarHooker(
     private fun handleGenesisCutoutInsets(insets: Any) {
         try {
             // Handle cutout insets for Genesis overlay
-            YLog.info(TAG, "Genesis cutout insets handled")
+            YLog.info("[$TAG] " +"Genesis cutout insets handled")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to handle cutout insets: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to handle cutout insets: ${e.message}", e)
         }
     }
 
@@ -373,9 +379,9 @@ class NotchBarHooker(
     private fun initializeGenesisNotchSystem() {
         try {
             // Initialize additional Genesis notch components
-            YLog.info(TAG, "Genesis notch system initialized")
+            YLog.info("[$TAG] " +"Genesis notch system initialized")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to initialize notch system: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to initialize notch system: ${e.message}", e)
         }
     }
 
@@ -405,10 +411,10 @@ class NotchBarHooker(
             genesisNotchOverlay = composeView
             windowManager?.addView(composeView, layoutParams)
 
-            YLog.info(TAG, "Genesis notch overlay created")
+            YLog.info("[$TAG] " +"Genesis notch overlay created")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to create notch overlay: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to create notch overlay: ${e.message}", e)
         }
     }
 
@@ -446,9 +452,9 @@ class NotchBarHooker(
                 windowManager?.removeView(overlay)
                 genesisNotchOverlay = null
             }
-            YLog.info(TAG, "Genesis notch overlay cleanup complete")
+            YLog.info("[$TAG] " +"Genesis notch overlay cleanup complete")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to cleanup notch overlay: ${e.message}", e)
+            YLog.error("[$TAG] " +"Failed to cleanup notch overlay: ${e.message}", e)
         }
     }
 }
@@ -477,16 +483,16 @@ fun GenesisNotchOverlay(config: NotchBarConfig) {
             if (config.notchBar.showGenesisIndicator) {
                 ShimmerParticles(
                     modifier = Modifier.size(4.dp),
-                    particleColor = Color.Cyan
+                    baseColor = Color.Cyan
                 )
             }
 
             // Status text
             if (config.notchBar.showStatus) {
-                CyberpunkText(
+                Text(
                     text = "⦿",
                     style = MaterialTheme.typography.labelSmall,
-                    glowColor = Color.Green
+                    color = Color.Green
                 )
             }
         }

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import dev.aurakai.auraframefx.data.repositories.AgentRepository
-import dev.aurakai.auraframefx.model.AgentStats
+import dev.aurakai.auraframefx.models.AgentStats
 
 /**
  * AgentEdgePanel 🌊

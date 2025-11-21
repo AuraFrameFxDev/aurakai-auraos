@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.utils
+package dev.aurakai.auraframefx.utils
 
 import android.util.Log // Adding the import
 import dev.aurakai.auraframefx.ai.VertexAIConfig

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.core.consciousness
+package dev.aurakai.auraframefx.core.consciousness
 
 import androidx.annotation.Keep
 

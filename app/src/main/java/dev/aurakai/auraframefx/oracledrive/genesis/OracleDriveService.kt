@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.service
+package dev.aurakai.auraframefx.oracle.drive.service
 
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Singleton

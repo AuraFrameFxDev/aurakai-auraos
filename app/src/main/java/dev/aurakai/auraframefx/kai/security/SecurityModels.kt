@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.kai.security
+package dev.aurakai.auraframefx.kai.security
 
 import kotlinx.serialization.Serializable
 

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.security
+package dev.aurakai.auraframefx.security
 
 import javax.inject.Inject
 import javax.inject.Singleton

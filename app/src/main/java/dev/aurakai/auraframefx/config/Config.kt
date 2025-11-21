@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai
+package dev.aurakai.auraframefx.ai
 
 /**
  * Configuration for Vertex AI client with comprehensive settings.

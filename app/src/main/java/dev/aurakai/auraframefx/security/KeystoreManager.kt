@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.security
+package dev.aurakai.auraframefx.security
 
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec

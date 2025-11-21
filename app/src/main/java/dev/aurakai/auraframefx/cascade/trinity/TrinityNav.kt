@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.navigation
+package dev.aurakai.auraframefx.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

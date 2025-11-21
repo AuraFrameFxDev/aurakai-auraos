@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.navigation
+package dev.aurakai.auraframefx.ui.navigation
 
 /**
  * Navigation routes for the app

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracledrive.genesis.cloud
+package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

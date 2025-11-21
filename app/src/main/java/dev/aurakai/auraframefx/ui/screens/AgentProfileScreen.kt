@@ -20,10 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.aurakai.auraframefx.model.AgentProfile
-import dev.aurakai.auraframefx.model.AgentProfiles
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.model.CapabilityLevel
+import dev.aurakai.auraframefx.models.AgentProfile
+import dev.aurakai.auraframefx.models.AgentProfiles
+import dev.aurakai.auraframefx.models.AgentStatus
+import dev.aurakai.auraframefx.models.CapabilityLevel
 
 /**
  * Comprehensive Agent Profile Screen
@@ -44,7 +45,7 @@ fun AgentProfileScreen(
     onNavigateToSettings: (() -> Unit)? = null,
     onNavigateBack: (() -> Unit)? = null
 ) {
-    val currentAgent = agentType ?: AgentType.Claude
+    val currentAgent = agentType ?: AgentType.CLAUDE
     val profile = remember(currentAgent) {
         AgentProfiles.getProfile(currentAgent)
     }
@@ -198,9 +199,9 @@ private fun ProfileHeader(profile: AgentProfile) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = when (profile.status) {
-                        dev.aurakai.auraframefx.model.AgentStatus.ACTIVE -> Color(0xFF4CAF50)
-                        dev.aurakai.auraframefx.model.AgentStatus.LEARNING -> Color(0xFFFF9800)
-                        dev.aurakai.auraframefx.model.AgentStatus.EVOLVING -> Color(0xFF9C27B0)
+                        AgentStatus.ACTIVE -> Color(0xFF4CAF50)
+                        AgentStatus.LEARNING -> Color(0xFFFF9800)
+                        AgentStatus.EVOLVING -> Color(0xFF9C27B0)
                         else -> Color.Gray
                     }
                 ) {
@@ -487,12 +488,12 @@ private fun getCapabilityLevelColor(level: CapabilityLevel): Color {
 @Composable
 private fun getAgentIcon(agentType: AgentType): ImageVector {
     return when (agentType) {
-        AgentType.Aura, AgentType.AURA -> Icons.Default.Brush
-        AgentType.Kai, AgentType.KAI -> Icons.Default.Shield
-        AgentType.Genesis, AgentType.GENESIS -> Icons.Default.AutoAwesome
-        AgentType.Claude -> Icons.Default.Architecture
-        AgentType.Cascade, AgentType.CASCADE -> Icons.Default.Storage
-        AgentType.NeuralWhisper, AgentType.NEURAL_WHISPER -> Icons.Default.Psychology
+        AgentType.AURA -> Icons.Default.Brush
+        AgentType.KAI -> Icons.Default.Shield
+        AgentType.GENESIS -> Icons.Default.AutoAwesome
+        AgentType.CLAUDE -> Icons.Default.Architecture
+        AgentType.CASCADE -> Icons.Default.Storage
+        AgentType.NEURAL_WHISPER -> Icons.Default.Psychology
         else -> Icons.Default.Person
     }
 }

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.memory
+package dev.aurakai.auraframefx.ai.memory
 
 /**
  * Genesis Memory Manager

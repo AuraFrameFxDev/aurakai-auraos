@@ -1,4 +1,4 @@
-﻿@file:Suppress(
+@file:Suppress(
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",

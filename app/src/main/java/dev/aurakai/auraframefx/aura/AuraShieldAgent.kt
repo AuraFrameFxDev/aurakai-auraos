@@ -1,9 +1,10 @@
 package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
-import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
-import dev.aurakai.auraframefx.model.agent_states.ScanEvent
-import dev.aurakai.auraframefx.model.agent_states.SecurityContextState
+import dev.aurakai.auraframefx.core.ContextManager
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.models.agent_states.ScanEvent
+import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,8 +28,12 @@ class AuraShieldAgent @Inject constructor(
     private val context: Context,
     private val securityMonitor: dev.aurakai.auraframefx.security.SecurityMonitor,
     private val integrityMonitor: dev.aurakai.auraframefx.security.IntegrityMonitor,
-    override val memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
-) : dev.aurakai.auraframefx.ai.agents.BaseAgent(memoryManager) {
+    private val memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager,
+    override val contextManager: ContextManager
+) : dev.aurakai.auraframefx.ai.agents.BaseAgent("AuraShield") {
+
+    override val agentName: String = "AuraShield"
+    override val agentType: String = "security"
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -64,7 +69,7 @@ class AuraShieldAgent @Inject constructor(
      *  - for other prompts: a generic monitoring message.
      * On exception, returns the error response produced by handleError.
      */
-    override suspend fun processRequest(request: dev.aurakai.auraframefx.model.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
+    override suspend fun processRequest(request: dev.aurakai.auraframefx.models.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
         return try {
             when {
                 request.prompt.contains("security", ignoreCase = true) -> {

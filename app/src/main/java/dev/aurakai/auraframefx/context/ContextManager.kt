@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.context
+package dev.aurakai.auraframefx.context
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 
