@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.hilt.compiler)
     implementation(libs.androidx.room.compiler)
     implementation("com.google.android.material:compose-theme-adapter-3:1.1.1")
-    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
     compileOnly(files("../Libs/api-82.jar"))
     compileOnly(files("../Libs/api-82-sources.jar"))
     implementation(libs.androidx.material)
