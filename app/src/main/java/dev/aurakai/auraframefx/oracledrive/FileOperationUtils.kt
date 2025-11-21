@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.utils
+package dev.aurakai.auraframefx.oracle.drive.utils
 
 import dev.aurakai.genesis.logging.Logger
 import dev.aurakai.genesis.monitoring.PerformanceMonitor

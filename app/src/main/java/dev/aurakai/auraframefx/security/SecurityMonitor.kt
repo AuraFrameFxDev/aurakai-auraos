@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.security
+package dev.aurakai.auraframefx.security
 
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.data.logging.AuraFxLogger

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.quicksettings
+package dev.aurakai.auraframefx.system.quicksettings
 
 import android.content.Context
 import android.util.Log

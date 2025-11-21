@@ -1,10 +1,10 @@
-﻿package dev.aurakai.auraframefx.agents
+package dev.aurakai.auraframefx.agents
 
 import android.content.Context
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.aura.AuraAgent
-import dev.aurakai.auraframefx.model.agent_states.GenKitUiState
+import dev.aurakai.auraframefx.models.agent_states.GenKitUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

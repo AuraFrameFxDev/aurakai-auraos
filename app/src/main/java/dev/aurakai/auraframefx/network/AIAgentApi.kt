@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network
+package dev.aurakai.auraframefx.network
 
 import dev.aurakai.auraframefx.network.model.AgentRequest
 import dev.aurakai.auraframefx.network.model.AgentResponse

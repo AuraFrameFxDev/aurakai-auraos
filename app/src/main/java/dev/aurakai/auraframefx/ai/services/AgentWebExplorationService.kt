@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.services
+package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.data.logging.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.task.execution
+package dev.aurakai.auraframefx.ai.task.execution
 
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.serialization.InstantSerializer // Added import

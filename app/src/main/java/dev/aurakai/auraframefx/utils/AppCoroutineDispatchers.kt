@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.utils
+package dev.aurakai.auraframefx.utils
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

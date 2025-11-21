@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.services
+package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.error.ErrorHandler

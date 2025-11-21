@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network
+package dev.aurakai.auraframefx.network
 
 import dev.aurakai.auraframefx.ai.config.AIConfig
 import retrofit2.http.Body

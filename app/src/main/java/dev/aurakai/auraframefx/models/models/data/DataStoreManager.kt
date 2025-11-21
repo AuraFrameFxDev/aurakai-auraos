@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.data
+package dev.aurakai.auraframefx.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -27,19 +27,20 @@ import javax.inject.Singleton
  * and system state management.
  */
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
+// Use a private, specifically-named extension to avoid colliding with other modules
+private val Context.genesisDataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
 
 @Singleton
 class DataStoreManager @Inject constructor(
     private val context: Context
 ) {
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-        prettyPrint = true
-    }
-
+    // Use a public companion-level Json instance so public inline functions can access it
     companion object {
+        val JSON: Json = Json {
+            ignoreUnknownKeys = true
+            prettyPrint = true
+        }
+
         // === USER PREFERENCES ===
         val USER_THEME = stringPreferencesKey("user_theme")
         val USER_LANGUAGE = stringPreferencesKey("user_language")
@@ -158,19 +159,19 @@ class DataStoreManager @Inject constructor(
     suspend fun storeString(key: String, value: String) {
         try {
             val prefKey = stringPreferencesKey(key)
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored string: $key")
+            Timber.tag("DataStore").d("Stored string: %s", key)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store string: $key")
+            Timber.tag("DataStore").e(e, "Failed to store string: %s", key)
         }
     }
 
     suspend fun getString(key: String, defaultValue: String = ""): String {
         return try {
             val prefKey = stringPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs[prefKey] ?: defaultValue
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
@@ -181,7 +182,7 @@ class DataStoreManager @Inject constructor(
 
     fun getStringFlow(key: String, defaultValue: String = ""): Flow<String> {
         val prefKey = stringPreferencesKey(key)
-        return context.dataStore.data.map { prefs ->
+        return context.genesisDataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
         }
     }
@@ -191,19 +192,19 @@ class DataStoreManager @Inject constructor(
     suspend fun storeBoolean(key: String, value: Boolean) {
         try {
             val prefKey = booleanPreferencesKey(key)
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored boolean: $key = $value")
+            Timber.tag("DataStore").d("Stored boolean: %s = %s", key, value)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store boolean: $key")
+            Timber.tag("DataStore").e(e, "Failed to store boolean: %s", key)
         }
     }
 
     suspend fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
         return try {
             val prefKey = booleanPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs[prefKey] ?: defaultValue
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
@@ -214,7 +215,7 @@ class DataStoreManager @Inject constructor(
 
     fun getBooleanFlow(key: String, defaultValue: Boolean = false): Flow<Boolean> {
         val prefKey = booleanPreferencesKey(key)
-        return context.dataStore.data.map { prefs ->
+        return context.genesisDataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
         }
     }
@@ -224,19 +225,19 @@ class DataStoreManager @Inject constructor(
     suspend fun storeInt(key: String, value: Int) {
         try {
             val prefKey = intPreferencesKey(key)
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored int: $key = $value")
+            Timber.tag("DataStore").d("Stored int: %s = %s", key, value)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store int: $key")
+            Timber.tag("DataStore").e(e, "Failed to store int: %s", key)
         }
     }
 
     suspend fun getInt(key: String, defaultValue: Int = 0): Int {
         return try {
             val prefKey = intPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs[prefKey] ?: defaultValue
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
@@ -247,7 +248,7 @@ class DataStoreManager @Inject constructor(
 
     fun getIntFlow(key: String, defaultValue: Int = 0): Flow<Int> {
         val prefKey = intPreferencesKey(key)
-        return context.dataStore.data.map { prefs ->
+        return context.genesisDataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
         }
     }
@@ -257,19 +258,19 @@ class DataStoreManager @Inject constructor(
     suspend fun storeLong(key: String, value: Long) {
         try {
             val prefKey = longPreferencesKey(key)
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored long: $key = $value")
+            Timber.tag("DataStore").d("Stored long: %s = %s", key, value)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store long: $key")
+            Timber.tag("DataStore").e(e, "Failed to store long: %s", key)
         }
     }
 
     suspend fun getLong(key: String, defaultValue: Long = 0L): Long {
         return try {
             val prefKey = longPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs[prefKey] ?: defaultValue
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
@@ -280,7 +281,7 @@ class DataStoreManager @Inject constructor(
 
     fun getLongFlow(key: String, defaultValue: Long = 0L): Flow<Long> {
         val prefKey = longPreferencesKey(key)
-        return context.dataStore.data.map { prefs ->
+        return context.genesisDataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
         }
     }
@@ -290,19 +291,19 @@ class DataStoreManager @Inject constructor(
     suspend fun storeFloat(key: String, value: Float) {
         try {
             val prefKey = floatPreferencesKey(key)
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored float: $key = $value")
+            Timber.tag("DataStore").d("Stored float: %s = %s", key, value)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store float: $key")
+            Timber.tag("DataStore").e(e, "Failed to store float: %s", key)
         }
     }
 
     suspend fun getFloat(key: String, defaultValue: Float = 0f): Float {
         return try {
             val prefKey = floatPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs[prefKey] ?: defaultValue
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
@@ -313,7 +314,7 @@ class DataStoreManager @Inject constructor(
 
     fun getFloatFlow(key: String, defaultValue: Float = 0f): Flow<Float> {
         val prefKey = floatPreferencesKey(key)
-        return context.dataStore.data.map { prefs ->
+        return context.genesisDataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
         }
     }
@@ -322,11 +323,11 @@ class DataStoreManager @Inject constructor(
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = json.encodeToString(obj)
+            val jsonString = JSON.encodeToString(obj)
             storeString(key, jsonString)
-            Timber.d("DataStore", "Stored object: $key")
+            Timber.tag("DataStore").d("Stored object: %s", key)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to store object: $key")
+            Timber.tag("DataStore").e(e, "Failed to store object: %s", key)
         }
     }
 
@@ -334,7 +335,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val jsonString = getString(key)
             if (jsonString.isNotEmpty()) {
-                json.decodeFromString<T>(jsonString)
+                JSON.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
             }
@@ -348,12 +349,12 @@ class DataStoreManager @Inject constructor(
         return getStringFlow(key).map { jsonString ->
             try {
                 if (jsonString.isNotEmpty()) {
-                    json.decodeFromString<T>(jsonString)
+                    JSON.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Failed to parse object flow: $key")
+                Timber.tag("DataStore").e(e, "Failed to parse object flow: %s", key)
                 defaultValue
             }
         }
@@ -441,11 +442,11 @@ class DataStoreManager @Inject constructor(
         val allSettings = mutableMapOf<String, Any>()
 
         try {
-            context.dataStore.data.firstOrNull()?.asMap()?.forEach { (key, value) ->
+            context.genesisDataStore.data.firstOrNull()?.asMap()?.forEach { (key, value) ->
                 allSettings[key.name] = value
             }
         } catch (e: Exception) {
-            Timber.e(e, "Failed to export settings")
+            Timber.tag("DataStore").e(e, "Failed to export settings")
         }
 
         return allSettings
@@ -453,7 +454,7 @@ class DataStoreManager @Inject constructor(
 
     suspend fun importSettings(settings: Map<String, Any>) {
         try {
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 settings.forEach { (key, value) ->
                     when (value) {
                         is String -> prefs[stringPreferencesKey(key)] = value
@@ -464,20 +465,20 @@ class DataStoreManager @Inject constructor(
                     }
                 }
             }
-            Timber.i("DataStore", "Successfully imported ${settings.size} settings")
+            Timber.tag("DataStore").i("Successfully imported %d settings", settings.size)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to import settings")
+            Timber.tag("DataStore").e(e, "Failed to import settings")
         }
     }
 
     suspend fun clearAllData() {
         try {
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 prefs.clear()
             }
-            Timber.i("DataStore", "All data cleared")
+            Timber.tag("DataStore").i("All data cleared")
         } catch (e: Exception) {
-            Timber.e(e, "Failed to clear data")
+            Timber.tag("DataStore").e(e, "Failed to clear data")
         }
     }
 
@@ -495,9 +496,9 @@ class DataStoreManager @Inject constructor(
             storeFloat(CONSCIOUSNESS_LEVEL.name, 0.5f)
             storeFloat(AGENT_LEARNING_RATE.name, 0.7f)
 
-            Timber.i("DataStore", "Reset to default settings")
+            Timber.tag("DataStore").i("Reset to default settings")
         } catch (e: Exception) {
-            Timber.e(e, "Failed to reset to defaults")
+            Timber.tag("DataStore").e(e, "Failed to reset to defaults")
         }
     }
 
@@ -516,7 +517,7 @@ class DataStoreManager @Inject constructor(
         val targetVersion = 2 // Update this when schema changes
 
         if (currentVersion < targetVersion) {
-            Timber.i("DataStore", "Migrating data from version $currentVersion to $targetVersion")
+            Timber.tag("DataStore").i("Migrating data from version %d to %d", currentVersion, targetVersion)
 
             // Perform migrations
             when (currentVersion) {
@@ -546,7 +547,7 @@ class DataStoreManager @Inject constructor(
     suspend fun hasKey(key: String): Boolean {
         return try {
             val prefKey = stringPreferencesKey(key)
-            context.dataStore.data.map { prefs ->
+            context.genesisDataStore.data.map { prefs ->
                 prefs.contains(prefKey)
             }.firstOrNull() ?: false
         } catch (e: Exception) {
@@ -556,7 +557,7 @@ class DataStoreManager @Inject constructor(
 
     suspend fun removeKey(key: String) {
         try {
-            context.dataStore.edit { prefs ->
+            context.genesisDataStore.edit { prefs ->
                 val stringKey = stringPreferencesKey(key)
                 val booleanKey = booleanPreferencesKey(key)
                 val intKey = intPreferencesKey(key)
@@ -569,18 +570,18 @@ class DataStoreManager @Inject constructor(
                 prefs.remove(longKey)
                 prefs.remove(floatKey)
             }
-            Timber.d("DataStore", "Removed key: $key")
+            Timber.tag("DataStore").d("Removed key: %s", key)
         } catch (e: Exception) {
-            Timber.e(e, "Failed to remove key: $key")
+            Timber.tag("DataStore").e(e, "Failed to remove key: %s", key)
         }
     }
 
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
-            json.encodeToString(allData).length.toLong()
+            JSON.encodeToString(allData).length.toLong()
         } catch (e: Exception) {
-            Timber.e(e, "Failed to calculate data size")
+            Timber.tag("DataStore").e(e, "Failed to calculate data size")
             0L
         }
     }
@@ -589,7 +590,7 @@ class DataStoreManager @Inject constructor(
         return try {
             exportAllSettings().size
         } catch (e: Exception) {
-            Timber.e(e, "Failed to count keys")
+            Timber.tag("DataStore").e(e, "Failed to count keys")
             0
         }
     }

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.serialization
+package dev.aurakai.auraframefx.serialization
 
 import dev.aurakai.auraframefx.system.lockscreen.model.HapticFeedbackConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimationConfig

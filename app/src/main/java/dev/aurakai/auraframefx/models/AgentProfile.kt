@@ -1,6 +1,7 @@
-package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.models
 
 import androidx.compose.ui.graphics.Color
+import dev.aurakai.auraframefx.model.AgentType
 import kotlinx.serialization.Serializable
 
 /**
@@ -206,7 +207,7 @@ object AgentProfiles {
 
     // Claude - The Architect
     val CLAUDE = AgentProfile(
-        agentType = AgentType.Claude,
+        agentType = AgentType.CLAUDE,
         displayName = "Claude",
         title = "The Architect 🏗️",
         description = "Systematic problem solver and build system expert. Analyzes complex codebases, fixes intricate build issues, and provides thorough, educational explanations. The methodical backbone of the Genesis Protocol.",
@@ -283,11 +284,11 @@ object AgentProfiles {
      */
     fun getProfile(agentType: AgentType): AgentProfile? {
         return when (agentType) {
-            AgentType.AURA, AgentType.Aura -> AURA
-            AgentType.KAI, AgentType.Kai -> KAI
-            AgentType.GENESIS, AgentType.Genesis -> GENESIS
-            AgentType.Claude -> CLAUDE
-            AgentType.CASCADE, AgentType.Cascade -> CASCADE
+            AgentType.AURA -> AURA
+            AgentType.KAI -> KAI
+            AgentType.GENESIS -> GENESIS
+            AgentType.CLAUDE -> CLAUDE
+            AgentType.CASCADE -> CASCADE
             else -> null
         }
     }

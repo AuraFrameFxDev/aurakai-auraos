@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.system.lockscreen.model
+package dev.aurakai.auraframefx.system.lockscreen.model
 
 import kotlinx.serialization.Serializable
 

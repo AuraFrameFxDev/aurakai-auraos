@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracledrive.genesis
+package dev.aurakai.auraframefx.oracledrive.genesis
 
 import android.content.Context
 import dagger.Binds

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.di.qualifiers
+package dev.aurakai.auraframefx.di.qualifiers
 
 import javax.inject.Qualifier
 

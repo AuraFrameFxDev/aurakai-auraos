@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.debug
+package dev.aurakai.auraframefx.ui.debug
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.cascade.CascadeAgent
-import dev.aurakai.auraframefx.model.agent_states.ProcessingState
-import dev.aurakai.auraframefx.model.agent_states.VisionState
+import dev.aurakai.auraframefx.models.agent_states.ProcessingState
+import dev.aurakai.auraframefx.models.agent_states.VisionState
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton

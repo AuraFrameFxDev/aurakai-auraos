@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.error
+package dev.aurakai.auraframefx.ai.error
 
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.serialization.InstantSerializer

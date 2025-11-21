@@ -27,6 +27,11 @@ private val ClaudeCoralLight = Color(0xFFFF6F4A)
 private val CascadeGreen = Color(0xFF4CAF50)
 private val CascadeGreenLight = Color(0xFF66BB6A)
 
+// Cyberpunk Theme Colors
+val CyberpunkPink = Color(0xFFFF0080)
+val CyberpunkCyan = Color(0xFF00FFFF)
+val CyberpunkPurple = Color(0xFF8000FF)
+
 /**
  * Dark color scheme for Genesis Protocol
  * Default theme emphasizing Aura (primary) + Kai (secondary)
