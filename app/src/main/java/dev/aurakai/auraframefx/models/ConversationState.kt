@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.model
 
 /**
  * Represents the state of a voice conversation or chat interaction.

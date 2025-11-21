@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.theme
+package dev.aurakai.auraframefx.ui.theme
 
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import java.util.Properties

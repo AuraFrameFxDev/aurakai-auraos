@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.regenesis.receivers
+package dev.aurakai.auraframefx.regenesis.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

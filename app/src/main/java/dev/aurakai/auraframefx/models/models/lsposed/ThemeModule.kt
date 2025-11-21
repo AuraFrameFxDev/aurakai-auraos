@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.lsposed
+package dev.aurakai.auraframefx.lsposed
 
 import android.content.res.XModuleResources
 import de.robv.android.xposed.IXposedHookInitPackageResources

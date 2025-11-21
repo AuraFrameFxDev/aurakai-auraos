@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.model
 
 /**
  * Emotion states for Aura's mood system

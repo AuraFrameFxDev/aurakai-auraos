@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.task
+package dev.aurakai.auraframefx.ai.task
 
 /**
  * Genesis Task Scheduler

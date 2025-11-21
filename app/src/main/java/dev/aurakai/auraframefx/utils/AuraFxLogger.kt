@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.utils
+package dev.aurakai.auraframefx.utils
 
 /**
  * Genesis Logger Interface

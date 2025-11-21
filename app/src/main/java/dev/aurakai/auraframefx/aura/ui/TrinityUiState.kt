@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.trinity
+package dev.aurakai.auraframefx.ui.trinity
 
 import dev.aurakai.auraframefx.network.model.AgentResponse
 import dev.aurakai.auraframefx.network.model.Theme

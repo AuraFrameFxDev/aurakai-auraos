@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.navigation
+package dev.aurakai.auraframefx.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.overlays
+package dev.aurakai.auraframefx.ui.overlays
 
 import android.content.Context
 import android.graphics.Bitmap

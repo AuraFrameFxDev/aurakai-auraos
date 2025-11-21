@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.service
+package dev.aurakai.auraframefx.oracle.drive.service
 
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent

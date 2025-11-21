@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.utils
+package dev.aurakai.auraframefx.utils
 
 import android.util.Log
 import dev.aurakai.auraframefx.BuildConfig

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.state
+package dev.aurakai.auraframefx.state
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

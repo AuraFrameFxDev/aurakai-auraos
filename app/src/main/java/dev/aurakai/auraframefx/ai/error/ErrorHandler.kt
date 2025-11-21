@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.error
+package dev.aurakai.auraframefx.ai.error
 
 /**
  * Genesis Error Handler

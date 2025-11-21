@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai
+package dev.aurakai.auraframefx.ai
 
 // import dev.aurakai.auraframefx.generated.model.auraframefxai.GenerateImageDescriptionResponse // Not available in new API
 // import kotlinx.coroutines.CoroutineScope // Not needed if generateImageDescription is removed

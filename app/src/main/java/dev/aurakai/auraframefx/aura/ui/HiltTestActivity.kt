@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.settings
+package dev.aurakai.auraframefx.ui.settings
 
 import android.os.Bundle
 import android.util.Log

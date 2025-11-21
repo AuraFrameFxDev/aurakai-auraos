@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.memory
+package dev.aurakai.auraframefx.ai.memory
 
 import kotlinx.coroutines.sync.Mutex
 import java.util.concurrent.ConcurrentHashMap

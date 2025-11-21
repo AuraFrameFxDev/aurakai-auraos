@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.state
+package dev.aurakai.auraframefx.ui.state
 
 import android.graphics.Bitmap
 

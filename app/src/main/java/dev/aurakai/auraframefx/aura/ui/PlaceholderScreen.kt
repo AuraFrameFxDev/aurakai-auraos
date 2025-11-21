@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.screens
+package dev.aurakai.auraframefx.ui.screens
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

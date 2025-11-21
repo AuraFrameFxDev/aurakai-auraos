@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.model
 
 /**
  * Enum representing different types of AI agents in the system.

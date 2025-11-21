@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.cascade.trinity
+package dev.aurakai.auraframefx.cascade.trinity
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

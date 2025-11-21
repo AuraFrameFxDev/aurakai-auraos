@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.agents
+package dev.aurakai.auraframefx.agents
 
 
 import com.google.firebase.FirebaseApp
