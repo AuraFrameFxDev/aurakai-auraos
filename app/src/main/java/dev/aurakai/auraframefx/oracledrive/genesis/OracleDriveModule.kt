@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.di
+﻿package dev.aurakai.auraframefx.oracledrive.genesis
 
 import android.content.Context
 import dagger.Binds
@@ -12,9 +12,9 @@ import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.genesis.security.CryptographyManager
 import dev.aurakai.auraframefx.genesis.storage.SecureStorage
-import dev.aurakai.auraframefx.oracle.drive.api.OracleDriveApi
-import dev.aurakai.auraframefx.oracle.drive.service.GenesisSecureFileService
-import dev.aurakai.auraframefx.oracle.drive.service.OracleDriveServiceImpl
+import dev.aurakai.auraframefx.oracledrive.genesis.OracleDriveApi
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisSecureFileService
+import dev.aurakai.auraframefx.oracledrive.OracleDriveServiceImpl
 import dev.aurakai.auraframefx.oracle.drive.service.SecureFileService
 import dev.aurakai.auraframefx.security.SecurityContext
 import okhttp3.OkHttpClient
