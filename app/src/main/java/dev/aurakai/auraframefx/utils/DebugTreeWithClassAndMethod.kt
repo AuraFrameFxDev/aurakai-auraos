@@ -1,6 +1,7 @@
-﻿package dev.aurakai.auraframefx.core.logging
+﻿package dev.aurakai.auraframefx.utils
 
 import android.util.Log
+import dev.aurakai.auraframefx.BuildConfig
 import timber.log.Timber
 
 /**
