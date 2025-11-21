@@ -155,6 +155,7 @@ dependencies {
 
     // Firebase BOM (Bill of Materials) for version management
     implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
 
 
     // Networking

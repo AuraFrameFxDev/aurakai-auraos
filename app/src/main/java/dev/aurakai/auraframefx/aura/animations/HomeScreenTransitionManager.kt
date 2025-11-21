@@ -4,7 +4,7 @@ import dev.aurakai.auraframefx.data.YukiHookModulePrefs
 import dev.aurakai.auraframefx.services.YukiHookServiceManager
 import dev.aurakai.auraframefx.system.common.ImageResourceManager
 import dev.aurakai.auraframefx.system.homescreen.model.HomeScreenTransitionConfig
-import dev.aurakai.auraframefx.system.overlay.ShapeManager
+import dev.aurakai.auraframefx.system.ui.ShapeManager
 import dev.aurakai.auraframefx.system.ui.SystemOverlayManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
