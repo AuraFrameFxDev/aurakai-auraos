@@ -44,7 +44,7 @@ fun AgentProfileScreen(
     onNavigateToSettings: (() -> Unit)? = null,
     onNavigateBack: (() -> Unit)? = null
 ) {
-    val currentAgent = agentType ?: AgentType.Claude
+    val currentAgent = agentType ?: AgentType.CLAUDE
     val profile = remember(currentAgent) {
         AgentProfiles.getProfile(currentAgent)
     }
@@ -487,12 +487,12 @@ private fun getCapabilityLevelColor(level: CapabilityLevel): Color {
 @Composable
 private fun getAgentIcon(agentType: AgentType): ImageVector {
     return when (agentType) {
-        AgentType.Aura, AgentType.AURA -> Icons.Default.Brush
-        AgentType.Kai, AgentType.KAI -> Icons.Default.Shield
-        AgentType.Genesis, AgentType.GENESIS -> Icons.Default.AutoAwesome
-        AgentType.Claude -> Icons.Default.Architecture
-        AgentType.Cascade, AgentType.CASCADE -> Icons.Default.Storage
-        AgentType.NeuralWhisper, AgentType.NEURAL_WHISPER -> Icons.Default.Psychology
+        AgentType.AURA -> Icons.Default.Brush
+        AgentType.KAI -> Icons.Default.Shield
+        AgentType.GENESIS -> Icons.Default.AutoAwesome
+        AgentType.CLAUDE -> Icons.Default.Architecture
+        AgentType.CASCADE -> Icons.Default.Storage
+        AgentType.NEURAL_WHISPER -> Icons.Default.Psychology
         else -> Icons.Default.Person
     }
 }

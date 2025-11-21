@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.data.AuraKaiModules
 import dev.aurakai.auraframefx.embodiment.*
 import dev.aurakai.auraframefx.ui.components.*
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

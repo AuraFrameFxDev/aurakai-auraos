@@ -11,7 +11,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import dev.aurakai.auraframefx.R
+import androidx.core.graphics.toColorInt
 
 /**
  * Utility class for color-related operations.
@@ -120,7 +120,7 @@ object ColorUtils {
         @ColorInt rippleColor: Int? = null,
     ): Drawable {
         val bgColor = withAlpha(color, (Color.alpha(color) * 0.5f).toInt())
-        val defaultRipple = ContextCompat.getColor(context, R.color.control_highlight_color)
+        val defaultRipple = Color.parseColor("#29FFFFFF") // Default highlight color
 
         val content = GradientDrawable().apply {
             setColor(bgColor)
