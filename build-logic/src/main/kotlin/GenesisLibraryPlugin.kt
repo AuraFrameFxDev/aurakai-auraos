@@ -18,10 +18,11 @@ import org.gradle.kotlin.dsl.configure
  * - Java 24 bytecode target (Firebase + AGP 9.0 compatible)
  * - Consistent build configuration across library modules
  *
- * Plugin Application Order (Critical!):
- * 1. com.android.library (provides built-in Kotlin since AGP 9.0)
- * 2. org.jetbrains.kotlin.plugin.compose (Built-in Compose compiler)
- * 3. org.jetbrains.kotlin.plugin.serialization
+ * Plugin Application Order:
+ * 1. org.jetbrains.kotlin.android (MUST BE FIRST when android.builtInKotlin=false)
+ * 2. com.android.library
+ * 3. org.jetbrains.kotlin.plugin.compose
+ * 4. org.jetbrains.kotlin.plugin.serialization
  *
  * Note: Kotlin is built into AGP 9.0.0-alpha14+ (android.builtInKotlin=true)
  * Note: Hilt and KSP are NOT applied - use genesis.android.library.hilt for DI
@@ -45,8 +46,9 @@ class GenesisLibraryPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
             // Apply plugins in correct order
-            // Note: Kotlin is built into AGP 9.0.0-alpha14+ (android.builtInKotlin=true)
+            // CRITICAL: When android.builtInKotlin=false, we MUST apply kotlin("android") FIRST
             // Note: Hilt NOT applied - use genesis.android.library.hilt for DI
+            pluginManager.apply("org.jetbrains.kotlin.android")  // ← MUST BE FIRST!
             pluginManager.apply("com.android.library")
             pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
             pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")

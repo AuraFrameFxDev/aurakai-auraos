@@ -44,12 +44,12 @@ subprojects { subproject ->
 
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_24
-                    targetCompatibility = JavaVersion.VERSION_25
+                    targetCompatibility = JavaVersion.VERSION_24
                     isCoreLibraryDesugaringEnabled = true
                 }
 
                 kotlinOptions {
-                    jvmTarget = "25"
+                    jvmTarget = "24"
                     freeCompilerArgs = freeCompilerArgs +
                             listOf(
                                 "-Xjvm-default=all",

@@ -43,8 +43,11 @@ object GenesisJvmConfig {
         with(project) {
             // Configure Kotlin JVM toolchain to match Java toolchain (uses foojay-resolver)
             // This automatically sets jvmTarget, making manual jvmTarget.set() redundant
-            extensions.configure<KotlinAndroidProjectExtension> {
-                jvmToolchain(JVM_VERSION)
+            // Use afterEvaluate to ensure Kotlin plugin has been applied and extension is available
+            pluginManager.withPlugin("org.jetbrains.kotlin.android") {
+                extensions.configure<KotlinAndroidProjectExtension> {
+                    jvmToolchain(JVM_VERSION)
+                }
             }
 
             // Configure Kotlin compilation options with opt-ins

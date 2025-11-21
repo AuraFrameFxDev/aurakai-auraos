@@ -1,4 +1,4 @@
-﻿plugins {
+﻿﻿plugins {
     alias(libs.plugins.spotless)
     `maven-publish`
     `java-library`
@@ -9,7 +9,7 @@ group = "dev.aurakai.auraframefx.list"
 version = "1.0.0"
 
 java {
-    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+    toolchain { languageVersion = JavaLanguageVersion.of(24) }
 }
 
 kotlin {
