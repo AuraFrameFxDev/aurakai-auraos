@@ -6,15 +6,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.remoteConfig
-import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import dev.aurakai.auraframefx.model.AgentType
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.storage
 import dev.aurakai.auraframefx.ai.capabilities.CapabilityPolicy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -31,14 +28,16 @@ class AgentFirebase @Inject constructor(
     private val policy: CapabilityPolicy,
     private val firebaseApp: FirebaseApp
 ) {
-    private val firestore: FirebaseFirestore by lazy { Firebase.firestore(firebaseApp) }
-    private val storage: FirebaseStorage by lazy { Firebase.storage(firebaseApp) }
+    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance(firebaseApp) }
+    private val storage: FirebaseStorage by lazy { FirebaseStorage.getInstance(firebaseApp) }
     private val remoteConfig: FirebaseRemoteConfig by lazy {
-        Firebase.remoteConfig.apply {
-            setConfigSettingsAsync(remoteConfigSettings {
-                minimumFetchIntervalInSeconds = if (firebaseApp.isDefaultApp) 3600 else 0
-                fetchTimeoutInSeconds = 30
-            })
+        FirebaseRemoteConfig.getInstance().apply {
+            setConfigSettingsAsync(
+                FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(if (firebaseApp.isDefaultApp) 3600 else 0)
+                    .setFetchTimeoutInSeconds(30)
+                    .build()
+            )
         }
     }
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance(firebaseApp) }
