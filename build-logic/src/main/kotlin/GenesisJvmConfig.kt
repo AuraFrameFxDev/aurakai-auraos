@@ -43,10 +43,18 @@ object GenesisJvmConfig {
         with(project) {
             // Configure Kotlin JVM toolchain to match Java toolchain (uses foojay-resolver)
             // This automatically sets jvmTarget, making manual jvmTarget.set() redundant
-            // Use afterEvaluate to ensure Kotlin plugin has been applied and extension is available
-            pluginManager.withPlugin("org.jetbrains.kotlin.android") {
-                extensions.configure<KotlinAndroidProjectExtension> {
-                    jvmToolchain(JVM_VERSION)
+            // CRITICAL: Use afterEvaluate to ensure both Kotlin and Android plugins have been applied
+            // and their extensions are available (required for AGP 9.0 + android.builtInKotlin=false)
+            afterEvaluate {
+                pluginManager.withPlugin("org.jetbrains.kotlin.android") {
+                    try {
+                        extensions.configure<KotlinAndroidProjectExtension> {
+                            jvmToolchain(JVM_VERSION)
+                        }
+                    } catch (e: Exception) {
+                        // Extension not available yet - skip configuration
+                        logger.debug("KotlinAndroidProjectExtension not yet available: ${e.message}")
+                    }
                 }
             }
 

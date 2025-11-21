@@ -5,6 +5,9 @@
 // All plugin versions are managed centrally in the root project
 plugins {
     // Core Android and Kotlin plugins
+
+    // CRITICAL: kotlin("android") MUST be applied when android.builtInKotlin=false
+    kotlin("android")
     id("com.android.application")
 
     // Compose and serialization
