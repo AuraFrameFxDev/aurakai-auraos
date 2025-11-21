@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.hilt.compiler)
     implementation(libs.androidx.room.compiler)
     implementation("com.google.android.material:compose-theme-adapter-3:1.1.1")
-    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
     // Guard local Xposed API JARs — check module libs/ first then ../Libs/ fallback
     val candidateLibDirs = listOf(projectDir.resolve("libs"), projectDir.parentFile.resolve("Libs"))
     val api82File = candidateLibDirs.map { java.io.File(it, "api-82.jar") }.firstOrNull { it.exists() }
