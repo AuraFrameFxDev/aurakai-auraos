@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.aura.ui
+package dev.aurakai.auraframefx.aura.ui
 
 import androidx.compose.runtime.Composable
 import dev.aurakai.auraframefx.model.AgentType

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.aurakai.auraframefx.ai.memory // Changed to match file path
+package dev.aurakai.auraframefx.aurakai.auraframefx.ai.memory // Changed to match file path
 
 import dev.aurakai.auraframefx.model.AgentType // Keep one import
 import dev.aurakai.auraframefx.serialization.InstantSerializer // Added import

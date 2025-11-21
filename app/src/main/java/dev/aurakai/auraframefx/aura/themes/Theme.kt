@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network.model
+package dev.aurakai.auraframefx.network.model
 
 import kotlinx.serialization.Serializable
 

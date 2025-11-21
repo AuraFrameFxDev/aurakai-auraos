@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.di
+package dev.aurakai.auraframefx.di
 
 import androidx.hilt.work.HiltWorkerFactory
 import dagger.Module

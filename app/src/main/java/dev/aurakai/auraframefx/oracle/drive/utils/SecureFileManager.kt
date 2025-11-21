@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracle.drive.utils
+package dev.aurakai.auraframefx.oracle.drive.utils
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext

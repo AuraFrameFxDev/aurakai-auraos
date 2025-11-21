@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.agents
+package dev.aurakai.auraframefx.ai.agents
 
 import android.util.Log
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
@@ -7,16 +7,16 @@ import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
 import dev.aurakai.auraframefx.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
-import dev.aurakai.auraframefx.model.AgentHierarchy
-import dev.aurakai.auraframefx.model.AgentMessage
-import dev.aurakai.auraframefx.model.AgentRequest
-import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.models.AgentHierarchy
+import dev.aurakai.auraframefx.models.AgentMessage
+import dev.aurakai.auraframefx.models.AgentRequest
+import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.model.AiRequest
-import dev.aurakai.auraframefx.model.ConversationMode
-import dev.aurakai.auraframefx.model.EnhancedInteractionData
-import dev.aurakai.auraframefx.model.HierarchyAgentConfig
-import dev.aurakai.auraframefx.model.InteractionResponse
+import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.ConversationMode
+import dev.aurakai.auraframefx.models.EnhancedInteractionData
+import dev.aurakai.auraframefx.models.HierarchyAgentConfig
+import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope

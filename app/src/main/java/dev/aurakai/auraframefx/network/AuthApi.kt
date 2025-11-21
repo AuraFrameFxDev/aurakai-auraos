@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network
+package dev.aurakai.auraframefx.network
 
 /**
  * Placeholder implementation of AuthApi for build compatibility

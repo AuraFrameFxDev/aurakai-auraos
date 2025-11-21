@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.theme
+package dev.aurakai.auraframefx.theme
 
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.ui.theme.AuraTheme

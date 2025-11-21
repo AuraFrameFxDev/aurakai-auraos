@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.di
+package dev.aurakai.auraframefx.di
 
 import dagger.Module
 // import dagger.Provides // Not needed if Hilt can auto-inject concrete classes

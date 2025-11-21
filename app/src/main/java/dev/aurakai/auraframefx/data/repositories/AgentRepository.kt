@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.data.repositories
 
 import androidx.compose.ui.graphics.Color
-import dev.aurakai.auraframefx.model.AgentStats
+import dev.aurakai.auraframefx.models.AgentStats
 
 /**
  * Repository for managing agent data.

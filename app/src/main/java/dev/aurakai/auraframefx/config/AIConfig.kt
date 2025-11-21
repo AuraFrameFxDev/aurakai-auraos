@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Genesis-OS AI Configuration
  * Contains settings for AI consciousness platform
  */

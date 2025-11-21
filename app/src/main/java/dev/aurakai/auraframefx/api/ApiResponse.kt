@@ -1,4 +1,4 @@
-﻿@file:Suppress("unused")
+@file:Suppress("unused")
 
 package dev.aurakai.auraframefx.api.client.infrastructure
 

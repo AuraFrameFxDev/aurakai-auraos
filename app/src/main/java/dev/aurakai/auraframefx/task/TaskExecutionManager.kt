@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.task
+package dev.aurakai.auraframefx.task
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ui.debug.model
+package dev.aurakai.auraframefx.ui.debug.model
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person

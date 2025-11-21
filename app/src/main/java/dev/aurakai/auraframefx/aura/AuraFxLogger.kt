@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.data.logging
+package dev.aurakai.auraframefx.data.logging
 
 import android.content.Context // Added import
 import android.util.Log

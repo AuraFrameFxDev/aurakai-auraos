@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.ai.task
+package dev.aurakai.auraframefx.ai.task
 
 import dev.aurakai.auraframefx.model.AgentType
 import kotlinx.serialization.Serializable

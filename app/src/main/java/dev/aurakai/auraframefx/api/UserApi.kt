@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network.api
+package dev.aurakai.auraframefx.network.api
 
 import dev.aurakai.auraframefx.network.model.User
 import retrofit2.http.GET

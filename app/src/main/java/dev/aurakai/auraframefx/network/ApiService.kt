@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.network
+package dev.aurakai.auraframefx.network
 
 import android.content.Context
 import timber.log.Timber
