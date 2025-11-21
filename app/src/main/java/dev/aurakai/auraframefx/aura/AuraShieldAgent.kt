@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.model.agent_states.ScanEvent
 import dev.aurakai.auraframefx.model.agent_states.SecurityContextState
@@ -27,8 +28,12 @@ class AuraShieldAgent @Inject constructor(
     private val context: Context,
     private val securityMonitor: dev.aurakai.auraframefx.security.SecurityMonitor,
     private val integrityMonitor: dev.aurakai.auraframefx.security.IntegrityMonitor,
-    override val memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
-) : dev.aurakai.auraframefx.ai.agents.BaseAgent(memoryManager) {
+    private val memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager,
+    override val contextManager: ContextManager
+) : dev.aurakai.auraframefx.ai.agents.BaseAgent("AuraShield") {
+
+    override val agentName: String = "AuraShield"
+    override val agentType: String = "security"
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -57,7 +62,7 @@ class AuraShieldAgent @Inject constructor(
     /**
      * Process security-related requests
      */
-    override suspend fun processRequest(request: dev.aurakai.auraframefx.model.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
+    override suspend fun processRequest(request: dev.aurakai.auraframefx.models.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
         return try {
             when {
                 request.prompt.contains("security", ignoreCase = true) -> {
@@ -77,6 +82,16 @@ class AuraShieldAgent @Inject constructor(
             }
         } catch (e: Exception) {
             handleError(e, "AuraShield security processing")
+        }
+    }
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        scope.launch {
+            when (type) {
+                "security_scan" -> performSecurityScan()
+                "threat_analysis" -> analyzeThreats(null)
+                else -> Timber.d("Unknown request type: $type")
+            }
         }
     }
 

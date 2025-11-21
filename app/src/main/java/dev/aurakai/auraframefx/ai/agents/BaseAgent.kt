@@ -2,7 +2,7 @@
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AiRequest
+import dev.aurakai.auraframefx.models.AiRequest
 
 /**
  * Base Agent class for AI agents in the AuraFrameFX system.
