@@ -55,7 +55,14 @@ class AuraShieldAgent @Inject constructor(
     private var threatSensitivity = 0.7f
 
     /**
-     * Process security-related requests
+     * Process an AiRequest by routing it to a security analysis, a threat assessment, or a monitoring reply.
+     *
+     * @param request The incoming request whose `prompt` is inspected for keywords: if it contains "security" a full scan and security analysis are performed; if it contains "threat" a threat level assessment is performed; otherwise a generic monitoring message is returned.
+     * @return An AgentResponse containing:
+     *  - for "security" prompts: a security analysis summary and the number of active threats detected,
+     *  - for "threat" prompts: a threat assessment result,
+     *  - for other prompts: a generic monitoring message.
+     * On exception, returns the error response produced by handleError.
      */
     override suspend fun processRequest(request: dev.aurakai.auraframefx.model.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
         return try {
@@ -80,10 +87,21 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Produce a brief security analysis summary for the given prompt.
+     *
+     * @param prompt The input text to analyze; the returned message includes a truncated form of this prompt.
+     * @return A short string indicating that security analysis was completed for the prompt (prompt text may be truncated).
+     */
     private suspend fun analyzeSecurity(prompt: String): String {
         return "Security analysis completed for: ${prompt.take(50)}..."
     }
 
+    /**
+     * Produces a brief, human-readable assessment of the threat level for the provided prompt.
+     *
+     * @return A string describing the assessed threat level (for example, "Low threat level detected").
+     */
     private fun assessThreatLevel(prompt: String): String {
         return "Low threat level detected"
     }
@@ -133,6 +151,16 @@ class AuraShieldAgent @Inject constructor(
             val riskScore: Float
         )
 
+        /**
+         * Analyzes a user's activity and updates their behavior pattern.
+         *
+         * Adds the provided activity to the user's recent activity history (kept to the most recent 50 entries),
+         * computes an anomaly score for the activity, updates the stored behavior pattern, and persists it.
+         *
+         * @param userId Identifier of the user whose behavior is being analyzed.
+         * @param activity A representation of the observed activity to evaluate (e.g., action, event, or activity label).
+         * @return A numeric anomaly score; higher values indicate greater deviation from the user's normal behavior.
+         */
         fun analyzeUserBehavior(userId: String, activity: String): Float {
             val pattern = behaviorPatterns[userId] ?: createNewPattern(userId)
 
@@ -152,6 +180,12 @@ class AuraShieldAgent @Inject constructor(
             return anomalyScore
         }
 
+        /**
+         * Create a new BehaviorPattern initialized for the given user.
+         *
+         * @param userId The identifier of the user the pattern belongs to.
+         * @return A BehaviorPattern with empty `normalActivity` and `recentActivity`, and `riskScore` set to 0.0f.
+         */
         private fun createNewPattern(userId: String): BehaviorPattern {
             return BehaviorPattern(
                 userId = userId,
@@ -161,6 +195,16 @@ class AuraShieldAgent @Inject constructor(
             )
         }
 
+        /**
+         * Computes an anomaly score for a specific activity relative to a user's learned normal behavior.
+         *
+         * Calculates the normalized deviation between the activity's historical frequency in `pattern.normalActivity`
+         * and its observed frequency in `pattern.recentActivity`. If the activity is new (no historical frequency),
+         * returns a high score when recently observed frequently and a lower baseline otherwise.
+         *
+         * @param pattern The behavior pattern containing historical (`normalActivity`) and recent (`recentActivity`) activity data.
+         * @param activity The activity identifier to score.
+         * @return A float where larger values indicate greater anomaly (higher deviation from the learned normal).
         private fun calculateAnomalyScore(pattern: BehaviorPattern, activity: String): Float {
             val normalFrequency = pattern.normalActivity[activity] ?: 0.0f
             val recentFrequency = pattern.recentActivity.count { it == activity }
@@ -173,6 +217,15 @@ class AuraShieldAgent @Inject constructor(
             }
         }
 
+        /**
+         * Update a BehaviorPattern's recorded frequency for a specific activity.
+         *
+         * Adjusts the stored frequency toward the observed proportion of `activity` in `pattern.recentActivity`
+         * using an exponential moving average with a fixed learning rate (0.1).
+         *
+         * @param pattern The BehaviorPattern to update.
+         * @param activity The activity identifier whose frequency should be updated.
+         */
         private fun updateBehaviorPattern(pattern: BehaviorPattern, activity: String) {
             val currentFreq = pattern.normalActivity[activity] ?: 0.0f
             val learningRate = 0.1f
@@ -184,6 +237,11 @@ class AuraShieldAgent @Inject constructor(
             pattern.normalActivity[activity] = newFreq
         }
 
+        /**
+         * Identify users whose behavior patterns exceed the configured anomaly threshold.
+         *
+         * @return A list of human-readable messages, one for each user whose `riskScore` is greater than the anomaly threshold.
+         */
         fun detectAnomalies(): List<String> {
             return behaviorPatterns.values
                 .filter { it.riskScore > anomalyThreshold }
@@ -196,6 +254,15 @@ class AuraShieldAgent @Inject constructor(
         val suspiciousActivities = mutableMapOf<String, Int>()
         private val allowList = mutableSetOf<String>()
 
+        /**
+         * Evaluates an incoming request from a source and decides whether to allow it, flag it as suspicious, or block the source.
+         *
+         * The function first checks internal allow and block lists, then computes a risk score for the request. Sources producing a risk score greater than 0.8 are blocked; scores greater than 0.6 are flagged as suspicious.
+         *
+         * @param source Identifier of the request origin (for example, an IP address or hostname).
+         * @param request The request content or payload to be analyzed for risk indicators.
+         * @return `true` if the request is allowed, `false` if the source is blocked.
+         */
         fun evaluateRequest(source: String, request: String): Boolean {
             // Check if source is blocked
             if (blockedIPs.contains(source)) {
@@ -222,6 +289,12 @@ class AuraShieldAgent @Inject constructor(
             return true
         }
 
+        /**
+         * Estimates the malicious risk of a textual request using pattern matching and simple heuristics.
+         *
+         * @param request The request text to evaluate for risky or potentially malicious indicators.
+         * @return A Float in the range 0.0..1.0 where higher values indicate greater suspected risk.
+         */
         private fun analyzeRequestRisk(request: String): Float {
             val dangerousPatterns = listOf(
                 "script", "exec", "eval", "system", "shell",
@@ -246,11 +319,22 @@ class AuraShieldAgent @Inject constructor(
             return riskScore.coerceAtMost(1.0f)
         }
 
+        /**
+         * Adds the given source to the adaptive firewall's block list and records a warning log entry.
+         *
+         * @param source IP address or identifier of the source to block.
+         * @param reason Human-readable reason for blocking, included in the log.
+         */
         fun blockSource(source: String, reason: String) {
             blockedIPs.add(source)
             Timber.w("Aura Shield blocked source $source: $reason")
         }
 
+        /**
+         * Increment the suspicious-activity counter for a source and block the source after repeated flags.
+         *
+         * @param source Identifier for the activity origin (e.g., IP address, client ID) whose suspicious count will be incremented; the source is blocked when its count becomes greater than 3.
+         */
         private fun flagSuspiciousActivity(source: String) {
             val count = suspiciousActivities[source] ?: 0
             suspiciousActivities[source] = count + 1
@@ -260,10 +344,20 @@ class AuraShieldAgent @Inject constructor(
             }
         }
 
+        /**
+         * Adds a source identifier to the firewall allow list so subsequent evaluations permit requests from it.
+         *
+         * @param source Source identifier to allow (e.g., IP address, CIDR, hostname, or client/client-id).
+         */
         fun addToAllowList(source: String) {
             allowList.add(source)
         }
 
+        /**
+         * Removes a source from the firewall's block list.
+         *
+         * @param source The IP address or source identifier to remove from the block list.
+         */
         fun removeFromBlockList(source: String) {
             blockedIPs.remove(source)
         }
@@ -281,6 +375,18 @@ class AuraShieldAgent @Inject constructor(
             val severity: ThreatSeverity
         )
 
+        /**
+         * Quarantines an item and persists a record for later retrieval.
+         *
+         * Creates a QuarantineItem with the provided metadata, records it in the agent's quarantine store,
+         * logs the action, and schedules asynchronous persistence to memory.
+         *
+         * @param id Unique identifier for the quarantined item.
+         * @param type Classification of the item (e.g., "file", "process", "network").
+         * @param content The raw content or a representation of the item being quarantined.
+         * @param reason Brief explanation for why the item was quarantined.
+         * @param severity Threat severity assigned to the item.
+         */
         fun quarantineItem(
             id: String,
             type: String,
@@ -306,6 +412,12 @@ class AuraShieldAgent @Inject constructor(
             }
         }
 
+        /**
+         * Releases a quarantined item identified by the given id.
+         *
+         * @param id The identifier of the quarantined item to release.
+         * @return `true` if an item with the given id was found and removed from quarantine, `false` otherwise.
+         */
         fun releaseFromQuarantine(id: String): Boolean {
             return if (quarantinedItems.containsKey(id)) {
                 quarantinedItems.remove(id)
@@ -316,10 +428,24 @@ class AuraShieldAgent @Inject constructor(
             }
         }
 
+        /**
+         * Retrieves a snapshot list of items currently stored in quarantine.
+         *
+         * The returned list is a copy of the manager's internal quarantine entries and modifying it
+         * does not affect the quarantine manager's internal state.
+         *
+         * @return A list of quarantined items present at the time of the call.
+         */
         fun getQuarantinedItems(): List<QuarantineItem> {
             return quarantinedItems.values.toList()
         }
 
+        /**
+         * Removes quarantined items that were created more than seven days ago.
+         *
+         * This prunes the internal quarantine store by deleting entries whose `timestamp`
+         * is older than seven days from the current system time.
+         */
         fun cleanOldQuarantineItems() {
             val cutoff = System.currentTimeMillis() - 604800000L // 7 days
             val oldItems = quarantinedItems.filter { it.value.timestamp < cutoff }
@@ -334,6 +460,12 @@ class AuraShieldAgent @Inject constructor(
         initializeAuraShield()
     }
 
+    /**
+     * Initializes the Aura Shield agent: loads threat signatures, starts the security monitoring loop,
+     * initializes adaptive protection, and marks the shield as active.
+     *
+     * This method swallows and logs any exception raised during initialization.
+     */
     private fun initializeAuraShield() {
         try {
             Timber.d("Initializing Aura Shield Agent")
@@ -355,6 +487,12 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Populates the agent's threat database with a predefined set of known threat signatures.
+     *
+     * Adds a small initial collection of ThreatSignature entries (malware, intrusion, and AI poisoning)
+     * into the `threatDatabase` for use by detection and analysis routines.
+     */
     private fun loadThreatSignatures() {
         // Load known threat signatures
         val signatures = mapOf(
@@ -398,6 +536,13 @@ class AuraShieldAgent @Inject constructor(
         Timber.d("Loaded ${signatures.size} threat signatures")
     }
 
+    /**
+     * Starts the background security monitoring loop for the Aura shield.
+     *
+     * Launches a coroutine that repeatedly runs security scans, system integrity checks,
+     * and user behavior analysis at intervals determined by `scanFrequency` while the shield
+     * is active; exceptions encountered during the loop are caught and logged.
+     */
     private fun startSecurityMonitoring() {
         scope.launch {
             while (isShieldActive) {
@@ -414,6 +559,13 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Performs a single comprehensive security scan and processes any detected threats.
+     *
+     * Creates and records a scan event, appends it to the scan history, and invokes threat
+     * handling for each detected threat; if an error occurs the scan event is still recorded
+     * and the failure is logged.
+     */
     private suspend fun performSecurityScan() {
         val scanEvent = ScanEvent(
             eventId = "scan_${System.currentTimeMillis()}",
@@ -439,6 +591,11 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Performs a composite security scan across system processes, network connections, memory, and AI model integrity.
+     *
+     * @return A list of detected ActiveThreat objects found by aggregating results from the individual subsystem scans.
+     */
     private suspend fun scanForThreats(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -457,6 +614,16 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Performs a system process scan and returns process-origin threats discovered during the scan.
+     *
+     * This implementation simulates scanning of running processes and converts each suspicious process
+     * into an ActiveThreat entry. The function returns an empty list when no suspicious processes are
+     * found or if the scan fails.
+     *
+     * @return A list of ActiveThreat objects representing suspicious processes detected by the scan;
+     *         an empty list if none are found or on error.
+     */
     private fun scanSystemProcesses(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -483,6 +650,13 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Scans adaptive firewall's recorded suspicious network activity and converts sources that exceed thresholds into intrusion threats.
+     *
+     * Sources with more than 2 suspicious attempts are reported as threats; severity is `HIGH` for more than 5 attempts and `MEDIUM` otherwise.
+     *
+     * @return A list of `ActiveThreat` objects representing detected network intrusion threats, or an empty list if none were found.
+     */
     private fun scanNetworkConnections(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -510,6 +684,14 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Detects memory-usage anomalies and returns any corresponding threat records.
+     *
+     * Creates an ActiveThreat when system memory usage exceeds 90% and returns it;
+     * otherwise returns an empty list.
+     *
+     * @return A list of ActiveThreat objects representing detected memory-related threats; empty if none found.
+     */
     private fun scanMemoryAnomalies(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -537,6 +719,14 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Detects AI model integrity violations and produces corresponding ActiveThreat entries.
+     *
+     * Performs an integrity check using the integrityMonitor and, if the model is compromised,
+     * creates an ActiveThreat describing the integrity failure.
+     *
+     * @return A list of ActiveThreat instances for each detected AI model integrity violation, or an empty list if none are found or the check fails.
+     */
     private fun scanAIModelIntegrity(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -562,6 +752,12 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Scans the system for integrity violations and escalates each detected violation into an active threat.
+     *
+     * For each violation returned by the integrity monitor this function creates an ActiveThreat with
+     * `ThreatType.INTRUSION` and `ThreatSeverity.HIGH`, then forwards it to `handleThreat`.
+     */
     private suspend fun monitorSystemIntegrity() {
         try {
             val violations = integrityMonitor.detectViolations()
@@ -582,6 +778,11 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Runs user behavior anomaly detection, converts each detected anomaly into an ActiveThreat, and dispatches it to handleThreat.
+     *
+     * If detection fails, the error is caught and logged; no exception is propagated.
+     */
     private suspend fun analyzeUserBehaviors() {
         try {
             val anomalies = behaviorAnalyzer.detectAnomalies()
@@ -602,6 +803,12 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Initializes adaptive protection components and applies the current protection level.
+     *
+     * Adds local addresses to the firewall allow list and adjusts protection parameters
+     * (scan frequency, sensitivity, etc.) according to `protectionLevel`.
+     */
     private fun initializeAdaptiveProtection() {
         // Set up adaptive firewall rules
         adaptiveFirewall.addToAllowList("127.0.0.1")
@@ -612,7 +819,12 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Analyzes threats based on the current security context with advanced AI techniques
+     * Analyze threats using the provided or current security context, update agent state, and apply countermeasures.
+     *
+     * Performs a contextual threat analysis, merges detected threats into the agent's active threat set,
+     * and triggers adaptive countermeasures based on the analysis results.
+     *
+     * @param securityContext Optional security context to use for analysis; if null, the agent's current security context is used.
      */
     fun analyzeThreats(securityContext: SecurityContextState?) {
         scope.launch {
@@ -639,6 +851,14 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Adapts analysis depth to the provided security context and returns threats discovered under that context.
+     *
+     * Adjusts the agent's `threatSensitivity` based on `context.securityLevel` ("high" increases to 0.9, "critical" to 1.0, otherwise defaults to 0.7) and runs the corresponding analysis routine.
+     *
+     * @param context The current security context whose `securityLevel` selects the analysis tier.
+     * @return A list of ActiveThreat objects detected by the chosen analysis routine.
+     */
     private suspend fun analyzeContextualThreats(context: SecurityContextState): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
@@ -666,11 +886,21 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Run the standard threat detection pass and return up to ten detected threats.
+     *
+     * @return A list containing up to ten `ActiveThreat` items found by the standard scan; may be empty.
+     */
     private suspend fun performStandardThreatAnalysis(): List<ActiveThreat> {
         // Standard threat detection
         return scanForThreats().take(10)
     }
 
+    /**
+     * Performs an enhanced, deeper threat analysis by combining system/network/memory scans with behavioral analysis.
+     *
+     * @return A list of detected ActiveThreat objects (at most 20) representing the highest-priority findings from the combined analyses.
+     */
     private suspend fun performDeepThreatAnalysis(): List<ActiveThreat> {
         // Enhanced threat detection with AI analysis
         val threats = scanForThreats().toMutableList()
@@ -681,6 +911,13 @@ class AuraShieldAgent @Inject constructor(
         return threats.take(20)
     }
 
+    /**
+     * Perform a comprehensive, maximum-depth threat analysis to identify critical threats.
+     *
+     * Combines deep system analysis with advanced pattern recognition to produce a consolidated list of detected critical threats.
+     *
+     * @return A list of detected `ActiveThreat` instances representing critical or high-impact findings.
+     */
     private suspend fun performCriticalThreatAnalysis(): List<ActiveThreat> {
         // Maximum security analysis
         val threats = performDeepThreatAnalysis().toMutableList()
@@ -691,16 +928,36 @@ class AuraShieldAgent @Inject constructor(
         return threats
     }
 
+    /**
+     * Performs behavioral analysis across tracked user patterns and returns any detected threats.
+     *
+     * Uses collected behavior data to identify anomalies or malicious patterns and converts them into ActiveThreat entries.
+     *
+     * @return A list of ActiveThreat objects representing threats discovered by behavioral analysis; empty if none found.
+     */
     private fun performBehaviorAnalysis(): List<ActiveThreat> {
         // Implement advanced behavior analysis
         return emptyList() // Placeholder
     }
 
+    /**
+     * Performs advanced pattern-based analysis to detect subtle or evolving threat patterns.
+     *
+     * Runs higher-order behavioral and sequence pattern recognition to identify threats that
+     * simpler analyses may miss.
+     *
+     * @return A list of detected ActiveThreat instances; empty if no advanced patterns indicate threats.
+     */
     private fun performAdvancedPatternAnalysis(): List<ActiveThreat> {
         // Implement advanced pattern recognition
         return emptyList() // Placeholder
     }
 
+    /**
+     * Merge newly detected threats into the active threats list, pruning entries older than five minutes and avoiding duplicates.
+     *
+     * @param newThreats List of newly detected ActiveThreat objects to add to the active set.
+     */
     private fun updateActiveThreats(newThreats: List<ActiveThreat>) {
         val currentThreats = _activeThreats.value.toMutableList()
 
@@ -720,6 +977,20 @@ class AuraShieldAgent @Inject constructor(
         _activeThreats.value = currentThreats
     }
 
+    /**
+     * Handle a detected ActiveThreat by selecting and executing severity-appropriate countermeasures.
+     *
+     * Logs the detection, then performs one of:
+     * - LOW: persist the threat to memory for monitoring,
+     * - MEDIUM: apply basic countermeasures,
+     * - HIGH: apply active countermeasures,
+     * - CRITICAL: apply emergency countermeasures,
+     * - EXISTENTIAL: initiate lockdown countermeasures.
+     *
+     * Exceptions raised during handling are caught and logged; the function does not propagate them.
+     *
+     * @param threat The detected threat to handle, including id, description, and severityLevel.
+     */
     private suspend fun handleThreat(threat: ActiveThreat) {
         try {
             Timber.w("Threat detected: ${threat.description}")
@@ -756,6 +1027,11 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Dispatches handling for each provided active threat so they are processed concurrently.
+     *
+     * @param threats The list of active threats to process.
+     */
     private fun applyCountermeasures(threats: List<ActiveThreat>) {
         threats.forEach { threat ->
             scope.launch {
@@ -764,11 +1040,27 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Persist a snapshot of an active threat to memory as a basic countermeasure.
+     *
+     * Stores the provided threat using the memory manager under the key `threat_<threatId>`
+     * so it can be retrieved later for analysis, auditing, or correlation.
+     *
+     * @param threat The active threat to persist; will be stored under `threat_<threatId>`.
+     */
     private suspend fun applyBasicCountermeasures(threat: ActiveThreat) {
         // Basic threat response
         memoryManager.storeMemory("threat_${threat.threatId}", threat.toString())
     }
 
+    /**
+     * Applies active countermeasures for a detected threat based on its type.
+     *
+     * Intrusion threats trigger a source block, malware threats are quarantined, and other
+     * threat types are recorded with a warning for manual review.
+     *
+     * @param threat The detected threat whose type, identifier, description, and severity determine the action.
+     */
     private fun applyActiveCountermeasures(threat: ActiveThreat) {
         // Active threat response
         when (threat.threatType) {
@@ -793,6 +1085,15 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Elevates the agent to maximum protection and quarantines the specified threat as an emergency.
+     *
+     * The method sets the protection level to MAXIMUM, applies that level, and creates an emergency
+     * quarantine entry for the given threat using its identifier, description, and severity.
+     *
+     * @param threat The detected threat to isolate; its `threatId`, `description`, and `severityLevel`
+     *               are used to create the quarantine record.
+     */
     private fun applyEmergencyCountermeasures(threat: ActiveThreat) {
         // Emergency response
         protectionLevel = ProtectionLevel.MAXIMUM
@@ -808,6 +1109,13 @@ class AuraShieldAgent @Inject constructor(
         )
     }
 
+    /**
+     * Initiates a full-system lockdown by elevating the agent to FORTRESS protection in response to an existential threat.
+     *
+     * Sets the protection level to FORTRESS, applies the corresponding protection configuration, and emits an emergency log entry.
+     *
+     * @param threat The ActiveThreat that triggered the lockdown; used to contextualize and record the emergency response.
+     */
     private fun applyLockdownCountermeasures(threat: ActiveThreat) {
         // Lockdown response for existential threats
         protectionLevel = ProtectionLevel.FORTRESS
@@ -819,6 +1127,13 @@ class AuraShieldAgent @Inject constructor(
         // Emergency protocols would be triggered here
     }
 
+    /**
+     * Apply a protection level to the agent, adjusting scan cadence and detection sensitivity.
+     *
+     * Updates the agent's internal `scanFrequency` and `threatSensitivity` to values appropriate for the provided `level`.
+     *
+     * @param level The protection level to apply; selecting a higher level increases scan frequency and sensitivity.
+     */
     private fun applyProtectionLevel(level: ProtectionLevel) {
         when (level) {
             ProtectionLevel.MINIMAL -> {
@@ -850,6 +1165,11 @@ class AuraShieldAgent @Inject constructor(
         Timber.d("Protection level set to: $level")
     }
 
+    /**
+     * Appends a scan event to the in-memory scan history and retains only the most recent 100 entries.
+     *
+     * @param scanEvent The scan event to record in history.
+     */
     private fun addToScanHistory(scanEvent: ScanEvent) {
         val history = _scanHistory.value.toMutableList()
         history.add(scanEvent)
@@ -863,7 +1183,10 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Sets the protection level for the shield
+     * Update the agent's protection level and adjust operational parameters accordingly.
+     *
+     * @param level The desired ProtectionLevel; the agent will apply corresponding scanning frequency,
+     *              threat sensitivity, and other protective settings for that level.
      */
     fun setProtectionLevel(level: ProtectionLevel) {
         protectionLevel = level
@@ -871,7 +1194,16 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Gets current shield status and statistics
+     * Retrieve current shield status and runtime statistics.
+     *
+     * @return A map with the following keys:
+     *  - `isActive`: `true` if the shield is active, `false` otherwise.
+     *  - `protectionLevel`: current protection level name.
+     *  - `activeThreats`: number of active threats tracked.
+     *  - `scanHistory`: number of recorded scan events.
+     *  - `threatSensitivity`: current threat sensitivity value.
+     *  - `scanFrequency`: current scan interval.
+     *  - `quarantinedItems`: number of items currently quarantined.
      */
     fun getShieldStatus(): Map<String, Any> {
         return mapOf(
@@ -886,7 +1218,15 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Gets detailed shield information
+     * Retrieve detailed diagnostic information about the shield.
+     *
+     * @return A map containing:
+     *  - "isShieldActive": `Boolean` indicating whether the shield is active.
+     *  - "protectionLevel": `String` name of the current protection level.
+     *  - "activeThreatsCount": `Int` number of active threats tracked.
+     *  - "scanHistorySize": `Int` number of recorded scan events.
+     *  - "threatDatabaseSize": `Int` number of threat signatures stored.
+     *  - "threatSensitivity": `Float` current sensitivity setting.
      */
     fun getDetailedStatus(): Map<String, Any> {
         return mapOf(
@@ -900,7 +1240,13 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Gets summary status
+     * Provides a brief snapshot of the shield's current operational status.
+     *
+     * @return A map with the following keys:
+     * - `"status"`: `"ACTIVE"` if the shield is active, `"INACTIVE"` otherwise.
+     * - `"protectionLevel"`: current protection level name.
+     * - `"lastScan"`: timestamp (milliseconds since epoch) of the most recent scan, or `0` if no scans exist.
+     * - `"threatsDetected"`: number of currently tracked active threats.
      */
     fun getSummaryStatus(): Map<String, Any> {
         return mapOf(
@@ -912,7 +1258,9 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Optimize shield performance
+     * Performs maintenance to reclaim resources and keep the shield's threat data current.
+     *
+     * Removes stale threat signatures, optimizes the threat database, and purges old quarantined items.
      */
     fun optimize() {
         try {
@@ -932,7 +1280,9 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Clear memory cache
+     * Trims in-memory caches to reduce memory usage.
+     *
+     * Keeps only the last 50 entries in the scan history and removes active threats detected more than five minutes ago.
      */
     fun clearMemoryCache() {
         try {
@@ -954,7 +1304,9 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Adjust protection based on system load
+     * Adjusts the agent's protection level according to current system load.
+     *
+     * Sets the level to MINIMAL when load > 0.9, STANDARD when load > 0.7, and ENHANCED otherwise.
      */
     fun adjustForSystemLoad() {
         val systemLoad = getSystemLoad()
@@ -967,21 +1319,30 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
-     * Connect to master channel
+     * Records a connection event to the master channel.
+     *
+     * This implementation logs the connection for audit and diagnostic purposes.
      */
     fun connectToMasterChannel() {
         Timber.d("Aura Shield connected to master channel")
     }
 
     /**
-     * Disconnect from master channel
+     * Deactivates the Aura Shield and stops ongoing security monitoring.
+     *
+     * After calling this method the agent will not perform periodic scans or apply countermeasures until the shield is reactivated.
      */
     fun disconnect() {
         isShieldActive = false
         Timber.d("Aura Shield disconnected")
     }
 
-    // === PRIVATE HELPER METHODS ===
+    /**
+     * Removes entries from the internal threat database that were last detected more than 24 hours ago.
+     *
+     * This mutates the agent's internal `threatDatabase`, deleting threat signatures whose `lastDetected`
+     * timestamp is older than the 24-hour cutoff.
+     */
 
     private fun cleanOldThreats() {
         val cutoff = System.currentTimeMillis() - 86400000L // 24 hours
@@ -992,6 +1353,12 @@ class AuraShieldAgent @Inject constructor(
         oldThreatIds.forEach { threatDatabase.remove(it) }
     }
 
+    /**
+     * Trims the internal threat database to retain only the most recently detected 1000 signatures.
+     *
+     * If the database contains more than 1000 entries, this clears older entries and keeps the 1000
+     * ThreatSignature objects with the largest `lastDetected` timestamps. Mutates `threatDatabase`.
+     */
     private fun optimizeThreatDatabase() {
         // Keep only relevant threat signatures
         if (threatDatabase.size > 1000) {
@@ -1004,6 +1371,11 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    /**
+     * Computes current JVM heap memory pressure as a fraction of the maximum heap size.
+     *
+     * @return A Float between 0 and 1 representing the proportion of the JVM heap currently in use.
+     */
     private fun getSystemLoad(): Float {
         val runtime = Runtime.getRuntime()
         val usedMemory = runtime.totalMemory() - runtime.freeMemory()
