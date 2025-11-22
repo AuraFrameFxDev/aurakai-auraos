@@ -1,18 +1,36 @@
 package dev.aurakai.auraframefx.security
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/**
+ * Security state data class for monitoring
+ */
+data class SecurityState(
+    val errorState: Boolean = false,
+    val errorMessage: String? = null
+)
 
 /**
  * Genesis Security Context Interface
  */
 interface SecurityContext {
+    val securityState: StateFlow<SecurityState>
+    val encryptionStatus: StateFlow<EncryptionStatus>
+    val permissionsState: StateFlow<Map<String, Boolean>>
+    val threatDetectionActive: StateFlow<Boolean>
+
     fun hasPermission(permission: String): Boolean
     fun getCurrentUser(): String?
     fun isSecureMode(): Boolean
     fun validateAccess(resource: String): Boolean
     fun verifyApplicationIntegrity(): ApplicationIntegrity
     fun logSecurityEvent(event: SecurityEvent)
+    fun startThreatDetection()
+    fun stopThreatDetection()
 }
 
 /**
@@ -20,6 +38,18 @@ interface SecurityContext {
  */
 @Singleton
 class DefaultSecurityContext @Inject constructor() : SecurityContext {
+
+    private val _securityState = MutableStateFlow(SecurityState())
+    override val securityState: StateFlow<SecurityState> = _securityState.asStateFlow()
+
+    private val _encryptionStatus = MutableStateFlow(EncryptionStatus.NOT_INITIALIZED)
+    override val encryptionStatus: StateFlow<EncryptionStatus> = _encryptionStatus.asStateFlow()
+
+    private val _permissionsState = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    override val permissionsState: StateFlow<Map<String, Boolean>> = _permissionsState.asStateFlow()
+
+    private val _threatDetectionActive = MutableStateFlow(false)
+    override val threatDetectionActive: StateFlow<Boolean> = _threatDetectionActive.asStateFlow()
 
     override fun hasPermission(permission: String): Boolean {
         return true // Default allow for development
@@ -80,6 +110,43 @@ class DefaultSecurityContext @Inject constructor() : SecurityContext {
     override fun logSecurityEvent(event: SecurityEvent) {
         // Log security events (placeholder implementation)
         println("Security Event: ${event.type} - ${event.details}")
+    }
+
+    override fun startThreatDetection() {
+        _threatDetectionActive.value = true
+        _encryptionStatus.value = EncryptionStatus.ACTIVE
+    }
+
+    override fun stopThreatDetection() {
+        _threatDetectionActive.value = false
+    }
+
+    /**
+     * Updates the security state with an error condition.
+     */
+    fun setSecurityError(message: String) {
+        _securityState.value = SecurityState(errorState = true, errorMessage = message)
+    }
+
+    /**
+     * Clears any security error state.
+     */
+    fun clearSecurityError() {
+        _securityState.value = SecurityState(errorState = false, errorMessage = null)
+    }
+
+    /**
+     * Updates the encryption status.
+     */
+    fun setEncryptionStatus(status: EncryptionStatus) {
+        _encryptionStatus.value = status
+    }
+
+    /**
+     * Updates permissions state.
+     */
+    fun updatePermissions(permissions: Map<String, Boolean>) {
+        _permissionsState.value = permissions
     }
 }
 
