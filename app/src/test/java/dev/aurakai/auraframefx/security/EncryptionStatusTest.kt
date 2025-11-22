@@ -1,71 +1,141 @@
 package dev.aurakai.auraframefx.security
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.Assert.*
+import org.junit.Test
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DisplayName("EncryptionStatus Tests")
+/**
+ * Comprehensive unit tests for EncryptionStatus enum.
+ * Tests all enum values, ordering, and edge cases.
+ */
 class EncryptionStatusTest {
 
     @Test
-    @DisplayName("Should have all expected enum values")
-    fun shouldHaveAllExpectedEnumValues() {
-        val values = EncryptionStatus.values()
-
-        assertEquals(4, values.size)
-        assertTrue(values.contains(EncryptionStatus.ACTIVE))
-        assertTrue(values.contains(EncryptionStatus.NOT_INITIALIZED))
-        assertTrue(values.contains(EncryptionStatus.DISABLED))
-        assertTrue(values.contains(EncryptionStatus.ERROR))
+    fun `test all enum values exist`() {
+        val expectedValues = setOf(
+            EncryptionStatus.ACTIVE,
+            EncryptionStatus.NOT_INITIALIZED,
+            EncryptionStatus.DISABLED,
+            EncryptionStatus.ERROR
+        )
+        
+        val actualValues = EncryptionStatus.values().toSet()
+        assertEquals("All expected enum values should exist", expectedValues, actualValues)
     }
 
     @Test
-    @DisplayName("Should convert from string name")
-    fun shouldConvertFromStringName() {
+    fun `test enum values count`() {
+        assertEquals("Should have exactly 4 encryption status values", 4, EncryptionStatus.values().size)
+    }
+
+    @Test
+    fun `test ACTIVE status properties`() {
+        val status = EncryptionStatus.ACTIVE
+        assertEquals("ACTIVE", status.name)
+        assertEquals(0, status.ordinal)
+    }
+
+    @Test
+    fun `test NOT_INITIALIZED status properties`() {
+        val status = EncryptionStatus.NOT_INITIALIZED
+        assertEquals("NOT_INITIALIZED", status.name)
+        assertEquals(1, status.ordinal)
+    }
+
+    @Test
+    fun `test DISABLED status properties`() {
+        val status = EncryptionStatus.DISABLED
+        assertEquals("DISABLED", status.name)
+        assertEquals(2, status.ordinal)
+    }
+
+    @Test
+    fun `test ERROR status properties`() {
+        val status = EncryptionStatus.ERROR
+        assertEquals("ERROR", status.name)
+        assertEquals(3, status.ordinal)
+    }
+
+    @Test
+    fun `test enum valueOf with valid names`() {
         assertEquals(EncryptionStatus.ACTIVE, EncryptionStatus.valueOf("ACTIVE"))
         assertEquals(EncryptionStatus.NOT_INITIALIZED, EncryptionStatus.valueOf("NOT_INITIALIZED"))
         assertEquals(EncryptionStatus.DISABLED, EncryptionStatus.valueOf("DISABLED"))
         assertEquals(EncryptionStatus.ERROR, EncryptionStatus.valueOf("ERROR"))
     }
 
-    @Test
-    @DisplayName("Should have correct ordinal values")
-    fun shouldHaveCorrectOrdinalValues() {
-        assertEquals(0, EncryptionStatus.ACTIVE.ordinal)
-        assertEquals(1, EncryptionStatus.NOT_INITIALIZED.ordinal)
-        assertEquals(2, EncryptionStatus.DISABLED.ordinal)
-        assertEquals(3, EncryptionStatus.ERROR.ordinal)
+    @Test(expected = IllegalArgumentException::class)
+    fun `test valueOf with invalid name throws exception`() {
+        EncryptionStatus.valueOf("INVALID_STATUS")
     }
 
     @Test
-    @DisplayName("Should support when expressions")
-    fun shouldSupportWhenExpressions() {
-        fun getStatusDescription(status: EncryptionStatus): String = when (status) {
-            EncryptionStatus.ACTIVE -> "Encryption is active"
-            EncryptionStatus.NOT_INITIALIZED -> "Encryption not initialized"
-            EncryptionStatus.DISABLED -> "Encryption disabled"
-            EncryptionStatus.ERROR -> "Encryption error"
+    fun `test enum comparison and ordering`() {
+        assertTrue(EncryptionStatus.ACTIVE.ordinal < EncryptionStatus.NOT_INITIALIZED.ordinal)
+        assertTrue(EncryptionStatus.NOT_INITIALIZED.ordinal < EncryptionStatus.DISABLED.ordinal)
+        assertTrue(EncryptionStatus.DISABLED.ordinal < EncryptionStatus.ERROR.ordinal)
+    }
+
+    @Test
+    fun `test enum equality`() {
+        val status1 = EncryptionStatus.ACTIVE
+        val status2 = EncryptionStatus.ACTIVE
+        val status3 = EncryptionStatus.DISABLED
+        
+        assertEquals(status1, status2)
+        assertNotEquals(status1, status3)
+    }
+
+    @Test
+    fun `test when expression with all cases`() {
+        val testCases = listOf(
+            EncryptionStatus.ACTIVE to "active",
+            EncryptionStatus.NOT_INITIALIZED to "not_initialized",
+            EncryptionStatus.DISABLED to "disabled",
+            EncryptionStatus.ERROR to "error"
+        )
+        
+        testCases.forEach { (status, expected) ->
+            val result = when (status) {
+                EncryptionStatus.ACTIVE -> "active"
+                EncryptionStatus.NOT_INITIALIZED -> "not_initialized"
+                EncryptionStatus.DISABLED -> "disabled"
+                EncryptionStatus.ERROR -> "error"
+            }
+            assertEquals(expected, result)
         }
-
-        assertEquals("Encryption is active", getStatusDescription(EncryptionStatus.ACTIVE))
-        assertEquals("Encryption not initialized", getStatusDescription(EncryptionStatus.NOT_INITIALIZED))
-        assertEquals("Encryption disabled", getStatusDescription(EncryptionStatus.DISABLED))
-        assertEquals("Encryption error", getStatusDescription(EncryptionStatus.ERROR))
     }
 
     @Test
-    @DisplayName("Should be usable in collections")
-    fun shouldBeUsableInCollections() {
+    fun `test enum in collections`() {
+        val statusList = listOf(
+            EncryptionStatus.ACTIVE,
+            EncryptionStatus.DISABLED,
+            EncryptionStatus.ERROR
+        )
+        
+        assertTrue(statusList.contains(EncryptionStatus.ACTIVE))
+        assertTrue(statusList.contains(EncryptionStatus.DISABLED))
+        assertFalse(statusList.contains(EncryptionStatus.NOT_INITIALIZED))
+    }
+
+    @Test
+    fun `test enum in sets for uniqueness`() {
         val statusSet = setOf(
             EncryptionStatus.ACTIVE,
-            EncryptionStatus.NOT_INITIALIZED,
+            EncryptionStatus.ACTIVE,
             EncryptionStatus.DISABLED
         )
-
+        
+        assertEquals(2, statusSet.size)
         assertTrue(statusSet.contains(EncryptionStatus.ACTIVE))
-        assertFalse(statusSet.contains(EncryptionStatus.ERROR))
-        assertEquals(3, statusSet.size)
+        assertTrue(statusSet.contains(EncryptionStatus.DISABLED))
+    }
+
+    @Test
+    fun `test enum serialization toString`() {
+        assertEquals("ACTIVE", EncryptionStatus.ACTIVE.toString())
+        assertEquals("NOT_INITIALIZED", EncryptionStatus.NOT_INITIALIZED.toString())
+        assertEquals("DISABLED", EncryptionStatus.DISABLED.toString())
+        assertEquals("ERROR", EncryptionStatus.ERROR.toString())
     }
 }

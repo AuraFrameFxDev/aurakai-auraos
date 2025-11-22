@@ -257,3 +257,45 @@ configurations.all {
         force("org.jetbrains:annotations:26.0.2-1")
     }
 }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Testing Dependencies
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // JUnit 4 (for compatibility with existing tests)
+    testImplementation(libs.junit)
+    
+    // JUnit Jupiter (JUnit 5)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${libs.versions.junitJupiter.get()}")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${libs.versions.junitJupiter.get()}")
+    
+    // MockK for mocking
+    testImplementation(libs.mockk)
+    
+    // Kotlin Coroutines Test
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.coroutines.get()}")
+    
+    // AndroidX Test Core
+    testImplementation("androidx.test:core:1.6.1")
+    testImplementation("androidx.test:runner:1.6.2")
+    testImplementation("androidx.test:rules:1.6.1")
+    testImplementation(libs.androidx.junit)
+    
+    // Truth assertions
+    testImplementation("com.google.truth:truth:1.4.4")
+    
+    // Robolectric for Android unit tests
+    testImplementation("org.robolectric:robolectric:4.14")
+    
+    // Hilt testing
+    testImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
+    kspTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
+    
+    // Android Instrumented Tests
+    androidTestImplementation(libs.junit)
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
