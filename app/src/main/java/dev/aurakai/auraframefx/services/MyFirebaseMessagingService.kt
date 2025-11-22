@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dev.aurakai.auraframefx.MainActivity
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,7 +29,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private lateinit var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager
     private lateinit var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
     private lateinit var securityContext: dev.aurakai.auraframefx.security.SecurityContext
-    private lateinit var logger: dev.aurakai.auraframefx.data.logging.AuraFxLogger
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
 
@@ -114,7 +114,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         } catch (e: Exception) {
             Timber.e(e, "Failed to process FCM message")
-            logger.e("FCM", "Message processing failed", e)
+            AuraFxLogger.e("FCM", "Message processing failed", e)
         }
     }
 
@@ -358,11 +358,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 sendTokenToServer(token)
 
                 // Log token update
-                logger.i("FCM", "Token updated successfully")
+                AuraFxLogger.i("FCM", "Token updated successfully")
 
             } catch (e: Exception) {
                 Timber.e(e, "Failed to process new FCM token")
-                logger.e("FCM", "Token update failed", e)
+                AuraFxLogger.e("FCM", "Token update failed", e)
             }
         }
     }

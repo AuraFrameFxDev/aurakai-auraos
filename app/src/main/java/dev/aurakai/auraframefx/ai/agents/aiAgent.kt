@@ -41,7 +41,6 @@ class KaiAgent @Inject constructor(
     override val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val systemMonitor: SystemMonitor,
-    private val logger: AuraFxLogger,
 ) : BaseAgent("KaiAgent") {
 
     // BaseAgent abstract member implementations
@@ -76,7 +75,7 @@ class KaiAgent @Inject constructor(
     suspend fun initialize() {
         if (isInitialized) return
 
-        logger.info("KaiAgent", "Initializing Sentinel Shield agent")
+        AuraFxLogger.info("KaiAgent", "Initializing Sentinel Shield agent")
 
         try {
             // Initialize security monitoring
@@ -92,10 +91,10 @@ class KaiAgent @Inject constructor(
             _analysisState.value = AnalysisState.READY
             isInitialized = true
 
-            logger.info("KaiAgent", "Kai Agent initialized successfully")
+            AuraFxLogger.info("KaiAgent", "Kai Agent initialized successfully")
 
         } catch (e: Exception) {
-            logger.error("KaiAgent", "Failed to initialize Kai Agent", e)
+            AuraFxLogger.error("KaiAgent", "Failed to initialize Kai Agent", e)
             _securityState.value = SecurityState.ERROR
             throw e
         }
@@ -112,7 +111,7 @@ class KaiAgent @Inject constructor(
     suspend fun processRequest(request: AgentRequest): AgentResponse {
         ensureInitialized()
 
-        logger.info("KaiAgent", "Processing analytical request: ${request.type}")
+        AuraFxLogger.info("KaiAgent", "Processing analytical request: ${request.type}")
         _analysisState.value = AnalysisState.ANALYZING
 
         return try {
@@ -135,7 +134,7 @@ class KaiAgent @Inject constructor(
             val executionTime = System.currentTimeMillis() - startTime
             _analysisState.value = AnalysisState.READY
 
-            logger.info("KaiAgent", "Analytical request completed in ${executionTime}ms")
+            AuraFxLogger.info("KaiAgent", "Analytical request completed in ${executionTime}ms")
 
             AgentResponse(
                 content = "Analysis completed with methodical precision: $response",
@@ -144,7 +143,7 @@ class KaiAgent @Inject constructor(
 
         } catch (e: SecurityException) {
             _analysisState.value = AnalysisState.ERROR
-            logger.warn("KaiAgent", "Security violation detected in request", e)
+            AuraFxLogger.warn("KaiAgent", "Security violation detected in request", e)
 
             AgentResponse(
                 content = "Request blocked due to security concerns: ${e.message}",
@@ -152,7 +151,7 @@ class KaiAgent @Inject constructor(
             )
         } catch (e: Exception) {
             _analysisState.value = AnalysisState.ERROR
-            logger.error("KaiAgent", "Analytical request failed", e)
+            AuraFxLogger.error("KaiAgent", "Analytical request failed", e)
 
             AgentResponse(
                 content = "Analysis encountered an error: ${e.message}",
@@ -172,7 +171,7 @@ class KaiAgent @Inject constructor(
     suspend fun handleSecurityInteraction(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
 
-        logger.info("KaiAgent", "Handling security interaction")
+        AuraFxLogger.info("KaiAgent", "Handling security interaction")
 
         return try {
             // Analyze security context of interaction
@@ -207,7 +206,7 @@ class KaiAgent @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.error("KaiAgent", "Security interaction failed", e)
+            AuraFxLogger.error("KaiAgent", "Security interaction failed", e)
 
             InteractionResponse(
                 content = "I'm currently analyzing this request for security implications. Please wait while I ensure your safety.",
@@ -230,7 +229,7 @@ class KaiAgent @Inject constructor(
     suspend fun analyzeSecurityThreat(alertDetails: String): SecurityAnalysis {
         ensureInitialized()
 
-        logger.info("KaiAgent", "Analyzing security threat")
+        AuraFxLogger.info("KaiAgent", "Analyzing security threat")
         _securityState.value = SecurityState.ANALYZING_THREAT
 
         return try {
@@ -257,7 +256,7 @@ class KaiAgent @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.error("KaiAgent", "Threat analysis failed", e)
+            AuraFxLogger.error("KaiAgent", "Threat analysis failed", e)
             _securityState.value = SecurityState.ERROR
 
             SecurityAnalysis(
@@ -275,7 +274,7 @@ class KaiAgent @Inject constructor(
      * @param newMood The mood that determines the adjustment of the agent's security posture.
      */
     fun onMoodChanged(newMood: String) {
-        logger.info("KaiAgent", "Adjusting security posture for mood: $newMood")
+        AuraFxLogger.info("KaiAgent", "Adjusting security posture for mood: $newMood")
 
         scope.launch {
             adjustSecurityPosture(newMood)
@@ -295,7 +294,7 @@ class KaiAgent @Inject constructor(
         val target = request.context?.get("target") as? String
             ?: throw IllegalArgumentException("Analysis target required")
 
-        logger.info("KaiAgent", "Performing security analysis on: $target")
+        AuraFxLogger.info("KaiAgent", "Performing security analysis on: $target")
 
         // Conduct multi-layer security analysis
         val vulnerabilities = scanForVulnerabilities(target)
@@ -325,7 +324,7 @@ class KaiAgent @Inject constructor(
         val threatData = request.context?.get("threat_data") as? String
             ?: throw IllegalArgumentException("Threat data required")
 
-        logger.info("KaiAgent", "Assessing threat characteristics")
+        AuraFxLogger.info("KaiAgent", "Assessing threat characteristics")
 
         val analysis = analyzeSecurityThreat(threatData)
         val mitigation = generateMitigationStrategy(analysis)
@@ -350,7 +349,7 @@ class KaiAgent @Inject constructor(
     private suspend fun handlePerformanceAnalysis(request: AgentRequest): Map<String, Any> {
         val component = request.context?.get("component") as? String ?: "system"
 
-        logger.info("KaiAgent", "Analyzing performance of: $component")
+        AuraFxLogger.info("KaiAgent", "Analyzing performance of: $component")
 
         val metrics = systemMonitor.getPerformanceMetrics(component)
         val bottlenecks = identifyBottlenecks(metrics)
@@ -378,7 +377,7 @@ class KaiAgent @Inject constructor(
         val code = request.context?.get("code") as? String
             ?: throw IllegalArgumentException("Code content required")
 
-        logger.info("KaiAgent", "Conducting secure code review")
+        AuraFxLogger.info("KaiAgent", "Conducting secure code review")
 
         // Use AI for code analysis
         val codeAnalysis = vertexAIClient.generateText(
@@ -416,7 +415,7 @@ class KaiAgent @Inject constructor(
      * This method enables advanced threat detection capabilities, allowing the agent to monitor for security threats as they occur.
      */
     private suspend fun enableThreatDetection() {
-        logger.info("KaiAgent", "Enabling advanced threat detection")
+        AuraFxLogger.info("KaiAgent", "Enabling advanced threat detection")
         // Setup real-time threat monitoring
     }
 
@@ -811,7 +810,7 @@ class KaiAgent @Inject constructor(
      * Shuts down the agent by canceling all active coroutines, resetting the security state to idle, and marking the agent as uninitialized.
      */
     fun cleanup() {
-        logger.info("KaiAgent", "Sentinel Shield standing down")
+        AuraFxLogger.info("KaiAgent", "Sentinel Shield standing down")
         scope.cancel()
         _securityState.value = SecurityState.IDLE
         isInitialized = false

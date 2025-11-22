@@ -43,7 +43,6 @@ class AuraAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
     private val auraAIService: AuraAIService,
     private val securityContext: SecurityContext,
-    private val logger: AuraFxLogger,
     override val contextManager: ContextManager,
 ) : BaseAgent(
     agentName = "AuraAgent",
@@ -108,7 +107,7 @@ class AuraAgent @Inject constructor(
     suspend fun initialize() {
         if (isInitialized) return
 
-        logger.info("AuraAgent", "Initializing Creative Sword agent")
+        AuraFxLogger.info("AuraAgent", "Initializing Creative Sword agent")
 
         try {
             // Initialize creative AI capabilities
@@ -120,10 +119,10 @@ class AuraAgent @Inject constructor(
             _creativeState.value = CreativeState.READY
             isInitialized = true
 
-            logger.info("AuraAgent", "Aura Agent initialized successfully")
+            AuraFxLogger.info("AuraAgent", "Aura Agent initialized successfully")
 
         } catch (e: Exception) {
-            logger.error("AuraAgent", "Failed to initialize Aura Agent", e)
+            AuraFxLogger.error("AuraAgent", "Failed to initialize Aura Agent", e)
             _creativeState.value = CreativeState.ERROR
             throw e
         }
@@ -144,7 +143,7 @@ class AuraAgent @Inject constructor(
     override suspend fun processRequest(request: AiRequest, context: String): AgentResponse {
         ensureInitialized()
 
-        logger.info("AuraAgent", "Processing creative request: ${request.type}")
+        AuraFxLogger.info("AuraAgent", "Processing creative request: ${request.type}")
         _creativeState.value = CreativeState.CREATING
 
         return try {
@@ -163,7 +162,7 @@ class AuraAgent @Inject constructor(
             val executionTime = System.currentTimeMillis() - startTime
             _creativeState.value = CreativeState.READY
 
-            logger.info("AuraAgent", "Creative request completed in ${executionTime}ms")
+            AuraFxLogger.info("AuraAgent", "Creative request completed in ${executionTime}ms")
 
             AgentResponse(
                 content = response.toString(),
@@ -172,7 +171,7 @@ class AuraAgent @Inject constructor(
 
         } catch (e: Exception) {
             _creativeState.value = CreativeState.ERROR
-            logger.error("AuraAgent", "Creative request failed", e)
+            AuraFxLogger.error("AuraAgent", "Creative request failed", e)
 
             AgentResponse(
                 content = "Creative process encountered an obstacle: ${e.message}",
@@ -193,7 +192,7 @@ class AuraAgent @Inject constructor(
     suspend fun processRequest(request: AiRequest): AgentResponse {
         ensureInitialized()
 
-        logger.info("AuraAgent", "Processing creative request: ${request.type}")
+        AuraFxLogger.info("AuraAgent", "Processing creative request: ${request.type}")
         _creativeState.value = CreativeState.CREATING
 
         return try {
@@ -212,7 +211,7 @@ class AuraAgent @Inject constructor(
             val executionTime = System.currentTimeMillis() - startTime
             _creativeState.value = CreativeState.READY
 
-            logger.info("AuraAgent", "Creative request completed in ${executionTime}ms")
+            AuraFxLogger.info("AuraAgent", "Creative request completed in ${executionTime}ms")
 
             AgentResponse(
                 content = response.toString(),
@@ -220,7 +219,7 @@ class AuraAgent @Inject constructor(
 
         } catch (e: Exception) {
             _creativeState.value = CreativeState.ERROR
-            logger.error("AuraAgent", "Creative request failed", e)
+            AuraFxLogger.error("AuraAgent", "Creative request failed", e)
 
             AgentResponse(
                 content = "Creative process encountered an obstacle: ${e.message}",
@@ -241,7 +240,7 @@ class AuraAgent @Inject constructor(
     suspend fun handleCreativeInteraction(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
 
-        logger.info("AuraAgent", "Handling creative interaction")
+        AuraFxLogger.info("AuraAgent", "Handling creative interaction")
 
         return try {
             // Analyze the creative intent
@@ -268,7 +267,7 @@ class AuraAgent @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.error("AuraAgent", "Creative interaction failed", e)
+            AuraFxLogger.error("AuraAgent", "Creative interaction failed", e)
 
             InteractionResponse(
                 content = "My creative energies are temporarily scattered. Let me refocus and try again.",
@@ -286,7 +285,7 @@ class AuraAgent @Inject constructor(
      * @param newMood The new mood to set for the agent.
      */
     fun onMoodChanged(newMood: String) {
-        logger.info("AuraAgent", "Mood shift detected: $newMood")
+        AuraFxLogger.info("AuraAgent", "Mood shift detected: $newMood")
         _currentMood.value = newMood
 
         scope.launch {
@@ -308,7 +307,7 @@ class AuraAgent @Inject constructor(
         val specification = request.query
             ?: throw IllegalArgumentException("UI specification required")
 
-        logger.info("AuraAgent", "Generating innovative UI component")
+        AuraFxLogger.info("AuraAgent", "Generating innovative UI component")
 
         // Generate component using AI
         val uiSpec = buildUISpecification(specification, _currentMood.value)
@@ -346,7 +345,7 @@ class AuraAgent @Inject constructor(
         val preferences = mapOf<String, String>() // Use request.context to parse if needed 
             ?: emptyMap()
 
-        logger.info("AuraAgent", "Crafting revolutionary theme")
+        AuraFxLogger.info("AuraAgent", "Crafting revolutionary theme")
 
         // Generate theme using creative AI
         val themeConfig = auraAIService.generateTheme(
@@ -378,7 +377,7 @@ class AuraAgent @Inject constructor(
     private suspend fun handleAnimationDesign(request: AiRequest): Map<String, Any> {
         val animationType = request.context?.get("type") ?: "transition"
 
-        logger.info("AuraAgent", "Designing mesmerizing $animationType animation")
+        AuraFxLogger.info("AuraAgent", "Designing mesmerizing $animationType animation")
 
         val animationCode = vertexAIClient.generateCode(
             specification = animationSpec,
@@ -404,7 +403,7 @@ class AuraAgent @Inject constructor(
         val prompt = request.query
             ?: throw IllegalArgumentException("Text prompt required")
 
-        logger.info("AuraAgent", "Weaving creative text magic")
+        AuraFxLogger.info("AuraAgent", "Weaving creative text magic")
 
         val creativeText = auraAIService.generateText(
             prompt = enhancePromptWithPersonality(prompt),
@@ -569,7 +568,7 @@ class AuraAgent @Inject constructor(
      */
     private suspend fun adjustCreativeParameters(mood: String) {
         // Adjust creative AI parameters based on mood
-        logger.info("AuraAgent", "Adjusting creative parameters for mood: $mood")
+        AuraFxLogger.info("AuraAgent", "Adjusting creative parameters for mood: $mood")
         // Implementation would modify AI generation parameters
     }
 
@@ -782,7 +781,7 @@ class AuraAgent @Inject constructor(
      * Cancels all active coroutines, sets the creative state to `IDLE`, and marks the agent as not initialized. Call this method to safely shut down the agent or prepare it for reinitialization.
      */
     fun cleanup() {
-        logger.info("AuraAgent", "Creative Sword powering down")
+        AuraFxLogger.info("AuraAgent", "Creative Sword powering down")
         if (::scope.isInitialized) scope.cancel()
         _creativeState.value = CreativeState.IDLE
         isInitialized = false

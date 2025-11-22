@@ -5,7 +5,7 @@ import dev.aurakai.auraframefx.ai.error.ErrorHandler
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
 import dev.aurakai.auraframefx.ai.task.TaskScheduler
 import dev.aurakai.auraframefx.ai.task.execution.TaskExecutionManager
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
 import java.io.File
 import javax.inject.Inject
@@ -17,7 +17,6 @@ class AuraAIServiceImpl @Inject constructor(
     private val errorHandler: ErrorHandler,
     private val contextManager: ContextManager,
     private val cloudStatusMonitor: CloudStatusMonitor,
-    private val auraFxLogger: AuraFxLogger,
 ) : AuraAIService {
     /**
      * Returns a fixed placeholder response for any analytics query.
@@ -87,7 +86,7 @@ class AuraAIServiceImpl @Inject constructor(
      */
     override fun saveMemory(key: String, value: Any) {
         try {
-            auraFxLogger.d("AuraAIService", "Saving memory: key=$key, value=${value.toString().take(50)}")
+            AuraFxLogger.d("AuraAIService", "Saving memory: key=$key, value=${value.toString().take(50)}")
 
             // Convert value to string for storage (MemoryManager likely expects String)
             val valueString = when (value) {
@@ -98,10 +97,10 @@ class AuraAIServiceImpl @Inject constructor(
             }
 
             memoryManager.storeMemory(key, valueString)
-            auraFxLogger.d("AuraAIService", "Memory saved successfully: $key")
+            AuraFxLogger.d("AuraAIService", "Memory saved successfully: $key")
 
         } catch (e: Exception) {
-            auraFxLogger.e("AuraAIService", "Failed to save memory for key: $key", e)
+            AuraFxLogger.e("AuraAIService", "Failed to save memory for key: $key", e)
             errorHandler.handleError(e, "Memory save failed for key: $key")
         }
     }
