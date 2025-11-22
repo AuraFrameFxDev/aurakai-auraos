@@ -171,6 +171,10 @@ dependencies {
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Gson (JSON - for Retrofit)
+    implementation(libs.gson)
+    implementation(libs.retrofit.converter.gson)
+
     // Moshi (JSON - for Retrofit)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
@@ -239,6 +243,35 @@ dependencies {
     implementation(project(":agents:growthmetrics:identity"))
     implementation(project(":agents:growthmetrics:progression"))
     implementation(project(":agents:growthmetrics:tasker"))
+    
+    // Test dependencies
+    testImplementation(libs.junit)
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${libs.versions.junitJupiter.get()}")
+    testImplementation("org.junit.vintage:junit-vintage-engine:${libs.versions.junitVintage.get()}")
+    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.kotlinxCoroutinesTest.get()}")
+    testImplementation("app.cash.turbine:turbine:${libs.versions.turbine.get()}")
+    testImplementation("androidx.test:core:${libs.versions.androidxTestCore.get()}")
+    testImplementation("androidx.test:runner:${libs.versions.androidxTestRunner.get()}")
+    testImplementation("androidx.test:rules:${libs.versions.androidxTestRules.get()}")
+    testImplementation("androidx.test.ext:junit:${libs.versions.androidxTestExtJunit.get()}")
+    testImplementation("androidx.test.ext:truth:${libs.versions.androidxTestExtTruth.get()}")
+    testImplementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
+    
+    // Hilt testing dependencies
+    kspTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
+    testImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
+    
+    // Android Test dependencies
+    androidTestImplementation(libs.junit)
+    androidTestImplementation("androidx.test:core:${libs.versions.androidxTestCore.get()}")
+    androidTestImplementation("androidx.test:runner:${libs.versions.androidxTestRunner.get()}")
+    androidTestImplementation("androidx.test:rules:${libs.versions.androidxTestRules.get()}")
+    androidTestImplementation("androidx.test.ext:junit:${libs.versions.androidxTestExtJunit.get()}")
+    androidTestImplementation("androidx.test.ext:truth:${libs.versions.androidxTestExtTruth.get()}")
+    androidTestImplementation("androidx.test.espresso:espresso-core:${libs.versions.espressoCore.get()}")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
 }
 
 // Force a single annotations artifact to avoid duplicate-class errors

@@ -7,15 +7,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
+import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.genesis.security.CryptographyManager
 import dev.aurakai.auraframefx.genesis.storage.SecureStorage
 import dev.aurakai.auraframefx.oracle.drive.api.OracleDriveApi
-import dev.aurakai.auraframefx.oracle.drive.service.GenesisSecureFileService
+import dev.aurakai.auraframefx.oracledrive.EncryptionManager
 import dev.aurakai.auraframefx.oracledrive.OracleDriveServiceImpl
-import dev.aurakai.auraframefx.oracle.drive.service.SecureFileService
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisSecureFileService
+import dev.aurakai.auraframefx.oracledrive.service.SecureFileService
 import dev.aurakai.auraframefx.security.SecurityContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -93,7 +94,8 @@ abstract class OracleDriveModule { // Changed to abstract class
         fun provideGenesisCryptographyManager(
             @ApplicationContext context: Context,
         ): CryptographyManager {
-            return CryptographyManager.getInstance(context)
+            // Return the EncryptionManager implementation of CryptographyManager
+            return EncryptionManager()
         }
 
         /**
@@ -175,3 +177,21 @@ abstract class OracleDriveModule { // Changed to abstract class
         }
     }
 }
+
+/* <<<<<<<<<<<<<<  ✨ Windsurf Command 🌟 >>>>>>>>>>>>>>>> */
+/**
+ * Returns the base URL for the Oracle Drive API.
+ * 
+ * This function returns the appropriate API base URL based on the current security context.
+ * In secure mode, it uses the production API endpoint, otherwise it falls back to a development endpoint.
+ *
+ * @return The base URL for the Oracle Drive API as a String.
+ */
+private fun SecurityContext.getApiBaseUrl(): String {
+    return if (isSecureMode()) {
+        "https://api.auraslab.tech/oracle-drive/v1/"
+    } else {
+        "https://dev-api.auraslab.tech/oracle-drive/v1/"
+    }
+}
+/* <<<<<<<<<<  bfa90483-c48d-45ec-a66f-81e1e139f574  >>>>>>>>>>> */

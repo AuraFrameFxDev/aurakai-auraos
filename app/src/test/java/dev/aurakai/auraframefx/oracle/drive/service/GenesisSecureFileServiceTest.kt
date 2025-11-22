@@ -7,14 +7,16 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dev.aurakai.auraframefx.genesis.security.CryptographyManager
 import dev.aurakai.auraframefx.genesis.storage.SecureStorage
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisSecureFileService
+import dev.aurakai.auraframefx.oracledrive.service.FileOperationResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import javax.inject.Inject
@@ -39,7 +41,7 @@ class GenesisSecureFileServiceTest {
     private val testData = "Test file content".toByteArray()
     private val testDirectory = "test_dir"
 
-    @BeforeEach
+    @Before
     fun setup() {
         hiltRule.inject()
         context = ApplicationProvider.getApplicationContext()
@@ -49,7 +51,7 @@ class GenesisSecureFileServiceTest {
         context.filesDir.listFiles()?.forEach { it.deleteRecursively() }
     }
 
-    @AfterEach
+    @After
     fun tearDown() {
         // Clean up after each test
         context.filesDir.listFiles()?.forEach { it.deleteRecursively() }

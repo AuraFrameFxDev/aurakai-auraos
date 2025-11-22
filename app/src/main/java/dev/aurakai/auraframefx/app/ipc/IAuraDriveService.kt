@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.app.ipc
+﻿package dev.aurakai.auraframefx.app.ipc
 
 import android.os.IBinder
 import android.os.IInterface

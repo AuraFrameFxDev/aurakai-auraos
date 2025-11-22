@@ -1,9 +1,11 @@
-package dev.aurakai.auraframefx.oracle.drive.service
+package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.aurakai.auraframefx.genesis.security.CryptographyManager
 import dev.aurakai.auraframefx.genesis.storage.SecureStorage
+import dev.aurakai.auraframefx.oracledrive.service.FileOperationResult
+import dev.aurakai.auraframefx.oracledrive.service.SecureFileService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -75,6 +77,57 @@ class GenesisSecureFileService @Inject constructor(
             emit(FileOperationResult.Error("Failed to save file: ${e.message}", e))
         }
     }.flowOn(Dispatchers.IO)
+
+    private fun SecureStorage.storeMetadata(
+        metadataKey: String,
+        metadata: FileMetadata
+    ) {
+        // Store metadata in secure storage
+        // This is a placeholder implementation
+        // In a real implementation, this would use Android's EncryptedSharedPreferences or similar
+        val prefs = context.getSharedPreferences("secure_metadata", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString("${metadataKey}_name", metadata.fileName)
+            .putString("${metadataKey}_mime", metadata.mimeType)
+            .putLong("${metadataKey}_size", metadata.size)
+            .putLong("${metadataKey}_modified", metadata.lastModified)
+            .apply()
+    }
+
+    private fun SecureStorage.getMetadata(metadataKey: String): FileMetadata? {
+        // Retrieve metadata from secure storage
+        // This is a placeholder implementation
+        val prefs = context.getSharedPreferences("secure_metadata", Context.MODE_PRIVATE)
+        return if (prefs.contains("${metadataKey}_name")) {
+            FileMetadata(
+                fileName = prefs.getString("${metadataKey}_name", "") ?: "",
+                mimeType = prefs.getString("${metadataKey}_mime", "application/octet-stream") ?: "application/octet-stream",
+                size = prefs.getLong("${metadataKey}_size", 0L),
+                lastModified = prefs.getLong("${metadataKey}_modified", 0L)
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun SecureStorage.removeMetadata(metadataKey: String) {
+        // Remove metadata from secure storage
+        val prefs = context.getSharedPreferences("secure_metadata", Context.MODE_PRIVATE)
+        prefs.edit()
+            .remove("${metadataKey}_name")
+            .remove("${metadataKey}_mime")
+            .remove("${metadataKey}_size")
+            .remove("${metadataKey}_modified")
+            .apply()
+    }
+
+    private fun CryptographyManager.encrypt(
+        data: ByteArray,
+        keyAlias: String
+    ): ByteArray {
+        // Delegate to the actual implementation
+        return this.encrypt(data, keyAlias)
+    }
 
     /**
      * Reads and decrypts a securely stored file, emitting the result as a flow.

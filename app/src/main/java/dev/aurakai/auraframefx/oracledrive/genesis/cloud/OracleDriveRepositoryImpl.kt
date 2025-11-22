@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.oracle.drive.core
+package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -12,13 +12,8 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-// Assuming OracleDriveRepository is an interface defined elsewhere
-// interface OracleDriveRepository {
-//     suspend fun listFiles(bucketName: String, prefix: String?): List<OracleDriveFile>
-//     suspend fun uploadFile(bucketName: String, objectName: String, filePath: String): Boolean
-//     suspend fun downloadFile(bucketName: String, objectName: String, destinationPath: String): File?
-//     suspend fun deleteFile(bucketName: String, objectName: String): Boolean
-// }
+private const val TAG = "OracleDriveRepo"
+private const val OCTET_STREAM_MIME = "application/octet-stream"
 
 class OracleDriveRepositoryImpl @Inject constructor(
     private val oracleCloudApi: OracleCloudApi,
@@ -38,22 +33,32 @@ class OracleDriveRepositoryImpl @Inject constructor(
     override suspend fun listFiles(bucketName: String, prefix: String?): List<OracleDriveFile> =
         withContext(Dispatchers.IO) {
             try {
+                Log.d(TAG, "Fetching files from bucket: $bucketName, prefix: $prefix")
                 val response = oracleCloudApi.listFiles(bucketName = bucketName, prefix = prefix)
-                if (response.isSuccessful) {
-                    response.body()?.objects?.map {
-                        OracleDriveFile(
-                            it.name,
-                            it.size,
-                            it.timeCreated
-                        )
-                    } ?: emptyList()
-                } else {
-                    // Handle error, log, throw custom exception etc.
-                    emptyList()
+
+                if (!response.isSuccessful) {
+                    throw OracleDriveException(
+                        "Failed to list files. Code: ${response.code()}, Message: ${response.message()}"
+                    )
                 }
+
+                val files = response.body()?.objects?.map { file ->
+                    OracleDriveFile(
+                        name = file.name,
+                        size = file.size,
+                        timeCreated = file.timeCreated
+                    )
+                } ?: emptyList()
+
+                Log.d(TAG, "Successfully listed ${files.size} files")
+                files
+
             } catch (e: Exception) {
-                // Handle error
-                emptyList()
+                Log.e(TAG, "Error listing files in bucket: $bucketName", e)
+                throw when (e) {
+                    is OracleDriveException -> e
+                    else -> OracleDriveException("Failed to list files: ${e.message}", e)
+                }
             }
         }
 
@@ -74,19 +79,39 @@ class OracleDriveRepositoryImpl @Inject constructor(
         objectName: String,
         filePath: String
     ): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val file = File(filePath)
-            if (!file.exists()) return@withContext false
+        require(bucketName.isNotBlank()) { "Bucket name cannot be blank" }
+        require(objectName.isNotBlank()) { "Object name cannot be blank" }
+        require(filePath.isNotBlank()) { "File path cannot be blank" }
 
-            val requestBody = file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+        val file = File(filePath)
+        if (!file.exists()) {
+            Log.e(TAG, "File not found: $filePath")
+            return@withContext false
+        }
+
+        try {
+            Log.d(TAG, "Uploading file: $filePath to bucket: $bucketName/$objectName")
+
+            val requestBody = file.asRequestBody(OCTET_STREAM_MIME.toMediaTypeOrNull())
             val response = oracleCloudApi.uploadFile(
                 bucketName = bucketName,
                 objectName = objectName,
                 body = requestBody
             )
-            response.isSuccessful
+
+            if (!response.isSuccessful) {
+                Log.e(TAG, "Upload failed. Code: ${response.code()}, Message: ${response.message()}")
+                return@withContext false
+            }
+
+            Log.i(TAG, "Successfully uploaded file: $filePath")
+            true
+
+        } catch (e: IOException) {
+            Log.e(TAG, "IO error during file upload: ${e.message}", e)
+            false
         } catch (e: Exception) {
-            // Handle error
+            Log.e(TAG, "Unexpected error during file upload", e)
             false
         }
     }
@@ -108,25 +133,49 @@ class OracleDriveRepositoryImpl @Inject constructor(
         objectName: String,
         destinationPath: String
     ): File? = withContext(Dispatchers.IO) {
+        require(bucketName.isNotBlank()) { "Bucket name cannot be blank" }
+        require(objectName.isNotBlank()) { "Object name cannot be blank" }
+        require(destinationPath.isNotBlank()) { "Destination path cannot be blank" }
+
         try {
-            val response =
-                oracleCloudApi.downloadFile(bucketName = bucketName, objectName = objectName)
-            if (response.isSuccessful && response.body() != null) {
-                // Normalize objectName to its basename to prevent path traversal
-                val safeName = File(objectName).name // strips any path components
-                val file = File(destinationPath, safeName) // Ensure destinationPath is a directory
-                file.parentFile?.mkdirs() // Create parent directories if they don't exist
-                response.body()!!.byteStream().use { inputStream ->
-                    FileOutputStream(file).use { outputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-                }
-                file
-            } else {
-                null
+            Log.d(TAG, "Downloading file: $bucketName/$objectName to $destinationPath")
+
+            val response = oracleCloudApi.downloadFile(bucketName = bucketName, objectName = objectName)
+
+            if (!response.isSuccessful) {
+                Log.e(TAG, "Download failed. Code: ${response.code()}, Message: ${response.message()}")
+                return@withContext null
             }
+
+            val responseBody = response.body() ?: run {
+                Log.e(TAG, "Download failed: Empty response body")
+                return@withContext null
+            }
+
+            val safeName = File(objectName).name // Prevent path traversal
+            val destinationDir = File(destinationPath).also { it.mkdirs() }
+            val outputFile = File(destinationDir, safeName)
+
+            responseBody.byteStream().use { inputStream ->
+                FileOutputStream(outputFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+
+            if (!outputFile.exists() || outputFile.length() == 0L) {
+                Log.e(TAG, "Download failed: Output file was not created or is empty")
+                outputFile.delete() // Clean up empty file
+                return@withContext null
+            }
+
+            Log.i(TAG, "Successfully downloaded file to: ${outputFile.absolutePath}")
+            outputFile
+
+        } catch (e: IOException) {
+            Log.e(TAG, "IO error during file download: ${e.message}", e)
+            null
         } catch (e: Exception) {
-            // Handle error
+            Log.e(TAG, "Unexpected error during file download", e)
             null
         }
     }
@@ -144,12 +193,27 @@ class OracleDriveRepositoryImpl @Inject constructor(
      */
     override suspend fun deleteFile(bucketName: String, objectName: String): Boolean =
         withContext(Dispatchers.IO) {
+            require(bucketName.isNotBlank()) { "Bucket name cannot be blank" }
+            require(objectName.isNotBlank()) { "Object name cannot be blank" }
+
             try {
-                val response =
-                    oracleCloudApi.deleteFile(bucketName = bucketName, objectName = objectName)
-                response.isSuccessful
+                Log.d(TAG, "Deleting file: $bucketName/$objectName")
+
+                val response = oracleCloudApi.deleteFile(
+                    bucketName = bucketName,
+                    objectName = objectName
+                )
+
+                if (!response.isSuccessful) {
+                    Log.e(TAG, "Delete failed. Code: ${response.code()}, Message: ${response.message()}")
+                    return@withContext false
+                }
+
+                Log.i(TAG, "Successfully deleted file: $bucketName/$objectName")
+                true
+
             } catch (e: Exception) {
-                // Handle error
+                Log.e(TAG, "Error deleting file: $bucketName/$objectName", e)
                 false
             }
         }

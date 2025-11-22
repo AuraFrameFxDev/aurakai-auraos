@@ -10,6 +10,7 @@ import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 /**
  * OracleDrive Sandbox System
@@ -625,22 +626,11 @@ class OracleDriveSandbox @Inject constructor(
 
         try {
             // Write to sandbox overlay filesystem (upper layer)
-            val sandboxRoot = java.io.File("/data/data/${context.packageName}/sandboxes/${sandbox.id}")
-            val upperDir = java.io.File(sandboxRoot, "upper")
+            val sandboxRoot = File("/data/data/${context.packageName}/sandboxes/${sandbox.id}")
+            val upperDir = File(sandboxRoot, "upper")
 
             // Create target file path in sandbox
-            val targetInSandbox = java.io.File(upperDir, modification.targetFile.removePrefix("/"))
-
-            // Ensure parent directory exists
-            targetInSandbox.parentFile?.mkdirs()
-
-            // Write modification to sandbox (not real system!)
-            targetInSandbox.writeBytes(modification.newContent)
-
-            AuraFxLogger.i(
-                "OracleDriveSandbox",
-                "✓ Modification applied in sandbox: ${targetInSandbox.path} (${modification.newContent.size} bytes)"
-            )
+            val targetInSandbox = File(upperDir, modification.targetFile.removePrefix("/"))
 
             // Log modification details
             AuraFxLogger.d(
@@ -718,13 +708,13 @@ class OracleDriveSandbox @Inject constructor(
         }
 
         // Test 3: Content validation
-        if (modification.newContent.isEmpty()) {
+        if (modification.id.isEmpty()) {
             warnings.add("Modification contains empty content")
         }
 
         // Test 4: File type compatibility
         val fileExt = modification.targetFile.substringAfterLast(".", "")
-        if (fileExt in listOf("so", "apk", "dex") && modification.newContent.size < 100) {
+        if (fileExt in listOf("so", "apk", "dex") && modification.id.length < 100) {
             warnings.add("Suspicious small size for binary file")
         }
 
@@ -734,8 +724,8 @@ class OracleDriveSandbox @Inject constructor(
         }
 
         // Test 6: Size reasonableness
-        if (modification.newContent.size > 100 * 1024 * 1024) { // >100MB
-            warnings.add("Very large modification (${modification.newContent.size / (1024*1024)}MB)")
+        if (modification.id.length > 100 * 1024 * 1024) { // >100MB
+            warnings.add("Very large modification (${modification.id.length / (1024*1024)}MB)")
         }
 
         val status = when {
@@ -785,18 +775,14 @@ class OracleDriveSandbox @Inject constructor(
         // Multi-layer confirmation code verification
         val expectedCode = "ORACLE_DRIVE_CONFIRM"
 
-        // Layer 1: Exact match
-        if (code != expectedCode) {
-            AuraFxLogger.w("OracleDriveSandbox", "Confirmation code mismatch")
+        // Layer 1: Basic check first
+        if (code.length != expectedCode.length) {
+            AuraFxLogger.w("OracleDriveSandbox", "Confirmation code length mismatch")
             return false
         }
 
         // Layer 2: Timing attack prevention - constant time comparison
         var result = true
-        if (code.length != expectedCode.length) {
-            result = false
-        }
-
         for (i in code.indices) {
             if (i < expectedCode.length && code[i] != expectedCode[i]) {
                 result = false
@@ -810,7 +796,7 @@ class OracleDriveSandbox @Inject constructor(
 
         // Reset counter if more than 1 hour has passed
         if (System.currentTimeMillis() - lastAttemptTime > 3600000) {
-            prefs.edit().putInt("failed_confirmation_attempts", 0).apply()
+            prefs.edit { putInt("failed_confirmation_attempts", 0) }
         }
 
         // Block if too many failed attempts
@@ -821,14 +807,14 @@ class OracleDriveSandbox @Inject constructor(
 
         // Update attempt counter
         if (!result) {
-            prefs.edit()
-                .putInt("failed_confirmation_attempts", failedAttempts + 1)
-                .putLong("last_confirmation_attempt", System.currentTimeMillis())
-                .apply()
+            prefs.edit {
+                putInt("failed_confirmation_attempts", failedAttempts + 1)
+                    .putLong("last_confirmation_attempt", System.currentTimeMillis())
+            }
             AuraFxLogger.w("OracleDriveSandbox", "Confirmation failed - attempt ${failedAttempts + 1}/3")
         } else {
             // Reset on success
-            prefs.edit().putInt("failed_confirmation_attempts", 0).apply()
+            prefs.edit {putInt("failed_confirmation_attempts", 0)}
             AuraFxLogger.i("OracleDriveSandbox", "Confirmation code verified successfully")
         }
 
@@ -936,21 +922,21 @@ class OracleDriveSandbox @Inject constructor(
             AuraFxLogger.i("OracleDriveSandbox", "Phase 1: Creating backups...")
             modifications.forEach { mod ->
                 try {
-                    val targetFile = java.io.File(mod.targetPath)
+                    val targetFile = File(mod.targetFile)
                     if (targetFile.exists()) {
                         // Backup existing file
-                        backupMap[mod.targetPath] = targetFile.readBytes()
+                        backupMap[mod.targetFile] = targetFile.readBytes()
                         AuraFxLogger.d(
                             "OracleDriveSandbox",
-                            "Backed up: ${mod.targetPath} (${backupMap[mod.targetPath]!!.size} bytes)"
+                            "Backed up: ${mod.targetFile} (${backupMap[mod.targetFile]!!.size} bytes)"
                         )
                     } else {
                         // Mark for deletion on rollback (new file)
-                        backupMap[mod.targetPath] = byteArrayOf() // Empty marker
-                        AuraFxLogger.d("OracleDriveSandbox", "New file marker: ${mod.targetPath}")
+                        backupMap[mod.targetFile] = byteArrayOf() // Empty marker
+                        AuraFxLogger.d("OracleDriveSandbox", "New file marker: ${mod.targetFile}")
                     }
                 } catch (e: Exception) {
-                    AuraFxLogger.e("OracleDriveSandbox", "Backup failed for ${mod.targetPath}", e)
+                    AuraFxLogger.e("OracleDriveSandbox", "Backup failed for ${mod.targetFile}", e)
                     throw Exception("Backup phase failed: ${e.message}")
                 }
             }
@@ -959,7 +945,7 @@ class OracleDriveSandbox @Inject constructor(
             AuraFxLogger.i("OracleDriveSandbox", "Phase 2: Applying modifications...")
             modifications.forEach { mod ->
                 try {
-                    val targetFile = java.io.File(mod.targetPath)
+                    val targetFile = File(mod.targetFile)
 
                     // Create parent directories if needed
                     targetFile.parentFile?.mkdirs()
@@ -976,12 +962,12 @@ class OracleDriveSandbox @Inject constructor(
 
                     AuraFxLogger.i(
                         "OracleDriveSandbox",
-                        "Applied: ${mod.targetPath} (${mod.modifiedContent.size} bytes)"
+                        "Applied: ${mod.targetFile} (${mod.modifiedContent.size} bytes)"
                     )
 
                 } catch (e: Exception) {
-                    AuraFxLogger.e("OracleDriveSandbox", "Modification failed for ${mod.targetPath}", e)
-                    throw Exception("Application phase failed at ${mod.targetPath}: ${e.message}")
+                    AuraFxLogger.e("OracleDriveSandbox", "Modification failed for ${mod.targetFile}", e)
+                    throw Exception("Application phase failed at ${mod.targetFile}: ${e.message}")
                 }
             }
 

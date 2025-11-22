@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.ui.components.colorpicker
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.dp
 fun ThemeEditor(
     initialColors: ThemeColors = ThemeColors(),
     onColorsChanged: (ThemeColors) -> Unit,
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     var colors by remember { mutableStateOf(initialColors) }
     var selectedColorType by remember { mutableStateOf<ColorType?>(null) }
@@ -100,16 +101,15 @@ fun ThemeEditor(
                 onDismissRequest = { selectedColorType = null },
                 title = { Text("Select ${colorType.label} Color") },
                 text = {
-                    ChromaCoreColorPicker(
+                    ColorBlendr(
                         color = when (colorType) {
                             ColorType.PRIMARY -> colors.primary
                             ColorType.SECONDARY -> colors.secondary
                             ColorType.BACKGROUND -> colors.background
                             ColorType.SURFACE -> colors.surface
                             ColorType.ERROR -> colors.error
-                            else -> colors.primary
                         },
-                        onColorChange = { newColor ->
+                        onColorSelected = { newColor ->
                             colors = when (colorType) {
                                 ColorType.PRIMARY -> colors.copy(primary = newColor)
                                 ColorType.SECONDARY -> colors.copy(secondary = newColor)
@@ -135,6 +135,12 @@ fun ThemeEditor(
         }
     }
 }
+
+annotation class ChromaCore(
+    val color: Color,
+    val onColorSelected: Any,
+    val modifier: Modifier
+)
 
 @Composable
 private fun ColorSelectionItem(
