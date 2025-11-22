@@ -32,40 +32,35 @@ import javax.inject.Singleton
  * - Persists key events and state snapshots into memory
  */
 @Singleton
-abstract class CascadeAgent : BaseAgent, OrchestratableAgent {
+class CascadeAgent @Inject constructor(
+    private val auraAgent: AuraAgent,
+    private val kaiAgent: KaiAgent,
+    private val memoryManager: MemoryManager,
+    override val contextManager: ContextManager,
+) : BaseAgent("Cascade"), OrchestratableAgent {
 
-    private val auraAgent: AuraAgent
-    private val kaiAgent: KaiAgent
-    private val memoryManager: MemoryManager
-    final override val contextManager: ContextManager
+    // Internal scope for agent background work; cancelled independently from parentScope
+    private val internalJob = SupervisorJob()
+    private val internalScope: CoroutineScope = CoroutineScope(Dispatchers.Default + internalJob)
+    
+    // State management
+    private val _visionState = MutableStateFlow(VisionState())
+    val visionState: StateFlow<VisionState> = _visionState.asStateFlow()
 
-    @JvmOverloads
-    @Inject
-    constructor(
-        auraAgent: AuraAgent,
-        kaiAgent: KaiAgent,
-        memoryManager: MemoryManager,
-        contextManager: ContextManager,
-        collaborationMode: StateFlow<CollaborationMode> = MutableStateFlow(CollaborationMode.AUTONOMOUS),
-    ) : super("Cascade") {
-        this.auraAgent = auraAgent
-        this.kaiAgent = kaiAgent
-        this.memoryManager = memoryManager
-        this.contextManager = contextManager
-        this.collaborationMode = collaborationMode
-        this.internalJob = SupervisorJob()
-        this.internalScope = CoroutineScope(Dispatchers.Default + internalJob)
-        this._visionState = MutableStateFlow(VisionState())
-        this.visionState = _visionState.asStateFlow()
-        this._processingState = MutableStateFlow(ProcessingState())
-        this.processingState = _processingState.asStateFlow()
-        this._collaborationMode = MutableStateFlow(CollaborationMode.AUTONOMOUS)
-        this.agentCapabilities = mutableMapOf<String, Set<String>>()
-        this.activeRequests = mutableMapOf<String, RequestContext>()
-        this.collaborationHistory = mutableListOf<CollaborationEvent>()
-    }
+    private val _processingState = MutableStateFlow(ProcessingState())
+    val processingState: StateFlow<ProcessingState> = _processingState.asStateFlow()
 
-    val collaborationMode: StateFlow<CollaborationMode>
+    // Collaboration mode
+    private val _collaborationMode = MutableStateFlow(CollaborationMode.AUTONOMOUS)
+    val collaborationMode: StateFlow<CollaborationMode> = _collaborationMode.asStateFlow()
+    
+    // Coordination state
+    @Volatile
+    private var isCoordinationActive: Boolean = false
+    private val agentCapabilities: MutableMap<String, Set<String>> = mutableMapOf()
+    private val activeRequests: MutableMap<String, RequestContext> = mutableMapOf()
+    private val collaborationHistory: MutableList<CollaborationEvent> = mutableListOf()
+
 
     // Agent identity
     override val agentName: String = "Cascade"
@@ -82,29 +77,9 @@ abstract class CascadeAgent : BaseAgent, OrchestratableAgent {
     // Parent scope provided by orchestrator (kept for lifecycle reference)
     private var parentScope: CoroutineScope? = null
 
-    // Internal scope for agent background work; cancelled independently from parentScope
-    private val internalJob: CompletableJob
-    private val internalScope: CoroutineScope
-
     // Monitoring job handles the continuous collaboration monitor lifecycle
     private var monitoringJob: Job? = null
 
-    // State management
-    private val _visionState: MutableStateFlow<VisionState>
-    val visionState: StateFlow<VisionState>
-
-    private val _processingState: MutableStateFlow<ProcessingState>
-    val processingState: StateFlow<ProcessingState>
-
-    // Collaboration mode
-    private val _collaborationMode: MutableStateFlow<CollaborationMode>
-
-    // Coordination state
-    @Volatile
-    private var isCoordinationActive: Boolean = false
-    private val agentCapabilities: MutableMap<String, Set<String>>
-    private val activeRequests: MutableMap<String, RequestContext>
-    private val collaborationHistory: MutableList<CollaborationEvent>
 
     // --- OrchestratableAgent implementations ---
     override suspend fun initialize(scope: CoroutineScope) {
