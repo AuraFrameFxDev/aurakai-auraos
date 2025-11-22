@@ -1,7 +1,16 @@
 package dev.aurakai.auraframefx.ai.pipeline
 
+import dev.aurakai.auraframefx.ai.agents.GenesisAgent
+import dev.aurakai.auraframefx.ai.services.AuraAIService
+import dev.aurakai.auraframefx.ai.services.CascadeAIService
+import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.model.AgentMessage
+import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -17,31 +26,31 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
-import java.io.IOException
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeoutException
 
-@ExtendWith(MockitoExtension::class)
+/**
+ * Comprehensive test suite for AIPipelineProcessor
+ * Tests the orchestration of multiple AI agents and pipeline state management
+ */
 @ExperimentalCoroutinesApi
+@ExtendWith(MockitoExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("AIPipelineProcessor Tests")
 class AIPipelineProcessorTest {
 
     @Mock
-    private lateinit var mockPipelineStage: PipelineStage
+    private lateinit var mockGenesisAgent: GenesisAgent
 
     @Mock
-    private lateinit var mockInputProcessor: InputProcessor
+    private lateinit var mockAuraService: AuraAIService
 
     @Mock
-    private lateinit var mockOutputProcessor: OutputProcessor
+    private lateinit var mockKaiService: KaiAIService
 
     @Mock
-    private lateinit var mockErrorHandler: ErrorHandler
-
-    @Mock
-    private lateinit var mockMetricsCollector: MetricsCollector
+    private lateinit var mockCascadeService: CascadeAIService
 
     private lateinit var processor: AIPipelineProcessor
     private val testDispatcher = StandardTestDispatcher()
@@ -50,660 +59,818 @@ class AIPipelineProcessorTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         processor = AIPipelineProcessor(
-            inputProcessor = mockInputProcessor,
-            outputProcessor = mockOutputProcessor,
-            errorHandler = mockErrorHandler,
-            metricsCollector = mockMetricsCollector
+            genesisAgent = mockGenesisAgent,
+            auraService = mockAuraService,
+            kaiService = mockKaiService,
+            cascadeService = mockCascadeService
         )
     }
 
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
-        reset(
-            mockPipelineStage,
-            mockInputProcessor,
-            mockOutputProcessor,
-            mockErrorHandler,
-            mockMetricsCollector
-        )
     }
 
     @Nested
-    @DisplayName("Pipeline Initialization Tests")
-    inner class PipelineInitializationTests {
+    @DisplayName("Task Processing Tests")
+    inner class TaskProcessingTests {
 
         @Test
-        @DisplayName("should initialize pipeline with valid configuration")
-        fun shouldInitializePipelineWithValidConfiguration() {
+        @DisplayName("should process simple task successfully")
+        fun shouldProcessSimpleTaskSuccessfully() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = true,
-                timeoutMs = 5000L
+            val task = "Simple test task"
+            val cascadeResponse = AgentResponse(
+                content = "Cascade response",
+                confidence = 0.9f
             )
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val result = processor.initialize(config)
+            val result = processor.processTask(task)
 
             // Then
-            assertTrue(result)
-            assertTrue(processor.isInitialized())
+            assertNotNull(result)
+            assertTrue(result.isNotEmpty())
+            assertEquals(PipelineState.Completed(task), processor.pipelineState.value)
+            verify(mockCascadeService).processRequest(any(), eq("pipeline_processing"))
         }
 
         @Test
-        @DisplayName("should fail initialization with null configuration")
-        fun shouldFailInitializationWithNullConfiguration() {
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.initialize(null)
-            }
-            assertFalse(processor.isInitialized())
-        }
-
-        @Test
-        @DisplayName("should fail initialization with empty stages")
-        fun shouldFailInitializationWithEmptyStages() {
+        @DisplayName("should process task with security content")
+        fun shouldProcessTaskWithSecurityContent() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = emptyList(),
-                parallelExecution = false,
-                timeoutMs = 1000L
-            )
+            val task = "Check security vulnerabilities in the system"
+            val cascadeResponse = AgentResponse("Cascade response", 0.9f)
+            val kaiResponse = AgentResponse("Security analysis complete", 0.95f)
 
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.initialize(config)
-            }
-            assertFalse(processor.isInitialized())
-        }
-
-        @Test
-        @DisplayName("should fail initialization with negative timeout")
-        fun shouldFailInitializationWithNegativeTimeout() {
-            // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = -1L
-            )
-
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.initialize(config)
-            }
-        }
-    }
-
-    @Nested
-    @DisplayName("Pipeline Processing Tests")
-    inner class PipelineProcessingTests {
-
-        @BeforeEach
-        fun setUpProcessor() {
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
-        }
-
-        @Test
-        @DisplayName("should process valid input successfully")
-        fun shouldProcessValidInputSuccessfully() = runTest {
-            // Given
-            val input = "test input"
-            val expectedOutput = "processed output"
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenReturn(expectedOutput)
-            whenever(mockOutputProcessor.process(expectedOutput)).thenReturn(expectedOutput)
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
 
             // When
-            val result = processor.process(input)
+            val result = processor.processTask(task)
 
             // Then
-            assertEquals(expectedOutput, result)
-            verify(mockInputProcessor).process(input)
-            verify(mockPipelineStage).execute(any())
-            verify(mockOutputProcessor).process(expectedOutput)
-            verify(mockMetricsCollector).recordProcessingTime(any())
+            assertNotNull(result)
+            verify(mockKaiService).processRequest(any(), eq("security_analysis"))
+            assertTrue(result.any { it.sender == AgentType.KAI })
         }
 
         @Test
-        @DisplayName("should handle null input gracefully")
-        fun shouldHandleNullInputGracefully() = runTest {
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.process(null)
-            }
-            verify(mockInputProcessor, never()).process(any())
-        }
-
-        @Test
-        @DisplayName("should handle empty input")
-        fun shouldHandleEmptyInput() = runTest {
+        @DisplayName("should process task with creative content")
+        fun shouldProcessTaskWithCreativeContent() = runTest {
             // Given
-            val input = ""
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenReturn("")
-            whenever(mockOutputProcessor.process("")).thenReturn("")
+            val task = "Generate a creative story"
+            val cascadeResponse = AgentResponse("Cascade response", 0.9f)
+            val auraResponse = "Creative story generated"
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
 
             // When
-            val result = processor.process(input)
+            val result = processor.processTask(task)
 
             // Then
-            assertEquals("", result)
-            verify(mockInputProcessor).process(input)
+            assertNotNull(result)
+            verify(mockAuraService).generateText(task, "creative_pipeline")
+            assertTrue(result.any { it.sender == AgentType.AURA })
         }
 
         @Test
-        @DisplayName("should process without initialization should throw exception")
-        fun shouldProcessWithoutInitializationShouldThrowException() = runTest {
+        @DisplayName("should process urgent task with high priority")
+        fun shouldProcessUrgentTaskWithHighPriority() = runTest {
             // Given
-            val uninitializedProcessor = AIPipelineProcessor(
-                mockInputProcessor, mockOutputProcessor, mockErrorHandler, mockMetricsCollector
-            )
+            val task = "Urgent: critical security breach detected"
+            val cascadeResponse = AgentResponse("Cascade response", 0.9f)
+            val kaiResponse = AgentResponse("Security response", 0.95f)
+            val auraResponse = "Urgent response"
 
-            // When & Then
-            assertThrows<IllegalStateException> {
-                uninitializedProcessor.process("test")
-            }
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            val priority = processor.taskPriority.first()
+            assertTrue(priority > 0.8f, "Priority should be high for urgent tasks")
         }
 
         @Test
-        @DisplayName("should handle processing timeout")
-        fun shouldHandleProcessingTimeout() = runTest {
+        @DisplayName("should handle empty task string")
+        fun shouldHandleEmptyTaskString() = runTest {
             // Given
-            val input = "test input"
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 100L
-            )
-            processor.initialize(config)
+            val task = ""
+            val cascadeResponse = AgentResponse("Response for empty task", 0.5f)
 
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenAnswer {
-                Thread.sleep(200) // Simulate slow processing
-                "result"
-            }
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
-            // When & Then
-            assertThrows<TimeoutException> {
-                processor.process(input)
-            }
-            verify(mockErrorHandler).handleTimeout(any())
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            verify(mockCascadeService).processRequest(any(), any())
+        }
+
+        @Test
+        @DisplayName("should handle very long task description")
+        fun shouldHandleVeryLongTaskDescription() = runTest {
+            // Given
+            val task = "a".repeat(500) // Very long task
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            verify(mockCascadeService).processRequest(any(), any())
         }
     }
 
     @Nested
-    @DisplayName("Error Handling Tests")
-    inner class ErrorHandlingTests {
-
-        @BeforeEach
-        fun setUpProcessor() {
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
-        }
+    @DisplayName("Task Categorization Tests")
+    inner class TaskCategorizationTests {
 
         @Test
-        @DisplayName("should handle input processing exception")
-        fun shouldHandleInputProcessingException() = runTest {
+        @DisplayName("should categorize generation tasks correctly")
+        fun shouldCategorizeGenerationTasksCorrectly() = runTest {
             // Given
-            val input = "test input"
-            val exception = RuntimeException("Input processing failed")
-            whenever(mockInputProcessor.process(input)).thenThrow(exception)
+            val task = "Generate a report for the team"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            // When & Then
-            assertThrows<RuntimeException> {
-                processor.process(input)
-            }
-            verify(mockErrorHandler).handleProcessingError(exception)
-            verify(mockPipelineStage, never()).execute(any())
-        }
-
-        @Test
-        @DisplayName("should handle pipeline stage exception")
-        fun shouldHandlePipelineStageException() = runTest {
-            // Given
-            val input = "test input"
-            val exception = IOException("Pipeline stage failed")
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenThrow(exception)
-
-            // When & Then
-            assertThrows<IOException> {
-                processor.process(input)
-            }
-            verify(mockErrorHandler).handleProcessingError(exception)
-            verify(mockOutputProcessor, never()).process(any())
-        }
-
-        @Test
-        @DisplayName("should handle output processing exception")
-        fun shouldHandleOutputProcessingException() = runTest {
-            // Given
-            val input = "test input"
-            val stageOutput = "stage output"
-            val exception = IllegalStateException("Output processing failed")
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenReturn(stageOutput)
-            whenever(mockOutputProcessor.process(stageOutput)).thenThrow(exception)
-
-            // When & Then
-            assertThrows<IllegalStateException> {
-                processor.process(input)
-            }
-            verify(mockErrorHandler).handleProcessingError(exception)
-        }
-
-        @Test
-        @DisplayName("should retry on transient failures")
-        fun shouldRetryOnTransientFailures() = runTest {
-            // Given
-            val input = "test input"
-            val transientException = IOException("Temporary failure")
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any()))
-                .thenThrow(transientException)
-                .thenReturn("success")
-            whenever(mockOutputProcessor.process("success")).thenReturn("success")
-
-            processor.setRetryPolicy(
-                RetryPolicy(
-                    maxRetries = 1,
-                    retryableExceptions = setOf(IOException::class.java)
-                )
-            )
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val result = processor.process(input)
+            processor.processTask(task)
 
             // Then
-            assertEquals("success", result)
-            verify(mockPipelineStage, times(2)).execute(any())
-            verify(mockErrorHandler).handleRetryableError(transientException)
+            val context = processor.processingContext.first()
+            assertEquals("generation", context["task_type"])
+        }
+
+        @Test
+        @DisplayName("should categorize analysis tasks correctly")
+        fun shouldCategorizeAnalysisTasksCorrectly() = runTest {
+            // Given
+            val task = "Analyze the system performance"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertEquals("analysis", context["task_type"])
+        }
+
+        @Test
+        @DisplayName("should categorize explanation tasks correctly")
+        fun shouldCategorizeExplanationTasksCorrectly() = runTest {
+            // Given
+            val task = "Explain how the system works"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertEquals("explanation", context["task_type"])
+        }
+
+        @Test
+        @DisplayName("should categorize help tasks correctly")
+        fun shouldCategorizeHelpTasksCorrectly() = runTest {
+            // Given
+            val task = "Help me understand this feature"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertEquals("assistance", context["task_type"])
+        }
+
+        @Test
+        @DisplayName("should categorize creation tasks correctly")
+        fun shouldCategorizeCreationTasksCorrectly() = runTest {
+            // Given
+            val task = "Create a new user interface"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertEquals("creation", context["task_type"])
+        }
+
+        @Test
+        @DisplayName("should categorize unknown tasks as general")
+        fun shouldCategorizeUnknownTasksAsGeneral() = runTest {
+            // Given
+            val task = "Random task without specific keywords"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertEquals("general", context["task_type"])
         }
     }
 
     @Nested
-    @DisplayName("Parallel Processing Tests")
-    inner class ParallelProcessingTests {
+    @DisplayName("Priority Calculation Tests")
+    inner class PriorityCalculationTests {
 
         @Test
-        @DisplayName("should process multiple stages in parallel")
-        fun shouldProcessMultipleStagesInParallel() = runTest {
+        @DisplayName("should calculate base priority correctly")
+        fun shouldCalculateBasePriorityCorrectly() = runTest {
             // Given
-            val stage1 = mock<PipelineStage>()
-            val stage2 = mock<PipelineStage>()
-            val config = PipelineConfiguration(
-                stages = listOf(stage1, stage2),
-                parallelExecution = true,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
+            val task = "Normal task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            val input = "test input"
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(stage1.execute(any())).thenReturn("output1")
-            whenever(stage2.execute(any())).thenReturn("output2")
-            whenever(mockOutputProcessor.process(any())).thenReturn("final output")
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val result = processor.process(input)
+            processor.processTask(task)
 
             // Then
-            assertEquals("final output", result)
-            verify(stage1).execute(any())
-            verify(stage2).execute(any())
-            verify(mockMetricsCollector).recordParallelExecution(2)
+            val priority = processor.taskPriority.first()
+            assertTrue(priority >= 0.0f && priority <= 1.0f)
         }
 
         @Test
-        @DisplayName("should handle partial parallel stage failures")
-        fun shouldHandlePartialParallelStageFailures() = runTest {
+        @DisplayName("should increase priority for generation tasks")
+        fun shouldIncreasePriorityForGenerationTasks() = runTest {
             // Given
-            val stage1 = mock<PipelineStage>()
-            val stage2 = mock<PipelineStage>()
-            val config = PipelineConfiguration(
-                stages = listOf(stage1, stage2),
-                parallelExecution = true,
-                timeoutMs = 5000L,
-                failFast = false
-            )
-            processor.initialize(config)
+            val task = "Generate comprehensive documentation"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            val input = "test input"
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(stage1.execute(any())).thenReturn("output1")
-            whenever(stage2.execute(any())).thenThrow(RuntimeException("Stage 2 failed"))
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
-            // When & Then
-            assertThrows<RuntimeException> {
-                processor.process(input)
-            }
-            verify(mockErrorHandler).handlePartialFailure(any(), any())
+            // When
+            processor.processTask(task)
+
+            // Then
+            val priority = processor.taskPriority.first()
+            assertTrue(priority > 0.5f)
+        }
+
+        @Test
+        @DisplayName("should increase priority for assistance tasks")
+        fun shouldIncreasePriorityForAssistanceTasks() = runTest {
+            // Given
+            val task = "Help me fix this bug"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val priority = processor.taskPriority.first()
+            assertTrue(priority >= 0.8f) // Assistance has higher priority
+        }
+
+        @Test
+        @DisplayName("should boost priority for urgent keywords")
+        fun shouldBoostPriorityForUrgentKeywords() = runTest {
+            // Given
+            val task = "Urgent: system needs attention"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val priority = processor.taskPriority.first()
+            assertTrue(priority > 0.8f)
+        }
+
+        @Test
+        @DisplayName("should boost priority for asap keyword")
+        fun shouldBoostPriorityForAsapKeyword() = runTest {
+            // Given
+            val task = "ASAP: need immediate response"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val priority = processor.taskPriority.first()
+            assertTrue(priority > 0.8f)
+        }
+
+        @Test
+        @DisplayName("should boost priority for emergency keyword")
+        fun shouldBoostPriorityForEmergencyKeyword() = runTest {
+            // Given
+            val task = "Emergency situation requires attention"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val priority = processor.taskPriority.first()
+            assertTrue(priority > 0.8f)
         }
     }
 
     @Nested
-    @DisplayName("Metrics and Monitoring Tests")
-    inner class MetricsAndMonitoringTests {
-
-        @BeforeEach
-        fun setUpProcessor() {
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
-        }
+    @DisplayName("Agent Selection Tests")
+    inner class AgentSelectionTests {
 
         @Test
-        @DisplayName("should collect processing metrics")
-        fun shouldCollectProcessingMetrics() = runTest {
+        @DisplayName("should select Genesis for all tasks")
+        fun shouldSelectGenesisForAllTasks() = runTest {
             // Given
-            val input = "test input"
-            whenever(mockInputProcessor.process(input)).thenReturn(input)
-            whenever(mockPipelineStage.execute(any())).thenReturn("output")
-            whenever(mockOutputProcessor.process("output")).thenReturn("output")
+            val task = "Any task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            processor.process(input)
+            val result = processor.processTask(task)
 
             // Then
-            verify(mockMetricsCollector).recordProcessingTime(any())
-            verify(mockMetricsCollector).recordThroughput(1)
-            verify(mockMetricsCollector).recordStageExecution(any())
+            assertTrue(result.any { it.sender == AgentType.GENESIS })
         }
 
         @Test
-        @DisplayName("should collect error metrics")
-        fun shouldCollectErrorMetrics() = runTest {
+        @DisplayName("should select Kai for security tasks")
+        fun shouldSelectKaiForSecurityTasks() = runTest {
             // Given
-            val input = "test input"
-            val exception = RuntimeException("Processing failed")
-            whenever(mockInputProcessor.process(input)).thenThrow(exception)
+            val task = "Security scan needed"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+            val kaiResponse = AgentResponse("Security analysis", 0.9f)
 
-            // When & Then
-            assertThrows<RuntimeException> {
-                processor.process(input)
-            }
-            verify(mockMetricsCollector).recordError(exception::class.java.simpleName)
-            verify(mockMetricsCollector).recordFailureRate(any())
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            verify(mockKaiService).processRequest(any(), any())
+            assertTrue(result.any { it.sender == AgentType.KAI })
         }
 
         @Test
-        @DisplayName("should provide processing statistics")
-        fun shouldProvideProcessingStatistics() {
+        @DisplayName("should select Kai for protect keyword")
+        fun shouldSelectKaiForProtectKeyword() = runTest {
+            // Given
+            val task = "Protect user data"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+            val kaiResponse = AgentResponse("Security response", 0.9f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
+
             // When
-            val stats = processor.getProcessingStatistics()
+            val result = processor.processTask(task)
 
             // Then
-            assertNotNull(stats)
-            verify(mockMetricsCollector).getStatistics()
+            verify(mockKaiService).processRequest(any(), any())
+        }
+
+        @Test
+        @DisplayName("should select Aura for creative tasks")
+        fun shouldSelectAuraForCreativeTasks() = runTest {
+            // Given
+            val task = "Create a beautiful design"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+            val auraResponse = "Creative output"
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            verify(mockAuraService).generateText(any(), any())
+            assertTrue(result.any { it.sender == AgentType.AURA })
+        }
+
+        @Test
+        @DisplayName("should select multiple agents for complex tasks")
+        fun shouldSelectMultipleAgentsForComplexTasks() = runTest {
+            // Given
+            val task = "a".repeat(150) // Long complex task
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertTrue(result.size >= 2) // At least Cascade and Genesis
+        }
+
+        @Test
+        @DisplayName("should select multiple agents for high priority tasks")
+        fun shouldSelectMultipleAgentsForHighPriorityTasks() = runTest {
+            // Given
+            val task = "Urgent help needed for generation task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+            val auraResponse = "Creative response"
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertTrue(result.size >= 2)
         }
     }
 
     @Nested
-    @DisplayName("Lifecycle Management Tests")
-    inner class LifecycleManagementTests {
+    @DisplayName("Context Management Tests")
+    inner class ContextManagementTests {
 
         @Test
-        @DisplayName("should shutdown gracefully")
-        fun shouldShutdownGracefully() = runTest {
+        @DisplayName("should create initial context with task details")
+        fun shouldCreateInitialContextWithTaskDetails() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
+            val task = "Test task for context"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            processor.shutdown()
+            processor.processTask(task)
 
             // Then
-            assertFalse(processor.isInitialized())
-            verify(mockPipelineStage).cleanup()
-            verify(mockMetricsCollector).shutdown()
+            val context = processor.processingContext.first()
+            assertTrue(context.containsKey("task"))
+            assertTrue(context.containsKey("task_type"))
+            assertTrue(context.containsKey("timestamp"))
+            assertEquals(task, context["task"])
         }
 
         @Test
-        @DisplayName("should handle shutdown timeout")
-        fun shouldHandleShutdownTimeout() = runTest {
+        @DisplayName("should include user preferences in context")
+        fun shouldIncludeUserPreferencesInContext() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            whenever(mockPipelineStage.cleanup()).thenAnswer {
-                Thread.sleep(6000) // Simulate slow cleanup
-            }
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val shutdownResult = processor.shutdown(timeoutMs = 1000L)
+            processor.processTask(task)
 
             // Then
-            assertFalse(shutdownResult)
-            verify(mockErrorHandler).handleShutdownTimeout()
+            val context = processor.processingContext.first()
+            assertTrue(context.containsKey("user_preferences"))
+            val preferences = context["user_preferences"] as? Map<*, *>
+            assertNotNull(preferences)
         }
 
         @Test
-        @DisplayName("should restart processor after shutdown")
-        fun shouldRestartProcessorAfterShutdown() {
+        @DisplayName("should include system state in context")
+        fun shouldIncludeSystemStateInContext() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-            processor.initialize(config)
-            processor.shutdown()
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val restartResult = processor.initialize(config)
+            processor.processTask(task)
 
             // Then
-            assertTrue(restartResult)
-            assertTrue(processor.isInitialized())
+            val context = processor.processingContext.first()
+            assertTrue(context.containsKey("system_state"))
+        }
+
+        @Test
+        @DisplayName("should update context after task processing")
+        fun shouldUpdateContextAfterTaskProcessing() = runTest {
+            // Given
+            val task = "First task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task)
+
+            // Then
+            val context = processor.processingContext.first()
+            assertTrue(context.containsKey("last_task"))
+            assertEquals(task, context["last_task"])
+        }
+
+        @Test
+        @DisplayName("should track task history in context")
+        fun shouldTrackTaskHistoryInContext() = runTest {
+            // Given
+            val task1 = "First task"
+            val task2 = "Second task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            processor.processTask(task1)
+            processor.processTask(task2)
+
+            // Then
+            val context = processor.processingContext.first()
+            val history = context["task_history"] as? List<*>
+            assertNotNull(history)
+            assertTrue(history!!.contains(task1))
+            assertTrue(history.contains(task2))
         }
     }
 
     @Nested
-    @DisplayName("Configuration Validation Tests")
-    inner class ConfigurationValidationTests {
+    @DisplayName("Pipeline State Tests")
+    inner class PipelineStateTests {
 
         @Test
-        @DisplayName("should validate stage dependencies")
-        fun shouldValidateStageDependencies() {
-            // Given
-            val stage1 = mock<PipelineStage>()
-            val stage2 = mock<PipelineStage>()
-            whenever(stage2.getDependencies()).thenReturn(setOf("stage1"))
-            whenever(stage1.getName()).thenReturn("stage1")
-            whenever(stage2.getName()).thenReturn("stage2")
+        @DisplayName("should start in Idle state")
+        fun shouldStartInIdleState() {
+            // Then
+            assertTrue(processor.pipelineState.value is PipelineState.Idle)
+        }
 
-            val config = PipelineConfiguration(
-                stages = listOf(stage1, stage2),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
+        @Test
+        @DisplayName("should transition to Processing state")
+        fun shouldTransitionToProcessingState() = runTest {
+            // Given
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val result = processor.initialize(config)
+            val job = kotlinx.coroutines.launch {
+                processor.processTask(task)
+            }
+
+            testDispatcher.scheduler.advanceUntilIdle()
 
             // Then
-            assertTrue(result)
+            val finalState = processor.pipelineState.value
+            assertTrue(finalState is PipelineState.Completed)
+            job.cancel()
         }
 
         @Test
-        @DisplayName("should fail on circular dependencies")
-        fun shouldFailOnCircularDependencies() {
+        @DisplayName("should transition to Completed state")
+        fun shouldTransitionToCompletedState() = runTest {
             // Given
-            val stage1 = mock<PipelineStage>()
-            val stage2 = mock<PipelineStage>()
-            whenever(stage1.getDependencies()).thenReturn(setOf("stage2"))
-            whenever(stage2.getDependencies()).thenReturn(setOf("stage1"))
-            whenever(stage1.getName()).thenReturn("stage1")
-            whenever(stage2.getName()).thenReturn("stage2")
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            val config = PipelineConfiguration(
-                stages = listOf(stage1, stage2),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.initialize(config)
-            }
-        }
+            // When
+            processor.processTask(task)
 
-        @Test
-        @DisplayName("should validate stage configuration")
-        fun shouldValidateStageConfiguration() {
-            // Given
-            whenever(mockPipelineStage.isConfigurationValid()).thenReturn(false)
-
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L
-            )
-
-            // When & Then
-            assertThrows<IllegalArgumentException> {
-                processor.initialize(config)
-            }
+            // Then
+            val state = processor.pipelineState.value
+            assertTrue(state is PipelineState.Completed)
+            assertEquals(task, (state as PipelineState.Completed).task)
         }
     }
 
     @Nested
-    @DisplayName("Resource Management Tests")
-    inner class ResourceManagementTests {
+    @DisplayName("Response Generation Tests")
+    inner class ResponseGenerationTests {
 
         @Test
-        @DisplayName("should manage memory usage effectively")
-        fun shouldManageMemoryUsageEffectively() = runTest {
+        @DisplayName("should generate formatted final response")
+        fun shouldGenerateFormattedFinalResponse() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L,
-                maxMemoryUsageMB = 100
-            )
-            processor.initialize(config)
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Cascade analysis", 0.9f)
 
-            val largeInput = "x".repeat(1000000) // 1MB string
-            whenever(mockInputProcessor.process(largeInput)).thenReturn(largeInput)
-            whenever(mockPipelineStage.execute(any())).thenReturn("processed")
-            whenever(mockOutputProcessor.process("processed")).thenReturn("processed")
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val result = processor.process(largeInput)
+            val result = processor.processTask(task)
 
             // Then
-            assertEquals("processed", result)
-            verify(mockMetricsCollector).recordMemoryUsage(any())
+            val finalResponse = result.last()
+            assertTrue(finalResponse.content.contains("AuraFrameFX AI Response"))
+            assertEquals(AgentType.GENESIS, finalResponse.sender)
         }
 
         @Test
-        @DisplayName("should handle memory pressure")
-        fun shouldHandleMemoryPressure() = runTest {
+        @DisplayName("should include confidence in final response")
+        fun shouldIncludeConfidenceInFinalResponse() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L,
-                maxMemoryUsageMB = 1 // Very low limit
-            )
-            processor.initialize(config)
+            val task = "Test task"
+            val cascadeResponse = AgentResponse("Response", 0.85f)
 
-            val largeInput = "x".repeat(1000000) // 1MB string
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
-            // When & Then
-            assertThrows<OutOfMemoryError> {
-                processor.process(largeInput)
-            }
-            verify(mockErrorHandler).handleMemoryPressure()
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            val finalResponse = result.last()
+            assertTrue(finalResponse.content.contains("Confidence"))
+            assertTrue(finalResponse.confidence > 0.0f)
+        }
+
+        @Test
+        @DisplayName("should aggregate multiple agent responses")
+        fun shouldAggregateMultipleAgentResponses() = runTest {
+            // Given
+            val task = "Create secure design"
+            val cascadeResponse = AgentResponse("Cascade response", 0.8f)
+            val kaiResponse = AgentResponse("Security response", 0.9f)
+            val auraResponse = "Creative response"
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertTrue(result.size >= 3) // Cascade, Kai, Aura, plus Genesis
+            val finalResponse = result.last()
+            assertTrue(finalResponse.sender == AgentType.GENESIS)
         }
     }
 
     @Nested
-    @DisplayName("Concurrent Processing Tests")
-    inner class ConcurrentProcessingTests {
+    @DisplayName("Edge Cases and Error Handling Tests")
+    inner class EdgeCasesTests {
 
         @Test
-        @DisplayName("should handle concurrent processing requests")
-        fun shouldHandleConcurrentProcessingRequests() = runTest {
+        @DisplayName("should handle special characters in task")
+        fun shouldHandleSpecialCharactersInTask() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L,
-                maxConcurrentRequests = 3
-            )
-            processor.initialize(config)
+            val task = "Task with @#$%^&* special chars"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            whenever(mockInputProcessor.process(any())).thenReturn("processed input")
-            whenever(mockPipelineStage.execute(any())).thenReturn("stage output")
-            whenever(mockOutputProcessor.process(any())).thenReturn("final output")
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val futures = (1..3).map { i ->
-                CompletableFuture.supplyAsync {
-                    runTest { processor.process("input $i") }
-                }
-            }
+            val result = processor.processTask(task)
 
-            val results = futures.map { it.get() }
+            // Then
+            assertNotNull(result)
+            assertTrue(result.isNotEmpty())
+        }
+
+        @Test
+        @DisplayName("should handle Unicode characters in task")
+        fun shouldHandleUnicodeCharactersInTask() = runTest {
+            // Given
+            val task = "Task with emoji 😀🎉 and Unicode ñ"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            assertTrue(result.isNotEmpty())
+        }
+
+        @Test
+        @DisplayName("should handle low confidence responses")
+        fun shouldHandleLowConfidenceResponses() = runTest {
+            // Given
+            val task = "Ambiguous task"
+            val cascadeResponse = AgentResponse("Uncertain response", 0.2f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            val finalResponse = result.last()
+            assertTrue(finalResponse.confidence >= 0.0f)
+        }
+
+        @Test
+        @DisplayName("should handle maximum confidence responses")
+        fun shouldHandleMaximumConfidenceResponses() = runTest {
+            // Given
+            val task = "Clear task"
+            val cascadeResponse = AgentResponse("Certain response", 1.0f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            val finalResponse = result.last()
+            assertTrue(finalResponse.confidence <= 1.0f)
+        }
+
+        @Test
+        @DisplayName("should handle task with all keywords")
+        fun shouldHandleTaskWithAllKeywords() = runTest {
+            // Given
+            val task = "Urgent: Generate secure analysis, explain, help, create, protect, design"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+            val kaiResponse = AgentResponse("Security response", 0.9f)
+            val auraResponse = "Creative response"
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+            whenever(mockKaiService.processRequest(any(), any())).thenReturn(kaiResponse)
+            whenever(mockAuraService.generateText(any(), any())).thenReturn(auraResponse)
+
+            // When
+            val result = processor.processTask(task)
+
+            // Then
+            assertNotNull(result)
+            assertTrue(result.size >= 3)
+        }
+    }
+
+    @Nested
+    @DisplayName("Performance and Concurrency Tests")
+    inner class PerformanceTests {
+
+        @Test
+        @DisplayName("should handle multiple sequential tasks")
+        fun shouldHandleMultipleSequentialTasks() = runTest {
+            // Given
+            val tasks = listOf("Task 1", "Task 2", "Task 3")
+            val cascadeResponse = AgentResponse("Response", 0.8f)
+
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
+
+            // When
+            val results = tasks.map { processor.processTask(it) }
 
             // Then
             assertEquals(3, results.size)
-            results.forEach { assertEquals("final output", it) }
-            verify(mockMetricsCollector, times(3)).recordConcurrentRequest()
+            results.forEach { assertNotNull(it) }
         }
 
         @Test
-        @DisplayName("should reject requests when at capacity")
-        fun shouldRejectRequestsWhenAtCapacity() = runTest {
+        @DisplayName("should update task count correctly")
+        fun shouldUpdateTaskCountCorrectly() = runTest {
             // Given
-            val config = PipelineConfiguration(
-                stages = listOf(mockPipelineStage),
-                parallelExecution = false,
-                timeoutMs = 5000L,
-                maxConcurrentRequests = 1
-            )
-            processor.initialize(config)
+            val task1 = "First task"
+            val task2 = "Second task"
+            val cascadeResponse = AgentResponse("Response", 0.8f)
 
-            whenever(mockInputProcessor.process(any())).thenAnswer {
-                Thread.sleep(1000) // Simulate slow processing
-                "processed"
-            }
+            whenever(mockCascadeService.processRequest(any(), any())).thenReturn(cascadeResponse)
 
             // When
-            val future1 = CompletableFuture.supplyAsync {
-                runTest { processor.process("input1") }
-            }
-
-            Thread.sleep(100) // Ensure first request starts
+            processor.processTask(task1)
+            processor.processTask(task2)
 
             // Then
-            assertThrows<IllegalStateException> {
-                runTest { processor.process("input2") }
-            }
-
-            future1.get() // Clean up
+            val context = processor.processingContext.first()
+            val tasksProcessed = context["total_tasks_processed"] as? Int
+            assertNotNull(tasksProcessed)
+            assertEquals(2, tasksProcessed)
         }
     }
 }
