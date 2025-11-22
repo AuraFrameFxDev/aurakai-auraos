@@ -11,16 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
 import dev.aurakai.auraframefx.databinding.ActivityQuickSettingsConfigBinding
-import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
 import dev.aurakai.auraframefx.system.quicksettings.QuickSettingsConfigManager
-import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsTileConfig
 import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsBackground
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsTileConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -214,7 +215,7 @@ class QuickSettingsConfigActivity : AppCompatActivity() {
 
     class TileConfigAdapter(
         private val onItemClick: (QuickSettingsTileConfig) -> Unit,
-    ) : RecyclerView.Adapter<TileConfigAdapter.TileViewHolder>() {
+    ) : Adapter<TileConfigAdapter.TileViewHolder>() {
 
         private var tiles: List<QuickSettingsTileConfig> = emptyList()
 
@@ -285,6 +286,8 @@ class QuickSettingsConfigActivity : AppCompatActivity() {
 
         override fun getItemCount(): Int = tiles.size
     }
+
+    annotation class ToString
 
     companion object {
         fun createIntent(context: Context): Intent {
