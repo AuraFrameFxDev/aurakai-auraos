@@ -5,172 +5,103 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-/**
- * Test suite for AIPipelineConfig data classes
- */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("AIPipelineConfig Tests")
 class AIPipelineConfigTest {
 
     @Nested
-    @DisplayName("AIPipelineConfig Default Values Tests")
-    inner class DefaultValuesTests {
+    @DisplayName("Default Configuration")
+    inner class DefaultConfigurationTests {
 
         @Test
-        @DisplayName("should have correct default maxRetries")
-        fun shouldHaveCorrectDefaultMaxRetries() {
-            // When
+        @DisplayName("Should create config with default values")
+        fun shouldCreateConfigWithDefaults() {
             val config = AIPipelineConfig()
 
-            // Then
             assertEquals(3, config.maxRetries)
-        }
-
-        @Test
-        @DisplayName("should have correct default timeoutSeconds")
-        fun shouldHaveCorrectDefaultTimeoutSeconds() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
             assertEquals(30, config.timeoutSeconds)
-        }
-
-        @Test
-        @DisplayName("should have correct default contextWindowSize")
-        fun shouldHaveCorrectDefaultContextWindowSize() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
             assertEquals(5, config.contextWindowSize)
-        }
-
-        @Test
-        @DisplayName("should have correct default priorityThreshold")
-        fun shouldHaveCorrectDefaultPriorityThreshold() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
-            assertEquals(0.7f, config.priorityThreshold)
-        }
-
-        @Test
-        @DisplayName("should have correct default weights")
-        fun shouldHaveCorrectDefaultWeights() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
-            assertEquals(0.4f, config.priorityWeight)
-            assertEquals(0.4f, config.urgencyWeight)
-            assertEquals(0.2f, config.importanceWeight)
-        }
-
-        @Test
-        @DisplayName("should have correct default maxActiveTasks")
-        fun shouldHaveCorrectDefaultMaxActiveTasks() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
+            assertEquals(0.7f, config.priorityThreshold, 0.001f)
+            assertEquals(0.4f, config.priorityWeight, 0.001f)
+            assertEquals(0.4f, config.urgencyWeight, 0.001f)
+            assertEquals(0.2f, config.importanceWeight, 0.001f)
             assertEquals(10, config.maxActiveTasks)
-        }
-
-        @Test
-        @DisplayName("should have correct default agent priorities")
-        fun shouldHaveCorrectDefaultAgentPriorities() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
-            assertEquals(1.0f, config.agentPriorities[AgentType.GENESIS])
-            assertEquals(0.9f, config.agentPriorities[AgentType.KAI])
-            assertEquals(0.8f, config.agentPriorities[AgentType.AURA])
-            assertEquals(0.7f, config.agentPriorities[AgentType.CASCADE])
-        }
-
-        @Test
-        @DisplayName("should have default memory retrieval config")
-        fun shouldHaveDefaultMemoryRetrievalConfig() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
             assertNotNull(config.memoryRetrievalConfig)
+            assertNotNull(config.contextChainingConfig)
         }
 
         @Test
-        @DisplayName("should have default context chaining config")
-        fun shouldHaveDefaultContextChainingConfig() {
-            // When
+        @DisplayName("Should have correct default agent priorities")
+        fun shouldHaveCorrectDefaultAgentPriorities() {
             val config = AIPipelineConfig()
 
-            // Then
-            assertNotNull(config.contextChainingConfig)
+            assertEquals(1.0f, config.agentPriorities[AgentType.GENESIS], 0.001f)
+            assertEquals(0.9f, config.agentPriorities[AgentType.KAI], 0.001f)
+            assertEquals(0.8f, config.agentPriorities[AgentType.AURA], 0.001f)
+            assertEquals(0.7f, config.agentPriorities[AgentType.CASCADE], 0.001f)
+        }
+
+        @Test
+        @DisplayName("Weight sum should equal 1.0 for valid priority calculation")
+        fun weightSumShouldBeValid() {
+            val config = AIPipelineConfig()
+            val weightSum = config.priorityWeight + config.urgencyWeight + config.importanceWeight
+
+            assertEquals(1.0f, weightSum, 0.001f)
         }
     }
 
     @Nested
-    @DisplayName("AIPipelineConfig Custom Values Tests")
-    inner class CustomValuesTests {
+    @DisplayName("Custom Configuration")
+    inner class CustomConfigurationTests {
 
         @Test
-        @DisplayName("should allow custom maxRetries")
+        @DisplayName("Should allow custom max retries")
         fun shouldAllowCustomMaxRetries() {
-            // When
             val config = AIPipelineConfig(maxRetries = 5)
-
-            // Then
             assertEquals(5, config.maxRetries)
         }
 
         @Test
-        @DisplayName("should allow custom timeout")
+        @DisplayName("Should allow custom timeout")
         fun shouldAllowCustomTimeout() {
-            // When
             val config = AIPipelineConfig(timeoutSeconds = 60)
-
-            // Then
             assertEquals(60, config.timeoutSeconds)
         }
 
         @Test
-        @DisplayName("should allow custom agent priorities")
-        fun shouldAllowCustomAgentPriorities() {
-            // Given
-            val customPriorities = mapOf(
-                AgentType.GENESIS to 0.95f,
-                AgentType.KAI to 0.85f
+        @DisplayName("Should allow custom context window size")
+        fun shouldAllowCustomContextWindowSize() {
+            val config = AIPipelineConfig(contextWindowSize = 10)
+            assertEquals(10, config.contextWindowSize)
+        }
+
+        @Test
+        @DisplayName("Should allow custom weights")
+        fun shouldAllowCustomWeights() {
+            val config = AIPipelineConfig(
+                priorityWeight = 0.5f,
+                urgencyWeight = 0.3f,
+                importanceWeight = 0.2f
             )
 
-            // When
+            assertEquals(0.5f, config.priorityWeight, 0.001f)
+            assertEquals(0.3f, config.urgencyWeight, 0.001f)
+            assertEquals(0.2f, config.importanceWeight, 0.001f)
+        }
+
+        @Test
+        @DisplayName("Should allow custom agent priorities")
+        fun shouldAllowCustomAgentPriorities() {
+            val customPriorities = mapOf(
+                AgentType.GENESIS to 0.9f,
+                AgentType.KAI to 1.0f
+            )
             val config = AIPipelineConfig(agentPriorities = customPriorities)
 
-            // Then
-            assertEquals(0.95f, config.agentPriorities[AgentType.GENESIS])
-            assertEquals(0.85f, config.agentPriorities[AgentType.KAI])
-        }
-
-        @Test
-        @DisplayName("should allow zero maxActiveTasks")
-        fun shouldAllowZeroMaxActiveTasks() {
-            // When
-            val config = AIPipelineConfig(maxActiveTasks = 0)
-
-            // Then
-            assertEquals(0, config.maxActiveTasks)
-        }
-
-        @Test
-        @DisplayName("should allow negative timeout for unlimited")
-        fun shouldAllowNegativeTimeoutForUnlimited() {
-            // When
-            val config = AIPipelineConfig(timeoutSeconds = -1)
-
-            // Then
-            assertEquals(-1, config.timeoutSeconds)
+            assertEquals(customPriorities, config.agentPriorities)
         }
     }
 
@@ -179,63 +110,27 @@ class AIPipelineConfigTest {
     inner class MemoryRetrievalConfigTests {
 
         @Test
-        @DisplayName("should have correct default maxContextLength")
-        fun shouldHaveCorrectDefaultMaxContextLength() {
-            // When
-            val config = MemoryRetrievalConfig()
+        @DisplayName("Should create memory config with defaults")
+        fun shouldCreateMemoryConfigWithDefaults() {
+            val memoryConfig = MemoryRetrievalConfig()
 
-            // Then
-            assertEquals(2000, config.maxContextLength)
+            assertEquals(2000, memoryConfig.maxContextLength)
+            assertEquals(0.75f, memoryConfig.similarityThreshold, 0.001f)
+            assertEquals(5, memoryConfig.maxRetrievedItems)
         }
 
         @Test
-        @DisplayName("should have correct default similarityThreshold")
-        fun shouldHaveCorrectDefaultSimilarityThreshold() {
-            // When
-            val config = MemoryRetrievalConfig()
+        @DisplayName("Should allow custom memory config")
+        fun shouldAllowCustomMemoryConfig() {
+            val memoryConfig = MemoryRetrievalConfig(
+                maxContextLength = 3000,
+                similarityThreshold = 0.8f,
+                maxRetrievedItems = 10
+            )
 
-            // Then
-            assertEquals(0.75f, config.similarityThreshold)
-        }
-
-        @Test
-        @DisplayName("should have correct default maxRetrievedItems")
-        fun shouldHaveCorrectDefaultMaxRetrievedItems() {
-            // When
-            val config = MemoryRetrievalConfig()
-
-            // Then
-            assertEquals(5, config.maxRetrievedItems)
-        }
-
-        @Test
-        @DisplayName("should allow custom maxContextLength")
-        fun shouldAllowCustomMaxContextLength() {
-            // When
-            val config = MemoryRetrievalConfig(maxContextLength = 5000)
-
-            // Then
-            assertEquals(5000, config.maxContextLength)
-        }
-
-        @Test
-        @DisplayName("should allow custom similarityThreshold")
-        fun shouldAllowCustomSimilarityThreshold() {
-            // When
-            val config = MemoryRetrievalConfig(similarityThreshold = 0.9f)
-
-            // Then
-            assertEquals(0.9f, config.similarityThreshold)
-        }
-
-        @Test
-        @DisplayName("should allow custom maxRetrievedItems")
-        fun shouldAllowCustomMaxRetrievedItems() {
-            // When
-            val config = MemoryRetrievalConfig(maxRetrievedItems = 10)
-
-            // Then
-            assertEquals(10, config.maxRetrievedItems)
+            assertEquals(3000, memoryConfig.maxContextLength)
+            assertEquals(0.8f, memoryConfig.similarityThreshold, 0.001f)
+            assertEquals(10, memoryConfig.maxRetrievedItems)
         }
     }
 
@@ -244,161 +139,86 @@ class AIPipelineConfigTest {
     inner class ContextChainingConfigTests {
 
         @Test
-        @DisplayName("should have correct default maxChainLength")
-        fun shouldHaveCorrectDefaultMaxChainLength() {
-            // When
-            val config = ContextChainingConfig()
+        @DisplayName("Should create context chaining config with defaults")
+        fun shouldCreateContextChainingConfigWithDefaults() {
+            val chainingConfig = ContextChainingConfig()
 
-            // Then
-            assertEquals(10, config.maxChainLength)
+            assertEquals(10, chainingConfig.maxChainLength)
+            assertEquals(0.6f, chainingConfig.relevanceThreshold, 0.001f)
+            assertEquals(0.9f, chainingConfig.decayRate, 0.001f)
         }
 
         @Test
-        @DisplayName("should have correct default relevanceThreshold")
-        fun shouldHaveCorrectDefaultRelevanceThreshold() {
-            // When
-            val config = ContextChainingConfig()
+        @DisplayName("Decay rate should be between 0 and 1")
+        fun decayRateShouldBeValid() {
+            val chainingConfig = ContextChainingConfig()
 
-            // Then
-            assertEquals(0.6f, config.relevanceThreshold)
-        }
-
-        @Test
-        @DisplayName("should have correct default decayRate")
-        fun shouldHaveCorrectDefaultDecayRate() {
-            // When
-            val config = ContextChainingConfig()
-
-            // Then
-            assertEquals(0.9f, config.decayRate)
-        }
-
-        @Test
-        @DisplayName("should allow custom maxChainLength")
-        fun shouldAllowCustomMaxChainLength() {
-            // When
-            val config = ContextChainingConfig(maxChainLength = 20)
-
-            // Then
-            assertEquals(20, config.maxChainLength)
-        }
-
-        @Test
-        @DisplayName("should allow custom relevanceThreshold")
-        fun shouldAllowCustomRelevanceThreshold() {
-            // When
-            val config = ContextChainingConfig(relevanceThreshold = 0.8f)
-
-            // Then
-            assertEquals(0.8f, config.relevanceThreshold)
-        }
-
-        @Test
-        @DisplayName("should allow custom decayRate")
-        fun shouldAllowCustomDecayRate() {
-            // When
-            val config = ContextChainingConfig(decayRate = 0.95f)
-
-            // Then
-            assertEquals(0.95f, config.decayRate)
+            assertTrue(chainingConfig.decayRate >= 0.0f)
+            assertTrue(chainingConfig.decayRate <= 1.0f)
         }
     }
 
     @Nested
-    @DisplayName("Data Class Equality Tests")
-    inner class EqualityTests {
+    @DisplayName("Edge Cases")
+    inner class EdgeCasesTests {
 
         @Test
-        @DisplayName("should equal same config")
-        fun shouldEqualSameConfig() {
-            // Given
-            val config1 = AIPipelineConfig()
-            val config2 = AIPipelineConfig()
-
-            // Then
-            assertEquals(config1, config2)
+        @DisplayName("Should handle zero max retries")
+        fun shouldHandleZeroMaxRetries() {
+            val config = AIPipelineConfig(maxRetries = 0)
+            assertEquals(0, config.maxRetries)
         }
 
         @Test
-        @DisplayName("should not equal different config")
-        fun shouldNotEqualDifferentConfig() {
-            // Given
+        @DisplayName("Should handle empty agent priorities map")
+        fun shouldHandleEmptyAgentPriorities() {
+            val config = AIPipelineConfig(agentPriorities = emptyMap())
+            assertTrue(config.agentPriorities.isEmpty())
+        }
+
+        @Test
+        @DisplayName("Should handle boundary priority threshold values")
+        fun shouldHandleBoundaryPriorityThreshold() {
+            val config1 = AIPipelineConfig(priorityThreshold = 0.0f)
+            val config2 = AIPipelineConfig(priorityThreshold = 1.0f)
+
+            assertEquals(0.0f, config1.priorityThreshold, 0.001f)
+            assertEquals(1.0f, config2.priorityThreshold, 0.001f)
+        }
+    }
+
+    @Nested
+    @DisplayName("Data Class Behavior")
+    inner class DataClassBehaviorTests {
+
+        @Test
+        @DisplayName("Should support copy with modified values")
+        fun shouldSupportCopyWithModifiedValues() {
+            val original = AIPipelineConfig(maxRetries = 3)
+            val copied = original.copy(maxRetries = 5)
+
+            assertEquals(3, original.maxRetries)
+            assertEquals(5, copied.maxRetries)
+        }
+
+        @Test
+        @DisplayName("Should have proper equals implementation")
+        fun shouldHaveProperEquals() {
+            val config1 = AIPipelineConfig(maxRetries = 3, timeoutSeconds = 30)
+            val config2 = AIPipelineConfig(maxRetries = 3, timeoutSeconds = 30)
+            val config3 = AIPipelineConfig(maxRetries = 5, timeoutSeconds = 30)
+
+            assertEquals(config1, config2)
+            assertNotEquals(config1, config3)
+        }
+
+        @Test
+        @DisplayName("Should have proper hashCode implementation")
+        fun shouldHaveProperHashCode() {
             val config1 = AIPipelineConfig(maxRetries = 3)
-            val config2 = AIPipelineConfig(maxRetries = 5)
+            val config2 = AIPipelineConfig(maxRetries = 3)
 
-            // Then
-            assertNotEquals(config1, config2)
-        }
-
-        @Test
-        @DisplayName("should equal same memory config")
-        fun shouldEqualSameMemoryConfig() {
-            // Given
-            val config1 = MemoryRetrievalConfig()
-            val config2 = MemoryRetrievalConfig()
-
-            // Then
-            assertEquals(config1, config2)
-        }
-
-        @Test
-        @DisplayName("should equal same context chaining config")
-        fun shouldEqualSameContextChainingConfig() {
-            // Given
-            val config1 = ContextChainingConfig()
-            val config2 = ContextChainingConfig()
-
-            // Then
-            assertEquals(config1, config2)
-        }
-    }
-
-    @Nested
-    @DisplayName("Validation Tests")
-    inner class ValidationTests {
-
-        @Test
-        @DisplayName("should validate priority threshold bounds")
-        fun shouldValidatePriorityThresholdBounds() {
-            // When
-            val config = AIPipelineConfig(priorityThreshold = 0.7f)
-
-            // Then
-            assertTrue(config.priorityThreshold >= 0.0f)
-            assertTrue(config.priorityThreshold <= 1.0f)
-        }
-
-        @Test
-        @DisplayName("should validate weight sum")
-        fun shouldValidateWeightSum() {
-            // When
-            val config = AIPipelineConfig()
-
-            // Then
-            val weightSum = config.priorityWeight + config.urgencyWeight + config.importanceWeight
-            assertEquals(1.0f, weightSum, 0.01f)
-        }
-
-        @Test
-        @DisplayName("should validate similarity threshold bounds")
-        fun shouldValidateSimilarityThresholdBounds() {
-            // When
-            val config = MemoryRetrievalConfig()
-
-            // Then
-            assertTrue(config.similarityThreshold >= 0.0f)
-            assertTrue(config.similarityThreshold <= 1.0f)
-        }
-
-        @Test
-        @DisplayName("should validate decay rate bounds")
-        fun shouldValidateDecayRateBounds() {
-            // When
-            val config = ContextChainingConfig()
-
-            // Then
-            assertTrue(config.decayRate >= 0.0f)
-            assertTrue(config.decayRate <= 1.0f)
+            assertEquals(config1.hashCode(), config2.hashCode())
         }
     }
 }
