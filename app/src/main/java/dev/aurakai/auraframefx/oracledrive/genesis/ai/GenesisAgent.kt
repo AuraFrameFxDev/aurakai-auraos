@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ai.agents
+﻿package dev.aurakai.auraframefx.ai.agents
 
 import android.util.Log
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient

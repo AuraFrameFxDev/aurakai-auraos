@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.viewmodel
+﻿package dev.aurakai.auraframefx.viewmodel
 
 // Placeholder interfaces will be removed
 import android.util.Log
@@ -233,7 +233,7 @@ class ConferenceRoomViewModel @Inject constructor(
 // Placeholder for actual AI service imports
 // import dev.aurakai.auraframefx.ai.services.AuraAIService
 // import dev.aurakai.auraframefx.ai.services.KaiAIService
-// import dev.aurakai.auraframefx.ai.services.CascadeAIService  
+// import dev.aurakai.auraframefx.ai.services.CascadeAIService
 // import dev.aurakai.auraframefx.ai.services.NeuralWhisper
 // import dev.aurakai.auraframefx.models.AgentMessage
 // import dev.aurakai.auraframefx.model.AgentType

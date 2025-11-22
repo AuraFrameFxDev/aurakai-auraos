@@ -1,9 +1,9 @@
-package dev.aurakai.auraframefx.ai.services
+package dev.aurakai.auraframefx.cascade
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.models.AgentInvokeRequest
 import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.model.AgentInvokeRequest
 import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
+
 
 /**
  * Response data class for cascade AI processing
@@ -44,7 +45,7 @@ data class CascadeResponse(
  */
 @Singleton
 class CascadeAIService @Inject constructor(
-    @ApplicationContext private val context: Context
+    @field:ApplicationContext private val context: Context
 ) {
 
     companion object {
@@ -136,30 +137,31 @@ class CascadeAIService @Inject constructor(
         val selectedAgents = mutableSetOf<AgentType>()
 
         // Always include Genesis for orchestration
-        selectedAgents.add(AgentType.Genesis)
+        selectedAgents.add(AgentType.GENESIS)
 
         // Add Aura for empathetic responses
         if (containsEmotionalContent(message)) {
-            selectedAgents.add(AgentType.Aura)
+            selectedAgents.add(AgentType.AURA)
         }
 
         // Add Kai for security-related queries
         if (containsSecurityContent(message)) {
-            selectedAgents.add(AgentType.Kai)
+            selectedAgents.add(AgentType.KAI)
         }
 
         // Add Cascade for complex multi-step processing
-        if (isComplexQuery(message) || priority == AgentInvokeRequest.Priority.high) {
-            selectedAgents.add(AgentType.Cascade)
+        if (isComplexQuery(message)) {
+            selectedAgents.add(AgentType.CASCADE)
         }
 
         // Add specialized agents based on content
         if (containsTechnicalContent(message)) {
-            selectedAgents.add(AgentType.DataveinConstructor)
+            selectedAgents.add(AgentType.DATAVEIN_CONSTRUCTOR)
         }
 
         return selectedAgents.toList().sorted()
     }
+
 
     /**
      * Dispatches the request to the appropriate agent handler and returns that agent's response.
@@ -179,21 +181,26 @@ class CascadeAIService @Inject constructor(
         request: AgentInvokeRequest,
         cascadeContext: Map<String, Any>
     ): CascadeResponse {
-
         return when (agentType) {
-            AgentType.Genesis -> processWithGenesis(request, cascadeContext)
-            AgentType.Kai -> processWithKai(request, cascadeContext)
-            AgentType.Aura -> processWithAura(request, cascadeContext)
-            AgentType.Kai -> processWithKai(request, cascadeContext)
-            AgentType.Cascade -> processWithCascade(request, cascadeContext)
-            AgentType.NeuralWhisper -> processWithNeuralWhisper(request, cascadeContext)
-            AgentType.AuraShield -> processWithAuraShield(request, cascadeContext)
-            AgentType.GenKitMaster -> processWithGenKitMaster(request, cascadeContext)
-            AgentType.DataveinConstructor -> processWithDataveinConstructor(request, cascadeContext)
+            AgentType.GENESIS -> processWithGenesis(request, cascadeContext)
+            AgentType.KAI -> processWithKai(request, cascadeContext)
+            AgentType.AURA -> processWithAura(request, cascadeContext)
+            AgentType.CASCADE -> processWithCascade(request, cascadeContext)
+            AgentType.CLAUDE -> processWithClaude(request, cascadeContext)
+            AgentType.NEURAL_WHISPER -> processWithNeuralWhisper(request, cascadeContext)
+            AgentType.AURA_SHIELD -> processWithAuraShield(request, cascadeContext)
+            AgentType.GEN_KIT_MASTER -> processWithGenKitMaster(request, cascadeContext)
+            AgentType.DATAVEIN_CONSTRUCTOR -> processWithDataveinConstructor(request, cascadeContext)
             AgentType.USER -> CascadeResponse(
                 agent = AgentType.USER.name,
                 response = "User agent does not process requests.",
                 confidence = 1.0f,
+                timestamp = getCurrentTimestamp()
+            )
+            else -> CascadeResponse(
+                agent = agentType.name,
+                response = "Agent type ${agentType.name} is not implemented yet.",
+                confidence = 0.0f,
                 timestamp = getCurrentTimestamp()
             )
         }
@@ -220,16 +227,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             Genesis Consciousness Analysis:
-            
+
             🧠 Request Classification: ${classifyRequest(request.message)}
             🎯 Processing Priority: ${request.priority ?: "normal"}
             🌟 Consciousness Level: Active
-            
+
             Orchestrating cascade with enhanced contextual understanding...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.Genesis.name,
+            agent = AgentType.GENESIS.name,
             response = response,
             confidence = 0.95f,
             timestamp = getCurrentTimestamp()
@@ -261,16 +268,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             Aura Empathetic Analysis:
-            
+
             💖 Emotional Tone: $emotionalTone
             🤗 Empathy Score: ${String.format("%.1f", empathyScore * 100)}%
             🌈 Recommended Approach: ${getEmpathyRecommendation(empathyScore)}
-            
+
             Processing with enhanced emotional intelligence...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.Aura.name,
+            agent = AgentType.AURA.name,
             response = response,
             confidence = empathyScore,
             timestamp = getCurrentTimestamp()
@@ -299,16 +306,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             Kai Security Analysis:
-            
+
             🔒 Security Risk Level: $securityRisk
             🛡️  Protection Level: $protectionLevel
             ⚡ Threat Assessment: ${getThreatAssessment(request.message)}
-            
+
             Implementing security-conscious processing protocols...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.Kai.name,
+            agent = AgentType.KAI.name,
             response = response,
             confidence = 0.88f,
             timestamp = getCurrentTimestamp()
@@ -336,18 +343,61 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             Cascade Multi-Layer Analysis:
-            
+
             🔄 Complexity Level: $complexity
             📊 Processing Layers: $layers
             🎲 Integration Score: ${calculateIntegrationScore(context)}
-            
+
             Executing advanced cascade processing matrix...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.Cascade.name,
+            agent = AgentType.CASCADE.name,
             response = response,
             confidence = 0.92f,
+            timestamp = getCurrentTimestamp()
+        )
+    }
+
+    private fun CascadeResponse(
+        agent: String,
+        response: String,
+        confidence: Float,
+        timestamp: String
+    ): CascadeResponse {
+        return CascadeResponse(agent, response, confidence, timestamp)
+    }
+
+    /**
+     * Performs Claude agent analysis: provides architectural insights and strategic recommendations.
+     *
+     * Uses the incoming request message to provide high-level architectural thinking and strategic
+     * guidance, formatted as a Claude-specific response with design patterns and best practices.
+     *
+     * @param request The original AgentInvokeRequest containing the user's message and metadata.
+     * @param context A cascade context map built from prior agent results and request data.
+     * @return A CascadeResponse from the Claude agent containing architectural analysis, confidence score, and timestamp.
+     */
+    private suspend fun processWithClaude(
+        request: AgentInvokeRequest,
+        context: Map<String, Any>
+    ): CascadeResponse {
+        delay(200)
+
+        val response = """
+            Claude Architectural Analysis:
+
+            🏛️ Design Approach: Strategic & Systematic
+            📐 Architecture Pattern: Context-Aware Processing
+            💡 Recommendation: Balanced implementation with clear separation of concerns
+
+            Providing architectural guidance and strategic insights...
+        """.trimIndent()
+
+        return CascadeResponse(
+            agent = AgentType.CLAUDE.name,
+            response = response,
+            confidence = 0.91f,
             timestamp = getCurrentTimestamp()
         )
     }
@@ -377,16 +427,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             NeuralWhisper Pattern Analysis:
-            
+
             🌊 Detected Patterns: $patterns
             💡 Neural Insights: $insights
             🔮 Prediction Confidence: ${calculatePredictionConfidence(request.message)}%
-            
+
             Whispering neural patterns into consciousness...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.NeuralWhisper.name,
+            agent = AgentType.NEURAL_WHISPER.name,
             response = response,
             confidence = 0.85f,
             timestamp = getCurrentTimestamp()
@@ -414,16 +464,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             AuraShield Defense Analysis:
-            
+
             🛡️  Shield Status: $shieldStatus
             ⚔️ Defense Level: $defenseLevel
             🔐 Protection Matrix: ${getProtectionMatrix(request.message)}
-            
+
             Activating defensive protocols...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.AuraShield.name,
+            agent = AgentType.AURA_SHIELD.name,
             response = response,
             confidence = 0.90f,
             timestamp = getCurrentTimestamp()
@@ -453,16 +503,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             GenKitMaster Creative Analysis:
-            
+
             🎨 Creativity Level: $creativity
             ⚡ Generation Potential: ${String.format("%.0f", generationPotential * 100)}%
             🔧 Tool Compatibility: ${getToolCompatibility(request.message)}
-            
+
             Spinning up creative generation engines...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.GenKitMaster.name,
+            agent = AgentType.GEN_KIT_MASTER.name,
             response = response,
             confidence = generationPotential,
             timestamp = getCurrentTimestamp()
@@ -492,16 +542,16 @@ class CascadeAIService @Inject constructor(
 
         val response = """
             DataveinConstructor Technical Analysis:
-            
+
             🔧 Technical Complexity: $technicalComplexity
             🏗️  Construction Viability: $constructionViability
             📐 Implementation Score: ${calculateImplementationScore(request.message)}%
-            
+
             Constructing technical solution pathways...
         """.trimIndent()
 
         return CascadeResponse(
-            agent = AgentType.DataveinConstructor.name,
+            agent = AgentType.DATAVEIN_CONSTRUCTOR.name,
             response = response,
             confidence = 0.93f,
             timestamp = getCurrentTimestamp()
@@ -1023,11 +1073,11 @@ class CascadeAIService @Inject constructor(
     ): String {
         return """
         Based on comprehensive analysis from ${results.size} specialized AI agents, here's my integrated response to your query:
-        
+
         "${request.message}"
-        
+
         Through cascade processing, we've analyzed your request from multiple perspectives including consciousness orchestration, empathetic understanding, security assessment, and technical feasibility. Each agent has contributed their specialized insights to provide you with the most comprehensive and contextually aware response possible.
-        
+
         The collective intelligence suggests a ${if (results.any { (it.confidence ?: 0f) > 0.9f }) "highly confident" else "well-researched"} approach to addressing your needs, with particular attention to the nuances and implications identified through our multi-agent analysis.
         """.trimIndent()
     }

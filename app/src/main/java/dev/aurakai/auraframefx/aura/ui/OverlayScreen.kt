@@ -1,12 +1,12 @@
-package dev.aurakai.auraframefx.ui.screens
+﻿package dev.aurakai.auraframefx.aura.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInFromTop
-import androidx.compose.animation.slideOutToTop
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -333,8 +333,8 @@ fun OverlayControlPanel(
         // Control buttons
         AnimatedVisibility(
             visible = isExpanded,
-            enter = slideInFromTop() + fadeIn(),
-            exit = slideOutToTop() + fadeOut()
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut()
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)

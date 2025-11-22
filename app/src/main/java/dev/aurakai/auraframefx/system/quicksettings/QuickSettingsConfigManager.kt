@@ -1,11 +1,13 @@
-package dev.aurakai.auraframefx.system.quicksettings
+﻿package dev.aurakai.auraframefx.system.quicksettings
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsTileConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 
 /**
@@ -29,13 +31,13 @@ class QuickSettingsConfigManager(private val context: Context) {
     suspend fun loadConfig(): QuickSettingsConfig = withContext(Dispatchers.IO) {
         return@withContext try {
             if (!configFile.exists()) {
-                Log.d(tag, "No saved config found, using default")
+                Timber.tag(tag).d("No saved config found, using default")
                 return@withContext defaultConfig
             }
 
             val json = configFile.readText()
             if (json.isBlank()) {
-                Log.d(tag, "Empty config file, using default")
+                Timber.tag(tag).d("Empty config file, using default")
                 return@withContext defaultConfig
             }
 
@@ -43,7 +45,7 @@ class QuickSettingsConfigManager(private val context: Context) {
             val type = object : TypeToken<QuickSettingsConfig>() {}.type
             gson.fromJson<QuickSettingsConfig>(json, type) ?: defaultConfig
         } catch (e: Exception) {
-            Log.e(tag, "Error loading config", e)
+            Timber.tag(tag).e(e, "Error loading config")
             defaultConfig
         }.also {
             currentConfig = it
@@ -60,7 +62,7 @@ class QuickSettingsConfigManager(private val context: Context) {
             currentConfig = config
             true
         } catch (e: Exception) {
-            Log.e(tag, "Error saving config", e)
+            Timber.tag(tag).e(e, "Error saving config")
             false
         }
     }
@@ -86,7 +88,7 @@ class QuickSettingsConfigManager(private val context: Context) {
                 false
             }
         } catch (e: Exception) {
-            Log.e(tag, "Error updating tile config", e)
+            Timber.tag(tag).e(e, "Error updating tile config")
             false
         }
     }

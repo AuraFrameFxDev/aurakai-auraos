@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.model.agent_states
+﻿package dev.aurakai.auraframefx.model.agent_states
 
 import kotlinx.serialization.Serializable
 
@@ -50,12 +50,13 @@ enum class SecurityMode {
 
 @Serializable
 data class ActiveThreat(
-    val id: String,
     val type: String,
     val severity: Int,
     val description: String,
     val detectedAt: Long = System.currentTimeMillis(),
-    val status: ThreatStatus = ThreatStatus.ACTIVE
+    val status: ThreatStatus = ThreatStatus.ACTIVE,
+    val threatId: String,
+    val threatType: String
 )
 
 @Serializable
@@ -73,5 +74,7 @@ data class ScanEvent(
     val result: String,
     val threatsFound: Int = 0,
     val scanTime: Long = System.currentTimeMillis(),
-    val duration: Long = 0L
+    val duration: Long = 0L,
+    val timestamp: Long,
+    val scanType: String
 )

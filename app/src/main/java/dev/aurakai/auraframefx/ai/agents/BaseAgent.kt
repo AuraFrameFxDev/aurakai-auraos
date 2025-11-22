@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.ai.agents
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.AiRequest
 
 /**
@@ -98,6 +99,10 @@ abstract class BaseAgent(agentName: String) {
     }
 
     abstract fun iRequest(query: String, type: String, context: Map<String, String>)
+    abstract fun iRequest()
+    abstract fun initializeAdaptiveProtection()
+    abstract fun addToScanHistory(scanEvent: Any)
+    abstract fun analyzeSecurity(prompt: String): List<ActiveThreat>
 
     abstract val contextManager: ContextManager
 }

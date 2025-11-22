@@ -10,7 +10,11 @@ data class QuickSettingsConfig(
     val background: ImageResource? = null,
     val layout: LayoutConfig = LayoutConfig(),
     val showGenesisIndicator: Boolean = true,
-)
+) {
+    companion object {
+        val DEFAULT = QuickSettingsConfig()
+    }
+}
 
 @Serializable
 data class QuickSettingsTileConfig(
@@ -18,8 +22,26 @@ data class QuickSettingsTileConfig(
     val label: String,
     val shape: OverlayShape,
     val animation: QuickSettingsAnimation,
-    val style: String = "default"
+    val style: String = "default",
+    val enabled: Boolean = true,
+    val enableClicks: Boolean = true,
+    val rippleEffect: Boolean = true,
+    val background: QuickSettingsBackground? = null
 )
+
+@Serializable
+sealed class QuickSettingsBackground {
+    abstract val cornerRadius: Float?
+    abstract val elevation: Float?
+
+    @Serializable
+    data class Solid(
+        val color: Long, 
+        val alpha: Float,
+        override val cornerRadius: Float? = null,
+        override val elevation: Float? = null
+    ) : QuickSettingsBackground()
+}
 
 @Serializable
 data class LayoutConfig(

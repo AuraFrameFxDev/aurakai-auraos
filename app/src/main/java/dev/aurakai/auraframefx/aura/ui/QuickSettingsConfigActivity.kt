@@ -16,9 +16,10 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
 import dev.aurakai.auraframefx.databinding.ActivityQuickSettingsConfigBinding
-import dev.aurakai.auraframefx.system.quicksettings.QuickSettingsConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
 import dev.aurakai.auraframefx.system.quicksettings.QuickSettingsConfigManager
-import dev.aurakai.auraframefx.system.quicksettings.QuickSettingsTileConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsTileConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsBackground
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,9 +81,10 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
             showResetConfirmationDialog()
         }
 
-        binding.applyButton.setOnClickListener {
-            saveConfig()
-        }
+        // TODO: Add applyButton to layout XML
+        // binding.applyButton.setOnClickListener {
+        //     saveConfig()
+        // }
     }
 
     private fun showTileConfigDialog(tile: QuickSettingsTileConfig) {
@@ -136,8 +138,8 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
         // Apply card background
         tile.background?.let { background ->
             when (background) {
-                is QuickSettingsConfig.QuickSettingsBackground.Solid -> {
-                    card.setCardBackgroundColor(background.color.toColorInt())
+                is QuickSettingsBackground.Solid -> {
+                    card.setCardBackgroundColor(background.color.toInt())
                     card.alpha = background.alpha
                 }
                 // Handle other background types as needed
@@ -145,7 +147,7 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
                     card.setCardBackgroundColor(
                         ContextCompat.getColor(
                             this,
-                            R.color.cardview_dark_background
+                            R.color.light_surface
                         )
                     )
                 }
@@ -154,7 +156,7 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
             card.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.cardview_dark_background
+                    R.color.light_surface
                 )
             )
         }
@@ -266,9 +268,9 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
         private fun applyTileStyle(cardView: MaterialCardView, tile: QuickSettingsTileConfig) {
             // Apply background color based on tile state
             val backgroundColor = if (tile.enabled) {
-                ContextCompat.getColor(cardView.context, R.color.primaryColor)
+                ContextCompat.getColor(cardView.context, R.color.primary)
             } else {
-                ContextCompat.getColor(cardView.context, R.color.cardview_light_background)
+                ContextCompat.getColor(cardView.context, R.color.light_surface_variant)
             }
 
             cardView.setCardBackgroundColor(backgroundColor)

@@ -20,7 +20,7 @@ fun ProfileScreen(
 ) {
     // Redirect to comprehensive agent profile screen
     AgentProfileScreen(
-        agentType = agentType ?: AgentType.Claude, // Default to Claude - The Architect
+        agentType = agentType ?: AgentType.GENESIS, // Default to Genesis
         onNavigateToSettings = onNavigateToSettings,
         onNavigateBack = null
     )

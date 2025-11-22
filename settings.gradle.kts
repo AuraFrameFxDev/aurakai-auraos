@@ -10,18 +10,16 @@ pluginManagement {
         // Kotlin dev repository for beta/EAP releases
         maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev") }
         maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://dl.google.com/dl/android/maven2/") }
+        // Plugin versions are now managed in the root build.gradle.kts
     }
     plugins {
         id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     }
-    // Plugin versions are now managed in the root build.gradle.kts
-}
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
-dependencyResolutionManagement {
-        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
+    // Enable version catalogs
+    dependencyResolutionManagement {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         repositories {
             google()
             mavenCentral()
@@ -131,6 +129,10 @@ dependencyResolutionManagement {
     include(":extendsysd")
     include(":extendsyse")
     include(":extendsysf")
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 
 
 // Note: Do NOT include ':build-logic' here. It is handled by includeBuild.

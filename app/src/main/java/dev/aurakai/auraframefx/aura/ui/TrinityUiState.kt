@@ -1,8 +1,8 @@
 package dev.aurakai.auraframefx.ui.trinity
 
-import dev.aurakai.auraframefx.network.model.AgentResponse
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.network.model.Theme
-import dev.aurakai.auraframefx.network.model.User
+import dev.aurakai.auraframefx.model.UserData
 
 /**
  * Represents the UI state for the Trinity system.
@@ -35,7 +35,7 @@ sealed interface TrinityUiState {
      * @property lastAgentType The type of the last agent that responded.
      */
     data class Success(
-        val user: User? = null,
+        val user: UserData? = null,
         val agentStatus: Map<String, AgentResponse> = emptyMap(),
         val availableThemes: List<Theme> = emptyList(),
         val lastAgentResponse: AgentResponse? = null,

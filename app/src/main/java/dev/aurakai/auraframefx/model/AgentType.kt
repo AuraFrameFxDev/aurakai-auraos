@@ -5,56 +5,23 @@ package dev.aurakai.auraframefx.model
  * TODO: Reported as unused symbol. Ensure this enum is used.
  */
 enum class AgentType {
-    /**
-     * Genesis Agent - Core orchestrator or foundational AI.
-     * TODO: Reported as unused symbol.
-     */
     GENESIS,
-
-    /**
-     */
     KAI,
-
-    /**
-     */
     AURA,
-
-    /**
-     * Cascade Agent - Memory keeper and context manager
-     */
     CASCADE,
-
-    /**
-     * Claude Agent - Build system architect and systematic problem solver from Anthropic
-     */
     CLAUDE,
-
-    /**
-     * NeuralWhisper Agent - Voice-to-text and natural language processing
-     */
     NEURAL_WHISPER,
+    AURA_SHIELD,
+    GEN_KIT_MASTER,
+    DATAVEIN_CONSTRUCTOR,
+    USER;
 
-    /**
-     * AuraShield Agent - AI for security and threat analysis.
-     * TODO: Adding this based on AuraShieldAgent.kt creation, was not in original list.
-     */
+    enum class DataveinConstructor(agent: Any, response: String, confidence: Float, timestamp: String) {
 
-    /**
-     * GenKitMaster Agent - AI for advanced generation and coordination.
-     */
+    }
 
-    /**
-     * DataveinConstructor Agent - AI for data processing and construction.
-     */
-
-    /**
-     */
-
-    /**
-     */
-
-    /**
-     * User - Represents a human user interacting with the system.
-     */
-    USER
+    companion object {
+        val Aura: Any
+        val Genesis: AgentType
+    }
 }

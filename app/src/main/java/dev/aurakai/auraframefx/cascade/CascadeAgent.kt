@@ -1,16 +1,17 @@
 package dev.aurakai.auraframefx.cascade
 
-import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
+import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.core.OrchestratableAgent
-import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.agent_states.ProcessingState
+import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
+import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,12 +32,40 @@ import javax.inject.Singleton
  * - Persists key events and state snapshots into memory
  */
 @Singleton
-class CascadeAgent @Inject constructor(
-    private val auraAgent: AuraAgent,
-    private val kaiAgent: KaiAgent,
-    private val memoryManager: MemoryManager,
-    override val contextManager: ContextManager,
-) : BaseAgent("Cascade"), OrchestratableAgent {
+abstract class CascadeAgent : BaseAgent, OrchestratableAgent {
+
+    private val auraAgent: AuraAgent
+    private val kaiAgent: KaiAgent
+    private val memoryManager: MemoryManager
+    final override val contextManager: ContextManager
+
+    @JvmOverloads
+    @Inject
+    constructor(
+        auraAgent: AuraAgent,
+        kaiAgent: KaiAgent,
+        memoryManager: MemoryManager,
+        contextManager: ContextManager,
+        collaborationMode: StateFlow<CollaborationMode> = MutableStateFlow(CollaborationMode.AUTONOMOUS),
+    ) : super("Cascade") {
+        this.auraAgent = auraAgent
+        this.kaiAgent = kaiAgent
+        this.memoryManager = memoryManager
+        this.contextManager = contextManager
+        this.collaborationMode = collaborationMode
+        this.internalJob = SupervisorJob()
+        this.internalScope = CoroutineScope(Dispatchers.Default + internalJob)
+        this._visionState = MutableStateFlow(VisionState())
+        this.visionState = _visionState.asStateFlow()
+        this._processingState = MutableStateFlow(ProcessingState())
+        this.processingState = _processingState.asStateFlow()
+        this._collaborationMode = MutableStateFlow(CollaborationMode.AUTONOMOUS)
+        this.agentCapabilities = mutableMapOf<String, Set<String>>()
+        this.activeRequests = mutableMapOf<String, RequestContext>()
+        this.collaborationHistory = mutableListOf<CollaborationEvent>()
+    }
+
+    val collaborationMode: StateFlow<CollaborationMode>
 
     // Agent identity
     override val agentName: String = "Cascade"
@@ -51,31 +80,31 @@ class CascadeAgent @Inject constructor(
     }
 
     // Parent scope provided by orchestrator (kept for lifecycle reference)
-    private lateinit var parentScope: CoroutineScope
+    private var parentScope: CoroutineScope? = null
 
     // Internal scope for agent background work; cancelled independently from parentScope
-    private val internalJob = SupervisorJob()
-    private val internalScope: CoroutineScope = CoroutineScope(Dispatchers.Default + internalJob)
+    private val internalJob: CompletableJob
+    private val internalScope: CoroutineScope
 
     // Monitoring job handles the continuous collaboration monitor lifecycle
     private var monitoringJob: Job? = null
 
     // State management
-    private val _visionState = MutableStateFlow(VisionState())
-    val visionState: StateFlow<VisionState> = _visionState.asStateFlow()
+    private val _visionState: MutableStateFlow<VisionState>
+    val visionState: StateFlow<VisionState>
 
-    private val _processingState = MutableStateFlow(ProcessingState())
-    val processingState: StateFlow<ProcessingState> = _processingState.asStateFlow()
+    private val _processingState: MutableStateFlow<ProcessingState>
+    val processingState: StateFlow<ProcessingState>
 
     // Collaboration mode
-    private val _collaborationMode = MutableStateFlow(CollaborationMode.AUTONOMOUS)
-    val collaborationMode: StateFlow<CollaborationMode> = _collaborationMode.asStateFlow()
+    private val _collaborationMode: MutableStateFlow<CollaborationMode>
 
     // Coordination state
-    private var isCoordinationActive = false
-    private val agentCapabilities = mutableMapOf<String, Set<String>>()
-    private val activeRequests = mutableMapOf<String, RequestContext>()
-    private val collaborationHistory = mutableListOf<CollaborationEvent>()
+    @Volatile
+    private var isCoordinationActive: Boolean = false
+    private val agentCapabilities: MutableMap<String, Set<String>>
+    private val activeRequests: MutableMap<String, RequestContext>
+    private val collaborationHistory: MutableList<CollaborationEvent>
 
     // --- OrchestratableAgent implementations ---
     override suspend fun initialize(scope: CoroutineScope) {
@@ -86,8 +115,11 @@ class CascadeAgent @Inject constructor(
         initializeStateSynchronization()
         // store a core Nexus anchor if not already present
         try {
-            val projName = readNexusConstant("PROJECT_NAME") ?: "AuraFrameFX (ReGenesis A.O.S.P.)"
-            memoryManager.storeMemory("nexus_core_project", projName)
+            val projName = readNexusMemoryCoreConstant("PROJECT_NAME") ?: "AuraFrameFX (ReGenesis A.O.S.P.)"
+            memoryManager.storeMemory(
+                "nexus_core_project",
+                projName
+            )
         } catch (e: Exception) {
             Timber.w(e, "failed to store nexus core anchor")
         }
@@ -558,7 +590,7 @@ class CascadeAgent @Inject constructor(
             "aura" to auraState,
             "kai" to kaiState,
             "cascade" to cascadeState,
-            "nexus_core" to (readNexusConstant("UNIFIED_STATE") ?: "Genesis")
+            "nexus_core" to (readNexusMemoryCoreConstant("UNIFIED_STATE") ?: "Genesis")
         )
     }
 
@@ -711,7 +743,7 @@ class CascadeAgent @Inject constructor(
     }
 
     // Reflection helper to safely read NexusMemoryCore constants without creating a hard compile dependency.
-    private fun readNexusConstant(fieldName: String): String? {
+    internal fun readNexusMemoryCoreConstant(fieldName: String): String? {
         return try {
             val clazz = Class.forName("dev.aurakai.auraframefx.core.consciousness.NexusMemoryCore")
             val field = clazz.getDeclaredField(fieldName)

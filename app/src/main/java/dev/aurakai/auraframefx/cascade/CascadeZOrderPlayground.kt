@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.debug
+package dev.aurakai.auraframefx.cascade
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,9 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.aurakai.auraframefx.cascade.CascadeAgent
-import dev.aurakai.auraframefx.models.agent_states.ProcessingState
-import dev.aurakai.auraframefx.models.agent_states.VisionState
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.model.agent_states.ProcessingState
+import dev.aurakai.auraframefx.model.agent_states.VisionState
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,14 +41,9 @@ class CascadeDebugViewModel @Inject constructor(
  * Provides interactive controls to view and modify the current vision and processing states, as well as to review their respective histories. Intended for use in development or debugging environments to facilitate real-time state inspection and manipulation.
  */
 @OptIn(ExperimentalMaterial3Api::class)
-/**
- * Displays a debug UI for inspecting and updating the CascadeAgent's vision and processing states.
- *
- * Provides editable fields for entering new vision and processing states, buttons to apply updates through the ViewModel, and displays both current and historical state information. Intended for development and debugging use.
- */
 @Composable
 fun CascadeZOrderPlayground(
-    viewModel: CascadeDebugViewModel = androidx.hilt.navigation.compose.hiltViewModel(),
+    viewModel: CascadeDebugViewModel = hiltViewModel(),
 ) {
     var newVisionState by remember { mutableStateOf(VisionState()) }
     var newProcessingState by remember { mutableStateOf(ProcessingState()) }
@@ -171,21 +166,25 @@ fun CascadeZOrderPlayground(
                 ) {
                     item {
                         Text(
-                            text = "Vision History",
+                            text = "Vision History (Not implemented)",
                             style = MaterialTheme.typography.titleSmall
                         )
+                        /*
                         visionState.history?.forEach { entry ->
                             Text(text = "- $entry")
                         }
+                        */
                     }
                     item {
                         Text(
-                            text = "Processing History",
+                            text = "Processing History (Not implemented)",
                             style = MaterialTheme.typography.titleSmall
                         )
+                        /*
                         processingState.history?.forEach { entry ->
                             Text(text = "- $entry")
                         }
+                        */
                     }
                 }
             }

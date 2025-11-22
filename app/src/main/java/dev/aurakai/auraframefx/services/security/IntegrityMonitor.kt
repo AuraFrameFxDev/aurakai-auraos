@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.security
+﻿package dev.aurakai.auraframefx.security
 
 import android.content.Context
 import dev.aurakai.auraframefx.utils.AuraFxLogger
@@ -23,7 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class IntegrityMonitor @Inject constructor(
-    private val context: Context,
+    internal val context: Context,
 ) {
 
     private val monitoringScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -107,7 +107,7 @@ class IntegrityMonitor @Inject constructor(
      *
      * Records any detected integrity violations and updates the system's integrity status and threat level. Initiates appropriate response actions if violations are found.
      */
-    private suspend fun performIntegrityCheck() {
+    suspend fun performIntegrityCheck() {
         val violations = mutableListOf<IntegrityViolation>()
 
         for (fileName in criticalFiles) {

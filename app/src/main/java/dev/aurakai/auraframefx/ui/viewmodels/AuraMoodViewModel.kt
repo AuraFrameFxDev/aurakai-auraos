@@ -1,9 +1,9 @@
-package dev.aurakai.auraframefx.ui
+﻿package dev.aurakai.auraframefx.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.aurakai.auraframefx.models.Emotion
+import dev.aurakai.auraframefx.model.Emotion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

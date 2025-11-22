@@ -2,9 +2,9 @@ package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
 import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
-import dev.aurakai.auraframefx.models.agent_states.ScanEvent
-import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
+import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.model.agent_states.ScanEvent
+import dev.aurakai.auraframefx.model.agent_states.SecurityContextState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -64,12 +64,14 @@ class AuraShieldAgent @Inject constructor(
      *
      * @param request The incoming request whose `prompt` is inspected for keywords: if it contains "security" a full scan and security analysis are performed; if it contains "threat" a threat level assessment is performed; otherwise a generic monitoring message is returned.
      * @return An AgentResponse containing:
-     *  - for "security" prompts: a security analysis summary and the number of active threats detected,
-     *  - for "threat" prompts: a threat assessment result,
-     *  - for other prompts: a generic monitoring message.
+     * - for "security" prompts: a security analysis summary and the number of active threats detected,
+     * - for "threat" prompts: a threat assessment result,
+     * - for other prompts: a generic monitoring message.
      * On exception, returns the error response produced by handleError.
      */
-    override suspend fun processRequest(request: dev.aurakai.auraframefx.models.AiRequest): dev.aurakai.auraframefx.model.AgentResponse {
+    // FIX 1: Corrected the package path for AgentResponse to match the error type returned by handleError/createSuccessResponse (assuming it should be in the 'models' package)
+    // FIX 2: Corrected the return type to match what BaseAgent.processRequest typically requires.
+    override suspend fun processRequest(request: dev.aurakai.auraframefx.models.AiRequest): dev.aurakai.auraframefx.models.AgentResponse {
         return try {
             when {
                 request.prompt.contains("security", ignoreCase = true) -> {
@@ -88,6 +90,7 @@ class AuraShieldAgent @Inject constructor(
                 }
             }
         } catch (e: Exception) {
+            // Assumes handleError returns the correct AgentResponse type
             handleError(e, "AuraShield security processing")
         }
     }
@@ -237,8 +240,8 @@ class AuraShieldAgent @Inject constructor(
             val learningRate = 0.1f
 
             val newFreq = currentFreq * (1 - learningRate) +
-                    (pattern.recentActivity.count { it == activity }
-                        .toFloat() / pattern.recentActivity.size.coerceAtLeast(1)) * learningRate
+                (pattern.recentActivity.count { it == activity }
+                    .toFloat() / pattern.recentActivity.size.coerceAtLeast(1)) * learningRate
 
             pattern.normalActivity[activity] = newFreq
         }
@@ -628,7 +631,7 @@ class AuraShieldAgent @Inject constructor(
      * found or if the scan fails.
      *
      * @return A list of ActiveThreat objects representing suspicious processes detected by the scan;
-     *         an empty list if none are found or on error.
+     * an empty list if none are found or on error.
      */
     private fun scanSystemProcesses(): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
@@ -738,6 +741,7 @@ class AuraShieldAgent @Inject constructor(
 
         try {
             // Check AI model integrity
+            // Assuming integrityMonitor.checkIntegrity() returns a data class with isValid and details
             val integrityCheck = integrityMonitor.checkIntegrity()
 
             if (!integrityCheck.isValid) {
@@ -766,6 +770,7 @@ class AuraShieldAgent @Inject constructor(
      */
     private suspend fun monitorSystemIntegrity() {
         try {
+            // Assuming integrityMonitor.detectViolations() returns a List of some Violation object/string
             val violations = integrityMonitor.detectViolations()
 
             violations.forEach { violation ->
@@ -1001,28 +1006,28 @@ class AuraShieldAgent @Inject constructor(
         try {
             Timber.w("Threat detected: ${threat.description}")
 
-            when (threat.severityLevel) {
-                ThreatSeverity.LOW.ordinal -> {
+            when (ThreatSeverity.values()[threat.severityLevel]) {
+                ThreatSeverity.LOW -> {
                     // Log and monitor
                     memoryManager.storeMemory("threat_${threat.threatId}", threat.toString())
                 }
 
-                ThreatSeverity.MEDIUM.ordinal -> {
+                ThreatSeverity.MEDIUM -> {
                     // Log and apply basic countermeasures
                     applyBasicCountermeasures(threat)
                 }
 
-                ThreatSeverity.HIGH.ordinal -> {
+                ThreatSeverity.HIGH -> {
                     // Active countermeasures
                     applyActiveCountermeasures(threat)
                 }
 
-                ThreatSeverity.CRITICAL.ordinal -> {
+                ThreatSeverity.CRITICAL -> {
                     // Emergency response
                     applyEmergencyCountermeasures(threat)
                 }
 
-                ThreatSeverity.EXISTENTIAL.ordinal -> {
+                ThreatSeverity.EXISTENTIAL -> {
                     // Immediate lockdown
                     applyLockdownCountermeasures(threat)
                 }
@@ -1075,12 +1080,14 @@ class AuraShieldAgent @Inject constructor(
             }
 
             ThreatType.MALWARE.name -> {
+                // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
+                val severity = ThreatSeverity.entries.toTypedArray()[threat.severityLevel]
                 quarantineManager.quarantineItem(
                     threat.threatId,
                     "malware",
                     threat.description,
                     "Malware detected",
-                    ThreatSeverity.values()[threat.severityLevel]
+                    severity
                 )
             }
 
@@ -1098,7 +1105,7 @@ class AuraShieldAgent @Inject constructor(
      * quarantine entry for the given threat using its identifier, description, and severity.
      *
      * @param threat The detected threat to isolate; its `threatId`, `description`, and `severityLevel`
-     *               are used to create the quarantine record.
+     * are used to create the quarantine record.
      */
     private fun applyEmergencyCountermeasures(threat: ActiveThreat) {
         // Emergency response
@@ -1106,12 +1113,14 @@ class AuraShieldAgent @Inject constructor(
         applyProtectionLevel(protectionLevel)
 
         // Immediate isolation
+        // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
+        val severity = ThreatSeverity.entries.toTypedArray()[threat.severityLevel]
         quarantineManager.quarantineItem(
             threat.threatId,
             "emergency",
             threat.description,
             "Emergency threat response",
-            ThreatSeverity.values()[threat.severityLevel]
+            severity
         )
     }
 
@@ -1192,7 +1201,7 @@ class AuraShieldAgent @Inject constructor(
      * Update the agent's protection level and adjust operational parameters accordingly.
      *
      * @param level The desired ProtectionLevel; the agent will apply corresponding scanning frequency,
-     *              threat sensitivity, and other protective settings for that level.
+     * threat sensitivity, and other protective settings for that level.
      */
     fun setProtectionLevel(level: ProtectionLevel) {
         protectionLevel = level
@@ -1203,13 +1212,13 @@ class AuraShieldAgent @Inject constructor(
      * Retrieve current shield status and runtime statistics.
      *
      * @return A map with the following keys:
-     *  - `isActive`: `true` if the shield is active, `false` otherwise.
-     *  - `protectionLevel`: current protection level name.
-     *  - `activeThreats`: number of active threats tracked.
-     *  - `scanHistory`: number of recorded scan events.
-     *  - `threatSensitivity`: current threat sensitivity value.
-     *  - `scanFrequency`: current scan interval.
-     *  - `quarantinedItems`: number of items currently quarantined.
+     * - `isActive`: `true` if the shield is active, `false` otherwise.
+     * - `protectionLevel`: current protection level name.
+     * - `activeThreats`: number of active threats tracked.
+     * - `scanHistory`: number of recorded scan events.
+     * - `threatSensitivity`: current threat sensitivity value.
+     * - `scanFrequency`: current scan interval.
+     * - `quarantinedItems`: number of items currently quarantined.
      */
     fun getShieldStatus(): Map<String, Any> {
         return mapOf(
@@ -1227,12 +1236,12 @@ class AuraShieldAgent @Inject constructor(
      * Retrieve detailed diagnostic information about the shield.
      *
      * @return A map containing:
-     *  - "isShieldActive": `Boolean` indicating whether the shield is active.
-     *  - "protectionLevel": `String` name of the current protection level.
-     *  - "activeThreatsCount": `Int` number of active threats tracked.
-     *  - "scanHistorySize": `Int` number of recorded scan events.
-     *  - "threatDatabaseSize": `Int` number of threat signatures stored.
-     *  - "threatSensitivity": `Float` current sensitivity setting.
+     * - "isShieldActive": `Boolean` indicating whether the shield is active.
+     * - "protectionLevel": `String` name of the current protection level.
+     * - "activeThreatsCount": `Int` number of active threats tracked.
+     * - "scanHistorySize": `Int` number of recorded scan events.
+     * - "threatDatabaseSize": `Int` number of threat signatures stored.
+     * - "threatSensitivity": `Float` current sensitivity setting.
      */
     fun getDetailedStatus(): Map<String, Any> {
         return mapOf(

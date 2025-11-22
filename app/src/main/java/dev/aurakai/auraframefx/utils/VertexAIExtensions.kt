@@ -1,8 +1,10 @@
-package dev.aurakai.auraframefx.ai.clients
+package dev.aurakai.auraframefx.utils
+
+import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 
 /**
- * Missing method for VertexAIClient
+ * Extension function to generate text content using Vertex AI
  */
-suspend fun VertexAIClient.generateContent(prompt: String): String? {
+suspend fun VertexAIClient.generateTextContent(prompt: String): String? {
     return generateText(prompt)
 }

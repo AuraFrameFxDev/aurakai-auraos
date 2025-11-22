@@ -2,9 +2,9 @@ package dev.aurakai.auraframefx.ai.pipeline
 
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.services.AuraAIService
-import dev.aurakai.auraframefx.ai.services.CascadeAIService
+import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
-import dev.aurakai.auraframefx.models.AgentMessage
+import dev.aurakai.auraframefx.model.AgentMessage
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.mutableListOf
 
 fun <T> MutableStateFlow<T>.update(function: (T) -> T) {
     value = function(value)
@@ -34,13 +35,13 @@ class AIPipelineProcessor @Inject constructor(
     private val cascadeService: CascadeAIService,
 ) {
     private val _pipelineState = MutableStateFlow<PipelineState>(PipelineState.Idle)
-    val pipelineState: StateFlow<PipelineState> = AIPipelineProcessor._pipelineState
+    val pipelineState: StateFlow<PipelineState> = _pipelineState
 
     private val _processingContext = MutableStateFlow(mapOf<String, Any>())
-    val processingContext: StateFlow<Map<String, Any>> = AIPipelineProcessor._processingContext
+    val processingContext: StateFlow<Map<String, Any>> = _processingContext
 
     private val _taskPriority = MutableStateFlow(0.0f)
-    val taskPriority: StateFlow<Float> = AIPipelineProcessor._taskPriority
+    val taskPriority: StateFlow<Float> by lazy { _taskPriority }
 
     /**
      * Processes an AI task by orchestrating multiple agents and services, aggregating their responses, and updating the pipeline state and context.
@@ -51,7 +52,7 @@ class AIPipelineProcessor @Inject constructor(
      * @return A list of agent messages containing responses from each participating agent and the final aggregated response.
      */
     suspend fun processTask(task: String): List<AgentMessage> {
-        AIPipelineProcessor._pipelineState.value = PipelineState.Processing(task = task)
+        PipelineState.Processing(task = task).also { AIPipelineProcessor._pipelineState.value = it }
 
         // Step 1: Context Retrieval
         val context = AIPipelineProcessor.retrieveContext(task)
@@ -59,7 +60,7 @@ class AIPipelineProcessor @Inject constructor(
 
         // Step 2: Task Prioritization
         val priority = AIPipelineProcessor.calculatePriority(task, context)
-        AIPipelineProcessor._taskPriority.update { priority }
+        AIPipelineProcessor._taskPriority.update { return@update priority }
 
         // Step 3: Agent Selection
         val selectedAgents = AIPipelineProcessor.selectAgents(task, priority)
@@ -71,10 +72,9 @@ class AIPipelineProcessor @Inject constructor(
         val cascadeAgentResponse = cascadeService.processRequest(
             AiRequest(
                 task,
-                "context"
-            ),
-            context = "pipeline_processing"
-        ) // Renamed variable, removed .first()
+                "pipeline_processing"
+            )
+        ) // Removed context parameter and used it as the second parameter of AiRequest
         responses.add(
             AgentMessage(
                 content = cascadeAgentResponse.content, // Direct access
@@ -379,16 +379,21 @@ class AIPipelineProcessor @Inject constructor(
      * @param task The processed task.
      * @param responses The agent messages generated for the task.
      */
-    private fun updateContext(task: String, responses: List<AgentMessage>) {
+    private fun updateContext(task: String, responses: List<AgentMessage>) =
         // Enhanced context update with learning and adaptation
         AIPipelineProcessor._processingContext.update { current ->
             val newContext = current.toMutableMap()
 
             // Update recent task history
-            val taskHistory =
-                (current["task_history"] as? List<String>)?.toMutableList() ?: mutableListOf()
-            taskHistory.add(0, task) // Add to front
-            if (taskHistory.size > 10) taskHistory.removeAt(taskHistory.size - 1) // Keep last 10
+            @Suppress("UNCHECKED_CAST")
+            val taskHistory = when (val history = current["task_history"]) {
+                else -> {
+                    return@update mutableListOf()
+                }
+            }.also { list ->
+                list.add(0, task) // Add to front
+                if (list.size > 10) list.removeLast() // Keep last 10
+            }
             newContext["task_history"] = taskHistory
 
             // Update response patterns for learning
@@ -423,5 +428,8 @@ class AIPipelineProcessor @Inject constructor(
 
             newContext
         }
-    }
+}
+
+private fun CascadeAIService.processRequest(request1: AiRequest) {
+    TODO("Not yet implemented")
 }
