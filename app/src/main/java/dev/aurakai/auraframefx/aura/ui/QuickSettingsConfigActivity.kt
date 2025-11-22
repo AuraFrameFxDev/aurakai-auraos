@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.settings
+package dev.aurakai.auraframefx.aura.ui
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +30,7 @@ import kotlinx.coroutines.withContext
  * Activity for configuring Quick Settings tiles.
  */
 @AndroidEntryPoint
-class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
+class QuickSettingsConfigActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityQuickSettingsConfigBinding
     private lateinit var configManager: QuickSettingsConfigManager
@@ -81,10 +82,9 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
             showResetConfirmationDialog()
         }
 
-        // TODO: Add applyButton to layout XML
-        // binding.applyButton.setOnClickListener {
-        //     saveConfig()
-        // }
+        binding.resetButton.setOnClickListener {
+            saveConfig()
+        }
     }
 
     private fun showTileConfigDialog(tile: QuickSettingsTileConfig) {
@@ -143,14 +143,6 @@ class QuickSettingsConfigActivity : androidx.appcompat.app.AppCompatActivity() {
                     card.alpha = background.alpha
                 }
                 // Handle other background types as needed
-                else -> {
-                    card.setCardBackgroundColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.light_surface
-                        )
-                    )
-                }
             }
         } ?: run {
             card.setCardBackgroundColor(
