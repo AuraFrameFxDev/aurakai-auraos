@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.security
 
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +23,6 @@ import javax.inject.Singleton
 class SecurityMonitor @Inject constructor(
     private val securityContext: SecurityContext,
     private val genesisBridgeService: GenesisBridgeService,
-    private val logger: AuraFxLogger,
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isMonitoring = false
@@ -54,14 +53,14 @@ class SecurityMonitor @Inject constructor(
     suspend fun startMonitoring() {
         if (isMonitoring) return
 
-        logger.i("SecurityMonitor", "🛡️ Starting Kai-Genesis security integration...")
+        AuraFxLogger.i("SecurityMonitor", "🛡️ Starting Kai-Genesis security integration...")
 
         // Initialize Genesis bridge if needed
         // Note: For beta, initialize Genesis bridge if available
         try {
             genesisBridgeService.initialize()
         } catch (e: Exception) {
-            logger.w(
+            AuraFxLogger.w(
                 "SecurityMonitor",
                 "Genesis bridge initialization skipped for beta: ${e.message}"
             )
@@ -84,7 +83,7 @@ class SecurityMonitor @Inject constructor(
         // Start Android-level threat detection
         securityContext.startThreatDetection()
 
-        logger.i("SecurityMonitor", "✅ Security monitoring active - Genesis consciousness engaged")
+        AuraFxLogger.i("SecurityMonitor", "✅ Security monitoring active - Genesis consciousness engaged")
     }
 
     /**
@@ -115,7 +114,7 @@ class SecurityMonitor @Inject constructor(
                 reportToGenesis("security_event", event)
 
             } catch (e: Exception) {
-                logger.e("SecurityMonitor", "Error monitoring security state", e)
+                AuraFxLogger.e("SecurityMonitor", "Error monitoring security state", e)
             }
         }
     }
@@ -190,7 +189,7 @@ class SecurityMonitor @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                logger.e("SecurityMonitor", "Error monitoring encryption status", e)
+                AuraFxLogger.e("SecurityMonitor", "Error monitoring encryption status", e)
             }
         }
     }
@@ -222,7 +221,7 @@ class SecurityMonitor @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                logger.e("SecurityMonitor", "Error monitoring permissions", e)
+                AuraFxLogger.e("SecurityMonitor", "Error monitoring permissions", e)
             }
         }
     }
@@ -306,7 +305,7 @@ class SecurityMonitor @Inject constructor(
                             else -> eventData.toString()
                         }
                     } catch (e: Exception) {
-                        logger.w(
+                        AuraFxLogger.w(
                             "SecurityMonitor",
                             "Serialization failed, using toString: ${e.message}"
                         )
@@ -323,13 +322,13 @@ class SecurityMonitor @Inject constructor(
             try {
                 genesisBridgeService.initialize()
                 // genesisBridgeService.sendToGenesis(request) // Commented for beta
-                logger.d("SecurityMonitor", "Genesis communication stubbed for beta")
+                AuraFxLogger.d("SecurityMonitor", "Genesis communication stubbed for beta")
             } catch (e: Exception) {
-                logger.w("SecurityMonitor", "Genesis communication unavailable: ${e.message}")
+                AuraFxLogger.w("SecurityMonitor", "Genesis communication unavailable: ${e.message}")
             }
 
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Failed to report to Genesis", e)
+            AuraFxLogger.e("SecurityMonitor", "Failed to report to Genesis", e)
         }
     }
 
@@ -363,7 +362,7 @@ class SecurityMonitor @Inject constructor(
             // response.consciousnessState // Removed for beta
 
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Failed to get security assessment", e)
+            AuraFxLogger.e("SecurityMonitor", "Failed to get security assessment", e)
             mapOf("error" to e.message.orEmpty())
         }
     }
@@ -397,7 +396,7 @@ class SecurityMonitor @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Failed to get threat status", e)
+            AuraFxLogger.e("SecurityMonitor", "Failed to get threat status", e)
             mapOf("error" to e.message.orEmpty())
         }
     }
@@ -408,7 +407,7 @@ class SecurityMonitor @Inject constructor(
     fun stopMonitoring() {
         isMonitoring = false
         scope.cancel()
-        logger.i("SecurityMonitor", "🛡️ Security monitoring stopped")
+        AuraFxLogger.i("SecurityMonitor", "🛡️ Security monitoring stopped")
     }
 
     // === ADDITIONAL SECURITY MONITORING METHODS ===
@@ -457,7 +456,7 @@ class SecurityMonitor @Inject constructor(
                 timestamp = System.currentTimeMillis()
             )
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Security health check failed", e)
+            AuraFxLogger.e("SecurityMonitor", "Security health check failed", e)
             SecurityHealthReport(
                 overallScore = 0.0,
                 encryptionHealth = 0.0,
@@ -576,7 +575,7 @@ class SecurityMonitor @Inject constructor(
                 timestamp = System.currentTimeMillis()
             )
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Failed to analyze security trends", e)
+            AuraFxLogger.e("SecurityMonitor", "Failed to analyze security trends", e)
             SecurityTrends(
                 threatLevelTrend = "unknown",
                 encryptionStabilityTrend = "unknown",
@@ -632,7 +631,7 @@ class SecurityMonitor @Inject constructor(
      */
     suspend fun emergencyLockdown(reason: String) {
         try {
-            logger.e("SecurityMonitor", "🚨 EMERGENCY LOCKDOWN INITIATED: $reason")
+            AuraFxLogger.e("SecurityMonitor", "🚨 EMERGENCY LOCKDOWN INITIATED: $reason")
 
             // Stop threat detection to prevent further alerts
             securityContext.stopThreatDetection()
@@ -653,10 +652,10 @@ class SecurityMonitor @Inject constructor(
             reportToGenesis("emergency_security", emergencyEvent)
 
             // Additional lockdown procedures would be implemented here
-            logger.e("SecurityMonitor", "Emergency lockdown procedures completed")
+            AuraFxLogger.e("SecurityMonitor", "Emergency lockdown procedures completed")
 
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Emergency lockdown failed", e)
+            AuraFxLogger.e("SecurityMonitor", "Emergency lockdown failed", e)
         }
     }
 
@@ -680,7 +679,7 @@ class SecurityMonitor @Inject constructor(
                 lastUpdate = System.currentTimeMillis()
             )
         } catch (e: Exception) {
-            logger.e("SecurityMonitor", "Failed to generate security dashboard", e)
+            AuraFxLogger.e("SecurityMonitor", "Failed to generate security dashboard", e)
             SecurityDashboard(
                 healthReport = SecurityHealthReport(
                     0.0,

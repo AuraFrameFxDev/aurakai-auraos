@@ -42,7 +42,6 @@ class GenesisBridgeService @Inject constructor(
     private val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val applicationContext: Context,
-    private val logger: AuraFxLogger,
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isInitialized = false
