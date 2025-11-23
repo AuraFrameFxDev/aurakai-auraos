@@ -2,6 +2,7 @@
 
 package dev.aurakai.auraframefx.ai.services
 
+import dev.aurakai.auraframefx.ai.task.TaskStatus
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,7 @@ class AgentWebExplorationService @Inject constructor() {
         val taskType: TaskType,
         val parameters: Map<String, Any>,
         val startTime: Long = System.currentTimeMillis(),
-        var status: TaskStatus = TaskStatus.RUNNING,
+        var status: TaskStatus = TaskStatus.IN_PROGRESS,
         val job: Job? = null
     )
 
@@ -48,12 +49,8 @@ class AgentWebExplorationService @Inject constructor() {
         NETWORK_SCAN
     }
 
-    enum class TaskStatus {
-        RUNNING,
-        COMPLETED,
-        FAILED,
-        CANCELLED
-    }
+    // TaskStatus is imported from dev.aurakai.auraframefx.ai.task.TaskStatus
+    // Using the common enum with values: PENDING, IN_PROGRESS, COMPLETED, FAILED, CANCELLED, BLOCKED, WAITING
 
     data class WebExplorationResult(
         val agentName: String,

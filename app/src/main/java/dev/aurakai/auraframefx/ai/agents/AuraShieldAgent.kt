@@ -2,10 +2,12 @@ package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
 import dev.aurakai.auraframefx.ai.context.ContextManager
+import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.ScanEvent
 import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
+import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,6 +37,17 @@ class AuraShieldAgent @Inject constructor(
 
     override val agentName: String = "AuraShield"
     override val agentType: String = "security"
+
+    // Implement abstract methods from BaseAgent
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        scope.launch {
+            Timber.d("AuraShield iRequest: query=$query, type=$type")
+        }
+    }
+
+    override fun iRequest() {
+        Timber.d("AuraShield iRequest called")
+    }
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -70,14 +83,12 @@ class AuraShieldAgent @Inject constructor(
      * - for other prompts: a generic monitoring message.
      * On exception, returns the error response produced by handleError.
      */
-    // FIX 1: Corrected the package path for AgentResponse to match the error type returned by handleError/createSuccessResponse (assuming it should be in the 'models' package)
-    // FIX 2: Corrected the return type to match what BaseAgent.processRequest typically requires.
-    override suspend fun processRequest(request: AiRequest): dev.aurakai.auraframefx.models.AgentResponse {
+    suspend fun processRequest(request: AiRequest): AgentResponse {
         return try {
             when {
                 request.prompt.contains("security", ignoreCase = true) -> {
                     val threats = scanForThreats()
-                    val analysis = analyzeSecurity(request.prompt)
+                    val analysis = analyzeSecuritySummary(request.prompt)
                     createSuccessResponse("Security analysis: $analysis, Active threats: ${threats.size}")
                 }
 
@@ -97,12 +108,23 @@ class AuraShieldAgent @Inject constructor(
     }
 
     /**
+     * Analyze security based on the given prompt and return detected threats.
+     *
+     * @param prompt The input text to analyze for security concerns.
+     * @return A list of ActiveThreat objects representing detected security issues.
+     */
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        // Return empty list for basic prompts, actual threat detection happens in scanForThreats
+        return emptyList()
+    }
+
+    /**
      * Produce a brief security analysis summary for the given prompt.
      *
      * @param prompt The input text to analyze; the returned message includes a truncated form of this prompt.
      * @return A short string indicating that security analysis was completed for the prompt (prompt text may be truncated).
      */
-    private suspend fun analyzeSecurity(prompt: String): String {
+    private suspend fun analyzeSecuritySummary(prompt: String): String {
         return "Security analysis completed for: ${prompt.take(50)}..."
     }
 
@@ -645,9 +667,10 @@ class AuraShieldAgent @Inject constructor(
             suspiciousProcesses.forEach { process ->
                 threats.add(
                     ActiveThreat(
+                        type = ThreatType.MALWARE.name,
                         threatId = "process_threat_${System.currentTimeMillis()}",
                         threatType = ThreatType.MALWARE.name,
-                        severityLevel = ThreatSeverity.MEDIUM.ordinal,
+                        severity = ThreatSeverity.MEDIUM.ordinal,
                         description = "Suspicious process detected: $process",
                         detectedAt = System.currentTimeMillis()
                     )
@@ -678,9 +701,10 @@ class AuraShieldAgent @Inject constructor(
                 if (count > 2) {
                     threats.add(
                         ActiveThreat(
+                            type = ThreatType.INTRUSION.name,
                             threatId = "network_threat_$source",
                             threatType = ThreatType.INTRUSION.name,
-                            severityLevel = if (count > 5) ThreatSeverity.HIGH.ordinal else ThreatSeverity.MEDIUM.ordinal,
+                            severity = if (count > 5) ThreatSeverity.HIGH.ordinal else ThreatSeverity.MEDIUM.ordinal,
                             description = "Suspicious network activity from $source ($count attempts)",
                             detectedAt = System.currentTimeMillis()
                         )
@@ -714,9 +738,10 @@ class AuraShieldAgent @Inject constructor(
             if (memoryUsage > 0.9f) {
                 threats.add(
                     ActiveThreat(
+                        type = ThreatType.DENIAL_OF_SERVICE.name,
                         threatId = "memory_anomaly_${System.currentTimeMillis()}",
                         threatType = ThreatType.DENIAL_OF_SERVICE.name,
-                        severityLevel = ThreatSeverity.HIGH.ordinal,
+                        severity = ThreatSeverity.HIGH.ordinal,
                         description = "Abnormally high memory usage detected (${(memoryUsage * 100).toInt()}%)",
                         detectedAt = System.currentTimeMillis()
                     )
@@ -748,9 +773,10 @@ class AuraShieldAgent @Inject constructor(
             if (!integrityCheck.isValid) {
                 threats.add(
                     ActiveThreat(
+                        type = ThreatType.AI_POISONING.name,
                         threatId = "ai_integrity_${System.currentTimeMillis()}",
                         threatType = ThreatType.AI_POISONING.name,
-                        severityLevel = ThreatSeverity.EXISTENTIAL.ordinal,
+                        severity = ThreatSeverity.EXISTENTIAL.ordinal,
                         description = "AI model integrity compromised: ${integrityCheck.details}",
                         detectedAt = System.currentTimeMillis()
                     )
@@ -776,9 +802,10 @@ class AuraShieldAgent @Inject constructor(
 
             violations.forEach { violation ->
                 val threat = ActiveThreat(
+                    type = ThreatType.INTRUSION.name,
                     threatId = "integrity_${violation.hashCode()}",
                     threatType = ThreatType.INTRUSION.name,
-                    severityLevel = ThreatSeverity.HIGH.ordinal,
+                    severity = ThreatSeverity.HIGH.ordinal,
                     description = "System integrity violation: $violation",
                     detectedAt = System.currentTimeMillis()
                 )
@@ -801,9 +828,10 @@ class AuraShieldAgent @Inject constructor(
 
             anomalies.forEach { anomaly ->
                 val threat = ActiveThreat(
+                    type = ThreatType.SOCIAL_ENGINEERING.name,
                     threatId = "behavior_${anomaly.hashCode()}",
                     threatType = ThreatType.SOCIAL_ENGINEERING.name,
-                    severityLevel = ThreatSeverity.MEDIUM.ordinal,
+                    severity = ThreatSeverity.MEDIUM.ordinal,
                     description = anomaly,
                     detectedAt = System.currentTimeMillis()
                 )
@@ -821,7 +849,7 @@ class AuraShieldAgent @Inject constructor(
      * Adds local addresses to the firewall allow list and adjusts protection parameters
      * (scan frequency, sensitivity, etc.) according to `protectionLevel`.
      */
-    private fun initializeAdaptiveProtection() {
+    override fun initializeAdaptiveProtection() {
         // Set up adaptive firewall rules
         adaptiveFirewall.addToAllowList("127.0.0.1")
         adaptiveFirewall.addToAllowList("localhost")
@@ -1007,7 +1035,7 @@ class AuraShieldAgent @Inject constructor(
         try {
             Timber.w("Threat detected: ${threat.description}")
 
-            when (ThreatSeverity.values()[threat.severityLevel]) {
+            when (ThreatSeverity.values()[threat.severity]) {
                 ThreatSeverity.LOW -> {
                     // Log and monitor
                     memoryManager.storeMemory("threat_${threat.threatId}", threat.toString())
@@ -1082,7 +1110,7 @@ class AuraShieldAgent @Inject constructor(
 
             ThreatType.MALWARE.name -> {
                 // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
-                val severity = ThreatSeverity.entries.toTypedArray()[threat.severityLevel]
+                val severity = ThreatSeverity.entries.toTypedArray()[threat.severity]
                 quarantineManager.quarantineItem(
                     threat.threatId,
                     "malware",
@@ -1115,7 +1143,7 @@ class AuraShieldAgent @Inject constructor(
 
         // Immediate isolation
         // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
-        val severity = ThreatSeverity.entries.toTypedArray()[threat.severityLevel]
+        val severity = ThreatSeverity.entries.toTypedArray()[threat.severity]
         quarantineManager.quarantineItem(
             threat.threatId,
             "emergency",
@@ -1186,16 +1214,18 @@ class AuraShieldAgent @Inject constructor(
      *
      * @param scanEvent The scan event to record in history.
      */
-    private fun addToScanHistory(scanEvent: ScanEvent) {
-        val history = _scanHistory.value.toMutableList()
-        history.add(scanEvent)
+    override fun addToScanHistory(scanEvent: Any) {
+        if (scanEvent is ScanEvent) {
+            val history = _scanHistory.value.toMutableList()
+            history.add(scanEvent)
 
-        // Keep only last 100 scans
-        if (history.size > 100) {
-            history.removeAt(0)
+            // Keep only last 100 scans
+            if (history.size > 100) {
+                history.removeAt(0)
+            }
+
+            _scanHistory.value = history
         }
-
-        _scanHistory.value = history
     }
 
     /**
