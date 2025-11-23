@@ -1,34 +1,24 @@
 package dev.aurakai.auraframefx.ui.theme
 
-import edu.stanford.nlp.pipeline.StanfordCoreNLP
-import java.util.Properties
+// TODO: StanfordCoreNLP is not suitable for Android - using simple keyword matching instead
+// For production, consider using ML Kit or a lightweight NLP solution
 
 class ThemeService {
 
-    private val pipeline: StanfordCoreNLP
-
-    init {
-        val props = Properties()
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner")
-        pipeline = StanfordCoreNLP(props)
-    }
-
     fun parseThemeCommand(command: String): ThemeCommand {
-        // This is a very basic implementation. A real implementation would use a more
-        // sophisticated NLP model to understand the user's intent.
-        val document = pipeline.newdocument(command)
-        pipeline.annotate(document)
-        val tokens = document.tokens()
-        val keywords = tokens.map { it.lemma().lowercase() }
+        // Simple keyword-based parsing (lightweight alternative to StanfordCoreNLP)
+        val keywords = command.lowercase()
+            .split(Regex("[\\s,;.!?]+"))
+            .filter { it.isNotBlank() }
 
         return when {
-            keywords.contains("dark") -> ThemeCommand.SetTheme(Theme.DARK)
-            keywords.contains("light") -> ThemeCommand.SetTheme(Theme.LIGHT)
-            keywords.contains("cyberpunk") -> ThemeCommand.SetTheme(Theme.CYBERPUNK)
-            keywords.contains("solarized") -> ThemeCommand.SetTheme(Theme.SOLARIZED)
-            keywords.contains("red") -> ThemeCommand.SetColor(Color.RED)
-            keywords.contains("blue") -> ThemeCommand.SetColor(Color.BLUE)
-            keywords.contains("green") -> ThemeCommand.SetColor(Color.GREEN)
+            keywords.any { it.contains("dark") } -> ThemeCommand.SetTheme(Theme.DARK)
+            keywords.any { it.contains("light") } -> ThemeCommand.SetTheme(Theme.LIGHT)
+            keywords.any { it.contains("cyberpunk") } -> ThemeCommand.SetTheme(Theme.CYBERPUNK)
+            keywords.any { it.contains("solarized") } -> ThemeCommand.SetTheme(Theme.SOLARIZED)
+            keywords.any { it.contains("red") } -> ThemeCommand.SetColor(Color.RED)
+            keywords.any { it.contains("blue") } -> ThemeCommand.SetColor(Color.BLUE)
+            keywords.any { it.contains("green") } -> ThemeCommand.SetColor(Color.GREEN)
             else -> ThemeCommand.Unknown
         }
     }

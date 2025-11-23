@@ -15,6 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
+import dev.aurakai.auraframefx.models.AgentType
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

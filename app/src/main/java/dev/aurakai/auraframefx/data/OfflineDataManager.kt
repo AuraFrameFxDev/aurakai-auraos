@@ -7,6 +7,28 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
+ * Data class representing critical offline data for the application.
+ */
+data class CriticalOfflineData(
+    val lastFullSyncTimestamp: Long? = null,
+    val aiConfig: AiConfigData? = null,
+    val systemMonitoring: SystemMonitoringData? = null,
+    val contextualMemory: ContextualMemoryData? = null
+)
+
+data class AiConfigData(
+    val lastSyncTimestamp: Long = 0L
+)
+
+data class SystemMonitoringData(
+    val enabled: Boolean = false
+)
+
+data class ContextualMemoryData(
+    val lastUpdateTimestamp: Long = 0L
+)
+
+/**
  * Manages offline data persistence and retrieval for the Genesis Protocol.
  *
  * Handles critical offline data storage including:
@@ -35,11 +57,17 @@ class OfflineDataManager @Inject constructor(
      *
      * @return The loaded offline data, or null if no data is available.
      */
-    fun loadCriticalOfflineData(): Any? {
+    suspend fun loadCriticalOfflineData(): CriticalOfflineData? {
         Timber.d("OfflineDataManager: Attempting to load critical offline data")
-        // Implementation would load from DataStore, SharedPreferences, or local database
+        // TODO: Implementation would load from DataStore, SharedPreferences, or local database
         // Example: return dataStore.data.first() or room.offlineDataDao().getCriticalData()
-        return null // Placeholder until data structure is defined
+        // Return stub data for now
+        return CriticalOfflineData(
+            lastFullSyncTimestamp = System.currentTimeMillis(),
+            aiConfig = AiConfigData(lastSyncTimestamp = System.currentTimeMillis()),
+            systemMonitoring = SystemMonitoringData(enabled = true),
+            contextualMemory = ContextualMemoryData(lastUpdateTimestamp = System.currentTimeMillis())
+        )
     }
 
     /**

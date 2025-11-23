@@ -165,6 +165,38 @@ class ThemeManager @Inject constructor(
      * @param emotionalContext An optional description of the user's emotional state.
      * @return A list of recommended themes for the given context, or an empty list if none are found.
      */
+    /**
+     * Applies a theme by name.
+     *
+     * @param themeName The name of the theme to apply.
+     */
+    suspend fun applyTheme(themeName: String) {
+        try {
+            AuraFxLogger.d(this::class.simpleName, "Applying theme by name: '$themeName'")
+
+            val themeToApply = when (themeName.lowercase()) {
+                "genesis_default", "default" -> ForestTheme
+                "cyberpunk_neon", "cyberpunk" -> CyberpunkTheme
+                "minimal_elegance" -> ForestTheme
+                "matrix_digital" -> CyberpunkTheme
+                "aurora_dreams" -> SolarFlareTheme
+                "dark_matter" -> CyberpunkTheme
+                "solar" -> SolarFlareTheme
+                "nature", "forest" -> ForestTheme
+                else -> {
+                    AuraFxLogger.w(this::class.simpleName, "Unknown theme: '$themeName', using default")
+                    ForestTheme
+                }
+            }
+
+            applySystemTheme(themeToApply)
+            AuraFxLogger.i(this::class.simpleName, "Successfully applied theme '${themeToApply.name}'")
+
+        } catch (e: Exception) {
+            AuraFxLogger.e(this::class.simpleName, "Failed to apply theme: $themeName", e)
+        }
+    }
+
     suspend fun suggestThemeBasedOnContext(
         timeOfDay: String,
         userActivity: String,

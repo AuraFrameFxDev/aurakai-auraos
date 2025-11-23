@@ -6,13 +6,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
-import dev.aurakai.auraframefx.data.offline.OfflineDataManager
+import dev.aurakai.auraframefx.data.OfflineDataManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -213,7 +214,8 @@ class DiagnosticsViewModel @Inject constructor(
      */
     fun loadDetailedConfig(): String {
         return try {
-            val criticalData = offlineDataManager.loadCriticalOfflineData()
+            // TODO: Consider making this a suspend function instead of using runBlocking
+            val criticalData = runBlocking { offlineDataManager.loadCriticalOfflineData() }
             "Critical Offline Data: $criticalData"
         } catch (e: Exception) {
             AuraFxLogger.e("DiagnosticsVM", "Failed to load detailed config: ${e.message}")
