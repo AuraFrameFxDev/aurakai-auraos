@@ -98,7 +98,13 @@ dependencies {
 
     // Hilt Dependency Injection (MUST be added before afterEvaluate)
     implementation(libs.hilt.android)
+    // Use the Hilt compiler with KSP (compiler artifact), not the runtime artifact
     ksp(libs.hilt.compiler)
+
+    // Gemini AI
+    // Use the project version-catalog alias for Google Generative AI client
+    implementation(libs.generativeai)
+    // Hilt KSP already declared above; avoid duplicate KSP entries
 
     // Core Android
     implementation(libs.androidx.core.ktx)

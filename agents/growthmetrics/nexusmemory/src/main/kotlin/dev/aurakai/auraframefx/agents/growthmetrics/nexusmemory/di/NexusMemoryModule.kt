@@ -21,11 +21,11 @@ object NexusMemoryModule {
     @Singleton
     fun provideNexusMemoryDatabase(@ApplicationContext context: Context): NexusMemoryDatabase {
         return Room.databaseBuilder(
-            context,
-            NexusMemoryDatabase::class.java,
-            "nexus_memory_db"
-        ).fallbackToDestructiveMigration() // For development phase
-         .build()
+                context,
+                NexusMemoryDatabase::class.java,
+                "nexus_memory_db"
+            ).fallbackToDestructiveMigration(false) // For development phase
+            .build()
     }
 
     @Provides

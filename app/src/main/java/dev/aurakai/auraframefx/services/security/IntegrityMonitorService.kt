@@ -1,7 +1,9 @@
-package dev.aurakai.auraframefx.security
+package dev.aurakai.auraframefx.services.security
 
 import android.app.Service
 import android.content.Intent
+import android.os.Build
+import android.os.Debug
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +15,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.security.MessageDigest
 
 /**
  * Service for monitoring app and system integrity.
@@ -135,8 +136,8 @@ class IntegrityMonitorService : Service() {
      * @return true if debugger is detected
      */
     private fun checkDebugger(): Boolean {
-        return android.os.Debug.isDebuggerConnected() ||
-                android.os.Debug.waitingForDebugger()
+        return Debug.isDebuggerConnected() ||
+                Debug.waitingForDebugger()
     }
 
     /**
@@ -145,9 +146,9 @@ class IntegrityMonitorService : Service() {
      * @return true if emulator is detected
      */
     private fun checkEmulator(): Boolean {
-        val brand = android.os.Build.BRAND
-        val device = android.os.Build.DEVICE
-        val product = android.os.Build.PRODUCT
+        val brand = Build.BRAND
+        val device = Build.DEVICE
+        val product = Build.PRODUCT
 
         return (brand.startsWith("generic") && device.startsWith("generic")) ||
                 product.contains("sdk") ||
