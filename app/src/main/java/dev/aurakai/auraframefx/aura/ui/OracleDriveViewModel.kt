@@ -3,8 +3,7 @@ package dev.aurakai.auraframefx.oracle.drive.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.aurakai.auraframefx.oracle.drive.model.*
-import dev.aurakai.auraframefx.oracle.drive.service.OracleDriveService
+import dev.aurakai.auraframefx.oracledrive.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -94,7 +93,7 @@ class OracleDriveViewModel @Inject constructor(
         _uiState.update { it.copy(selectedFile = file) }
 
         // Log file selection for analytics
-        timber.log.Timber.d("OracleDriveViewModel: File selected - ${file.name} (type: ${file.type})")
+        timber.log.Timber.d("OracleDriveViewModel: File selected - ${file.name} (mimeType: ${file.mimeType})")
 
         // File preview/navigation is handled by the UI layer based on file type:
         // - Images: Show in ImageViewer
@@ -133,7 +132,7 @@ class OracleDriveViewModel @Inject constructor(
      * Continuously updates the UI state with the latest consciousness state from the Oracle Drive service.
      */
     private fun monitorConsciousness() = viewModelScope.launch {
-        oracleDriveService.consciousnessState.collect { state ->
+        oracleDriveService.getDriveConsciousnessState().collect { state ->
             _uiState.update { it.copy(consciousnessState = state) }
         }
     }

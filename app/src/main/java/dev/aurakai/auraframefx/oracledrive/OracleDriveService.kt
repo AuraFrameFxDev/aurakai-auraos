@@ -36,4 +36,11 @@ interface OracleDriveService {
      * @return A [StateFlow] emitting updates to the [DriveConsciousnessState].
      */
     fun getDriveConsciousnessState(): StateFlow<DriveConsciousnessState>
+
+    /**
+     * Retrieves the list of files from the Oracle Drive.
+     *
+     * @return A list of [DriveFile] objects representing all files in the drive.
+     */
+    suspend fun getFiles(): List<DriveFile>
 }
