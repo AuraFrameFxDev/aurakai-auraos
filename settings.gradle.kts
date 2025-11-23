@@ -44,19 +44,15 @@ pluginManagement {
                     mavenPom()
                 }
             }
-            // HighCapable Maven repositories (primary + legacy fallback)
+            // Explicitly declaring Maven.google.com for Google AI artifacts
             maven {
-                url = uri("https://maven.highcapable.dev/releases")
+                url = uri("https://maven.google.com")
                 metadataSources {
                     artifact()
                     mavenPom()
                 }
             }
-
             // Local YukiHook fallback repository (for when hosted repo is unreachable)
-            flatDir {
-                dirs("$rootDir/libs/yukihook")
-            }
             // Dynamically add every module's libs/ directory as a file-based maven repository
             // This discovers local jars placed in module/libs (including nested modules) and registers them so artifacts like
             // de.robv.android.xposed:api and local JARs can be resolved.
@@ -129,9 +125,6 @@ pluginManagement {
     include(":extendsysd")
     include(":extendsyse")
     include(":extendsysf")
-}
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 
