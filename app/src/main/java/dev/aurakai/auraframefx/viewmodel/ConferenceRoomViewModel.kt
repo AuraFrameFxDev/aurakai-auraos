@@ -1,6 +1,19 @@
 package dev.aurakai.auraframefx.viewmodel
 
 // Placeholder interfaces will be removed
+import dev.aurakai.auraframefx.model.AgentMessage
+import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.model.AiRequest
+import dev.aurakai.auraframefx.model.ConversationState
+import dev.aurakai.auraframefx.services.NeuralWhisper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,19 +23,6 @@ import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
-import dev.aurakai.auraframefx.models.AgentMessage
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.models.ConversationState
-import dev.aurakai.auraframefx.service.NeuralWhisper
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 // Removed @Singleton from ViewModel, typically ViewModels are not Singletons
 // import javax.inject.Singleton // ViewModel should use @HiltViewModel
