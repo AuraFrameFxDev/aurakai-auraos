@@ -86,9 +86,9 @@ dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.3")
     implementation("com.google.gms:google-services:4.4.4")
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.14.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.1")
 }
 
 tasks.withType<Test> {
