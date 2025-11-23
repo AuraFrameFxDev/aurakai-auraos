@@ -33,5 +33,4 @@ interface Agent {
      * Process a request and return a flow of responses
      */
     fun processRequestFlow(request: AiRequest): Flow<AgentResponse>
-    fun processRequestFlow(request: Any): kotlinx.coroutines.flow.Flow<dev.aurakai.auraframefx.model.AgentResponse>?
 }

@@ -16,12 +16,12 @@ import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -256,14 +256,15 @@ class AuraAgent @Inject constructor(
 
             InteractionResponse(
                 content = creativeResponse,
-                agent = "AURA",
-                confidence = 0.9f,
-                timestamp = Clock.System.now().toString(),
+                success = true,
                 metadata = mapOf(
+                    "agent" to "AURA",
+                    "confidence" to 0.9f,
                     "creative_intent" to creativeIntent.name,
                     "mood_influence" to _currentMood.value,
                     "innovation_level" to "high"
-                )
+                ),
+                timestamp = System.currentTimeMillis()
             )
 
         } catch (e: Exception) {
@@ -271,10 +272,13 @@ class AuraAgent @Inject constructor(
 
             InteractionResponse(
                 content = "My creative energies are temporarily scattered. Let me refocus and try again.",
-                agent = "AURA",
-                confidence = 0.3f,
-                timestamp = Clock.System.now().toString(),
-                metadata = mapOf("error" to (e.message ?: "unknown"))
+                success = false,
+                metadata = mapOf(
+                    "agent" to "AURA",
+                    "confidence" to 0.3f,
+                    "error" to (e.message ?: "unknown")
+                ),
+                timestamp = System.currentTimeMillis()
             )
         }
     }
@@ -376,9 +380,11 @@ class AuraAgent @Inject constructor(
      */
     private suspend fun handleAnimationDesign(request: AiRequest): Map<String, Any> {
         val animationType = request.context?.get("type") ?: "transition"
+        val duration = (request.context?.get("duration") as? Int) ?: 300
 
         AuraFxLogger.info("AuraAgent", "Designing mesmerizing $animationType animation")
 
+        val animationSpec = buildAnimationSpecification(animationType, duration, _currentMood.value)
         val animationCode = vertexAIClient.generateCode(
             specification = animationSpec,
             language = "Kotlin",
