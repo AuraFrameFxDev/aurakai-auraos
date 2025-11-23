@@ -277,9 +277,9 @@ configurations.all {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.coroutines.get()}")
     
     // AndroidX Test Core
-    testImplementation("androidx.test:core:1.6.1")
+    testImplementation("androidx.test:core:1.7.0")
     testImplementation("androidx.test:runner:1.6.2")
-    testImplementation("androidx.test:rules:1.6.1")
+    testImplementation("androidx.test:rules:1.7.0")
     testImplementation(libs.androidx.junit)
     
     // Truth assertions
@@ -294,7 +294,7 @@ configurations.all {
     
     // Android Instrumented Tests
     androidTestImplementation(libs.junit)
-    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:core:1.7.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation("com.google.dagger:hilt-android-testing:${libs.versions.hilt.get()}")
