@@ -247,10 +247,10 @@ class PersistentMemoryManager @Inject constructor(
                     memoryCache.clear() // Clear cache before loading new agent's data
                     val agentTag = "AGENT:${this@PersistentMemoryManager.currentAgentType}"
                     val loadedMemories = memoryList
-                        .filter { it.tags.contains(agentTag) }
+                        .filter { it.tags.contains(agentTag) && it.key != null }
                         .associate {
-                            it.key to MemoryEntry(
-                                key = it.key,
+                            it.key!! to MemoryEntry(
+                                key = it.key!!,
                                 value = it.content,
                                 timestamp = it.timestamp
                             )

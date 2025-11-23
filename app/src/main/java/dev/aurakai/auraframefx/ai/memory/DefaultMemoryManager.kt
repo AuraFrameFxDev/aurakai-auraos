@@ -132,7 +132,7 @@ class DefaultMemoryManager : MemoryManager {
      */
     private fun calculateTotalSize(): Long {
         return memories.values.sumOf {
-            (it.key.length + it.value.length) * 2L // 2 bytes per char (UTF-16)
+            ((it.key?.length ?: 0) + it.value.length) * 2L // 2 bytes per char (UTF-16)
         }
     }
 }
