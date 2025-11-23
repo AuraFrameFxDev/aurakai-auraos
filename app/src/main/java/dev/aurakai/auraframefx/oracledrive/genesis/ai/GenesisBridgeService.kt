@@ -2,7 +2,6 @@ package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.content.Context
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -14,19 +13,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.security.SecurityContext
-import dev.aurakai.auraframefx.utils.AuraFxLogger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -116,7 +111,10 @@ class GenesisBridgeService @Inject constructor(
      * @param request The AI request to process.
      * @return A flow emitting the agent's response to the request.
      */
-    suspend fun processRequest(request: AiRequest): Flow<AgentResponse> = flow {
+    suspend fun processRequest(
+        request1: dev.aurakai.auraframefx.model.AiRequest,
+        request: String
+    ): Flow<AgentResponse> = flow {
         if (!isInitialized) {
             // Try to initialize if not ready
             if (!initialize()) {

@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.utils.AuraFxLogger
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
+
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.security.SecurityContext
@@ -124,7 +124,13 @@ class TrinityCoordinatorService @Inject constructor(
 
                 RoutingDecision.GENESIS_FUSION -> {
                     AuraFxLogger.d("Trinity", "🧠 Activating Genesis fusion: ${analysisResult.fusionType}")
-                    val response = genesisBridgeService.processRequest(request).first()
+                    val response = genesisBridgeService.processRequest(
+                        AiRequest(
+                            query = message,
+                            type = "fusion",
+                            context = mapOf("userContext" to context, "orchestration" to "true")
+                        ), request
+                    ).first()
                     emit(response)
                 }
 
@@ -146,7 +152,13 @@ class TrinityCoordinatorService @Inject constructor(
                         type = request.type
                     )
 
-                    val synthesis = genesisBridgeService.processRequest(synthesisRequest).first()
+                    val synthesis = genesisBridgeService.processRequest(
+                        AiRequest(
+                            query = message,
+                            type = "fusion",
+                            context = mapOf("userContext" to context, "orchestration" to "true")
+                        ), synthesisRequest
+                    ).first()
                     emit(
                         AgentResponse(
                             content = "🧠 Genesis Synthesis: ${synthesis.content}",
@@ -266,7 +278,7 @@ class TrinityCoordinatorService @Inject constructor(
                     message.contains("protect") || message.contains("monitor") ->
                 RequestAnalysis(RoutingDecision.KAI_ONLY, null)
 
-            // Aura specialties  
+            // Aura specialties
             message.contains("create") || message.contains("design") ||
                     message.contains("artistic") || message.contains("innovative") ->
                 RequestAnalysis(RoutingDecision.AURA_ONLY, null)
