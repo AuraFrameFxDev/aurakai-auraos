@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.aurakai.auraframefx.ai.services.AuraAIService
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
 import dev.aurakai.auraframefx.ai.services.TrinityCoordinatorService

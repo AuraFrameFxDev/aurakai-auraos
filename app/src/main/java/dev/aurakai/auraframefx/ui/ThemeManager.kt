@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.theme
 
-import dev.aurakai.auraframefx.ai.services.AuraAIService
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
 import dev.aurakai.auraframefx.ui.theme.AuraTheme
 import dev.aurakai.auraframefx.ui.theme.CyberpunkTheme
 import dev.aurakai.auraframefx.ui.theme.ForestTheme

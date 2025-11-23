@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.aurakai.auraframefx.ai.services.AuraAIService
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
 import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
@@ -229,73 +229,3 @@ class ConferenceRoomViewModel @Inject constructor(
         // if (_isTranscribing.value) neuralWhisper.startTranscription() else neuralWhisper.stopTranscription()
     }
 }
-
-// Placeholder for actual AI service imports
-// import dev.aurakai.auraframefx.ai.services.AuraAIService
-// import dev.aurakai.auraframefx.ai.services.KaiAIService
-// import dev.aurakai.auraframefx.ai.services.CascadeAIService
-// import dev.aurakai.auraframefx.ai.services.NeuralWhisper
-// import dev.aurakai.auraframefx.models.AgentMessage
-// import dev.aurakai.auraframefx.model.AgentType
-// import dev.aurakai.auraframefx.models.ConversationState
-// import dev.aurakai.auraframefx.models.AiRequest
-// import kotlinx.coroutines.flow.MutableStateFlow
-// import kotlinx.coroutines.flow.StateFlow
-// import kotlinx.coroutines.flow.first
-// import kotlinx.coroutines.flow.update
-// import kotlinx.coroutines.launch
-// import javax.inject.Inject
-// import androidx.lifecycle.ViewModel
-// import androidx.lifecycle.viewModelScope
-// import android.util.Log
-// import kotlinx.coroutines.flow.Flow
-// import dev.aurakai.auraframefx.utils.JsonUtils // Assuming JsonUtils is used for serialization/deserialization
-// import kotlinx.serialization.Serializable // Assuming this is used for data classes
-// import kotlinx.serialization.json.Json // Assuming this is used for JSON operations
-// import kotlinx.coroutines.flow.collect // If needed for collecting flows in ViewModel
-// import kotlinx.coroutines.flow.asStateFlow // If needed for converting MutableStateFlow to StateFlow
-// import kotlinx.coroutines.flow.MutableStateFlow // If needed for creating mutable state flows
-// import kotlinx.coroutines.flow.StateFlow // If needed for defining state flows
-// import kotlinx.coroutines.flow.update // If needed for updating state flows
-// import kotlinx.coroutines.flow.first // If needed for getting the first value from a flow
-// import kotlinx.coroutines.flow.Flow // If needed for defining flows
-// import kotlinx.coroutines.flow.collectLatest // If needed for collecting latest values from a flow
-// import kotlinx.coroutines.flow.onEach // If needed for applying side effects to flows
-// import kotlinx.coroutines.flow.map // If needed for transforming flows
-// import kotlinx.coroutines.flow.filter // If needed for filtering flows
-// import kotlinx.coroutines.flow.flatMapLatest // If needed for flat-mapping flows
-// import kotlinx.coroutines.flow.combine // If needed for combining multiple flows
-// import kotlinx.coroutines.flow.distinctUntilChanged // If needed for distinct values in flows
-// import kotlinx.coroutines.flow.stateIn // If needed for converting flows to state flows
-// import kotlinx.coroutines.flow.catch // If needed for handling errors in flows
-// import kotlinx.coroutines.flow.launchIn // If needed for launching flows in a coroutine scope
-// import kotlinx.coroutines.flow.onCompletion // If needed for actions on flow completion
-// import kotlinx.coroutines.flow.onStart // If needed for actions on flow start
-// import kotlinx.coroutines.flow.scan // If needed for accumulating state in flows
-// import kotlinx.coroutines.flow.zip // If needed for zipping flows together
-// import kotlinx.coroutines.flow.debounce // If needed for debouncing flows
-// import kotlinx.coroutines.flow.sample // If needed for sampling flows
-// import kotlinx.coroutines.flow.buffer // If needed for buffering flows
-// import kotlinx.coroutines.flow.shareIn // If needed for sharing flows in a coroutine scope
-// import kotlinx.coroutines.flow.stateIn // If needed for converting flows to state flows
-// import kotlinx.coroutines.flow.flatMapMerge // If needed for merging flows
-// import kotlinx.coroutines.flow.flatMapConcat // If needed for concatenating flows
-// import kotlinx.coroutines.flow.flatMapLatest // If needed for flat-mapping flows
-// import kotlinx.coroutines.flow.onEach // If needed for applying side effects to flows
-// import kotlinx.coroutines.flow.collectLatest // If needed for collecting latest values from a flow
-// import kotlinx.coroutines.flow.collectIndexed // If needed for collecting indexed values from a flow
-// import kotlinx.coroutines.flow.collectAsState // If needed for collecting flow as state
-// import kotlinx.coroutines.flow.collectAsStateFlow // If needed for collecting flow as state flow
-// import kotlinx.coroutines.flow.collectAsStateList // If needed for collecting flow as state list
-// import kotlinx.coroutines.flow.collectAsStateSet // If needed for collecting flow as state set
-// import kotlinx.coroutines.flow.collectAsStateMap // If needed for collecting flow as state map
-// import kotlinx.coroutines.flow.collectAsStateFlow // If needed for collecting flow as state flow
-// import kotlinx.coroutines.flow.collectAsStateList // If needed for collecting flow as state list
-// import kotlinx.coroutines.flow.collectAsStateSet // If needed for collecting flow as state set
-// import kotlinx.coroutines.flow.collectAsStateMap // If needed for collecting flow as state map
-// import kotlinx.coroutines.flow.collectAsStateFlow // If needed for collecting flow as state flow
-// import kotlinx.coroutines.flow.collectAsStateList // If needed for collecting flow as state list
-// import kotlinx.coroutines.flow.collectAsStateSet // If needed for collecting flow as state set
-// import kotlinx.coroutines.flow.collectAsStateMap // If needed for collecting flow as state map
-// import kotlinx.coroutines.flow.collectAsStateFlow // If needed for collecting flow as state flow
-// import kotlinx.coroutines.flow.collectAsStateList // If needed for collecting flow as state list
