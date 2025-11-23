@@ -44,14 +44,8 @@ pluginManagement {
                     mavenPom()
                 }
             }
-            // Explicitly declaring Maven.google.com for Google AI artifacts
-            maven {
-                url = uri("https://maven.google.com")
-                metadataSources {
-                    artifact()
-                    mavenPom()
-                }
-            }
+            // YukiHookAPI now on Maven Central - highcapable.dev is deprecated
+
             // Local YukiHook fallback repository (for when hosted repo is unreachable)
             // Dynamically add every module's libs/ directory as a file-based maven repository
             // This discovers local jars placed in module/libs (including nested modules) and registers them so artifacts like

@@ -4,7 +4,7 @@ import android.content.Context
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.aura.AuraAgent
-import dev.aurakai.auraframefx.models.agent_states.GenKitUiState
+import dev.aurakai.auraframefx.models.GenKitUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
