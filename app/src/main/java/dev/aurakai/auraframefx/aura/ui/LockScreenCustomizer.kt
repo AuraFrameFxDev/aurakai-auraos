@@ -2,7 +2,12 @@ package dev.aurakai.auraframefx.system.lockscreen
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import dev.aurakai.auraframefx.system.lockscreen.model.BackgroundConfig
+import dev.aurakai.auraframefx.system.lockscreen.model.ClockConfig
+import dev.aurakai.auraframefx.system.lockscreen.model.HapticFeedbackConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimation
+import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimationConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenElementType
 import dev.aurakai.auraframefx.system.overlay.model.OverlayShape
@@ -12,6 +17,7 @@ import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -140,7 +146,7 @@ class LockScreenCustomizer @Inject constructor(
 
                 val currentConfig = _currentConfig.value ?: getDefaultConfig()
                 val updatedBackground = currentConfig.background?.copy(image = image)
-                    ?: dev.aurakai.auraframefx.system.lockscreen.model.BackgroundConfig(image = image)
+                    ?: BackgroundConfig(image = image)
 
                 val updatedConfig = currentConfig.copy(background = updatedBackground)
                 _currentConfig.value = updatedConfig
@@ -270,9 +276,9 @@ class LockScreenCustomizer @Inject constructor(
             // This would serialize the config to JSON or structured keys
             prefs.edit {
                 putBoolean("genesis_elements", config.showGenesisElements)
-                    .putString("clock_position", config.clockConfig.position)
-                    .putBoolean("haptic_enabled", config.hapticFeedback.enabled)
-                    .putString("animation_type", config.animation.type)
+                putString("clock_position", config.clockConfig.position)
+                putBoolean("haptic_enabled", config.hapticFeedback.enabled)
+                putString("animation_type", config.animation.type)
             }
 
         } catch (e: Exception) {
@@ -283,9 +289,9 @@ class LockScreenCustomizer @Inject constructor(
     private fun getDefaultConfig(): LockScreenConfig {
         return LockScreenConfig(
             showGenesisElements = true,
-            clockConfig = dev.aurakai.auraframefx.system.lockscreen.model.ClockConfig(),
-            hapticFeedback = dev.aurakai.auraframefx.system.lockscreen.model.HapticFeedbackConfig(),
-            animation = dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimationConfig()
+            clockConfig = ClockConfig(),
+            hapticFeedback = HapticFeedbackConfig(),
+            animation = LockScreenAnimationConfig()
         )
     }
 

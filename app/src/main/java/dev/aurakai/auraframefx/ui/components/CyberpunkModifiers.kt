@@ -81,12 +81,17 @@ fun Modifier.digitalPixelEffect() = this
 enum class CornerStyle {
     ROUNDED,
     SHARP,
-    HEXAGON
+    HEXAGON,
+    ANGLED,
+    CLIPPED
 }
 
 enum class BackgroundStyle {
     SOLID,
     GRADIENT,
     GLITCH,
-    MATRIX
+    MATRIX,
+    HEX_GRID,
+    TRANSPARENT,
+    GLASS
 }

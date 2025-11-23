@@ -84,9 +84,9 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
-                    cornerStyle = CornerStyle.Hex,
+                    cornerStyle = CornerStyle.HEXAGON,
                     title = stringResource(R.string.app_title),
-                    backgroundStyle = BackgroundStyle.HexGrid
+                    backgroundStyle = BackgroundStyle.HEX_GRID
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -117,7 +117,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .cyberEdgeGlow(),
                     title = stringResource(R.string.virtual_monitorization),
-                    cornerStyle = CornerStyle.Angled
+                    cornerStyle = CornerStyle.ANGLED
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Menu items like in image reference 1
@@ -198,8 +198,8 @@ fun HomeScreen(
                                 primaryColor = NeonPink,
                                 secondaryColor = NeonBlue
                             ),
-                        cornerStyle = CornerStyle.Rounded,
-                        backgroundStyle = BackgroundStyle.HexGrid
+                        cornerStyle = CornerStyle.ROUNDED,
+                        backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -220,8 +220,8 @@ fun HomeScreen(
                                 primaryColor = NeonCyan,
                                 secondaryColor = NeonBlue
                             ),
-                        cornerStyle = CornerStyle.Rounded,
-                        backgroundStyle = BackgroundStyle.HexGrid
+                        cornerStyle = CornerStyle.ROUNDED,
+                        backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -242,8 +242,8 @@ fun HomeScreen(
                                 primaryColor = NeonGreen,
                                 secondaryColor = NeonBlue
                             ),
-                        cornerStyle = CornerStyle.Rounded,
-                        backgroundStyle = BackgroundStyle.HexGrid
+                        cornerStyle = CornerStyle.ROUNDED,
+                        backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -266,9 +266,9 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .height(140.dp)
                         .digitalGlitchEffect(),
-                    cornerStyle = CornerStyle.Hex,
+                    cornerStyle = CornerStyle.HEXAGON,
                     title = stringResource(R.string.system_status),
-                    backgroundStyle = BackgroundStyle.Transparent
+                    backgroundStyle = BackgroundStyle.TRANSPARENT
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
