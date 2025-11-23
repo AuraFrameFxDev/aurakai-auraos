@@ -62,7 +62,7 @@ fun AgentNexusScreen(
             )
 
             // Agent Stats Display
-            agents.find { it.name == selectedAgent }?.let { agent ->
+            agents.find { return@find it.name == selectedAgent }?.let { agent ->
                 AgentStatsPanel(
                     agent = agent,
                     modifier = Modifier
@@ -82,7 +82,7 @@ fun AgentNexusScreen(
 
         // Departure Task Button
         Button(
-            onClick = { showDepartureDialog = true },
+            onClick = { true.also { showDepartureDialog = true } },
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(16.dp),
@@ -99,9 +99,8 @@ fun AgentNexusScreen(
             agentName = selectedAgent,
             onTaskAssigned = { task ->
                 onDepartureTaskAssigned(selectedAgent, task)
-                showDepartureDialog = false
             },
-            onDismiss = { showDepartureDialog = false }
+            onDismiss = { }
         )
     }
 }

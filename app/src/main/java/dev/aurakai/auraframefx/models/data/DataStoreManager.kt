@@ -323,7 +323,7 @@ class DataStoreManager @Inject constructor(
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = JSON.encodeToString(obj)
+            val jsonString = Companion.JSON.encodeToString(obj)
             storeString(key, jsonString)
             Timber.tag("DataStore").d("Stored object: %s", key)
         } catch (e: Exception) {
@@ -335,7 +335,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val jsonString = getString(key)
             if (jsonString.isNotEmpty()) {
-                JSON.decodeFromString<T>(jsonString)
+                Companion.JSON.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
             }
@@ -349,7 +349,7 @@ class DataStoreManager @Inject constructor(
         return getStringFlow(key).map { jsonString ->
             try {
                 if (jsonString.isNotEmpty()) {
-                    JSON.decodeFromString<T>(jsonString)
+                    Companion.JSON.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
                 }
@@ -579,7 +579,7 @@ class DataStoreManager @Inject constructor(
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
-            JSON.encodeToString(allData).length.toLong()
+            Companion.JSON.encodeToString(allData).length.toLong()
         } catch (e: Exception) {
             Timber.tag("DataStore").e(e, "Failed to calculate data size")
             0L
