@@ -2,9 +2,8 @@
 // Core UI Module - Shared UI components and Compose utilities
 // ═══════════════════════════════════════════════════════════════════════════
 plugins {
-    id("genesis.android.library")
-    alias(libs.plugins.ksp)  // Required for Hilt + Room code generation
-
+    id("genesis.android.library.hilt")  // Provides Hilt + KSP for annotation processing
+    alias(libs.plugins.ksp)  // Explicit for ksp() DSL accessor
 }
 
 android {
@@ -13,7 +12,7 @@ android {
 
 dependencies {
     // ═══════════════════════════════════════════════════════════════════════
-    // AUTO-PROVIDED by genesis.android.library:
+    // AUTO-PROVIDED by genesis.android.library.hilt:
     // - androidx-core-ktx, appcompat
     // - Hilt (android + compiler via KSP)
     // - Timber, Coroutines
