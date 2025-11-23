@@ -6,12 +6,11 @@ import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.core.OrchestratableAgent
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.agent_states.ProcessingState
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.agent_states.VisionState
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,7 +41,7 @@ class CascadeAgent @Inject constructor(
     // Internal scope for agent background work; cancelled independently from parentScope
     private val internalJob = SupervisorJob()
     private val internalScope: CoroutineScope = CoroutineScope(Dispatchers.Default + internalJob)
-    
+
     // State management
     private val _visionState = MutableStateFlow(VisionState())
     val visionState: StateFlow<VisionState> = _visionState.asStateFlow()
@@ -53,7 +52,7 @@ class CascadeAgent @Inject constructor(
     // Collaboration mode
     private val _collaborationMode = MutableStateFlow(CollaborationMode.AUTONOMOUS)
     val collaborationMode: StateFlow<CollaborationMode> = _collaborationMode.asStateFlow()
-    
+
     // Coordination state
     @Volatile
     private var isCoordinationActive: Boolean = false

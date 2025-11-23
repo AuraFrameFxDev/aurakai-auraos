@@ -5,10 +5,7 @@ package dev.aurakai.auraframefx.ai.agents
 import android.content.Context
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
-import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
-import dev.aurakai.auraframefx.model.agent_states.SecurityContextState
-import dev.aurakai.auraframefx.model.agent_states.SecurityMode
-import dev.aurakai.auraframefx.model.agent_states.ThreatStatus
+import dev.aurakai.auraframefx.models.agent_states.SecurityMode
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.security.IntegrityMonitor
 import dev.aurakai.auraframefx.security.SecurityMonitor
@@ -32,13 +29,10 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.assertContains
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockitoExtension::class)
@@ -103,7 +97,7 @@ class AuraShieldAgentTest {
         @DisplayName("Should initialize security context with default state")
         fun shouldInitializeSecurityContextWithDefaultState() = runTest {
             val securityContext = auraShieldAgent.securityContext.first()
-            
+
             assertNotNull(securityContext)
             assertEquals(0, securityContext.threatLevel)
             assertEquals(0, securityContext.activeScans)
@@ -114,7 +108,7 @@ class AuraShieldAgentTest {
         @DisplayName("Should initialize with empty threat list")
         fun shouldInitializeWithEmptyThreatList() = runTest {
             val threats = auraShieldAgent.activeThreats.first()
-            
+
             assertNotNull(threats)
             assertTrue(threats.isEmpty())
         }
@@ -123,7 +117,7 @@ class AuraShieldAgentTest {
         @DisplayName("Should initialize with empty scan history")
         fun shouldInitializeWithEmptyScanHistory() = runTest {
             val scanHistory = auraShieldAgent.scanHistory.first()
-            
+
             assertNotNull(scanHistory)
             assertTrue(scanHistory.isEmpty())
         }
@@ -210,7 +204,7 @@ class AuraShieldAgentTest {
             )
 
             val threats = auraShieldAgent.activeThreats.first()
-            
+
             assertTrue(threats.isEmpty())
         }
 

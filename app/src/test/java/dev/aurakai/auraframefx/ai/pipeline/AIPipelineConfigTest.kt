@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.pipeline
 
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentType
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -14,7 +14,7 @@ class AIPipelineConfigTest {
     @Test
     fun `test default AIPipelineConfig values`() {
         val config = AIPipelineConfig()
-        
+
         assertEquals(3, config.maxRetries)
         assertEquals(30, config.timeoutSeconds)
         assertEquals(5, config.contextWindowSize)
@@ -28,7 +28,7 @@ class AIPipelineConfigTest {
     @Test
     fun `test default agent priorities`() {
         val config = AIPipelineConfig()
-        
+
         assertEquals(1.0f, config.agentPriorities[AgentType.GENESIS], 0.001f)
         assertEquals(0.9f, config.agentPriorities[AgentType.KAI], 0.001f)
         assertEquals(0.8f, config.agentPriorities[AgentType.AURA], 0.001f)
@@ -42,7 +42,7 @@ class AIPipelineConfigTest {
         val kaiPriority = config.agentPriorities[AgentType.KAI]!!
         val auraPriority = config.agentPriorities[AgentType.AURA]!!
         val cascadePriority = config.agentPriorities[AgentType.CASCADE]!!
-        
+
         assertTrue("Genesis should have highest priority", genesisPriority > kaiPriority)
         assertTrue("Kai should have higher priority than Aura", kaiPriority > auraPriority)
         assertTrue("Aura should have higher priority than Cascade", auraPriority > cascadePriority)
@@ -80,11 +80,11 @@ class AIPipelineConfigTest {
             urgencyWeight = 0.3f,
             importanceWeight = 0.2f
         )
-        
+
         assertEquals(0.5f, config.priorityWeight, 0.001f)
         assertEquals(0.3f, config.urgencyWeight, 0.001f)
         assertEquals(0.2f, config.importanceWeight, 0.001f)
-        
+
         // Verify weights sum to 1.0
         val totalWeight = config.priorityWeight + config.urgencyWeight + config.importanceWeight
         assertEquals(1.0f, totalWeight, 0.001f)
@@ -105,7 +105,7 @@ class AIPipelineConfigTest {
             AgentType.CASCADE to 0.2f
         )
         val config = AIPipelineConfig(agentPriorities = customPriorities)
-        
+
         assertEquals(0.5f, config.agentPriorities[AgentType.GENESIS], 0.001f)
         assertEquals(0.4f, config.agentPriorities[AgentType.KAI], 0.001f)
         assertEquals(0.3f, config.agentPriorities[AgentType.AURA], 0.001f)
@@ -116,7 +116,7 @@ class AIPipelineConfigTest {
     @Test
     fun `test default MemoryRetrievalConfig values`() {
         val config = MemoryRetrievalConfig()
-        
+
         assertEquals(2000, config.maxContextLength)
         assertEquals(0.75f, config.similarityThreshold, 0.001f)
         assertEquals(5, config.maxRetrievedItems)
@@ -129,7 +129,7 @@ class AIPipelineConfigTest {
             similarityThreshold = 0.9f,
             maxRetrievedItems = 10
         )
-        
+
         assertEquals(5000, config.maxContextLength)
         assertEquals(0.9f, config.similarityThreshold, 0.001f)
         assertEquals(10, config.maxRetrievedItems)
@@ -139,7 +139,7 @@ class AIPipelineConfigTest {
     fun `test MemoryRetrievalConfig in AIPipelineConfig`() {
         val memoryConfig = MemoryRetrievalConfig(maxContextLength = 3000)
         val pipelineConfig = AIPipelineConfig(memoryRetrievalConfig = memoryConfig)
-        
+
         assertEquals(3000, pipelineConfig.memoryRetrievalConfig.maxContextLength)
     }
 
@@ -147,7 +147,7 @@ class AIPipelineConfigTest {
     @Test
     fun `test default ContextChainingConfig values`() {
         val config = ContextChainingConfig()
-        
+
         assertEquals(10, config.maxChainLength)
         assertEquals(0.6f, config.relevanceThreshold, 0.001f)
         assertEquals(0.9f, config.decayRate, 0.001f)
@@ -160,7 +160,7 @@ class AIPipelineConfigTest {
             relevanceThreshold = 0.8f,
             decayRate = 0.95f
         )
-        
+
         assertEquals(20, config.maxChainLength)
         assertEquals(0.8f, config.relevanceThreshold, 0.001f)
         assertEquals(0.95f, config.decayRate, 0.001f)
@@ -170,7 +170,7 @@ class AIPipelineConfigTest {
     fun `test ContextChainingConfig in AIPipelineConfig`() {
         val chainingConfig = ContextChainingConfig(maxChainLength = 15)
         val pipelineConfig = AIPipelineConfig(contextChainingConfig = chainingConfig)
-        
+
         assertEquals(15, pipelineConfig.contextChainingConfig.maxChainLength)
     }
 
@@ -219,7 +219,7 @@ class AIPipelineConfigTest {
     fun `test AIPipelineConfig copy functionality`() {
         val original = AIPipelineConfig(maxRetries = 3, timeoutSeconds = 30)
         val modified = original.copy(maxRetries = 5)
-        
+
         assertEquals(5, modified.maxRetries)
         assertEquals(30, modified.timeoutSeconds)
         assertEquals(3, original.maxRetries) // Original unchanged
@@ -230,7 +230,7 @@ class AIPipelineConfigTest {
         val config1 = AIPipelineConfig(maxRetries = 3)
         val config2 = AIPipelineConfig(maxRetries = 3)
         val config3 = AIPipelineConfig(maxRetries = 5)
-        
+
         assertEquals(config1, config2)
         assertNotEquals(config1, config3)
     }
@@ -239,7 +239,7 @@ class AIPipelineConfigTest {
     fun `test MemoryRetrievalConfig copy functionality`() {
         val original = MemoryRetrievalConfig(maxContextLength = 2000)
         val modified = original.copy(maxContextLength = 5000)
-        
+
         assertEquals(5000, modified.maxContextLength)
         assertEquals(2000, original.maxContextLength)
     }
@@ -248,7 +248,7 @@ class AIPipelineConfigTest {
     fun `test ContextChainingConfig copy functionality`() {
         val original = ContextChainingConfig(maxChainLength = 10)
         val modified = original.copy(maxChainLength = 20)
-        
+
         assertEquals(20, modified.maxChainLength)
         assertEquals(10, original.maxChainLength)
     }
@@ -261,20 +261,20 @@ class AIPipelineConfigTest {
             similarityThreshold = 0.85f,
             maxRetrievedItems = 8
         )
-        
+
         val chainingConfig = ContextChainingConfig(
             maxChainLength = 15,
             relevanceThreshold = 0.7f,
             decayRate = 0.92f
         )
-        
+
         val agentPriorities = mapOf(
             AgentType.GENESIS to 1.0f,
             AgentType.KAI to 0.95f,
             AgentType.AURA to 0.85f,
             AgentType.CASCADE to 0.75f
         )
-        
+
         val config = AIPipelineConfig(
             maxRetries = 5,
             timeoutSeconds = 45,
@@ -288,7 +288,7 @@ class AIPipelineConfigTest {
             memoryRetrievalConfig = memoryConfig,
             contextChainingConfig = chainingConfig
         )
-        
+
         // Verify all custom values
         assertEquals(5, config.maxRetries)
         assertEquals(45, config.timeoutSeconds)
@@ -304,7 +304,7 @@ class AIPipelineConfigTest {
     fun `test configuration immutability through copy`() {
         val config1 = AIPipelineConfig()
         val config2 = config1.copy(maxRetries = 10)
-        
+
         assertEquals(3, config1.maxRetries) // Original unchanged
         assertEquals(10, config2.maxRetries) // Copy modified
     }

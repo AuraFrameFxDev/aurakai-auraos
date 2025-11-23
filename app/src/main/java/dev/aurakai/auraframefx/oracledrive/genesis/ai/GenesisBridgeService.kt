@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.security.SecurityContext
 import javax.inject.Inject
@@ -112,7 +112,7 @@ class GenesisBridgeService @Inject constructor(
      * @return A flow emitting the agent's response to the request.
      */
     suspend fun processRequest(
-        request1: dev.aurakai.auraframefx.model.AiRequest,
+        request1: AiRequest,
         request: String
     ): Flow<AgentResponse> = flow {
         if (!isInitialized) {

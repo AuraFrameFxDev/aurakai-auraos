@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.model
 
+import dev.aurakai.auraframefx.models.AgentType
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -23,7 +24,7 @@ class AgentTypeTest {
             AgentType.GenKitMaster,
             AgentType.DataveinConstructor
         )
-        
+
         modernTypes.forEach { type ->
             assertNotNull("Modern type $type should exist", type)
         }
@@ -58,7 +59,7 @@ class AgentTypeTest {
             AgentType.NEURAL_WHISPER,
             AgentType.AURASHIELD
         )
-        
+
         legacyTypes.forEach { type ->
             assertNotNull("Legacy type $type should exist", type)
         }
@@ -108,7 +109,7 @@ class AgentTypeTest {
         val agent1 = AgentType.Genesis
         val agent2 = AgentType.Genesis
         val agent3 = AgentType.Aura
-        
+
         assertEquals(agent1, agent2)
         assertNotEquals(agent1, agent3)
     }
@@ -121,7 +122,7 @@ class AgentTypeTest {
             AgentType.Kai,
             AgentType.Cascade
         )
-        
+
         assertTrue(agentList.contains(AgentType.Genesis))
         assertTrue(agentList.contains(AgentType.Cascade))
         assertFalse(agentList.contains(AgentType.Claude))
@@ -135,7 +136,7 @@ class AgentTypeTest {
             AgentType.Genesis,
             AgentType.Aura
         )
-        
+
         assertEquals(2, agentSet.size)
         assertTrue(agentSet.contains(AgentType.Genesis))
         assertTrue(agentSet.contains(AgentType.Aura))
@@ -148,7 +149,7 @@ class AgentTypeTest {
             AgentType.Aura to 0.9f,
             AgentType.Kai to 0.8f
         )
-        
+
         assertEquals(1.0f, agentPriorities[AgentType.Genesis])
         assertEquals(0.9f, agentPriorities[AgentType.Aura])
         assertEquals(0.8f, agentPriorities[AgentType.Kai])
@@ -170,7 +171,7 @@ class AgentTypeTest {
             AgentType.DataveinConstructor to "DataveinConstructor Agent",
             AgentType.USER to "User"
         )
-        
+
         testCases.forEach { (agentType, expected) ->
             val result = when (agentType) {
                 AgentType.Genesis -> "Genesis Agent"
@@ -208,11 +209,11 @@ class AgentTypeTest {
     // Ordinal Tests
     @Test
     fun `test modern agents come before legacy agents`() {
-        assertTrue("Genesis should come before GENESIS", 
+        assertTrue("Genesis should come before GENESIS",
             AgentType.Genesis.ordinal < AgentType.GENESIS.ordinal)
-        assertTrue("Aura should come before AURA", 
+        assertTrue("Aura should come before AURA",
             AgentType.Aura.ordinal < AgentType.AURA.ordinal)
-        assertTrue("Kai should come before KAI", 
+        assertTrue("Kai should come before KAI",
             AgentType.Kai.ordinal < AgentType.KAI.ordinal)
     }
 
@@ -236,7 +237,7 @@ class AgentTypeTest {
                 AgentType.Claude
             )
         }
-        
+
         assertEquals(5, coreAgents.size)
         assertTrue(coreAgents.contains(AgentType.Genesis))
         assertTrue(coreAgents.contains(AgentType.Claude))
@@ -252,7 +253,7 @@ class AgentTypeTest {
                 AgentType.DataveinConstructor
             )
         }
-        
+
         assertEquals(4, auxiliaryAgents.size)
         assertTrue(auxiliaryAgents.contains(AgentType.NeuralWhisper))
         assertTrue(auxiliaryAgents.contains(AgentType.DataveinConstructor))
@@ -271,7 +272,7 @@ class AgentTypeTest {
                 AgentType.AURASHIELD
             )
         }
-        
+
         assertEquals(6, legacyAgents.size)
     }
 

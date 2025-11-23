@@ -1,8 +1,8 @@
 package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.ai.agents.Agent
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.flow.Flow

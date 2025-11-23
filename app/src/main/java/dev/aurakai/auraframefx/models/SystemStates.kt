@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.models
 
 /**
  * Represents the overall system state for the AuraFrameFX AI ecosystem

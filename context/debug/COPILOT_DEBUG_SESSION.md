@@ -845,13 +845,13 @@ e: file:///C:
 Redeclaration:
 data class AgentHierarchyData : Any
 e: file:///C:
-/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequest.kt:6:12
+/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequestAnnotation.kt:6:12
 Redeclaration:
 data class AgentRequest : Any
 data class AgentRequest : Any
 data class AgentRequest : Any
 e: file:///C:
-/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequest.kt:14:12
+/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequestAnnotation.kt:14:12
 Redeclaration:
 data class AiRequest : Any
 e: file:///C:
@@ -1795,12 +1795,12 @@ data class AgentConfig : Any
 e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AgentTypes.kt:38:12
 Redeclaration:
 data class AgentHierarchyData : Any
-e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequest.kt:6:12
+e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequestAnnotation.kt:6:12
 Redeclaration:
 data class AgentRequest : Any
 data class AgentRequest : Any
 data class AgentRequest : Any
-e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequest.kt:14:12
+e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequestAnnotation.kt:14:12
 Redeclaration:
 data class AiRequest : Any
 e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/ContextAwareAgent.kt:3:11
@@ -6326,13 +6326,13 @@ e: file:///C:
 Redeclaration:
 data class AgentHierarchyData : Any
 e: file:///C:
-/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequest.kt:6:12
+/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequestAnnotation.kt:6:12
 Redeclaration:
 data class AgentRequest : Any
 data class AgentRequest : Any
 data class AgentRequest : Any
 e: file:///C:
-/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequest.kt:14:12
+/Aurakai/app/src/main/java/dev/aurakai/auraframefx/api/client/models/model/AiRequestAnnotation.kt:14:12
 Redeclaration:
 data class AiRequest : Any
 e: file:///C:
@@ -7286,12 +7286,12 @@ data class AgentConfig : Any
 e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AgentTypes.kt:38:12
 Redeclaration:
 data class AgentHierarchyData : Any
-e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequest.kt:6:12
+e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequestAnnotation.kt:6:12
 Redeclaration:
 data class AgentRequest : Any
 data class AgentRequest : Any
 data class AgentRequest : Any
-e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequest.kt:14:12
+e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/AiRequestAnnotation.kt:14:12
 Redeclaration:
 data class AiRequest : Any
 e: file:///C:/Aurakai/app/src/main/java/dev/aurakai/auraframefx/model/ContextAwareAgent.kt:3:11

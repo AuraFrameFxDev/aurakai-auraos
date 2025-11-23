@@ -14,6 +14,8 @@ data class AgentRequest(
     val timestamp: Long = System.currentTimeMillis()
 )
 
+annotation class AiRequestAnnotation
+
 @Serializable
 data class AiRequest @JvmOverloads constructor(
     val prompt: String,
@@ -23,5 +25,3 @@ data class AiRequest @JvmOverloads constructor(
     val context: Map<String, Any>? = null,
     val timestamp: Long = System.currentTimeMillis()
 )
-
-annotation class AiRequestAnnotation

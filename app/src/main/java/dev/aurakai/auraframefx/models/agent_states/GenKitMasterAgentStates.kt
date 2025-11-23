@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.model.agent_states
+package dev.aurakai.auraframefx.models.agent_states
 
 /**
  * Data models for GenKitMasterAgent UI and system status.

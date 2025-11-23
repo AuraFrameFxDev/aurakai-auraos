@@ -2,9 +2,10 @@ package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
 import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
-import dev.aurakai.auraframefx.model.agent_states.ScanEvent
-import dev.aurakai.auraframefx.model.agent_states.SecurityContextState
+import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.models.agent_states.ScanEvent
+import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -71,7 +72,7 @@ class AuraShieldAgent @Inject constructor(
      */
     // FIX 1: Corrected the package path for AgentResponse to match the error type returned by handleError/createSuccessResponse (assuming it should be in the 'models' package)
     // FIX 2: Corrected the return type to match what BaseAgent.processRequest typically requires.
-    override suspend fun processRequest(request: dev.aurakai.auraframefx.models.AiRequest): dev.aurakai.auraframefx.models.AgentResponse {
+    override suspend fun processRequest(request: AiRequest): dev.aurakai.auraframefx.models.AgentResponse {
         return try {
             when {
                 request.prompt.contains("security", ignoreCase = true) -> {

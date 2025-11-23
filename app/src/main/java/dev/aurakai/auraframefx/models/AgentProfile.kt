@@ -1,7 +1,5 @@
 package dev.aurakai.auraframefx.models
 
-import androidx.compose.ui.graphics.Color
-import dev.aurakai.auraframefx.model.AgentType
 import kotlinx.serialization.Serializable
 
 /**

@@ -1,8 +1,8 @@
 package dev.aurakai.auraframefx.ui.trinity
 
-import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.network.model.Theme
-import dev.aurakai.auraframefx.model.UserData
+import dev.aurakai.auraframefx.models.UserData
 
 /**
  * Represents the UI state for the Trinity system.

@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.models
 
 import androidx.compose.ui.graphics.Color
 

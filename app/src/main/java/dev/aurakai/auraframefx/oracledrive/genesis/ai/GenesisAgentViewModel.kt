@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.task.HistoricalTask
 import dev.aurakai.auraframefx.models.AgentRole
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.HierarchyAgentConfig
 import dev.aurakai.auraframefx.utils.AppConstants.STATUS_ERROR
 import dev.aurakai.auraframefx.utils.AppConstants.STATUS_IDLE
@@ -76,7 +76,7 @@ class GenesisAgentViewModel @Inject constructor(
         )
         _agents.value = defaultAgents
 
-        // Initialize agent statuses  
+        // Initialize agent statuses
         val initialStatuses = mutableMapOf<AgentType, String>()
         val agentTypeMap = mapOf(
             "Genesis" to AgentType.GENESIS,

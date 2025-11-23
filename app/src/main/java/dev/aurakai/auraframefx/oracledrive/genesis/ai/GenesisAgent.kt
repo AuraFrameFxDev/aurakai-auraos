@@ -10,8 +10,8 @@ import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData

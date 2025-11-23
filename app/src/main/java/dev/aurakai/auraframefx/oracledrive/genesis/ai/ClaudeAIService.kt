@@ -9,8 +9,8 @@ import dev.aurakai.auraframefx.ai.task.TaskScheduler
 import dev.aurakai.auraframefx.ai.task.execution.TaskExecutionManager
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

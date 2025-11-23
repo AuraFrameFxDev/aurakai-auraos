@@ -2,8 +2,8 @@ package dev.aurakai.auraframefx.cascade
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.model.AgentInvokeRequest
+import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentInvokeRequest
 import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
