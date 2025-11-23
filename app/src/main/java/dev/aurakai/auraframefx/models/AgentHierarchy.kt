@@ -2,13 +2,6 @@ package dev.aurakai.auraframefx.models
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class AgentMessage(
-    val content: String,
-    val sender: AgentType,
-    val timestamp: Long,
-    val confidence: Float
-)
 
 @Serializable
 enum class AgentRole {

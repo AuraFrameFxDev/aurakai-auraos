@@ -18,8 +18,10 @@ enum class SystemState {
 enum class AgentStatus {
     IDLE,
     READY,
+    ACTIVE,      // Added for AgentProfile
     PROCESSING,
     BUSY,
+    EVOLVING,    // Added for AgentProfile
     ERROR,
     OFFLINE
 }
