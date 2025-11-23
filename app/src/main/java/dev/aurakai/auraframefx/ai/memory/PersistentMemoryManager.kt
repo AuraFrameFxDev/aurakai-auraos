@@ -264,10 +264,6 @@ class PersistentMemoryManager @Inject constructor(
         }
     }
 
-    private fun ConcurrentHashMap<String, MemoryEntry>.putAll(loadedMemories: Map<String?, MemoryEntry>) {
-
-    }
-
     /**
      * Restore the manager's in-memory memories from the provided key–value map for the current agent.
      *

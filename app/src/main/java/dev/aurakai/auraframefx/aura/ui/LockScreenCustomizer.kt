@@ -290,17 +290,17 @@ class LockScreenCustomizer @Inject constructor(
     }
 
     private suspend fun setupThemeIntegration() {
-        logger.debug("LockScreenCustomizer", "Setting up theme integration")
+        AuraFxLogger.debug("LockScreenCustomizer", "Setting up theme integration")
         // Setup integration with theme manager
     }
 
     private suspend fun initializeSecurityFeatures() {
-        logger.debug("LockScreenCustomizer", "Initializing security features")
+        AuraFxLogger.debug("LockScreenCustomizer", "Initializing security features")
         // Initialize security features for lock screen
     }
 
     private suspend fun applyConfiguration(config: LockScreenConfig) {
-        logger.debug("LockScreenCustomizer", "Applying full lock screen configuration")
+        AuraFxLogger.debug("LockScreenCustomizer", "Applying full lock screen configuration")
         // Implementation for applying the complete configuration
     }
 
@@ -308,7 +308,7 @@ class LockScreenCustomizer @Inject constructor(
         elementType: LockScreenElementType,
         shape: OverlayShape
     ) {
-        logger.debug("LockScreenCustomizer", "Applying element shape change: $elementType")
+        AuraFxLogger.debug("LockScreenCustomizer", "Applying element shape change: $elementType")
         // Implementation for applying shape changes
     }
 
@@ -316,12 +316,12 @@ class LockScreenCustomizer @Inject constructor(
         elementType: LockScreenElementType,
         animation: LockScreenAnimation
     ) {
-        logger.debug("LockScreenCustomizer", "Applying element animation change: $elementType")
+        AuraFxLogger.debug("LockScreenCustomizer", "Applying element animation change: $elementType")
         // Implementation for applying animation changes
     }
 
     private suspend fun applyBackgroundChange(image: ImageResource?) {
-        logger.debug("LockScreenCustomizer", "Applying background change")
+        AuraFxLogger.debug("LockScreenCustomizer", "Applying background change")
         // Implementation for applying background changes
     }
 
@@ -329,7 +329,7 @@ class LockScreenCustomizer @Inject constructor(
         position: Pair<Float, Float>,
         properties: Map<String, Any>
     ) {
-        logger.debug("LockScreenCustomizer", "Adding clock element at position: $position")
+        AuraFxLogger.debug("LockScreenCustomizer", "Adding clock element at position: $position")
         // Implementation for adding clock element
     }
 
@@ -337,7 +337,7 @@ class LockScreenCustomizer @Inject constructor(
         position: Pair<Float, Float>,
         properties: Map<String, Any>
     ) {
-        logger.debug("LockScreenCustomizer", "Adding weather element at position: $position")
+        AuraFxLogger.debug("LockScreenCustomizer", "Adding weather element at position: $position")
         // Implementation for adding weather element
     }
 
@@ -345,7 +345,7 @@ class LockScreenCustomizer @Inject constructor(
         position: Pair<Float, Float>,
         properties: Map<String, Any>
     ) {
-        logger.debug("LockScreenCustomizer", "Adding notification element at position: $position")
+        AuraFxLogger.debug("LockScreenCustomizer", "Adding notification element at position: $position")
         // Implementation for adding notification element
     }
 
@@ -353,7 +353,7 @@ class LockScreenCustomizer @Inject constructor(
         position: Pair<Float, Float>,
         properties: Map<String, Any>
     ) {
-        logger.debug("LockScreenCustomizer", "Adding shortcut element at position: $position")
+        AuraFxLogger.debug("LockScreenCustomizer", "Adding shortcut element at position: $position")
         // Implementation for adding shortcut element
     }
 
@@ -361,12 +361,12 @@ class LockScreenCustomizer @Inject constructor(
         position: Pair<Float, Float>,
         properties: Map<String, Any>
     ) {
-        logger.debug("LockScreenCustomizer", "Adding custom element at position: $position")
+        AuraFxLogger.debug("LockScreenCustomizer", "Adding custom element at position: $position")
         // Implementation for adding custom element
     }
 
     private suspend fun applyLockScreenTheme(themeName: String) {
-        logger.debug("LockScreenCustomizer", "Applying lock screen theme: $themeName")
+        AuraFxLogger.debug("LockScreenCustomizer", "Applying lock screen theme: $themeName")
         // Implementation for applying theme to lock screen
     }
 
@@ -374,7 +374,7 @@ class LockScreenCustomizer @Inject constructor(
      * Cleanup resources
      */
     fun cleanup() {
-        logger.info("LockScreenCustomizer", "Cleaning up lock screen customizer")
+        AuraFxLogger.info("LockScreenCustomizer", "Cleaning up lock screen customizer")
         scope.cancel()
         isInitialized = false
     }
