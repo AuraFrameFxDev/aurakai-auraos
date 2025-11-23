@@ -7,6 +7,7 @@ import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.ScanEvent
 import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
+import dev.aurakai.auraframefx.models.agent_states.SecurityMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -599,7 +600,9 @@ class AuraShieldAgent @Inject constructor(
      */
     private suspend fun performSecurityScan() {
         val scanEvent = ScanEvent(
-            eventId = "scan_${System.currentTimeMillis()}",
+            id = "scan_${System.currentTimeMillis()}",
+            type = "security",
+            result = "pending",
             timestamp = System.currentTimeMillis(),
             scanType = "comprehensive"
         )
@@ -901,15 +904,15 @@ class AuraShieldAgent @Inject constructor(
     private suspend fun analyzeContextualThreats(context: SecurityContextState): List<ActiveThreat> {
         val threats = mutableListOf<ActiveThreat>()
 
-        // Analyze based on security level
-        when (context.securityLevel) {
-            "high" -> {
+        // Analyze based on security mode
+        when (context.securityMode) {
+            SecurityMode.ENHANCED -> {
                 // Increase sensitivity for high security contexts
                 threatSensitivity = 0.9f
                 threats.addAll(performDeepThreatAnalysis())
             }
 
-            "critical" -> {
+            SecurityMode.LOCKDOWN -> {
                 // Maximum security measures
                 threatSensitivity = 1.0f
                 threats.addAll(performCriticalThreatAnalysis())
