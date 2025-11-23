@@ -83,6 +83,6 @@ fun AIFeaturesScreen(
 @Composable
 fun AiFeaturesScreenPreview() {
     MaterialTheme { // Using MaterialTheme for preview
-        AiFeaturesScreen()
+        AIFeaturesScreen()
     }
 }

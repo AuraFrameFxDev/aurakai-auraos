@@ -192,6 +192,6 @@ fun ChatMessageItem(message: ChatMessage) {
 @Composable
 fun AiChatScreenPreview() {
     AuraFrameFXTheme { // Using our custom theme for preview
-        AiChatScreen()
+        AIChatScreen()
     }
 }
