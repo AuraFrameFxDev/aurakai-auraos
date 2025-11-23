@@ -40,8 +40,8 @@ kotlin = "2.3.0"
 # Kotlin DSL
 kotlinDsl = "5.1.2"
 
-# KSP - Latest: 2.3.3 (KSP2, compatible with Kotlin 2.2.21 and AGP 9.0)
-ksp = "2.3.3"
+# KSP2 - Decoupled from Kotlin version (requires Kotlin 2.3.0+ and AGP 9.0+)
+ksp = "2.3.1"
 
 # YukiHook and KavaRef versions
 material3WindowSizeClass = "1.4.0"
