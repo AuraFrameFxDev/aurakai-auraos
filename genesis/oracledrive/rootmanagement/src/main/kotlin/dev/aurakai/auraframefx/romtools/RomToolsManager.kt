@@ -4,6 +4,7 @@ package dev.aurakai.auraframefx.romtools
 import android.os.Build
 import dev.aurakai.auraframefx.romtools.bootloader.BootloaderManager
 import dev.aurakai.auraframefx.romtools.retention.AurakaiRetentionManager
+import dev.aurakai.auraframefx.romtools.retention.RetentionStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +30,9 @@ open class RomToolsManager @Inject constructor(
     private val backupManager: BackupManager,
     private val retentionManager: AurakaiRetentionManager
 ) {
-    val _romToolsState = MutableStateFlow(RomToolsState())
-    val romToolsState: StateFlow<RomToolsState> = _romToolsState
+
+    private val _romToolsState = MutableStateFlow(RomToolsState())
+    protected val romToolsState: StateFlow<RomToolsState> = _romToolsState
 
     private val _operationProgress = MutableStateFlow<OperationProgress?>(null)
     val operationProgress: StateFlow<OperationProgress?> = _operationProgress
@@ -91,7 +93,7 @@ open class RomToolsManager @Inject constructor(
             verificationManager.verifyRomFile(romFile).getOrThrow()
 
             // Step 2: Create backup if requested
-            if (_romToolsState.value.settings.autoBackup) {
+            if (romToolsState.value.settings.autoBackup) {
                 updateOperationProgress(RomOperation.CREATING_BACKUP, 20f)
                 backupManager.createFullBackup().getOrThrow()
             }
@@ -231,7 +233,7 @@ open class RomToolsManager @Inject constructor(
      */
     suspend fun getAvailableRoms(): Result<List<AvailableRom>> {
         return try {
-            val deviceModel = _romToolsState.value.capabilities?.deviceModel ?: "unknown"
+            val deviceModel = romToolsState.value.capabilities?.deviceModel ?: "unknown"
             val roms = romRepository.getCompatibleRoms(deviceModel)
             Result.success(roms)
         } catch (e: Exception) {
@@ -257,7 +259,7 @@ open class RomToolsManager @Inject constructor(
      *
      * @return A Result containing the configured `RetentionStatus` on success, or a failure with the encountered exception.
      */
-    suspend fun setupAurakaiRetention(): Result<dev.aurakai.auraframefx.romtools.retention.RetentionStatus> {
+    suspend fun setupAurakaiRetention(): Result<RetentionStatus> {
         return try {
             updateOperationProgress(RomOperation.SETTING_UP_RETENTION, 0f)
 
