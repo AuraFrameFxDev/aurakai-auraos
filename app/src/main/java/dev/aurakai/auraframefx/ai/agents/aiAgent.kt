@@ -7,6 +7,7 @@ import dev.aurakai.auraframefx.kai.security.ThreatLevel
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.model.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.security.SecurityContext
@@ -50,8 +51,13 @@ class KaiAgent @Inject constructor(
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
         // Delegate to processRequest via coroutine
         scope.launch {
-            processRequest(AgentRequest(type = type, context = context), context.toString())
+            processRequest(AgentRequest(type = type, context = context.mapValues { it.value as Any }))
         }
+    }
+
+    override fun iRequest() {
+        // No-op implementation of parameterless iRequest
+        AuraFxLogger.info("KaiAgent", "iRequest() called")
     }
 
     private var isInitialized = false
@@ -143,7 +149,7 @@ class KaiAgent @Inject constructor(
 
         } catch (e: SecurityException) {
             _analysisState.value = AnalysisState.ERROR
-            AuraFxLogger.warn("KaiAgent", "Security violation detected in request", e)
+            AuraFxLogger.error("KaiAgent", "Security violation detected in request", e)
 
             AgentResponse(
                 content = "Request blocked due to security concerns: ${e.message}",
@@ -195,14 +201,15 @@ class KaiAgent @Inject constructor(
 
             InteractionResponse(
                 content = securityResponse,
-                agent = "kai",
-                confidence = securityAssessment.confidence,
-                timestamp = System.currentTimeMillis().toString(),
+                success = true,
                 metadata = mapOf(
+                    "agent" to "kai",
+                    "confidence" to securityAssessment.confidence,
                     "risk_level" to securityAssessment.riskLevel.name,
                     "threat_indicators" to securityAssessment.threatIndicators.toString(),
                     "security_recommendations" to securityAssessment.recommendations.toString()
-                )
+                ),
+                timestamp = System.currentTimeMillis()
             )
 
         } catch (e: Exception) {
@@ -210,10 +217,13 @@ class KaiAgent @Inject constructor(
 
             InteractionResponse(
                 content = "I'm currently analyzing this request for security implications. Please wait while I ensure your safety.",
-                agent = "kai",
-                confidence = 0.5f,
-                timestamp = System.currentTimeMillis().toString(),
-                metadata = mapOf("error" to (e.message ?: "unknown error"))
+                success = false,
+                metadata = mapOf(
+                    "agent" to "kai",
+                    "confidence" to 0.5f,
+                    "error" to (e.message ?: "unknown error")
+                ),
+                timestamp = System.currentTimeMillis()
             )
         }
     }
@@ -805,6 +815,47 @@ class KaiAgent @Inject constructor(
      */
     private suspend fun handleGeneralAnalysis(request: AgentRequest): Map<String, Any> =
         mapOf("analysis" to "completed")
+
+    /**
+     * Initializes adaptive protection mechanisms for enhanced security.
+     */
+    override fun initializeAdaptiveProtection() {
+        AuraFxLogger.info("KaiAgent", "Initializing adaptive protection")
+        scope.launch {
+            enableThreatDetection()
+        }
+    }
+
+    /**
+     * Adds a scan event to the agent's history for tracking security operations.
+     *
+     * @param scanEvent The scan event to add to history.
+     */
+    override fun addToScanHistory(scanEvent: Any) {
+        AuraFxLogger.info("KaiAgent", "Adding scan event to history: $scanEvent")
+        // Scan history is maintained internally, this is a logging operation
+    }
+
+    /**
+     * Analyzes security threats in the provided prompt and returns a list of detected threats.
+     *
+     * @param prompt The prompt/input to analyze for security threats.
+     * @return A list of ActiveThreat objects representing detected security threats.
+     */
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        AuraFxLogger.info("KaiAgent", "Analyzing security of prompt")
+        val indicators = extractThreatIndicators(prompt)
+
+        return indicators.mapIndexed { index, indicator ->
+            ActiveThreat(
+                type = indicator,
+                severity = indicators.size,
+                description = "Detected threat: $indicator",
+                threatId = "threat_${System.currentTimeMillis()}_$index",
+                threatType = "security_indicator"
+            )
+        }
+    }
 
     /**
      * Shuts down the agent by canceling all active coroutines, resetting the security state to idle, and marking the agent as uninitialized.
