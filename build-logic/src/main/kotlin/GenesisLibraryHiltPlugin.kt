@@ -114,6 +114,10 @@ class GenesisLibraryHiltPlugin : Plugin<Project> {
             dependencies.add("implementation", "com.google.dagger:hilt-android:2.57.2")
             dependencies.add("ksp", "com.google.dagger:hilt-android-compiler:2.57.2")
 
+            // YukiHookAPI KSP processor (for modules using YukiHook)
+            dependencies.add("implementation", "com.highcapable.yukihookapi:api:1.3.1")
+            dependencies.add("ksp", "com.highcapable.yukihookapi:ksp-xposed:1.3.1")
+
             // Core Android libraries
             dependencies.add("implementation", "androidx.core:core-ktx:1.17.0")
             dependencies.add("implementation", "androidx.appcompat:appcompat:1.7.1")

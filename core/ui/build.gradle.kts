@@ -2,9 +2,7 @@
 // Core UI Module - Shared UI components and Compose utilities
 // ═══════════════════════════════════════════════════════════════════════════
 plugins {
-    id("genesis.android.library")
-    alias(libs.plugins.ksp)  // Required for Hilt + Room code generation
-
+    id("genesis.android.library.hilt")  // Provides Hilt + KSP + YukiHookAPI
 }
 
 android {
@@ -13,7 +11,7 @@ android {
 
 dependencies {
     // ═══════════════════════════════════════════════════════════════════════
-    // AUTO-PROVIDED by genesis.android.library:
+    // AUTO-PROVIDED by genesis.android.library.hilt:
     // - androidx-core-ktx, appcompat
     // - Hilt (android + compiler via KSP)
     // - Timber, Coroutines
@@ -31,9 +29,7 @@ dependencies {
     // Xposed API (compile-only, not bundled in APK)
     compileOnly(files("$projectDir/libs/api-82.jar"))
 
-    // YukiHook API 1.3.0+ with KavaRef
-    implementation(libs.yukihookapi.api)
-    ksp(libs.yukihookapi.ksp)
+    // YukiHookAPI provided by genesis.android.library.hilt convention
 
 }
 
