@@ -50,8 +50,6 @@ data class AITask(
     val error: String? = null
 )
 
-// TaskPriority is defined in TaskModel.kt with a more sophisticated data class version
-
-enum class TaskStatus {
-    PENDING, RUNNING, COMPLETED, FAILED, CANCELLED
-}
+// TaskPriority and TaskStatus are imported from TaskModel.kt in the same package
+// TaskPriority is a data class with value, reason, and metadata
+// TaskStatus is an enum with PENDING, IN_PROGRESS, COMPLETED, FAILED, CANCELLED, BLOCKED, WAITING
