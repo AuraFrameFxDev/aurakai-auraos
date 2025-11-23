@@ -264,11 +264,11 @@ dependencies {
     testImplementation(libs.androidx.rules)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.truth)
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${libs.versions.junitJupiterApi.get()}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation(libs.robolectric)
 
     // Hilt testing dependencies
-    kspTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
+    kspTest("com.google.dagger:hilt-android-compiler")
     testImplementation(libs.hilt.android.testing)
 
     // Android Test dependencies
@@ -276,7 +276,7 @@ dependencies {
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
-    kspAndroidTest("com.google.dagger:hilt-android-compiler:${libs.versions.hilt.get()}")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler")
 }
 
 // Force a single annotations artifact to avoid duplicate-class errors

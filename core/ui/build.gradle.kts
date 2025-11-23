@@ -2,7 +2,9 @@
 // Core UI Module - Shared UI components and Compose utilities
 // ═══════════════════════════════════════════════════════════════════════════
 plugins {
-    id("genesis.android.library.hilt")  // Provides Hilt + KSP + YukiHookAPI
+    id("genesis.android.library")
+    alias(libs.plugins.ksp)  // Required for Hilt + Room code generation
+
 }
 
 android {
@@ -13,7 +15,7 @@ dependencies {
     // ═══════════════════════════════════════════════════════════════════════
     // AUTO-PROVIDED by genesis.android.library.hilt:
     // - androidx-core-ktx, appcompat
-    // - Hilt (android + compiler via KSP)
+    // - Hilt (android + compiler viaversion KSP)
     // - Timber, Coroutines
     // - Compose enabled by default
     // ═══════════════════════════════════════════════════════════════════════
@@ -30,6 +32,5 @@ dependencies {
     compileOnly(files("$projectDir/libs/api-82.jar"))
 
     // YukiHookAPI provided by genesis.android.library.hilt convention
-
 }
 

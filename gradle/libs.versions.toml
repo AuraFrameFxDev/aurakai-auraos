@@ -8,11 +8,10 @@ core = "1.7.0"
 gson = "2.13.2"
 # Android Gradle Plugin - Latest: 9.0.0-beta01 (requires Gradle 9.2.0+)
 agp = "9.0.0-beta01"
-
 # Gradle - Latest: 9.2.0
 gradle = "9.2.0"
 gradleCore = "9.2.0"
-generativeai = "1.0.0"
+generativeai = "0.9.0"
 # Foojay Toolchain Resolver - Required for Gradle 8.0+
 foojayResolver = "1.0.0"
 
@@ -20,12 +19,12 @@ foojayResolver = "1.0.0"
 googleServices = "4.4.4"
 
 # Firebase Plugins
-firebaseCrashlyticsPlugin = "3.0.6"
+firebaseCrashlyticsPlugin = "23.00"
 # NOTE: Firebase Analytics does NOT have a Gradle plugin - it's just a library dependency
 
 # Dagger Hilt - Latest: 2.57.2
 hilt = "2.57.2"
-
+hilt-android = "2.57.2"
 # AndroidX Hilt Work - Latest: 1.3.0 (September 10, 2025)
 hiltAndroidTestingVersion = "2.57.2"
 hiltWork = "1.3.0"
@@ -59,7 +58,7 @@ compile-sdk = "36"
 min-sdk = "34"
 multidex = "2.0.1"
 target-sdk = "36"
-
+android-test = "1.5.2"
 # ============================================================================
 # AndroidX & Jetpack Libraries
 # ============================================================================
@@ -229,12 +228,13 @@ kotlinxCoroutinesTest = "1.8.1"
 
 # Turbine for Flow testing
 turbine = "1.1.0"
+kotlin-compose = "1.82"
 
 # Robolectric
 robolectric = "4.12.1"
 
 # Hilt Testing
-hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hiltAndroidTestingVersion" }
 hiltAndroidCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 
 # AndroidX JUnit (Test Ext) - Latest: 1.2.1
@@ -312,7 +312,7 @@ androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = 
 compose-animation = { module = "androidx.compose.animation:animation" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
-compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size" }
+compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size", version.ref = "material3WindowSizeClass" }
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata" }
 compose-ui = { module = "androidx.compose.ui:ui" }
@@ -396,7 +396,6 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
-
 # ============================================================================
 # System & Root
 # ============================================================================
@@ -408,6 +407,8 @@ libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", versio
 # ============================================================================
 # Testing
 # ============================================================================
+# JUnit 4 - Latest: 4.13.2
+# JUnit 5 (Jupiter) - Latest: 6.0.1 (Oct 31, 2025, requires Java 17, Kotlin 2.2)
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 benchmark-junit4 = { group = "androidx.benchmark", name = "benchmark-junit4", version.ref = "benchmark" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
@@ -424,26 +425,24 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 # ============================================================================
 # Gradle Plugins (Use with alias(libs.plugins.xxx))
 # ============================================================================
-[plugins]
 # Android Plugins
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-android-test = { id = "com.android.test", version.ref = "agp" }
+android-application = { group = "com.android.application", name = "android-application", version.ref = "agp" }
+android-library = { group = "com.android.library", name = "android-library", version.ref = "agp" }
+android-test = { group = "com.android.test", name = "android-test", version.ref = "agp" }
 
 # Kotlin Plugins
 # Note: Using EXTERNAL kotlin-android plugin (android.builtInKotlin=false for Hilt compatibility)
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-android = { group = "org.jetbrains.kotlin.android", name = "kotlin-android", version.ref = "kotlin" }
+kotlin-compose = { group = "org.jetbrains.kotlin.plugin.compose", name = "kotlin-compose", version.ref = "kotlin" }
+kotlin-serialization = { group = "org.jetbrains.kotlin.plugin.serialization", name = "kotlin-serialization", version.ref = "kotlin" }
+kotlin-parcelize = { group = "org.jetbrains.kotlin.plugin.parcelize", name = "kotlin-parcelize", version.ref = "kotlin" }
 
 # Code Generation & DI
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { group = "com.google.devtools.ksp", name = "ksp", version.ref = "ksp" }
+hilt = { group = "com.google.dagger.hilt.android", name = "hilt-android", version.ref = "hilt" }
 
 # Firebase & Google Services
-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+google-services = { group = "com.google.gms.google-services", name = "google-services", version.ref = "googleServices" }
 # NOTE: Firebase Analytics is NOT a plugin - just use implementation(libs.firebase.analytics)
 
 [bundles]

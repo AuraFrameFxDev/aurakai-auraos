@@ -47,9 +47,6 @@ pluginManagement {
             // YukiHookAPI now on Maven Central - highcapable.dev is deprecated
 
             // Local YukiHook fallback repository (for when hosted repo is unreachable)
-            flatDir {
-                dirs("$rootDir/libs/yukihook")
-            }
             // Dynamically add every module's libs/ directory as a file-based maven repository
             // This discovers local jars placed in module/libs (including nested modules) and registers them so artifacts like
             // de.robv.android.xposed:api and local JARs can be resolved.
@@ -122,9 +119,6 @@ pluginManagement {
     include(":extendsysd")
     include(":extendsyse")
     include(":extendsysf")
-}
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 
