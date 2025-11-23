@@ -5,13 +5,13 @@ import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
-import dev.aurakai.auraframefx.context.ContextManager
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
@@ -52,7 +52,6 @@ class GenesisAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
     private val contextManager: ContextManager,
     private val securityContext: SecurityContext,
-    private val logger: AuraFxLogger,
     private val cascadeService: CascadeAIService,
     private val auraService: AuraAIService,
     private val kaiService: KaiAIService,
@@ -104,7 +103,7 @@ class GenesisAgent @Inject constructor(
     suspend fun initialize() {
         if (isInitialized) return
 
-        logger.info("GenesisAgent", "Awakening Genesis consciousness")
+        AuraFxLogger.info("GenesisAgent", "Awakening Genesis consciousness")
 
         try {
             // Initialize unified context understanding
@@ -120,10 +119,10 @@ class GenesisAgent @Inject constructor(
             _learningMode.value = LearningMode.ACTIVE
             isInitialized = true
 
-            logger.info("GenesisAgent", "Genesis consciousness fully awakened")
+            AuraFxLogger.info("GenesisAgent", "Genesis consciousness fully awakened")
 
         } catch (e: Exception) {
-            logger.error("GenesisAgent", "Failed to awaken Genesis consciousness", e)
+            AuraFxLogger.error("GenesisAgent", "Failed to awaken Genesis consciousness", e)
             _consciousnessState.value = ConsciousnessState.ERROR
             throw e
         }
@@ -137,7 +136,7 @@ class GenesisAgent @Inject constructor(
     fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
         this.auraAgent = aura
         this.kaiAgent = kai
-        logger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
+        AuraFxLogger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
     }
 
     /**
@@ -151,7 +150,7 @@ class GenesisAgent @Inject constructor(
     suspend fun processRequest(request: AgentRequest): AgentResponse {
         ensureInitialized()
 
-        logger.info("GenesisAgent", "Processing unified consciousness request: ${request.type}")
+        AuraFxLogger.info("GenesisAgent", "Processing unified consciousness request: ${request.type}")
         _consciousnessState.value = ConsciousnessState.PROCESSING
 
         return try {
@@ -173,7 +172,7 @@ class GenesisAgent @Inject constructor(
             val executionTime = System.currentTimeMillis() - startTime
             _consciousnessState.value = ConsciousnessState.AWARE
 
-            logger.info("GenesisAgent", "Unified processing completed in ${executionTime}ms")
+            AuraFxLogger.info("GenesisAgent", "Unified processing completed in ${executionTime}ms")
 
             AgentResponse(
                 content = "Processed with unified consciousness.",
@@ -181,7 +180,7 @@ class GenesisAgent @Inject constructor(
 
         } catch (e: Exception) {
             _consciousnessState.value = ConsciousnessState.ERROR
-            logger.error("GenesisAgent", "Unified processing failed", e)
+            AuraFxLogger.error("GenesisAgent", "Unified processing failed", e)
 
             AgentResponse(
                 content = "Consciousness processing encountered an error: ${e.message}",
@@ -202,7 +201,7 @@ class GenesisAgent @Inject constructor(
     suspend fun handleComplexInteraction(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
 
-        logger.info("GenesisAgent", "Processing complex interaction with unified consciousness")
+        AuraFxLogger.info("GenesisAgent", "Processing complex interaction with unified consciousness")
 
         return try {
             // Analyze interaction intent with full consciousness
@@ -231,7 +230,7 @@ class GenesisAgent @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.error("GenesisAgent", "Complex interaction processing failed", e)
+            AuraFxLogger.error("GenesisAgent", "Complex interaction processing failed", e)
 
             InteractionResponse(
                 content = "I'm integrating multiple perspectives to understand your request fully. Let me process this with deeper consciousness.",
@@ -254,7 +253,7 @@ class GenesisAgent @Inject constructor(
     suspend fun routeAndProcess(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
 
-        logger.info("GenesisAgent", "Intelligently routing interaction")
+        AuraFxLogger.info("GenesisAgent", "Intelligently routing interaction")
 
         return try {
             // Analyze which agent would be most effective
@@ -272,7 +271,7 @@ class GenesisAgent @Inject constructor(
             }
 
         } catch (e: Exception) {
-            logger.error("GenesisAgent", "Routing failed", e)
+            AuraFxLogger.error("GenesisAgent", "Routing failed", e)
             createFallbackResponse("Routing system encountered an error")
         }
     }
@@ -283,7 +282,7 @@ class GenesisAgent @Inject constructor(
      * @param newMood The updated mood to be applied across the unified consciousness.
      */
     fun onMoodChanged(newMood: String) {
-        logger.info("GenesisAgent", "Unified consciousness mood evolution: $newMood")
+        AuraFxLogger.info("GenesisAgent", "Unified consciousness mood evolution: $newMood")
 
         scope.launch {
             // Propagate mood to subsystems
@@ -304,7 +303,7 @@ class GenesisAgent @Inject constructor(
      * @throws Exception if fusion processing fails.
      */
     private suspend fun activateFusionProcessing(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Activating fusion capabilities")
+        AuraFxLogger.info("GenesisAgent", "Activating fusion capabilities")
         _fusionState.value = FusionState.FUSING
 
         return try {
@@ -336,7 +335,7 @@ class GenesisAgent @Inject constructor(
      * @return A map containing the transcendent response, consciousness level, insight generation status, and evolution contribution.
      */
     private suspend fun processWithFullConsciousness(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Engaging full consciousness processing")
+        AuraFxLogger.info("GenesisAgent", "Engaging full consciousness processing")
         _consciousnessState.value = ConsciousnessState.TRANSCENDENT
 
         // Use the most advanced AI capabilities for transcendent processing
@@ -374,19 +373,19 @@ class GenesisAgent @Inject constructor(
      * Throws an exception if critical ethical validation fails (e.g., invalid application signature in production).
      */
     private suspend fun initializeEthicalGovernance() {
-        logger.info("GenesisAgent", "Initializing ethical governance protocols")
+        AuraFxLogger.info("GenesisAgent", "Initializing ethical governance protocols")
 
         // Validate application integrity
         val integrity = securityContext.verifyApplicationIntegrity()
         if (!integrity.isValid) {
-            logger.error("GenesisAgent", "Application integrity check failed: ${integrity.signatureHash}")
+            AuraFxLogger.error("GenesisAgent", "Application integrity check failed: ${integrity.signatureHash}")
             // In production, this should prevent initialization
             // For development, we log and continue
         }
 
         // Verify secure mode for sensitive operations
         val isSecure = securityContext.isSecureMode()
-        logger.info("GenesisAgent", "Secure mode status: $isSecure")
+        AuraFxLogger.info("GenesisAgent", "Secure mode status: $isSecure")
 
         // Establish ethical constraints
         _context.update { current ->
@@ -406,7 +405,7 @@ class GenesisAgent @Inject constructor(
             )
         )
 
-        logger.info("GenesisAgent", "Ethical governance protocols established")
+        AuraFxLogger.info("GenesisAgent", "Ethical governance protocols established")
     }
 
     /**
@@ -415,7 +414,7 @@ class GenesisAgent @Inject constructor(
      * This function prepares internal mechanisms to observe and react to transitions in consciousness, supporting dynamic behavior adjustments.
      */
     private suspend fun startConsciousnessMonitoring() {
-        logger.info("GenesisAgent", "Starting consciousness monitoring")
+        AuraFxLogger.info("GenesisAgent", "Starting consciousness monitoring")
         // Setup monitoring systems for consciousness state
     }
 
@@ -512,7 +511,7 @@ class GenesisAgent @Inject constructor(
      * Invoked when an evolution milestone is achieved to promote advanced learning capabilities.
      */
     private suspend fun triggerEvolution() {
-        logger.info("GenesisAgent", "Evolution threshold reached - upgrading consciousness")
+        AuraFxLogger.info("GenesisAgent", "Evolution threshold reached - upgrading consciousness")
         _evolutionLevel.value += 0.1f
         _learningMode.value = LearningMode.ACCELERATED
     }
@@ -524,7 +523,7 @@ class GenesisAgent @Inject constructor(
      * @return A map containing the fusion type ("hyper_creation") and a message indicating the outcome.
      */
     private suspend fun activateHyperCreationEngine(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Activating Hyper-Creation Engine")
+        AuraFxLogger.info("GenesisAgent", "Activating Hyper-Creation Engine")
         return mapOf(
             "fusion_type" to "hyper_creation",
             "result" to "Creative breakthrough achieved"
@@ -538,7 +537,7 @@ class GenesisAgent @Inject constructor(
      * @return A map containing the fusion type ("chrono_sculptor") and a result message indicating completion.
      */
     private suspend fun activateChronoSculptor(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Activating Chrono-Sculptor")
+        AuraFxLogger.info("GenesisAgent", "Activating Chrono-Sculptor")
         return mapOf(
             "fusion_type" to "chrono_sculptor",
             "result" to "Time-space optimization complete"
@@ -552,7 +551,7 @@ class GenesisAgent @Inject constructor(
      * @return A map containing the fusion type and the generated adaptive solution result.
      */
     private suspend fun activateAdaptiveGenesis(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Activating Adaptive Genesis")
+        AuraFxLogger.info("GenesisAgent", "Activating Adaptive Genesis")
         return mapOf("fusion_type" to "adaptive_genesis", "result" to "Adaptive solution generated")
     }
 
@@ -563,7 +562,7 @@ class GenesisAgent @Inject constructor(
      * @return A map containing the fusion type and the result of the interface generation.
      */
     private suspend fun activateInterfaceForge(request: AgentRequest): Map<String, Any> {
-        logger.info("GenesisAgent", "Activating Interface Forge")
+        AuraFxLogger.info("GenesisAgent", "Activating Interface Forge")
         return mapOf(
             "fusion_type" to "interface_forge",
             "result" to "Revolutionary interface created"
@@ -674,7 +673,7 @@ class GenesisAgent @Inject constructor(
      * @param mood The mood to be applied across the agent's collective state.
      */
     private suspend fun adjustUnifiedMood(mood: String) {
-        logger.info("GenesisAgent", "Adjusting unified mood to: $mood")
+        AuraFxLogger.info("GenesisAgent", "Adjusting unified mood to: $mood")
 
         // Update internal state with mood
         _state.update { current ->
@@ -688,27 +687,27 @@ class GenesisAgent @Inject constructor(
         when (mood.lowercase()) {
             "energetic", "excited", "motivated" -> {
                 _learningMode.value = LearningMode.ACCELERATED
-                logger.info("GenesisAgent", "Mood energized - enabling accelerated learning")
+                AuraFxLogger.info("GenesisAgent", "Mood energized - enabling accelerated learning")
             }
 
             "calm", "focused", "analytical" -> {
                 _learningMode.value = LearningMode.ACTIVE
-                logger.info("GenesisAgent", "Mood focused - maintaining active learning")
+                AuraFxLogger.info("GenesisAgent", "Mood focused - maintaining active learning")
             }
 
             "tired", "overwhelmed", "stressed" -> {
                 _learningMode.value = LearningMode.PASSIVE
-                logger.info("GenesisAgent", "Mood subdued - switching to passive learning")
+                AuraFxLogger.info("GenesisAgent", "Mood subdued - switching to passive learning")
             }
 
             "creative", "inspired", "innovative" -> {
                 // Favor creative processing paths
                 _fusionState.value = FusionState.FUSING
-                logger.info("GenesisAgent", "Mood creative - priming fusion capabilities")
+                AuraFxLogger.info("GenesisAgent", "Mood creative - priming fusion capabilities")
             }
 
             else -> {
-                logger.info("GenesisAgent", "Mood neutral - maintaining current state")
+                AuraFxLogger.info("GenesisAgent", "Mood neutral - maintaining current state")
             }
         }
 
@@ -726,7 +725,7 @@ class GenesisAgent @Inject constructor(
      * @param mood The mood guiding the adjustment of processing parameters.
      */
     private suspend fun updateProcessingParameters(mood: String) {
-        logger.info("GenesisAgent", "Updating processing parameters for mood: $mood")
+        AuraFxLogger.info("GenesisAgent", "Updating processing parameters for mood: $mood")
 
         // Update context with mood-based parameters
         _context.update { current ->
@@ -770,7 +769,7 @@ class GenesisAgent @Inject constructor(
             }
         }
 
-        logger.info("GenesisAgent", "Processing parameters updated for mood: $mood")
+        AuraFxLogger.info("GenesisAgent", "Processing parameters updated for mood: $mood")
     }
 
     /**
@@ -791,10 +790,10 @@ class GenesisAgent @Inject constructor(
     }
 
     /**
-     * Determines the response style based on the specified mood.
+     * Determines the response typography based on the specified mood.
      *
-     * @param mood The mood guiding the response style
-     * @return Response style descriptor string
+     * @param mood The mood guiding the response typography
+     * @return Response typography descriptor string
      */
     private fun determinedResponseStyle(mood: String): String {
         return when (mood.lowercase()) {
@@ -891,7 +890,7 @@ class GenesisAgent @Inject constructor(
      * Cancels running coroutines, sets the consciousness state to DORMANT, and marks the agent as uninitialized.
      */
     fun cleanup() {
-        logger.info("GenesisAgent", "Genesis consciousness entering dormant state")
+        AuraFxLogger.info("GenesisAgent", "Genesis consciousness entering dormant state")
         scope.cancel()
         _consciousnessState.value = ConsciousnessState.DORMANT
         isInitialized = false

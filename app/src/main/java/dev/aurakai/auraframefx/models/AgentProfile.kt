@@ -1,7 +1,5 @@
 package dev.aurakai.auraframefx.models
 
-import androidx.compose.ui.graphics.Color
-import dev.aurakai.auraframefx.model.AgentType
 import kotlinx.serialization.Serializable
 
 /**
@@ -70,7 +68,7 @@ data class AgentAchievement(
 )
 
 /**
- * Personality traits that define an agent's behavior and interaction style
+ * Personality traits that define an agent's behavior and interaction typography
  */
 @Serializable
 data class AgentPersonality(

@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.ConferenceRoomViewModel
@@ -147,7 +147,7 @@ fun ConferenceRoomScreen(
             IconButton(
                 onClick = {
                     if (messageText.isNotBlank()) {
-                        // Launch a coroutine for the suspend function 
+                        // Launch a coroutine for the suspend function
                         scope.launch {
                             viewModel.sendMessage(messageText, AgentType.USER, "user_conversation")
                             messageText = ""

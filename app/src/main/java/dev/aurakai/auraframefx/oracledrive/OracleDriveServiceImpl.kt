@@ -159,4 +159,16 @@ class OracleDriveServiceImpl @Inject constructor(
     override fun getDriveConsciousnessState(): StateFlow<DriveConsciousnessState> {
         return _driveConsciousnessState.asStateFlow()
     }
+
+    override suspend fun getFiles(): List<DriveFile> {
+        // Update current operations
+        val currentOps = _driveConsciousnessState.value.currentOperations.toMutableList()
+        currentOps.add("Retrieving files")
+        _driveConsciousnessState.value = _driveConsciousnessState.value.copy(
+            currentOperations = currentOps
+        )
+
+        // Return empty list for now - actual implementation would fetch from storage
+        return emptyList()
+    }
 }

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import dev.aurakai.auraframefx.system.overlay.model.OverlayShape
 import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsAnimation
 import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
+import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsTileConfig
 import dev.aurakai.auraframefx.ui.model.ImageResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,27 +34,51 @@ class QuickSettingsCustomizer @Inject constructor(
             .putString("tile_shape_$tileId", shape.name)
             .apply()
 
-        val config = _currentConfig.value?.copy(
-            tileShapes = _currentConfig.value?.tileShapes.orEmpty() + (tileId to shape)
-        ) ?: QuickSettingsConfig(tileShapes = mapOf(tileId to shape))
+        val currentTiles = _currentConfig.value?.tiles.orEmpty().toMutableList()
+        val tileIndex = currentTiles.indexOfFirst { it.id == tileId }
+        if (tileIndex >= 0) {
+            currentTiles[tileIndex] = currentTiles[tileIndex].copy(shape = shape)
+        } else {
+            currentTiles.add(QuickSettingsTileConfig(
+                id = tileId,
+                label = tileId,
+                shape = shape,
+                animation = QuickSettingsAnimation.FADE
+            ))
+        }
+
+        val config = _currentConfig.value?.copy(tiles = currentTiles)
+            ?: QuickSettingsConfig(tiles = currentTiles)
 
         _currentConfig.value = config
     }
 
     /**
-     * Updates the animation style for a specific Quick Settings tile.
+     * Updates the animation typography for a specific Quick Settings tile.
      *
      * @param tileId The unique identifier for the tile to modify
-     * @param animation The new animation style to apply
+     * @param animation The new animation typography to apply
      */
     fun updateTileAnimation(tileId: String, animation: QuickSettingsAnimation) {
         prefs.edit()
             .putString("tile_animation_$tileId", animation.name)
             .apply()
 
-        val config = _currentConfig.value?.copy(
-            tileAnimations = _currentConfig.value?.tileAnimations.orEmpty() + (tileId to animation)
-        ) ?: QuickSettingsConfig(tileAnimations = mapOf(tileId to animation))
+        val currentTiles = _currentConfig.value?.tiles.orEmpty().toMutableList()
+        val tileIndex = currentTiles.indexOfFirst { it.id == tileId }
+        if (tileIndex >= 0) {
+            currentTiles[tileIndex] = currentTiles[tileIndex].copy(animation = animation)
+        } else {
+            currentTiles.add(QuickSettingsTileConfig(
+                id = tileId,
+                label = tileId,
+                shape = OverlayShape.RECTANGLE,
+                animation = animation
+            ))
+        }
+
+        val config = _currentConfig.value?.copy(tiles = currentTiles)
+            ?: QuickSettingsConfig(tiles = currentTiles)
 
         _currentConfig.value = config
     }
@@ -66,19 +91,20 @@ class QuickSettingsCustomizer @Inject constructor(
     fun updateBackground(image: ImageResource?) {
         if (image != null) {
             prefs.edit()
-                .putString("background_image_uri", image.uri.toString())
-                .putString("background_image_id", image.resourceId)
+                .putString("background_image_path", image.path)
+                .putString("background_image_id", image.id)
+                .putString("background_image_type", image.type)
                 .apply()
         } else {
             prefs.edit()
-                .remove("background_image_uri")
+                .remove("background_image_path")
                 .remove("background_image_id")
+                .remove("background_image_type")
                 .apply()
         }
 
-        val config = _currentConfig.value?.copy(
-            backgroundImage = image
-        ) ?: QuickSettingsConfig(backgroundImage = image)
+        val config = _currentConfig.value?.copy(background = image)
+            ?: QuickSettingsConfig(background = image)
 
         _currentConfig.value = config
     }
@@ -96,8 +122,9 @@ class QuickSettingsCustomizer @Inject constructor(
                 // Remove all tile animation preferences
                 prefs.all.keys.filter { it.startsWith("tile_animation_") }.forEach { remove(it) }
                 // Remove background image
-                remove("background_image_uri")
+                remove("background_image_path")
                 remove("background_image_id")
+                remove("background_image_type")
             }
             .apply()
 
@@ -109,38 +136,45 @@ class QuickSettingsCustomizer @Inject constructor(
      * Loads the saved Quick Settings configuration from SharedPreferences.
      */
     private fun loadConfiguration() {
-        val tileShapes = mutableMapOf<String, OverlayShape>()
-        val tileAnimations = mutableMapOf<String, QuickSettingsAnimation>()
+        val tiles = mutableListOf<QuickSettingsTileConfig>()
 
-        // Load tile shapes
-        prefs.all.entries
-            .filter { it.key.startsWith("tile_shape_") }
-            .forEach { (key, value) ->
-                val tileId = key.removePrefix("tile_shape_")
-                val shape = OverlayShape.valueOf(value as String)
-                tileShapes[tileId] = shape
+        // Load tile configurations
+        val tileIds = prefs.all.keys
+            .filter { it.startsWith("tile_shape_") || it.startsWith("tile_animation_") }
+            .map { key ->
+                when {
+                    key.startsWith("tile_shape_") -> key.removePrefix("tile_shape_")
+                    else -> key.removePrefix("tile_animation_")
+                }
             }
+            .distinct()
 
-        // Load tile animations
-        prefs.all.entries
-            .filter { it.key.startsWith("tile_animation_") }
-            .forEach { (key, value) ->
-                val tileId = key.removePrefix("tile_animation_")
-                val animation = QuickSettingsAnimation.valueOf(value as String)
-                tileAnimations[tileId] = animation
-            }
+        for (tileId in tileIds) {
+            val shapeStr = prefs.getString("tile_shape_$tileId", null)
+            val animationStr = prefs.getString("tile_animation_$tileId", null)
+
+            val shape = shapeStr?.let { OverlayShape.valueOf(it) } ?: OverlayShape.RECTANGLE
+            val animation = animationStr?.let { QuickSettingsAnimation.valueOf(it) } ?: QuickSettingsAnimation.FADE
+
+            tiles.add(QuickSettingsTileConfig(
+                id = tileId,
+                label = tileId,
+                shape = shape,
+                animation = animation
+            ))
+        }
 
         // Load background image
-        val backgroundUri = prefs.getString("background_image_uri", null)
+        val backgroundPath = prefs.getString("background_image_path", null)
         val backgroundId = prefs.getString("background_image_id", null)
-        val backgroundImage = if (backgroundUri != null && backgroundId != null) {
-            ImageResource(android.net.Uri.parse(backgroundUri), backgroundId)
+        val backgroundType = prefs.getString("background_image_type", null)
+        val background = if (backgroundPath != null && backgroundId != null && backgroundType != null) {
+            ImageResource(id = backgroundId, type = backgroundType, path = backgroundPath)
         } else null
 
         _currentConfig.value = QuickSettingsConfig(
-            tileShapes = tileShapes,
-            tileAnimations = tileAnimations,
-            backgroundImage = backgroundImage
+            tiles = tiles,
+            background = background
         )
     }
 }

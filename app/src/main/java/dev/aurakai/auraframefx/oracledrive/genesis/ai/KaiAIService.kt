@@ -7,10 +7,10 @@ import dev.aurakai.auraframefx.ai.error.ErrorHandler
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
 import dev.aurakai.auraframefx.ai.task.TaskScheduler
 import dev.aurakai.auraframefx.ai.task.execution.TaskExecutionManager
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.flow.Flow // Added import
 import kotlinx.coroutines.flow.flowOf // Added import
@@ -26,7 +26,6 @@ class KaiAIService @Inject constructor(
     private val contextManager: ContextManager,
     private val applicationContext: Context,
     private val cloudStatusMonitor: CloudStatusMonitor,
-    private val auraFxLogger: AuraFxLogger,
 ) : Agent {
     /**
      * Returns the name of the agent.
@@ -68,7 +67,7 @@ class KaiAIService @Inject constructor(
         request: AiRequest,
         context: String,
     ): AgentResponse { // Added context
-        auraFxLogger.i(
+        AuraFxLogger.i(
             "KaiAIService",
             "Processing request: ${request.query} with context: $context"
         )

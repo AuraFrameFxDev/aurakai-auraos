@@ -16,7 +16,7 @@ import dev.aurakai.auraframefx.ui.screens.SettingsScreen
  * Main navigation graph for the AuraFrameFX app with digital transition animations
  *
  * Sets up the main navigation graph for the AuraFrameFX app using Jetpack Compose with custom
- * cyberpunk-style digital materialization/dematerialization transitions between screens.
+ * cyberpunk-typography digital materialization/dematerialization transitions between screens.
  * Uses Jetpack Navigation 3's built-in animation support for seamless screen transitions.
  *
  * @param navController The navigation controller used to manage app navigation.

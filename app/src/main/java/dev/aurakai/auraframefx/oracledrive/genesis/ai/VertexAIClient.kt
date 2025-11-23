@@ -21,9 +21,9 @@ class DefaultVertexAIClient : VertexAIClient {
         style: String
     ): String {
         return """
-        // Generated $language code in $style style
+        // Generated $language code in $style typography
         // Specification: $specification
-        
+
         @Composable
         fun GeneratedComponent() {
             // Implementation based on specification

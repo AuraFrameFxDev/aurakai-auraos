@@ -53,7 +53,6 @@ val Accent1 = Color(0xFF00FFCC) // Primary teal glow
 val Accent2 = Color(0xFFE000FF) // Secondary purple glow
 val Accent3 = Color(0xFF00FFFF) // Tertiary cyan glow
 val Accent4 = Color(0xFFFF00FF) // Pink glow for special elements
-val LightOnError = Color(0xFF000000) // Black for text on error
 
 // Special Effects Colors
 val GlowOverlay = Color(0x1A00FFCC) // Semi-transparent teal glow

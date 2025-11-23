@@ -117,7 +117,7 @@ object KineticIdentity {
                     transformOrigin = TransformOrigin.Center
                 )
 
-    /** Glitch-style entrance from the void */
+    /** Glitch-typography entrance from the void */
     val GlitchEnter: EnterTransition =
         fadeIn(tween(MICRO_DURATION)) +
                 slideInHorizontally(

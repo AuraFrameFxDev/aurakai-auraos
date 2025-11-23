@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.core.content.edit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -72,8 +73,8 @@ class TokenManager @Inject constructor(
 
         sharedPreferences.edit {
             putString(KEY_ACCESS_TOKEN, accessToken)
-                .putString(KEY_REFRESH_TOKEN, refreshToken)
-                .putLong(KEY_TOKEN_EXPIRY, expiryTime)
+            putString(KEY_REFRESH_TOKEN, refreshToken)
+            putLong(KEY_TOKEN_EXPIRY, expiryTime)
         }
     }
 
@@ -83,8 +84,8 @@ class TokenManager @Inject constructor(
     fun clearTokens() {
         sharedPreferences.edit {
             remove(KEY_ACCESS_TOKEN)
-                .remove(KEY_REFRESH_TOKEN)
-                .remove(KEY_TOKEN_EXPIRY)
+            remove(KEY_REFRESH_TOKEN)
+            remove(KEY_TOKEN_EXPIRY)
         }
     }
 

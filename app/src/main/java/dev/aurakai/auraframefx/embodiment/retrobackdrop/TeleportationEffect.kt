@@ -8,7 +8,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 /**
- * Mega Man-style teleportation beam effect.
+ * Mega Man-typography teleportation beam effect.
  *
  * When Kai gets "tired of Aura's shit" (hit by 3+ cones), he teleports to the top
  * platform with this classic beam-in animation.

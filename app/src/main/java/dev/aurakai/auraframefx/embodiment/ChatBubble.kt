@@ -119,7 +119,7 @@ fun IdleChatBubble(
  * Chat Prompt Screen
  *
  * Opens when user clicks the idle bubble.
- * Text messaging style interface to talk to Aura or Kai.
+ * Text messaging typography interface to talk to Aura or Kai.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 /**

@@ -27,14 +27,14 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
  * Features:
  * - Glowing animated border
  * - Cyberpunk-themed header with title
- * - Customizable corner style and background
+ * - Customizable corner typography and background
  * - Elevated shadow for floating effect
  * - Gradient accents
  *
  * @param modifier Compose modifier
  * @param title The title displayed in the window's header
- * @param cornerStyle The style of the window's corners
- * @param backgroundStyle The background style of the window
+ * @param cornerStyle The typography of the window's corners
+ * @param backgroundStyle The background typography of the window
  * @param content The composable content to display inside the window
  */
 @Composable
@@ -68,6 +68,13 @@ fun FloatingCyberWindow(
             bottomStart = 4.dp,
             bottomEnd = 16.dp
         )
+        CornerStyle.HEXAGON -> RoundedCornerShape(8.dp)
+        CornerStyle.ANGLED -> RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 12.dp,
+            bottomStart = 12.dp,
+            bottomEnd = 0.dp
+        )
     }
 
     // Determine background based on style
@@ -88,6 +95,30 @@ fun FloatingCyberWindow(
             colors = listOf(
                 CyberpunkCyan.copy(alpha = 0.2f),
                 CyberpunkPink.copy(alpha = 0.2f)
+            )
+        )
+        BackgroundStyle.GLITCH -> Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFF1A0A2E),
+                Color(0xFF2A1A4E)
+            )
+        )
+        BackgroundStyle.MATRIX -> Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFF001A00),
+                Color(0xFF002200)
+            )
+        )
+        BackgroundStyle.HEX_GRID -> Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFF0A1A3E),
+                Color(0xFF1A2A4E)
+            )
+        )
+        BackgroundStyle.TRANSPARENT -> Brush.verticalGradient(
+            colors = listOf(
+                Color(0x200A0A2E),
+                Color(0x201A0A3E)
             )
         )
     }

@@ -16,7 +16,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 open class ApiClient(
     private var baseUrl: String = defaultBasePath,
-    private val okHttpClientBuilder: Call.Factory = null,
+    private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     private val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
     private val callAdapterFactories: List<CallAdapter.Factory> = listOf(

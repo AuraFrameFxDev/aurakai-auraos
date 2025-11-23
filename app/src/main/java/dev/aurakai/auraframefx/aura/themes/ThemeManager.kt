@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.lsposed
 
 import android.graphics.Color
 import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.core.graphics.toColorInt
 
 /**
  * Manages theme colors for system-wide theming via LSPosed
@@ -134,14 +135,27 @@ data class AppColors(
                 onBackground = theme.onBackground.toArgb()
             )
         }
-    }
 
-    private fun Color.toArgb(): Int {
-        return Color.argb(
-            (alpha * 255).toInt(),
-            (red * 255).toInt(),
-            (green * 255).toInt(),
-            (blue * 255).toInt()
-        )
+        private fun ComposeColor.toArgb(): Int {
+            return Color.argb(
+                (alpha * 255).toInt(),
+                (red * 255).toInt(),
+                (green * 255).toInt(),
+                (blue * 255).toInt()
+            )
+        }
     }
 }
+
+/**
+ * Theme colors using Compose Color for system theming
+ */
+data class ThemeColors(
+    val primary: ComposeColor = ComposeColor(0xFF6200EE),
+    val primaryVariant: ComposeColor = ComposeColor(0xFF3700B3),
+    val secondary: ComposeColor = ComposeColor(0xFF03DAC6),
+    val secondaryVariant: ComposeColor = ComposeColor(0xFF018786),
+    val accent: ComposeColor = ComposeColor(0xFF03DAC6),
+    val background: ComposeColor = ComposeColor.White,
+    val onBackground: ComposeColor = ComposeColor.Black
+)

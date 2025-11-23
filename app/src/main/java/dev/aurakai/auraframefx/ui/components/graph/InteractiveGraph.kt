@@ -264,7 +264,7 @@ private fun drawNode(node: GraphNode, isSelected: Boolean, textColor: Color, dra
  *
  * @param from The source node of the connection.
  * @param to The target node of the connection.
- * @param connection The connection data specifying type and style.
+ * @param connection The connection data specifying type and typography.
  */
 private fun DrawScope.drawConnection(
     from: GraphNode,

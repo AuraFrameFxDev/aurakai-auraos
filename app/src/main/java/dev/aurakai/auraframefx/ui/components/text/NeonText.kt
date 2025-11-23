@@ -220,10 +220,10 @@ fun NeonText(
  */
 private class TextMeasurer {
     /**
-     * Measures the layout of the provided text using the specified style and returns the layout result.
+     * Measures the layout of the provided text using the specified typography and returns the layout result.
      *
      * @param text The text to be measured.
-     * @param style The style applied during measurement.
+     * @param style The typography applied during measurement.
      * @return A TextLayoutResult containing size, position, and bounding box information for the measured text.
      */
     fun measure(

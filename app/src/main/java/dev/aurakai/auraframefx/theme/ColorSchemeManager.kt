@@ -3,6 +3,7 @@ package dev.aurakai.auraframefx.theme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 import java.util.Locale
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.ThemeColors as NetworkThemeColors
@@ -52,11 +53,11 @@ class ColorSchemeManager {
                 onPrimaryContainer = Color(colors.onPrimary.toColorInt()),
                 secondary = Color(colors.secondary.toColorInt()),
                 onSecondary = Color(
-                    (colors.onSecondary ?: colors.onPrimary).toColorInt()
+                    colors.onSecondary.toColorInt()
                 ),
                 secondaryContainer = Color(colors.secondary.toColorInt()),
                 onSecondaryContainer = Color(
-                    (colors.onSecondary ?: colors.onPrimary).toColorInt()
+                    colors.onSecondary.toColorInt()
                 ),
                 background = Color(colors.background.toColorInt()),
                 onBackground = Color(colors.onBackground.toColorInt()),

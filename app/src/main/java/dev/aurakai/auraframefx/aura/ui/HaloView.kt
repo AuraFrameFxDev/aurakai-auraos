@@ -55,7 +55,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonPink
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
@@ -467,12 +467,7 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
                 .fillMaxHeight(0.5f) // Adjust height as needed
                 .width(200.dp) // Give it a fixed width or use fillMaxWidth with weight in a Row
                 .padding(16.dp)
-                    items (taskHistoryState) { task ->
-                Color.Black.copy(alpha = 0.3f),
-                shape = MaterialTheme.shapes.medium
-                ) // Add a background for visibility
-                .padding(8.dp)
-                ) {
+        ) {
                 Text(
                     text = "Task History",
                     style = MaterialTheme.typography.titleMedium,
@@ -482,7 +477,6 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
 
                 LazyColumn(
                     modifier = Modifier
-                        .weight(1f)
                         .fillMaxWidth(),
                     reverseLayout = true,
                     state = lazyListState
@@ -504,107 +498,102 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
                         }
                     }
                 }
+        }
+
+        // Control buttons
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.BottomCenter),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(
+                onClick = { isRotating = !isRotating }
+            ) {
+                Icon(
+                    if (isRotating) Icons.Filled.PlayArrow else Icons.Filled.PlayArrow,
+                    contentDescription = "Toggle rotation",
+                    tint = NeonPurple
+                )
             }
 
-                // Control buttons
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .align(Alignment.BottomCenter),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    IconButton(
-                        onClick = { isRotating = !isRotating }
-                    ) {
-                        Icon(
-                            if (isRotating) Icons.Filled.PlayArrow else Icons.Filled.PlayArrow,
-                            contentDescription = "Toggle rotation",
-                            tint = NeonPurple
-                        )
-                    }
+            IconButton(
+                onClick = { rotationAngle = 0f }
+            ) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "Reset rotation",
+                    tint = NeonBlue
+                )
+            }
 
-                    IconButton(
-                        onClick = { rotationAngle = 0f }
-                    ) {
-                        Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = "Reset rotation",
-                            tint = NeonBlue
-                        )
-                    }
+            IconButton(
+                onClick = {
+                    _taskHistory.update { emptyList() }
+                }
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Clear history",
+                    tint = NeonPink
+                )
+            }
+        }
 
-                    IconButton(
-                        onClick = {
-                            _taskHistory.update { emptyList() }
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Clear history",
-                            tint = NeonPink
-                        )
+        // Animation effect
+        LaunchedEffect(isRotating) {
+            while (isRotating) {
+                rotationAngle = (rotationAngle + 1f) % 360f
+                delay(16) // 60 FPS
+            }
+        }
+
+        // Drag and drop gesture handling
+        LaunchedEffect(Unit) {
+            snapshotFlow { draggingAgent }
+                .collect { agent ->
+                    if (agent == null) {
+                        dragOffset = Offset.Zero
+                        dragStartOffset = Offset.Zero
+                        selectedTask = ""
                     }
+                }
+        }
+
+        // Task processing status updates
+        LaunchedEffect(taskHistory.value) {
+            // Reset all agent statuses to idle, then update based on current tasks
+            agents.forEach { agentConfig ->
+                try {
+                    val type = AgentType.valueOf(agentConfig.name.uppercase(Locale.ROOT))
+                    agentStatus[type] = "idle"
+                } catch (e: IllegalArgumentException) {
+                    // Handle cases where AgentConfig.name might not match an AgentType
                 }
             }
 
-                    // Animation effect
-                    LaunchedEffect (isRotating) {
-                if (isRotating) {
-                    LaunchedEffect(taskHistoryState) { // Trigger when taskHistory changes
-                        rotationAngle = (rotationAngle + 1f) % 360f
-                        delay(16) // 60 FPS
+            taskHistory.value.forEach { task ->
+                val agentNameFromHistory = task.substringAfter("[").substringBefore("]")
+                val foundAgentConfig =
+                    agents.find {
+                        it.name.lowercase(Locale.ROOT) == agentNameFromHistory.lowercase(Locale.ROOT)
                     }
-                }
-            }
-
-                    // Drag and drop gesture handling
-                    LaunchedEffect (Unit) {
-                snapshotFlow { draggingAgent }
-                    .collect { agent ->
-                        taskHistoryState.forEach { task ->
-                            dragOffset = Offset.Zero
-                            dragStartOffset = Offset.Zero
-                            selectedTask = ""
-                        }
-                    }
-            }
-
-                    // Task processing status updates
-                    LaunchedEffect (taskHistory.value) { // Trigger when taskHistory.value changes
-                // Reset all agent statuses to idle, then update based on current tasks
-                agents.forEach { agentConfig -> // agentConfig is AgentConfig
+                if (foundAgentConfig != null) {
                     try {
-                        val type = AgentType.valueOf(agentConfig.name.uppercase(Locale.ROOT))
-                        agentStatus[type] = "idle"
+                        val actualAgentType =
+                            AgentType.valueOf(foundAgentConfig.name.uppercase(Locale.ROOT))
+                        agentStatus[actualAgentType] = "processing"
+                        // Simulate task completion after a delay
+                        coroutineScope.launch {
+                            delay(5000) // Simulate processing time
+                            agentStatus[actualAgentType] = "idle"
+                        }
                     } catch (e: IllegalArgumentException) {
                         // Handle cases where AgentConfig.name might not match an AgentType
                     }
                 }
-
-                taskHistory.value.forEach { task ->
-                    val agentNameFromHistory = task.substringAfter("[").substringBefore("]")
-                    // Compare by name string to find the AgentConfig
-                    val foundAgentConfig =
-                        agents.find {
-                            it.name.lowercase(Locale.ROOT) == agentNameFromHistory.lowercase(
-                                Locale.ROOT
-                            )
-                        }
-                    if (foundAgentConfig != null) {
-                        try {
-                            val actualAgentType =
-                                AgentType.valueOf(foundAgentConfig.name.uppercase(Locale.ROOT))
-                            agentStatus[actualAgentType] = "processing"
-                            // Simulate task completion after a delay
-                            coroutineScope.launch {
-                                delay(5000) // Simulate processing time
-                                agentStatus[actualAgentType] = "idle"
-                            }
-                        } catch (e: IllegalArgumentException) {
-                            // Handle cases where AgentConfig.name might not match an AgentType
-                        }
-                    }
-                }
             }
+        }
     }
+}

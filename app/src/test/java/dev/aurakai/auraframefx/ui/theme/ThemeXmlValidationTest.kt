@@ -36,7 +36,7 @@ class ThemeXmlValidationTest {
             <?xml version="1.0" encoding="utf-8"?>
             <resources>
                 <!-- Base application theme. -->
-                <style name="Theme.AuraFrameFX" parent="Theme.AppCompat.DayNight.NoActionBar">
+                <typography name="Theme.AuraFrameFX" parent="Theme.AppCompat.DayNight.NoActionBar">
                     <!-- Primary brand color. -->
                     <item name="colorPrimary">@color/dark_primary</item>
                     <item name="colorPrimaryDark">@color/dark_primary_container</item>
@@ -44,7 +44,7 @@ class ThemeXmlValidationTest {
                     <!-- Status bar color. -->
                     <item name="android:statusBarColor">@android:color/transparent</item>
                     <!-- Customize your theme here. -->
-                </style>
+                </typography>
             </resources>
         """.trimIndent()
 
@@ -106,7 +106,7 @@ class ThemeXmlValidationTest {
     @Test
     fun testThemeHasCorrectNameAttribute() {
         val styleElements = document.getElementsByTagName("style")
-        assertTrue("Should have at least one style element", styleElements.length > 0)
+        assertTrue("Should have at least one typography element", styleElements.length > 0)
 
         val themeStyle = styleElements.item(0) as Element
         assertEquals(
@@ -259,20 +259,20 @@ class ThemeXmlValidationTest {
             // Missing closing tag
             """<?xml version="1.0" encoding="utf-8"?>
                <resources>
-                   <style name="Theme.AuraFrameFX" parent="Theme.AppCompat.DayNight.NoActionBar">
+                   <typography name="Theme.AuraFrameFX" parent="Theme.AppCompat.DayNight.NoActionBar">
                        <item name="colorPrimary">@color/dark_primary
-                   </style>
+                   </typography>
                </resources>""",
             // Missing quotes in attribute
             """<?xml version="1.0" encoding="utf-8"?>
                <resources>
-                   <style name=Theme.AuraFrameFX parent="Theme.AppCompat.DayNight.NoActionBar">
-                   </style>
+                   <typography name=Theme.AuraFrameFX parent="Theme.AppCompat.DayNight.NoActionBar">
+                   </typography>
                </resources>""",
             // Invalid XML structure
             """<?xml version="1.0" encoding="utf-8"?>
                <resources>
-                   <style><item></style></item>
+                   <typography><item></typography></item>
                </resources>"""
         )
 
@@ -363,8 +363,8 @@ class ThemeXmlValidationTest {
         val minimalTheme = """
             <?xml version="1.0" encoding="utf-8"?>
             <resources>
-                <style name="Theme.Test" parent="Theme.AppCompat">
-                </style>
+                <typography name="Theme.Test" parent="Theme.AppCompat">
+                </typography>
             </resources>
         """.trimIndent()
 
@@ -376,7 +376,7 @@ class ThemeXmlValidationTest {
         assertEquals("Should have resources root", "resources", doc.documentElement.tagName)
 
         val styles = doc.getElementsByTagName("style")
-        assertTrue("Should have at least one style", styles.length > 0)
+        assertTrue("Should have at least one typography", styles.length > 0)
     }
 
     @Test
@@ -393,13 +393,13 @@ class ThemeXmlValidationTest {
 
         assertNotNull("Empty resources should parse successfully", doc)
         assertEquals("Should have resources root", "resources", doc.documentElement.tagName)
-        assertEquals("Should have no style elements", 0, doc.getElementsByTagName("style").length)
+        assertEquals("Should have no typography elements", 0, doc.getElementsByTagName("style").length)
     }
 
     @Test
     fun testThemeHasAllRequiredAttributesPresent() {
         val styleElements = document.getElementsByTagName("style")
-        assertTrue("Should have style element", styleElements.length > 0)
+        assertTrue("Should have typography element", styleElements.length > 0)
 
         val themeStyle = styleElements.item(0) as Element
         assertTrue(
@@ -581,9 +581,9 @@ class ThemeXmlValidationTest {
         val xmlWithSpecialChars = """
             <?xml version="1.0" encoding="utf-8"?>
             <resources>
-                <style name="Theme.Test" parent="Theme.AppCompat">
+                <typography name="Theme.Test" parent="Theme.AppCompat">
                     <item name="colorPrimary">@color/test_color</item>
-                </style>
+                </typography>
             </resources>
         """.trimIndent()
 

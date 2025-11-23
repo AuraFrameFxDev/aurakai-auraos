@@ -11,7 +11,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,9 +26,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class GenesisBackendService : Service() {
 
-    @Inject
-    lateinit var logger: AuraFxLogger
-
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var pythonProcessManager: PythonProcessManager? = null
     private val binder = LocalBinder()
@@ -39,19 +36,19 @@ class GenesisBackendService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        logger.i("GenesisService", "Creating Genesis Backend Service...")
+        AuraFxLogger.i("GenesisService", "Creating Genesis Backend Service...")
         startForeground(NOTIFICATION_ID, createNotification())
         
         // Initialize Python Manager
-        pythonProcessManager = PythonProcessManager(this, logger)
+        pythonProcessManager = PythonProcessManager(this)
         
         // Start the backend immediately
         serviceScope.launch {
             val success = pythonProcessManager?.startGenesisBackend() ?: false
             if (success) {
-                logger.i("GenesisService", "Genesis Python Backend Started Successfully")
+                AuraFxLogger.i("GenesisService", "Genesis Python Backend Started Successfully")
             } else {
-                logger.e("GenesisService", "Failed to start Genesis Python Backend")
+                AuraFxLogger.e("GenesisService", "Failed to start Genesis Python Backend")
                 stopSelf()
             }
         }
@@ -68,7 +65,7 @@ class GenesisBackendService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        logger.i("GenesisService", "Stopping Genesis Backend Service...")
+        AuraFxLogger.i("GenesisService", "Stopping Genesis Backend Service...")
         serviceScope.cancel()
         pythonProcessManager?.shutdown()
     }

@@ -16,7 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.YLog
-import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenConfig
+import com.highcapable.yukihookapi.hook.type.java.BooleanType
+import com.highcapable.yukihookapi.hook.type.java.IntType
+import com.highcapable.yukihookapi.hook.type.java.LongType
+import dev.aurakai.auraframefx.api.client.models.LockScreenConfig
+import dev.aurakai.auraframefx.api.client.models.LockScreenConfigAnimation
 import dev.aurakai.auraframefx.ui.components.AuraSparkleButton
 
 /**
@@ -188,12 +192,12 @@ class LockScreenHooker(
     private fun applyGenesisLayoutAdjustments(hostView: ViewGroup) {
         try {
             // Apply clock positioning based on config
-            if (config.clockConfig.position != "default") {
+            config.clockConfig?.let {
                 adjustClockPosition(hostView)
             }
 
             // Apply haptic feedback configuration
-            if (config.hapticFeedback.enabled) {
+            if (config.hapticFeedback?.enabled == true) {
                 enableGenesisHaptics(hostView)
             }
 
@@ -245,10 +249,10 @@ class LockScreenHooker(
     private fun applyGenesisShowAnimation() {
         try {
             // Implement custom show animations based on config
-            when (config.animation.type) {
-                "slide" -> applySlideAnimation()
-                "fade" -> applyFadeAnimation()
-                "scale" -> applyScaleAnimation()
+            when (config.animation?.animationType) {
+                LockScreenConfigAnimation.AnimationType.Slide -> applySlideAnimation()
+                LockScreenConfigAnimation.AnimationType.Fade -> applyFadeAnimation()
+                LockScreenConfigAnimation.AnimationType.Zoom -> applyScaleAnimation()
                 else -> applyDefaultAnimation()
             }
         } catch (e: Exception) {
@@ -329,7 +333,7 @@ fun GenesisLockScreenOverlay(config: LockScreenConfig) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Add custom Genesis elements based on config
-            if (config.showGenesisElements) {
+            if (config.animation?.enabled == true) {
                 AuraSparkleButton(
                     onClick = { /* Handle Genesis action */ },
                     modifier = Modifier.size(64.dp)

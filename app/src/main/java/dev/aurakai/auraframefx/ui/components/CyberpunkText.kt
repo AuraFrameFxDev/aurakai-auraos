@@ -24,7 +24,7 @@ import kotlin.random.Random
  *
  * @param text The text to display
  * @param color Cyberpunk color theme
- * @param style Cyberpunk text style
+ * @param style Cyberpunk text typography
  * @param modifier Compose modifier
  * @param enableGlitch Whether to enable the glitch animation effect
  */

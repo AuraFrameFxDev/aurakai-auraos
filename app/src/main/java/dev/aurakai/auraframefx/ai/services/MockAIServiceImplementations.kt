@@ -4,8 +4,8 @@
 package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.ai.agents.Agent
-import dev.aurakai.auraframefx.model.AgentResponse
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -57,10 +57,13 @@ class MockAuraAIService : Agent {
         return flowOf(AgentResponse("AuraAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    fun getCapabilities(): Map<String, Any> = emptyMap() // Removed override
-    fun getContinuousMemory(): Any? = null // Removed override
-    fun getEthicalGuidelines(): List<String> = emptyList() // Removed override
-    fun getLearningHistory(): List<String> = emptyList() // Removed override
+    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
+        return if (request is AiRequest) {
+            flowOf(AgentResponse("AuraAI mock flow response for: ${request.query}", 1.0f))
+        } else {
+            null
+        }
+    }
 }
 
 class MockKaiAIService : Agent {
@@ -106,10 +109,13 @@ class MockKaiAIService : Agent {
         return flowOf(AgentResponse("KaiAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    fun getCapabilities(): Map<String, Any> = emptyMap() // Removed override
-    fun getContinuousMemory(): Any? = null // Removed override
-    fun getEthicalGuidelines(): List<String> = emptyList() // Removed override
-    fun getLearningHistory(): List<String> = emptyList() // Removed override
+    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
+        return if (request is AiRequest) {
+            flowOf(AgentResponse("KaiAI mock flow response for: ${request.query}", 1.0f))
+        } else {
+            null
+        }
+    }
 }
 
 class MockCascadeAIService : Agent {
@@ -155,8 +161,11 @@ class MockCascadeAIService : Agent {
         return flowOf(AgentResponse("CascadeAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    fun getCapabilities(): Map<String, Any> = emptyMap() // Removed override
-    fun getContinuousMemory(): Any? = null // Removed override
-    fun getEthicalGuidelines(): List<String> = emptyList() // Removed override
-    fun getLearningHistory(): List<String> = emptyList() // Removed override
+    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
+        return if (request is AiRequest) {
+            flowOf(AgentResponse("CascadeAI mock flow response for: ${request.query}", 1.0f))
+        } else {
+            null
+        }
+    }
 }

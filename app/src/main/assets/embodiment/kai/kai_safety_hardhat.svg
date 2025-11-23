@@ -65,7 +65,7 @@
   <!-- Head/Face -->
   <rect x="112" y="76" width="32" height="32" fill="#D4A574"/>
 
-  <!-- Hair (Dark, spiky anime style) -->
+  <!-- Hair (Dark, spiky anime typography) -->
   <rect x="108" y="64" width="12" height="16" fill="#2a2a2a"/> <!-- Left spike -->
   <rect x="124" y="60" width="8" height="20" fill="#2a2a2a"/> <!-- Center spike -->
   <rect x="136" y="64" width="12" height="16" fill="#2a2a2a"/> <!-- Right spike -->

@@ -8,7 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import dev.aurakai.auraframefx.network.model.Theme
 import dev.aurakai.auraframefx.theme.ColorSchemeManager
 import dev.aurakai.auraframefx.ui.components.colorpicker.ColorBlendrPicker
@@ -104,7 +106,7 @@ fun SpectraCodeReGen(
                 // Using the ColorBlendrPicker here
                 ColorBlendrPicker(
                     initialColor = currentColor,
-                    onColorChanged = { currentColor = it }
+                    onColorChanged = { newColor -> currentColor = newColor }
                 )
             },
             confirmButton = {

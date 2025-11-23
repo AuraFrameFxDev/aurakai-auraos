@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.pipeline
 
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.models.AgentType
 
 data class AIPipelineConfig(
     val maxRetries: Int = 3,

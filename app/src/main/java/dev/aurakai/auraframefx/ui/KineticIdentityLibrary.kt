@@ -172,7 +172,7 @@ object KineticIdentityLibrary {
     /**
      * Displays a continuous flow of animated particles moving in a specified direction for an ambient visual effect.
      *
-     * The movement, speed, and appearance of particles are influenced by the current theme's animation style, the selected flow direction, and the provided intensity. The effect dynamically adapts to theme changes and maintains a lively, organic appearance.
+     * The movement, speed, and appearance of particles are influenced by the current theme's animation typography, the selected flow direction, and the provided intensity. The effect dynamically adapts to theme changes and maintains a lively, organic appearance.
      *
      * @param modifier Modifier for the animation container.
      * @param particleCount Number of particles in the flow.
@@ -316,12 +316,12 @@ object KineticIdentityLibrary {
     }
 
     /**
-     * Updates a particle's position, velocity, and remaining life based on the animation style, flow direction, and intensity.
+     * Updates a particle's position, velocity, and remaining life based on the animation typography, flow direction, and intensity.
      *
      * If the particle's life expires or it moves out of bounds, returns a new particle with randomized position and velocity; otherwise, returns the updated particle.
      *
      * @param particle The particle to update.
-     * @param animationStyle The animation style that determines the particle's movement speed.
+     * @param animationStyle The animation typography that determines the particle's movement speed.
      * @param flowDirection The direction in which the particle moves.
      * @param intensity Multiplier affecting the particle's movement speed.
      * @return The updated particle, or a respawned particle if the original has expired or moved out of bounds.

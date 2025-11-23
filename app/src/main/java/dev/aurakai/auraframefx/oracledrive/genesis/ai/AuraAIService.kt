@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ai.services
+package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import kotlinx.serialization.Serializable
 
@@ -20,7 +20,7 @@ data class ThemePreferences(
 )
 
 @Serializable
-data class ThemeConfiguration(
+data class ThemeConfiguration @JvmOverloads constructor(
     val primaryColor: String,
     val secondaryColor: String,
     val backgroundColor: String,

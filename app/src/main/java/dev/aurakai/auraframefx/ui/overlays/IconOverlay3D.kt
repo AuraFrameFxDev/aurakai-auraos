@@ -218,7 +218,7 @@ object IconOverlayPresets {
     }
 
     /**
-     * Pixel Art Module Gates - Digimon-style holographic portals
+     * Pixel Art Module Gates - Digimon-typography holographic portals
      * Each gate shows pixel art representing the module's world
      */
     fun pixelArtModuleGates(): List<IconOverlay3D> = listOf(

@@ -15,7 +15,7 @@ import dev.aurakai.auraframefx.ui.theme.CyberpunkPink
 import kotlin.math.pow
 
 /**
- * Digital landscape background with perspective grid (Tron-style).
+ * Digital landscape background with perspective grid (Tron-typography).
  *
  * Renders a 3D perspective grid that scrolls toward the viewer,
  * creating a sense of movement through digital space.

@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.components.colorpicker
+package dev.aurakai.auraframefx.aura.themes
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.aurakai.auraframefx.aura.ui.UIComponentsPreview
 
 /**
  * A comprehensive theme editor that shows a live preview of UI components
@@ -181,6 +182,80 @@ private fun ColorSelectionItem(
                     )
             )
         }
+    }
+}
+
+/**
+ * Placeholder color picker using ChromaCore color space
+ * This is a simple implementation for selecting colors in the theme editor
+ */
+@Composable
+private fun ChromaCoreColorPicker(
+    color: Color,
+    onColorChange: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var hue by remember { mutableStateOf(0f) }
+    var saturation by remember { mutableStateOf(0.5f) }
+    var lightness by remember { mutableStateOf(0.5f) }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Hue slider
+        Text("Hue: ${(hue * 360).toInt()}°", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = hue,
+            onValueChange = { newHue ->
+                hue = newHue
+                onColorChange(Color.hsv(hue * 360, saturation, lightness))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+
+        // Saturation slider
+        Text("Saturation: ${(saturation * 100).toInt()}%", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = saturation,
+            onValueChange = { newSaturation ->
+                saturation = newSaturation
+                onColorChange(Color.hsv(hue * 360, saturation, lightness))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+
+        // Lightness slider
+        Text("Lightness: ${(lightness * 100).toInt()}%", style = MaterialTheme.typography.labelMedium)
+        Slider(
+            value = lightness,
+            onValueChange = { newLightness ->
+                lightness = newLightness
+                onColorChange(Color.hsv(hue * 360, saturation, newLightness))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+
+        // Current color preview
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(color, RoundedCornerShape(8.dp))
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(16.dp)
+        )
     }
 }
 

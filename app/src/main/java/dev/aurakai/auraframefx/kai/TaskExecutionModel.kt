@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ai.task.execution
 
-import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.ai.task.TaskPriority
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.serialization.InstantSerializer // Added import
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -103,12 +104,4 @@ enum class CheckpointStatus {
     SKIPPED
 }
 
-@Serializable
-enum class TaskPriority {
-    LOW,
-    NORMAL,
-    HIGH,
-    URGENT;
-
-    val value: Int get() = ordinal
-}
+// TaskPriority is imported from dev.aurakai.auraframefx.ai.task.TaskPriority (data class with value, reason, metadata)

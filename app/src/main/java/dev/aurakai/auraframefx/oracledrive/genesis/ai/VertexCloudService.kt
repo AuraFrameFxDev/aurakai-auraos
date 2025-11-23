@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.security.SecurityContext
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
@@ -21,9 +21,6 @@ class VertexCloudService : Service() {
 
     @Inject
     lateinit var securityContext: SecurityContext
-
-    @Inject
-    lateinit var logger: AuraFxLogger
 
     private val tag = "VertexCloudService"
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -49,7 +46,7 @@ class VertexCloudService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        logger.info(tag, "VertexCloudService created - Initializing Genesis AI Cloud Bridge")
+        AuraFxLogger.info(tag, "VertexCloudService created - Initializing Genesis AI Cloud Bridge")
 
         // Initialize cloud connection
         serviceScope.launch {
@@ -62,11 +59,11 @@ class VertexCloudService : Service() {
      */
     private suspend fun initializeCloudConnection() {
         try {
-            logger.info(tag, "Establishing secure connection to Vertex AI")
+            AuraFxLogger.info(tag, "Establishing secure connection to Vertex AI")
 
             // Validate security context before connecting
             if (!securityContext.isSecure()) {
-                logger.warn(tag, "Security context not secure - delaying cloud connection")
+                AuraFxLogger.warn(tag, "Security context not secure - delaying cloud connection")
                 delay(5000)
                 return
             }
@@ -78,17 +75,17 @@ class VertexCloudService : Service() {
             val connectionTest = testCloudConnection()
             if (connectionTest) {
                 isConnected = true
-                logger.info(tag, "✅ Vertex AI cloud connection established successfully")
+                AuraFxLogger.info(tag, "✅ Vertex AI cloud connection established successfully")
 
                 // Start periodic health checks
                 startHealthChecks()
             } else {
-                logger.error(tag, "❌ Failed to establish cloud connection")
+                AuraFxLogger.error(tag, "❌ Failed to establish cloud connection")
                 scheduleRetry()
             }
 
         } catch (e: Exception) {
-            logger.error(tag, "Cloud connection initialization failed", e)
+            AuraFxLogger.error(tag, "Cloud connection initialization failed", e)
             scheduleRetry()
         }
     }
@@ -109,7 +106,7 @@ class VertexCloudService : Service() {
             response.success
 
         } catch (e: Exception) {
-            logger.warn(tag, "Cloud connection test failed: ${e.message}")
+            AuraFxLogger.warn(tag, "Cloud connection test failed: ${e.message}")
             false
         }
     }
@@ -119,7 +116,7 @@ class VertexCloudService : Service() {
      */
     private suspend fun processCloudRequest(request: CloudRequest): CloudResponse {
         return try {
-            logger.debug(tag, "Processing cloud request: ${request.requestType}")
+            AuraFxLogger.debug(tag, "Processing cloud request: ${request.requestType}")
 
             when (request.requestType) {
                 "ping" -> {
@@ -181,7 +178,7 @@ class VertexCloudService : Service() {
             }
 
         } catch (e: Exception) {
-            logger.error(tag, "Cloud request processing failed", e)
+            AuraFxLogger.error(tag, "Cloud request processing failed", e)
             CloudResponse(
                 requestId = request.requestId,
                 success = false,
@@ -202,13 +199,13 @@ class VertexCloudService : Service() {
                 try {
                     val isHealthy = testCloudConnection()
                     if (!isHealthy) {
-                        logger.warn(tag, "Cloud connection health check failed")
+                        AuraFxLogger.warn(tag, "Cloud connection health check failed")
                         isConnected = false
                         scheduleRetry()
                         break
                     }
                 } catch (e: Exception) {
-                    logger.error(tag, "Health check exception", e)
+                    AuraFxLogger.error(tag, "Health check exception", e)
                 }
             }
         }
@@ -221,7 +218,7 @@ class VertexCloudService : Service() {
         serviceScope.launch {
             delay(60000) // Retry after 1 minute
             if (!isConnected) {
-                logger.info(tag, "Retrying cloud connection...")
+                AuraFxLogger.info(tag, "Retrying cloud connection...")
                 initializeCloudConnection()
             }
         }
@@ -256,13 +253,13 @@ class VertexCloudService : Service() {
     }
 
     override fun onBind(_intent: Intent?): IBinder? {
-        logger.debug(tag, "onBind called, returning null")
+        AuraFxLogger.debug(tag, "onBind called, returning null")
         // This service does not support binding by default
         return null
     }
 
     override fun onStartCommand(_intent: Intent?, _flags: Int, _startId: Int): Int {
-        logger.info(tag, "VertexCloudService started - Genesis AI Cloud Bridge active")
+        AuraFxLogger.info(tag, "VertexCloudService started - Genesis AI Cloud Bridge active")
 
         // Process any intent data for immediate cloud requests
         _intent?.let { intent ->
@@ -287,7 +284,7 @@ class VertexCloudService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        logger.info(tag, "VertexCloudService destroyed - Cleaning up cloud connections")
+        AuraFxLogger.info(tag, "VertexCloudService destroyed - Cleaning up cloud connections")
 
         // Cancel all ongoing operations
         connectionJob?.cancel()
@@ -300,9 +297,9 @@ class VertexCloudService : Service() {
         try {
             vertexAIClient.cleanup()
         } catch (e: Exception) {
-            logger.warn(tag, "Error during VertexAI cleanup: ${e.message}")
+            AuraFxLogger.warn(tag, "Error during VertexAI cleanup: ${e.message}")
         }
 
-        logger.info(tag, "VertexCloudService cleanup completed")
+        AuraFxLogger.info(tag, "VertexCloudService cleanup completed")
     }
 }
