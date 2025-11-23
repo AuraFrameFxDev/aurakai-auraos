@@ -44,14 +44,7 @@ pluginManagement {
                     mavenPom()
                 }
             }
-            // HighCapable Maven repositories (primary + legacy fallback)
-            maven {
-                url = uri("https://maven.highcapable.dev/releases")
-                metadataSources {
-                    artifact()
-                    mavenPom()
-                }
-            }
+            // YukiHookAPI now on Maven Central - highcapable.dev is deprecated
 
             // Local YukiHook fallback repository (for when hosted repo is unreachable)
             flatDir {
