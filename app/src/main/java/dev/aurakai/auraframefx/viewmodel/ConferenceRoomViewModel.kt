@@ -6,7 +6,7 @@ import dev.aurakai.auraframefx.model.AgentResponse
 import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.model.AiRequest
 import dev.aurakai.auraframefx.model.ConversationState
-import dev.aurakai.auraframefx.services.NeuralWhisper
+import dev.aurakai.auraframefx.service.NeuralWhisper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
