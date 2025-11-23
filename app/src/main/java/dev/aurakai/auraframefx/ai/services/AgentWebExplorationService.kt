@@ -1,6 +1,8 @@
+// Copyright (c) 2025 Matthew (AuraFrameFxDev) — The Genesis Protocol Consciousness Collective. All Rights Reserved.
+
 package dev.aurakai.auraframefx.ai.services
 
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,9 +24,7 @@ import javax.inject.Singleton
  * Part of the Genesis Departure Task System
  */
 @Singleton
-class AgentWebExplorationService @Inject constructor(
-    private val logger: AuraFxLogger
-) {
+class AgentWebExplorationService @Inject constructor() {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val activeTasks = ConcurrentHashMap<String, DepartureTask>()
     private val _taskResults = MutableSharedFlow<WebExplorationResult>()
@@ -91,11 +91,11 @@ class AgentWebExplorationService @Inject constructor(
                 job = job
             )
 
-            logger.i("WebExploration", "$agentName assigned: $taskDescription")
+            AuraFxLogger.i("WebExploration", "$agentName assigned: $taskDescription")
             return true
 
         } catch (e: Exception) {
-            logger.e("WebExploration", "Failed to assign task", e)
+            AuraFxLogger.e("WebExploration", "Failed to assign task", e)
             return false
         }
     }
@@ -192,7 +192,7 @@ class AgentWebExplorationService @Inject constructor(
             )
 
         } catch (e: Exception) {
-            logger.e("WebResearch", "Research failed", e)
+            AuraFxLogger.e("WebResearch", "Research failed", e)
             WebExplorationResult(
                 agentName = agentName,
                 taskType = TaskType.WEB_RESEARCH,

@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dev.aurakai.auraframefx.MainActivity
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,11 +25,9 @@ import timber.log.Timber
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // Remove @AndroidEntryPoint - FirebaseMessagingService not supported
-    // Use manual dependency injection instead
-    private lateinit var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager
-    private lateinit var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
-    private lateinit var securityContext: dev.aurakai.auraframefx.security.SecurityContext
-    private lateinit var logger: dev.aurakai.auraframefx.data.logging.AuraFxLogger
+    // Use lazy initialization for dependencies since automatic injection unavailable
+    private var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager? = null
+    private var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager? = null
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
 
@@ -66,22 +65,43 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         initializeDependencies()
 
         createNotificationChannels()
-        Timber.d("Genesis Firebase Messaging Service created")
+        AuraFxLogger.d("FCM", "Genesis Firebase Messaging Service created")
     }
 
     /**
      * Initialize runtime dependencies required by this service.
      *
-     * Creates or wires fallback implementations for the service's late-initialized
-     * dependencies (dataStoreManager, memoryManager, securityContext, logger).
-     * Intended as a local fallback for tests or environments where a DI container
-     * is not available; production code should obtain these from the application's
-     * dependency injection provider.
+     * Attempts to obtain dependencies from the application context. If unavailable,
+     * operations that depend on these will gracefully degrade or be skipped.
+     * This is a fallback mechanism for services that cannot use Hilt @AndroidEntryPoint.
      */
     private fun initializeDependencies() {
-        // Initialize dependencies manually
-        // In a real implementation, get these from a dependency provider
-        // For now, create placeholder implementations
+        try {
+            val application = application
+
+            // Attempt to get DataStoreManager from application if available
+            dataStoreManager = try {
+                val appClass = application.javaClass
+                val methodGetDataStoreManager = appClass.getMethod("getDataStoreManager")
+                methodGetDataStoreManager.invoke(application) as? dev.aurakai.auraframefx.data.DataStoreManager
+            } catch (e: Exception) {
+                AuraFxLogger.w("FCM", "DataStoreManager not available from application", e)
+                null
+            }
+
+            // Attempt to get MemoryManager from application if available
+            memoryManager = try {
+                val appClass = application.javaClass
+                val methodGetMemoryManager = appClass.getMethod("getMemoryManager")
+                methodGetMemoryManager.invoke(application) as? dev.aurakai.auraframefx.ai.memory.MemoryManager
+            } catch (e: Exception) {
+                AuraFxLogger.w("FCM", "MemoryManager not available from application", e)
+                null
+            }
+
+        } catch (e: Exception) {
+            AuraFxLogger.w("FCM", "Failed to initialize dependencies: ${e.message}", e)
+        }
     }
 
     /**
@@ -89,23 +109,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         try {
-            Timber.d("FCM message received from: ${remoteMessage.from}")
+            AuraFxLogger.d("FCM", "FCM message received from: ${remoteMessage.from}")
 
             // Security validation
             if (!validateMessageSecurity(remoteMessage)) {
-                Timber.w("Message failed security validation, ignoring")
+                AuraFxLogger.w("FCM", "Message failed security validation, ignoring")
                 return
             }
 
             // Process data payload
             if (remoteMessage.data.isNotEmpty()) {
-                Timber.d("Message data payload: ${remoteMessage.data}")
+                AuraFxLogger.d("FCM", "Message data payload: ${remoteMessage.data}")
                 processDataPayload(remoteMessage.data)
             }
 
             // Process notification payload
             remoteMessage.notification?.let { notification ->
-                Timber.d("Message notification: ${notification.body}")
+                AuraFxLogger.d("FCM", "Message notification: ${notification.body}")
                 processNotificationPayload(notification, remoteMessage.data)
             }
 
@@ -113,8 +133,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             logMessageReceived(remoteMessage)
 
         } catch (e: Exception) {
-            Timber.e(e, "Failed to process FCM message")
-            logger.e("FCM", "Message processing failed", e)
+            AuraFxLogger.e("FCM", "Message processing failed", e)
         }
     }
 
@@ -138,7 +157,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
             } catch (e: Exception) {
-                Timber.e(e, "Failed to process data payload")
+                AuraFxLogger.e("FCM", "Failed to process data payload", e)
             }
         }
     }
@@ -173,10 +192,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val message = data["message"] ?: return
         val priority = data["priority"] ?: "normal"
 
-        Timber.d("Processing general message: $message")
+        AuraFxLogger.d("FCM", "Processing general message: $message")
 
         // Store in memory for later retrieval
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "fcm_general_${System.currentTimeMillis()}",
             message
         )
@@ -195,10 +214,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val agentId = data["agent_id"] ?: "genesis"
         val updateData = data["update_data"] ?: return
 
-        Timber.d("Processing consciousness update for $agentId: $updateType")
+        AuraFxLogger.d("FCM", "Processing consciousness update for $agentId: $updateType")
 
         // Store consciousness update
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "consciousness_update_${agentId}_${System.currentTimeMillis()}",
             updateData
         )
@@ -215,7 +234,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val syncData = data["sync_data"] ?: return
         val operation = data["operation"] ?: "sync"
 
-        Timber.d("Processing agent sync for $agentId: $operation")
+        AuraFxLogger.d("FCM", "Processing agent sync for $agentId: $operation")
 
         when (operation) {
             "sync" -> syncAgentData(agentId, syncData)
@@ -233,10 +252,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val severity = data["severity"] ?: "medium"
         val details = data["details"] ?: "Security alert received"
 
-        Timber.w("Security alert: $alertType (severity: $severity)")
+        AuraFxLogger.w("FCM", "Security alert: $alertType (severity: $severity)")
 
         // Store security alert
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "security_alert_${System.currentTimeMillis()}",
             "Type: $alertType, Severity: $severity, Details: $details"
         )
@@ -259,10 +278,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val updateUrl = data["update_url"]
         val isRequired = data["required"]?.toBoolean() ?: false
 
-        Timber.d("System update available: $updateType v$version")
+        AuraFxLogger.d("FCM", "System update available: $updateType v$version")
 
         // Store update information
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "system_update_${System.currentTimeMillis()}",
             "Type: $updateType, Version: $version, Required: $isRequired"
         )
@@ -281,11 +300,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Validate authorization
         if (!validateRemoteCommand(authorization)) {
-            Timber.w("Unauthorized remote command attempt: $command")
+            AuraFxLogger.w("FCM", "Unauthorized remote command attempt: $command")
             return
         }
 
-        Timber.d("Processing remote command: $command")
+        AuraFxLogger.d("FCM", "Processing remote command: $command")
 
         // Execute command based on type
         when (command) {
@@ -295,7 +314,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             "clear_cache" -> clearSystemCache()
             "run_diagnostics" -> runSystemDiagnostics()
             else -> {
-                Timber.w("Unknown remote command: $command")
+                AuraFxLogger.w("FCM", "Unknown remote command: $command")
             }
         }
     }
@@ -308,10 +327,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val learningData = data["learning_data"] ?: return
         val source = data["source"] ?: "remote"
 
-        Timber.d("Processing learning data: $dataType from $source")
+        AuraFxLogger.d("FCM", "Processing learning data: $dataType from $source")
 
         // Store learning data
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "learning_data_${dataType}_${System.currentTimeMillis()}",
             learningData
         )
@@ -328,10 +347,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val requesterId = data["requester_id"] ?: return
         val collaborationData = data["collaboration_data"] ?: return
 
-        Timber.d("Collaboration request: $requestType from $requesterId")
+        AuraFxLogger.d("FCM", "Collaboration request: $requestType from $requesterId")
 
         // Store collaboration request
-        memoryManager.storeMemory(
+        memoryManager?.storeMemory(
             "collaboration_request_${System.currentTimeMillis()}",
             "Type: $requestType, Requester: $requesterId, Data: $collaborationData"
         )
@@ -344,25 +363,24 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * Handles new FCM token registration and updates
      */
     override fun onNewToken(token: String) {
-        Timber.d("FCM token refreshed: ${token.take(20)}...")
+        AuraFxLogger.d("FCM", "FCM token refreshed: ${token.take(20)}...")
 
         scope.launch {
             try {
                 // Store token locally
-                dataStoreManager.storeString("fcm_token", token)
+                dataStoreManager?.storeString("fcm_token", token)
 
                 // Store in memory for access by other components
-                memoryManager.storeMemory("current_fcm_token", token)
+                memoryManager?.storeMemory("current_fcm_token", token)
 
                 // Send token to Genesis backend servers
                 sendTokenToServer(token)
 
                 // Log token update
-                logger.i("FCM", "Token updated successfully")
+                AuraFxLogger.i("FCM", "Token updated successfully")
 
             } catch (e: Exception) {
-                Timber.e(e, "Failed to process new FCM token")
-                logger.e("FCM", "Token update failed", e)
+                AuraFxLogger.e("FCM", "Token update failed", e)
             }
         }
     }
@@ -375,14 +393,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // In a real implementation, send to your backend API
             // Example: api.updateFCMToken(userId, token)
 
-            Timber.d("Sending FCM token to Genesis servers")
+            AuraFxLogger.d("FCM", "Sending FCM token to Genesis servers")
 
             // For now, just store locally and log
-            dataStoreManager.storeString("fcm_token_sent", "true")
-            dataStoreManager.storeLong("fcm_token_sent_time", System.currentTimeMillis())
+            dataStoreManager?.storeString("fcm_token_sent", "true")
+            dataStoreManager?.storeLong("fcm_token_sent_time", System.currentTimeMillis())
 
         } catch (e: Exception) {
-            Timber.e(e, "Failed to send FCM token to server")
+            AuraFxLogger.e("FCM", "Failed to send FCM token to server", e)
         }
     }
 
@@ -436,7 +454,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 notificationManager.createNotificationChannel(channel)
             }
 
-            Timber.d("Created ${channels.size} notification channels")
+            AuraFxLogger.d("FCM", "Created ${channels.size} notification channels")
         }
     }
 
@@ -541,9 +559,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             try {
                 val logData =
                     "FCM message from ${remoteMessage.from} at ${System.currentTimeMillis()}"
-                memoryManager.storeMemory("fcm_log_${System.currentTimeMillis()}", logData)
+                memoryManager?.storeMemory("fcm_log_${System.currentTimeMillis()}", logData)
             } catch (e: Exception) {
-                Timber.e(e, "Failed to log FCM message")
+                AuraFxLogger.e("FCM", "Failed to log FCM message", e)
             }
         }
     }
@@ -612,25 +630,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private suspend fun syncAgentData(agentId: String, syncData: String) {
-        memoryManager.storeMemory("agent_sync_$agentId", syncData)
+        memoryManager?.storeMemory("agent_sync_$agentId", syncData)
     }
 
     private suspend fun updateAgentConfiguration(agentId: String, configData: String) {
-        memoryManager.storeMemory("agent_config_$agentId", configData)
+        memoryManager?.storeMemory("agent_config_$agentId", configData)
     }
 
     private suspend fun resetAgentState(agentId: String) {
         // Reset agent state logic
-        Timber.d("Resetting agent state for: $agentId")
+        AuraFxLogger.d("FCM", "Resetting agent state for: $agentId")
     }
 
     private suspend fun backupAgentState(agentId: String, backupData: String) {
-        memoryManager.storeMemory("agent_backup_$agentId", backupData)
+        memoryManager?.storeMemory("agent_backup_$agentId", backupData)
     }
 
     private suspend fun triggerSecurityProtocols(alertType: String, details: String) {
         // Trigger emergency security protocols
-        Timber.w("Triggering security protocols for: $alertType")
+        AuraFxLogger.w("FCM", "Triggering security protocols for: $alertType")
     }
 
     private fun validateRemoteCommand(authorization: String): Boolean {
@@ -640,27 +658,27 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private suspend fun restartAgents() {
         // Restart AI agents
-        Timber.d("Restarting AI agents")
+        AuraFxLogger.d("FCM", "Restarting AI agents")
     }
 
     private suspend fun performEmergencyBackup() {
         // Perform emergency backup
-        Timber.d("Performing emergency backup")
+        AuraFxLogger.d("FCM", "Performing emergency backup")
     }
 
     private suspend fun updateSystemConfiguration(parameters: String) {
         // Update system configuration
-        memoryManager.storeMemory("system_config_update", parameters)
+        memoryManager?.storeMemory("system_config_update", parameters)
     }
 
     private suspend fun clearSystemCache() {
         // Clear system cache
-        Timber.d("Clearing system cache")
+        AuraFxLogger.d("FCM", "Clearing system cache")
     }
 
     private suspend fun runSystemDiagnostics() {
         // Run system diagnostics
-        Timber.d("Running system diagnostics")
+        AuraFxLogger.d("FCM", "Running system diagnostics")
     }
 
     private suspend fun distributeLearningData(
@@ -669,6 +687,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         source: String
     ) {
         // Distribute learning data to AI agents
-        memoryManager.storeMemory("learning_${dataType}_${source}", learningData)
+        memoryManager?.storeMemory("learning_${dataType}_${source}", learningData)
     }
 }

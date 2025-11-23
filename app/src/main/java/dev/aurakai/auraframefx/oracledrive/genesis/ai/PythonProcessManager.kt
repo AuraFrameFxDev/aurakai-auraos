@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.content.Context
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -15,7 +15,6 @@ import java.io.OutputStreamWriter
  */
 class PythonProcessManager(
     private val context: Context,
-    private val logger: AuraFxLogger,
 ) {
     private var process: Process? = null
     private var writer: OutputStreamWriter? = null
@@ -47,12 +46,12 @@ class PythonProcessManager(
             val pythonPath = checkPython.inputStream.bufferedReader().readText().trim()
             
             if (pythonPath.isEmpty()) {
-                logger.e("PythonManager", "CRITICAL: 'python3' executable not found in PATH. Genesis backend cannot start.")
+                AuraFxLogger.e("PythonManager", "CRITICAL: 'python3' executable not found in PATH. Genesis backend cannot start.")
                 // In a real scenario, we might fallback to a bundled interpreter or show a user dialog.
                 // For now, we proceed but expect failure, or we could return false immediately.
                 return@withContext false
             } else {
-                logger.i("PythonManager", "Found python3 at: $pythonPath")
+                AuraFxLogger.i("PythonManager", "Found python3 at: $pythonPath")
             }
 
             val processBuilder = ProcessBuilder(
@@ -80,14 +79,14 @@ class PythonProcessManager(
                 }
                 // Log startup messages
                 if (!line.isNullOrBlank()) {
-                    logger.d("PythonBackend", line!!)
+                    AuraFxLogger.d("PythonBackend", line!!)
                 }
             }
             
             ready
 
         } catch (e: Exception) {
-            logger.e("PythonManager", "Failed to start Genesis backend", e)
+            AuraFxLogger.e("PythonManager", "Failed to start Genesis backend", e)
             false
         }
     }
@@ -101,7 +100,7 @@ class PythonProcessManager(
     suspend fun sendRequest(requestJson: String): String? = withContext(Dispatchers.IO) {
         try {
             if (process == null || !process!!.isAlive) {
-                logger.e("PythonManager", "Process is not running")
+                AuraFxLogger.e("PythonManager", "Process is not running")
                 return@withContext null
             }
             
@@ -112,7 +111,7 @@ class PythonProcessManager(
             // The Python script should print exactly one line of JSON per request
             reader?.readLine()
         } catch (e: Exception) {
-            logger.e("PythonManager", "Communication error", e)
+            AuraFxLogger.e("PythonManager", "Communication error", e)
             null
         }
     }
@@ -148,7 +147,7 @@ class PythonProcessManager(
                     }
                 }
             } catch (e: Exception) {
-                logger.w("PythonManager", "Could not copy $fileName", e)
+                AuraFxLogger.w("PythonManager", "Could not copy $fileName", e)
             }
         }
     }
@@ -164,7 +163,7 @@ class PythonProcessManager(
             reader?.close()
             process?.destroy()
         } catch (e: Exception) {
-            logger.w("PythonManager", "Shutdown warning", e)
+            AuraFxLogger.w("PythonManager", "Shutdown warning", e)
         }
     }
 }

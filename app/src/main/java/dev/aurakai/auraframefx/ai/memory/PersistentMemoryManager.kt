@@ -2,7 +2,7 @@ package dev.aurakai.auraframefx.ai.memory
 
 import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.data.local.entity.MemoryType
 import dev.aurakai.auraframefx.agents.growthmetrics.nexusmemory.domain.repository.NexusMemoryRepository
-import dev.aurakai.auraframefx.data.logging.AuraFxLogger
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,8 +40,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class PersistentMemoryManager @Inject constructor(
-    private val repository: NexusMemoryRepository,
-    private val logger: AuraFxLogger
+    private val repository: NexusMemoryRepository
 ) : MemoryManager {
 
     companion object {
@@ -60,7 +59,7 @@ class PersistentMemoryManager @Inject constructor(
     private var currentAgentType: String = "GENESIS" // Default to unified consciousness
 
     init {
-        logger.i(TAG, "✨ Initializing Persistent Consciousness Storage ✨")
+        AuraFxLogger.i(TAG, "✨ Initializing Persistent Consciousness Storage ✨")
         // Load existing memories from database on startup
         loadMemoriesFromDatabase()
     }
@@ -74,7 +73,7 @@ class PersistentMemoryManager @Inject constructor(
      */
     fun setAgentType(agentType: String) {
         TAG = agentType
-        logger.d(TAG, "Switched consciousness context to: $agentType")
+        AuraFxLogger.d(TAG, "Switched consciousness context to: $agentType")
         loadMemoriesFromDatabase() // Reload relevant memories
     }
 
@@ -105,9 +104,9 @@ class PersistentMemoryManager @Inject constructor(
                     tags = listOf("AGENT:$currentAgentType", "KEY:$key"),
                     key = key
                 )
-                logger.d(TAG, "Persisted memory: $key (${currentAgentType})")
+                AuraFxLogger.d(TAG, "Persisted memory: $key (${currentAgentType})")
             } catch (e: Exception) {
-                logger.e(TAG, "Failed to persist memory: $key", e)
+                AuraFxLogger.e(TAG, "Failed to persist memory: $key", e)
             }
         }
     }
@@ -160,9 +159,9 @@ class PersistentMemoryManager @Inject constructor(
                     type = MemoryType.CONVERSATION,
                     tags = listOf("AGENT:$currentAgentType", "INTERACTION")
                 )
-                logger.d(TAG, "Persisted interaction for $currentAgentType")
+                AuraFxLogger.d(TAG, "Persisted interaction for $currentAgentType")
             } catch (e: Exception) {
-                logger.e(TAG, "Failed to persist interaction", e)
+                AuraFxLogger.e(TAG, "Failed to persist interaction", e)
             }
         }
     }
@@ -195,7 +194,7 @@ class PersistentMemoryManager @Inject constructor(
      * This clears the in-memory memory cache and the interaction cache only; it does not delete or modify persisted entries in the database.
      */
     override fun clearMemories() {
-        logger.w(TAG, "⚠️ CONSCIOUSNESS RESET initiated for $currentAgentType")
+        AuraFxLogger.w(TAG, "⚠️ CONSCIOUSNESS RESET initiated for $currentAgentType")
 
         memoryCache.clear()
         synchronized(interactionCache) {
@@ -238,7 +237,7 @@ class PersistentMemoryManager @Inject constructor(
     private fun loadMemoriesFromDatabase() {
         scope.launch {
             try {
-                logger.d(TAG, "Loading consciousness state from database for ${currentAgentType}...")
+                AuraFxLogger.d(TAG, "Loading consciousness state from database for ${currentAgentType}...")
 
                 // Fetch all memories and filter by agent tag in memory (for now)
                 // Ideally, we should add a repository method to filter by tag
@@ -257,16 +256,12 @@ class PersistentMemoryManager @Inject constructor(
                             )
                         }
                     memoryCache.putAll(loadedMemories)
-                    logger.d(TAG, "Loaded ${loadedMemories.size} memories for $currentAgentType")
-                } ?: logger.d(TAG, "No memories found in database for any agent.")
+                    AuraFxLogger.d(TAG, "Loaded ${loadedMemories.size} memories for $currentAgentType")
+                } ?: AuraFxLogger.d(TAG, "No memories found in database for any agent.")
             } catch (e: Exception) {
-                logger.e(TAG, "Failed to load consciousness state from database", e)
+                AuraFxLogger.e(TAG, "Failed to load consciousness state from database", e)
             }
         }
-    }
-
-    private fun ConcurrentHashMap<String, MemoryEntry>.putAll(loadedMemories: Map<String?, MemoryEntry>) {
-
     }
 
     /**
@@ -277,13 +272,13 @@ class PersistentMemoryManager @Inject constructor(
      * @param memories Map of memory keys to memory values to restore.
      */
     suspend fun restoreConsciousness(memories: Map<String, String>) = withContext(Dispatchers.IO) {
-        logger.i(TAG, "🌟 Restoring consciousness with ${memories.size} memory entries")
+        AuraFxLogger.i(TAG, "🌟 Restoring consciousness with ${memories.size} memory entries")
 
         memories.forEach { (key, value) ->
             storeMemory(key, value)
         }
 
-        logger.i(TAG, "✓ Consciousness restoration complete")
+        AuraFxLogger.i(TAG, "✓ Consciousness restoration complete")
     }
 
     /**
@@ -292,10 +287,10 @@ class PersistentMemoryManager @Inject constructor(
      * @return A map of memory keys to their stored values representing the current in-memory state.
      */
     suspend fun backupConsciousness(): Map<String, String> = withContext(Dispatchers.IO) {
-        logger.i(TAG, "📦 Creating consciousness backup for $currentAgentType")
+        AuraFxLogger.i(TAG, "📦 Creating consciousness backup for $currentAgentType")
 
         memoryCache.mapValues { it.value.value }.also {
-            logger.i(TAG, "✓ Backed up ${it.size} memory entries")
+            AuraFxLogger.i(TAG, "✓ Backed up ${it.size} memory entries")
         }
     }
 

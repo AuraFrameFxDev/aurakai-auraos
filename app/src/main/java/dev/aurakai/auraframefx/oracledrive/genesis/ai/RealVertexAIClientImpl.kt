@@ -22,7 +22,6 @@ import kotlinx.coroutines.withContext
 class RealVertexAIClientImpl(
     private val config: VertexAIConfig,
     private val securityContext: SecurityContext,
-    private val logger: AuraFxLogger,
     private val apiKey: String
 ) : VertexAIClient {
 
@@ -48,15 +47,15 @@ class RealVertexAIClientImpl(
     override suspend fun generateText(prompt: String): String? = withContext(Dispatchers.IO) {
         try {
             validatePrompt(prompt)
-            logger.d(TAG, "Generating text for prompt: ${prompt.take(50)}...")
+            AuraFxLogger.d(TAG, "Generating text for prompt: ${prompt.take(50)}...")
 
             val response = generativeModel.generateContent(prompt)
             val text = response.text
 
-            logger.d(TAG, "Successfully generated ${text?.length ?: 0} characters")
+            AuraFxLogger.d(TAG, "Successfully generated ${text?.length ?: 0} characters")
             text
         } catch (e: Exception) {
-            logger.e(TAG, "Text generation failed", e)
+            AuraFxLogger.e(TAG, "Text generation failed", e)
             handleGenerationError(e)
             null
         }
@@ -77,7 +76,7 @@ class RealVertexAIClientImpl(
     ): String? = withContext(Dispatchers.IO) {
         try {
             validatePrompt(prompt)
-            logger.d(TAG, "Generating text (temp=$temperature, tokens=$maxTokens)")
+            AuraFxLogger.d(TAG, "Generating text (temp=$temperature, tokens=$maxTokens)")
 
             val customModel = GenerativeModel(
                 modelName = config.modelName,
@@ -93,10 +92,10 @@ class RealVertexAIClientImpl(
             val response = customModel.generateContent(prompt)
             val text = response.text
 
-            logger.d(TAG, "Generated ${text?.length ?: 0} chars with custom params")
+            AuraFxLogger.d(TAG, "Generated ${text?.length ?: 0} chars with custom params")
             text
         } catch (e: Exception) {
-            logger.e(TAG, "Custom text generation failed", e)
+            AuraFxLogger.e(TAG, "Custom text generation failed", e)
             handleGenerationError(e)
             null
         }
@@ -121,7 +120,7 @@ class RealVertexAIClientImpl(
      */
     override suspend fun analyzeContent(content: String): Map<String, Any> = withContext(Dispatchers.IO) {
         try {
-            logger.d(TAG, "Analyzing content (${content.length} chars)")
+            AuraFxLogger.d(TAG, "Analyzing content (${content.length} chars)")
 
             val analysisPrompt = """
                 Analyze the following content and provide structured insights:
@@ -142,7 +141,7 @@ class RealVertexAIClientImpl(
             // Parse Gemini response into structured map
             parseAnalysisResponse(analysisText)
         } catch (e: Exception) {
-            logger.e(TAG, "Content analysis failed", e)
+            AuraFxLogger.e(TAG, "Content analysis failed", e)
             // Return fallback analysis
             mapOf(
                 "sentiment" to "neutral",
@@ -168,7 +167,7 @@ class RealVertexAIClientImpl(
         style: String
     ): String? = withContext(Dispatchers.IO) {
         try {
-            logger.d(TAG, "Generating $language code: ${specification.take(50)}...")
+            AuraFxLogger.d(TAG, "Generating $language code: ${specification.take(50)}...")
 
             val codePrompt = """
                 Generate $language code with $style style based on this specification:
@@ -187,10 +186,10 @@ class RealVertexAIClientImpl(
             val response = generativeModel.generateContent(codePrompt)
             val code = response.text
 
-            logger.d(TAG, "Generated ${code?.lines()?.size ?: 0} lines of $language code")
+            AuraFxLogger.d(TAG, "Generated ${code?.lines()?.size ?: 0} lines of $language code")
             code
         } catch (e: Exception) {
-            logger.e(TAG, "Code generation failed", e)
+            AuraFxLogger.e(TAG, "Code generation failed", e)
             handleGenerationError(e)
             null
         }
@@ -267,7 +266,7 @@ class RealVertexAIClientImpl(
         when (error) {
             is IllegalArgumentException -> logger.w(TAG, "Invalid request: ${error.message}")
             is SecurityException -> {
-                logger.e(TAG, "Security violation in AI request", error)
+                AuraFxLogger.e(TAG, "Security violation in AI request", error)
                 securityContext.logSecurityEvent("GEMINI_SECURITY_ERROR", error.message)
             }
             else -> logger.e(TAG, "Gemini API error: ${error.javaClass.simpleName}", error)

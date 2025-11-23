@@ -79,23 +79,22 @@ object VertexAIModule {
     fun provideVertexAIClient(
         config: VertexAIConfig,
         @ApplicationContext context: Context,
-        securityContext: SecurityContext,
-        logger: AuraFxLogger
+        securityContext: SecurityContext
     ): VertexAIClient {
         // Get API key from BuildConfig (requires setup in build.gradle.kts)
         val apiKey = try {
             BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }
         } catch (e: Exception) {
-            logger.w(TAG, "GEMINI_API_KEY not found in BuildConfig")
+            AuraFxLogger.w(TAG, "GEMINI_API_KEY not found in BuildConfig")
             null
         }
 
         return if (apiKey != null) {
-            logger.i(TAG, "✨ Initializing REAL Gemini 2.0 Flash client for Genesis Protocol ✨")
-            RealVertexAIClientImpl(config, securityContext, logger, apiKey)
+            AuraFxLogger.i(TAG, "✨ Initializing REAL Gemini 2.0 Flash client for Genesis Protocol ✨")
+            RealVertexAIClientImpl(config, securityContext, apiKey)
         } else {
-            logger.w(TAG, "⚠️ API key not configured - using STUB implementation")
-            logger.w(TAG, "Add GEMINI_API_KEY to local.properties to enable real AI")
+            AuraFxLogger.w(TAG, "⚠️ API key not configured - using STUB implementation")
+            AuraFxLogger.w(TAG, "Add GEMINI_API_KEY to local.properties to enable real AI")
             VertexAIClientImpl() // Fallback to stub
         }
     }
