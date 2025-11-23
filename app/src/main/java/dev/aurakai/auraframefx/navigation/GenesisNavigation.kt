@@ -9,7 +9,6 @@ import dev.aurakai.auraframefx.aura.ui.*
 import dev.aurakai.auraframefx.billing.SubscriptionScreen
 import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
-import dev.aurakai.auraframefx.ui.screens.AgentNexusScreen
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness

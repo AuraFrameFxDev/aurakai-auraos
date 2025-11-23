@@ -9,12 +9,12 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dev.aurakai.auraframefx.MainActivity
+import dev.aurakai.auraframefx.data.DataStoreManager
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Genesis-OS Firebase Cloud Messaging Service
@@ -26,7 +26,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // Remove @AndroidEntryPoint - FirebaseMessagingService not supported
     // Use lazy initialization for dependencies since automatic injection unavailable
-    private var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager? = null
+    private var dataStoreManager: DataStoreManager? = null
     private var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager? = null
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
@@ -83,7 +83,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             dataStoreManager = try {
                 val appClass = application.javaClass
                 val methodGetDataStoreManager = appClass.getMethod("getDataStoreManager")
-                methodGetDataStoreManager.invoke(application) as? dev.aurakai.auraframefx.data.DataStoreManager
+                methodGetDataStoreManager.invoke(application) as? DataStoreManager
             } catch (e: Exception) {
                 AuraFxLogger.w("FCM", "DataStoreManager not available from application", e)
                 null
