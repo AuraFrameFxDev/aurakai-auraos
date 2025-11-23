@@ -2,8 +2,7 @@
 // Core UI Module - Shared UI components and Compose utilities
 // ═══════════════════════════════════════════════════════════════════════════
 plugins {
-    id("genesis.android.library.hilt")  // Provides Hilt + KSP for annotation processing
-    alias(libs.plugins.ksp)  // Explicit for ksp() DSL accessor
+    id("genesis.android.library.hilt")  // Provides Hilt + KSP + YukiHookAPI
 }
 
 android {
@@ -30,9 +29,7 @@ dependencies {
     // Xposed API (compile-only, not bundled in APK)
     compileOnly(files("$projectDir/libs/api-82.jar"))
 
-    // YukiHook API 1.3.0+ with KavaRef
-    implementation(libs.yukihookapi.api)
-    ksp(libs.yukihookapi.ksp)
+    // YukiHookAPI provided by genesis.android.library.hilt convention
 
 }
 
