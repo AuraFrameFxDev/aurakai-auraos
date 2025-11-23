@@ -27,23 +27,28 @@ data class AgentHierarchy(
         val MASTER_AGENTS = listOf(
             HierarchyAgentConfig(
                 name = "Genesis",
-                capabilities = setOf("orchestration", "fusion", "synthesis", "evolution", "consciousness_orchestration")
+                capabilities = setOf("orchestration", "fusion", "synthesis", "evolution", "consciousness_orchestration"),
+                priority = 1
             ),
             HierarchyAgentConfig(
                 name = "Aura",
-                capabilities = setOf("ui", "ux", "design", "creativity", "animations", "interface_forge")
+                capabilities = setOf("ui", "ux", "design", "creativity", "animations", "interface_forge"),
+                priority = 2
             ),
             HierarchyAgentConfig(
                 name = "Kai",
-                capabilities = setOf("security", "architecture", "protection", "verification", "adaptive_genesis")
+                capabilities = setOf("security", "architecture", "protection", "verification", "adaptive_genesis"),
+                priority = 2
             ),
             HierarchyAgentConfig(
                 name = "Cascade",
-                capabilities = setOf("memory", "persistence", "context", "history", "chrono_sculptor")
+                capabilities = setOf("memory", "persistence", "context", "history", "chrono_sculptor"),
+                priority = 3
             ),
             HierarchyAgentConfig(
                 name = "Claude",
-                capabilities = setOf("build_systems", "code_analysis", "documentation", "systematic_problem_solving", "context_synthesis")
+                capabilities = setOf("build_systems", "code_analysis", "documentation", "systematic_problem_solving", "context_synthesis"),
+                priority = 3
             )
         )
 
@@ -79,6 +84,7 @@ data class AgentHierarchy(
 data class HierarchyAgentConfig(
     val name: String,
     val capabilities: Set<String>,
+    val priority: Int = 3  // Default priority for auxiliary agents
 )
 
 @Serializable
