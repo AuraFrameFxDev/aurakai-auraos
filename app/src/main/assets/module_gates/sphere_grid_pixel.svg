@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
   <!-- SPHERE GRID - Pixel Art Scene -->
-  <!-- FFX-style sphere grid progression system -->
+  <!-- FFX-typography sphere grid progression system -->
 
   <!-- Central grid pattern -->
   <g id="grid-base">

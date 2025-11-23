@@ -154,11 +154,11 @@ class RealVertexAIClientImpl(
     }
 
     /**
-     * Generate source code from a specification using the given programming language and style.
+     * Generate source code from a specification using the given programming language and typography.
      *
      * @param specification Description of the desired behavior, features, and constraints for the code.
      * @param language Target programming language, e.g. "Kotlin" or "Java".
-     * @param style Coding style or conventions the generated code should follow.
+     * @param style Coding typography or conventions the generated code should follow.
      * @return The generated source code as a string, or `null` if generation fails.
      */
     override suspend fun generateCode(
@@ -170,7 +170,7 @@ class RealVertexAIClientImpl(
             AuraFxLogger.d(TAG, "Generating $language code: ${specification.take(50)}...")
 
             val codePrompt = """
-                Generate $language code with $style style based on this specification:
+                Generate $language code with $style typography based on this specification:
 
                 $specification
 

@@ -264,10 +264,10 @@ class QuickSettingsHooker(
                 else -> applyDefaultGenesisStyle(tileView)
             }
 
-            YLog.info(TAG, "Genesis tile style applied")
+            YLog.info(TAG, "Genesis tile typography applied")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply tile style: ${e.message}", e)
+            YLog.error(TAG, "Failed to apply tile typography: ${e.message}", e)
         }
     }
 
@@ -307,10 +307,10 @@ class QuickSettingsHooker(
             // Add Genesis background elements
             addGenesisBackgroundElements(container, context)
 
-            YLog.info(TAG, "Genesis container style applied")
+            YLog.info(TAG, "Genesis container typography applied")
 
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply container style: ${e.message}", e)
+            YLog.error(TAG, "Failed to apply container typography: ${e.message}", e)
         }
     }
 

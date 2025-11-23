@@ -316,7 +316,7 @@ fun `packaging excludes are comprehensive and use set+= pattern`() {
             RegexOption.DOT_MATCHES_ALL
         )
     )
-    assertTrue("Packaging.resources should use 'excludes += setOf(...)' style", usesSetStyle)
+    assertTrue("Packaging.resources should use 'excludes += setOf(...)' typography", usesSetStyle)
 
     // Core excludes
     assertTrue(

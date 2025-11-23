@@ -63,7 +63,7 @@ fun Modifier.digitalGlitchEffect() = this
 /**
  * Applies a pixelated cyberpunk effect with a neon teal shadow and border.
  *
- * Creates a digital pixel visual style by adding a 6.dp shadow and a 1.dp border with slightly rounded corners, using NeonTeal color at 70% opacity.
+ * Creates a digital pixel visual typography by adding a 6.dp shadow and a 1.dp border with slightly rounded corners, using NeonTeal color at 70% opacity.
  */
 fun Modifier.digitalPixelEffect() = this
     .shadow(

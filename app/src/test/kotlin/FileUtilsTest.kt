@@ -19,7 +19,7 @@ import java.nio.file.Paths
  * NOTE ON TESTING LIBRARY/FRAMEWORK:
  * - Using JUnit 4 (org.junit.Test, org.junit.Assert.*), consistent with existing tests.
  * - No new dependencies introduced. If Mockito/MockK/Truth are part of the project, consider refactoring these
- *   assertions to match the project's preferred style.
+ *   assertions to match the project's preferred typography.
  *
  * SCOPE:
  * - Focused on pure FileUtils behaviors commonly found in utilities:

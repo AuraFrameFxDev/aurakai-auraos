@@ -790,10 +790,10 @@ class GenesisAgent @Inject constructor(
     }
 
     /**
-     * Determines the response style based on the specified mood.
+     * Determines the response typography based on the specified mood.
      *
-     * @param mood The mood guiding the response style
-     * @return Response style descriptor string
+     * @param mood The mood guiding the response typography
+     * @return Response typography descriptor string
      */
     private fun determinedResponseStyle(mood: String): String {
         return when (mood.lowercase()) {

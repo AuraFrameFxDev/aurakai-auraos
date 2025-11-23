@@ -152,11 +152,11 @@ class VertexAIClientImpl : VertexAIClient {
     }
 
     /**
-     * Simulates code generation by returning a stub string for the specified specification, language, and style.
+     * Simulates code generation by returning a stub string for the specified specification, language, and typography.
      *
      * @param specification The description of the code to generate.
      * @param language The programming language for the generated code.
-     * @param style The desired coding style.
+     * @param style The desired coding typography.
      * @return A placeholder string representing generated code in the specified language.
      */
     override suspend fun generateCode(

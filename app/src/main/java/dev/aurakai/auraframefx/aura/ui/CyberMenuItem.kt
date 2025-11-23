@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
  * @param text The label to display on the menu item
  * @param onClick The action to perform when the menu item is clicked
  * @param modifier Modifier to adjust the layout or appearance of the menu item
- * @param isSelected Whether the menu item is currently selected, affecting its visual style
+ * @param isSelected Whether the menu item is currently selected, affecting its visual typography
  */
 @Composable
 fun CyberMenuItem(

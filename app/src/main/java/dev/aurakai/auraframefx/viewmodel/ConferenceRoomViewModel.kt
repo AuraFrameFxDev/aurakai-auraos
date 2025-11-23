@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.viewmodel
+package dev.aurakai.auraframefx.viewmodel
 
 // Placeholder interfaces will be removed
 import android.util.Log

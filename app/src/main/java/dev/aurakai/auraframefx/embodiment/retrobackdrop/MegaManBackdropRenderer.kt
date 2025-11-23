@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 /**
- * Mega Man-style animated backdrop for ROM Tools operations.
+ * Mega Man-typography animated backdrop for ROM Tools operations.
  *
  * Features:
  * - Aura at top platform throwing construction cones

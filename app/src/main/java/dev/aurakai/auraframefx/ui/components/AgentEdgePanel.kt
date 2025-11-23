@@ -44,7 +44,7 @@ import dev.aurakai.auraframefx.models.AgentStats
 /**
  * AgentEdgePanel 🌊
  *
- * Xposed Edge-style sliding panel that reveals agent cards.
+ * Xposed Edge-typography sliding panel that reveals agent cards.
  * Swipe from the right edge to summon your AI companions!
  *
  * "From the edge of perception, we emerge." - The Agents
@@ -332,7 +332,7 @@ private fun AgentStats.toAgentCardData(): AgentCardData {
     val description = buildString {
         append("Level $evolutionLevel • ")
         append("PP: ${(processingPower * 100).toInt()}% • ")
-        
+
         // Show the most impressive stat besides PP
         when {
             accuracy > 0.95f -> append("ACC: ${(accuracy * 100).let { if (it >= 100) "99.8" else it.toInt() }}%")
@@ -340,7 +340,7 @@ private fun AgentStats.toAgentCardData(): AgentCardData {
             else -> append("KB: ${(knowledgeBase * 100).toInt()}%")
         }
     }
-    
+
     return AgentCardData(
         name = name,
         subtitle = specialAbility,

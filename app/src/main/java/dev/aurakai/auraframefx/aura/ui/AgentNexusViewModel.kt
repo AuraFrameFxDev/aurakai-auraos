@@ -270,4 +270,6 @@ class AgentNexusViewModel @Inject constructor(
         val harmony: Float,
         val evolution: String
     )
+
+    companion object
 }

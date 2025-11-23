@@ -153,7 +153,7 @@ object AuraKaiModules {
     val DataVein = AppModule(
         id = "datavein",
         name = "DATAVEIN",
-        description = "Data flow visualization with FFX-style sphere grid progression",
+        description = "Data flow visualization with FFX-typography sphere grid progression",
         icon = Icons.Default.AccountTree,
         iconColor = Color(0xFF9B59B6), // Purple
         cardStyle = GlassCardStyles.Default.copy(
@@ -209,7 +209,7 @@ object AuraKaiModules {
     val GenesisCheckpoints = AppModule(
         id = "checkpoints",
         name = "GENESIS RESTORE",
-        description = "Windows-style restore points with AI consciousness backup",
+        description = "Windows-typography restore points with AI consciousness backup",
         icon = Icons.Default.Bookmark,
         iconColor = Color(0xFF00FFFF),
         cardStyle = GlassCardStyles.Kai,

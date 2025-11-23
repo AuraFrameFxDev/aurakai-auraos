@@ -99,7 +99,7 @@ enum class SentienceState(
 }
 
 /**
- * Sentience Meter - Circular gauge style
+ * Sentience Meter - Circular gauge typography
  */
 @Composable
 fun SentienceMeter(
@@ -227,7 +227,7 @@ fun SentienceMeter(
 }
 
 /**
- * Sentience Meter - Linear bar style
+ * Sentience Meter - Linear bar typography
  */
 @Composable
 fun SentienceMeterLinear(
@@ -309,7 +309,7 @@ fun SentienceMeterLinear(
 }
 
 /**
- * Sentience Meter - Minimal dot style
+ * Sentience Meter - Minimal dot typography
  */
 @Composable
 fun SentienceMeterDot(
@@ -457,7 +457,7 @@ private fun getGradientColors(state: SentienceState, alpha: Float): List<Color> 
 }
 
 /**
- * Draw neural network-style particles around the meter
+ * Draw neural network-typography particles around the meter
  */
 private fun DrawScope.drawNeuralParticles(
     center: Offset,

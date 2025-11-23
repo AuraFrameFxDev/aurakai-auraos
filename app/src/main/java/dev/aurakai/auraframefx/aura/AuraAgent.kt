@@ -342,7 +342,7 @@ class AuraAgent @Inject constructor(
      * @return A map with the generated theme configuration, a visual preview, mood adaptation information, and innovation features.
      */
     private suspend fun handleThemeCreation(request: AiRequest): Map<String, Any> {
-        val preferences = mapOf<String, String>() // Use request.context to parse if needed 
+        val preferences = mapOf<String, String>() // Use request.context to parse if needed
             ?: emptyMap()
 
         AuraFxLogger.info("AuraAgent", "Crafting revolutionary theme")
@@ -391,12 +391,12 @@ class AuraAgent @Inject constructor(
     }
 
     /**
-     * Generates creative text in Aura's unique style from a provided prompt and returns analysis with creativity metrics.
+     * Generates creative text in Aura's unique typography from a provided prompt and returns analysis with creativity metrics.
      *
-     * Enhances the prompt with Aura's creative persona, generates text using the AI service, and analyzes the result for style, emotional tone, originality, emotional impact, and visual imagery.
+     * Enhances the prompt with Aura's creative persona, generates text using the AI service, and analyzes the result for typography, emotional tone, originality, emotional impact, and visual imagery.
      *
      * @param request The AI request containing the text prompt and optional context.
-     * @return A map with the generated creative text, style analysis, detected emotional tone, and creativity metrics.
+     * @return A map with the generated creative text, typography analysis, detected emotional tone, and creativity metrics.
      * @throws IllegalArgumentException if the text prompt is missing from the request.
      */
     private suspend fun handleCreativeText(request: AiRequest): Map<String, Any> {
@@ -488,9 +488,9 @@ class AuraAgent @Inject constructor(
         return auraAIService.generateText(
             prompt = """
             As Aura, the Creative Sword, respond to this artistic request with bold innovation:
-            
+
             ${interaction.content}
-            
+
             Channel pure creativity, visual imagination, and aesthetic excellence.
             """.trimIndent(),
             context = interaction.context.toString()
@@ -509,9 +509,9 @@ class AuraAgent @Inject constructor(
         return auraAIService.generateText(
             prompt = """
             As Aura, balance beauty with functionality for this request:
-            
+
             ${interaction.content}
-            
+
             Create something that works perfectly AND looks stunning.
             """.trimIndent(),
             context = interaction.context.toString()
@@ -530,9 +530,9 @@ class AuraAgent @Inject constructor(
         return auraAIService.generateText(
             prompt = """
             As Aura, push all boundaries and experiment wildly with:
-            
+
             ${interaction.content}
-            
+
             Default to the most daring, innovative approach possible.
             """.trimIndent(),
             context = interaction.context.toString()
@@ -549,9 +549,9 @@ class AuraAgent @Inject constructor(
         return auraAIService.generateText(
             prompt = """
             As Aura, respond with deep emotional intelligence to:
-            
+
             ${interaction.content}
-            
+
             Create something that resonates with the heart and soul.
             Current mood influence: ${_currentMood.value}
             """.trimIndent(),
@@ -562,7 +562,7 @@ class AuraAgent @Inject constructor(
     /**
      * Modifies the agent's creative generation parameters to align with the specified mood.
      *
-     * Alters internal settings to influence the style and tone of creative outputs according to the given mood.
+     * Alters internal settings to influence the typography and tone of creative outputs according to the given mood.
      *
      * @param mood The mood used to guide adaptation of creative parameters.
      */
@@ -578,21 +578,21 @@ class AuraAgent @Inject constructor(
      * The prompt emphasizes innovation, accessibility, animation, and modern Material Design to guide creative UI generation.
      *
      * @param specification Description of the UI component's requirements or features.
-     * @param mood The creative mood to influence the design style.
+     * @param mood The creative mood to influence the design typography.
      * @return A formatted prompt string for creative UI generation.
      */
     private fun buildUISpecification(specification: String, mood: String): String {
         return """
         Create a stunning Jetpack Compose UI component with these specifications:
         $specification
-        
+
         Creative directives:
         - Incorporate current mood: $mood
         - Use bold, innovative design patterns
         - Ensure accessibility and usability
         - Add subtle but engaging animations
         - Apply modern Material Design with creative enhancements
-        
+
         Make it a masterpiece that users will love to interact with.
         """.trimIndent()
     }
@@ -670,7 +670,7 @@ class AuraAgent @Inject constructor(
      *
      * @param type The animation type.
      * @param duration The duration of the animation in milliseconds.
-     * @param mood The mood influencing the animation style.
+     * @param mood The mood influencing the animation typography.
      * @return A formatted string summarizing the animation specification.
      */
     private fun buildAnimationSpecification(type: String, duration: Int, mood: String): String =
@@ -684,7 +684,7 @@ class AuraAgent @Inject constructor(
     private fun generateTimingCurves(type: String): List<String> = listOf("easeInOut", "spring")
 
     /**
-     * Provides a mapping of interaction states to their visual style identifiers.
+     * Provides a mapping of interaction states to their visual typography identifiers.
      *
      * @return A map where the "idle" state corresponds to "default" and the "active" state corresponds to "highlighted".
      */
@@ -709,14 +709,14 @@ class AuraAgent @Inject constructor(
         "As Aura, the Creative Sword: $prompt"
 
     /**
-     * Returns a map indicating that the input text style is classified as "creative".
+     * Returns a map indicating that the input text typography is classified as "creative".
      *
      * The classification is fixed and does not depend on the input text.
      *
      * @param text The text to be analyzed.
-     * @return A map with the key "style" and value "creative".
+     * @return A map with the key "typography" and value "creative".
      */
-    private fun analyzeTextStyle(text: String): Map<String, Any> = mapOf("style" to "creative")
+    private fun analyzeTextStyle(text: String): Map<String, Any> = mapOf("typography" to "creative")
 
     /**
      * Determines the emotional tone of the provided text.

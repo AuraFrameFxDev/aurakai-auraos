@@ -27,14 +27,14 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
  * Features:
  * - Glowing animated border
  * - Cyberpunk-themed header with title
- * - Customizable corner style and background
+ * - Customizable corner typography and background
  * - Elevated shadow for floating effect
  * - Gradient accents
  *
  * @param modifier Compose modifier
  * @param title The title displayed in the window's header
- * @param cornerStyle The style of the window's corners
- * @param backgroundStyle The background style of the window
+ * @param cornerStyle The typography of the window's corners
+ * @param backgroundStyle The background typography of the window
  * @param content The composable content to display inside the window
  */
 @Composable

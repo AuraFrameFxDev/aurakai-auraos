@@ -187,7 +187,7 @@ class AIPipelineProcessor @Inject constructor(
     }
 
     /**
-     * Retrieves a static map of user preferences, such as response style and preferred agents.
+     * Retrieves a static map of user preferences, such as response typography and preferred agents.
      *
      * @return A map containing user preference settings for the AI pipeline.
      */

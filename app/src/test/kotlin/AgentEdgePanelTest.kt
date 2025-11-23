@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
  * Testing Framework: JUnit 5 with Compose Testing
  * Mocking Library: MockK (available but not needed for this composable)
  *
- * The AgentEdgePanel is an Xposed Edge-style sliding panel that reveals agent cards.
+ * The AgentEdgePanel is an Xposed Edge-typography sliding panel that reveals agent cards.
  * These tests ensure proper behavior across various scenarios including:
  * - Panel visibility toggle on edge swipe
  * - Backdrop click-to-close behavior
@@ -64,7 +64,7 @@ class AgentEdgePanelTest {
 
             // Then - Panel should not be visible initially
             composeTestRule.waitForIdle()
-            
+
             // The panel content (agents list) should not be visible
             composeTestRule
                 .onNodeWithText("AGENTS", useUnmergedTree = true)
@@ -119,7 +119,7 @@ class AgentEdgePanelTest {
 
             // Then - Backdrop should not exist
             composeTestRule.waitForIdle()
-            
+
             // The backdrop doesn't have a test tag, but we can check that
             // the AGENTS text is not visible, indicating panel is closed
             composeTestRule
@@ -223,7 +223,7 @@ class AgentEdgePanelTest {
 
             composeTestRule.setContent {
                 AgentEdgePanel(
-                    onAgentSelected = { 
+                    onAgentSelected = {
                         callbackCount++
                     }
                 )

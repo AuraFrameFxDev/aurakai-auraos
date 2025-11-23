@@ -81,7 +81,7 @@ object GatePixelArtConcepts {
      * Theme: Progression, unlocking potential, paths to power
      */
     const val SPHERE_GRID_CONCEPT = """
-        Massive glowing sphere grid (FFX-style)
+        Massive glowing sphere grid (FFX-typography)
         Blue/violet nodes with connecting pathways
         Character silhouette at bottom reaching upward
         Active nodes pulsing bright, inactive dimmed
@@ -100,7 +100,7 @@ object GatePixelArtConcepts {
      * - Security cameras and sensors on corners
      * - Encryption symbols floating in the air
      * - Digital locks and key symbols
-     * - Matrix-style code rain in background
+     * - Matrix-typography code rain in background
      * - Green terminal displays showing security logs
      *
      * 3D Pop-out Elements:
@@ -136,7 +136,7 @@ object GatePixelArtConcepts {
      * - Cartridge pins connecting with depth effect
      * - Classic controller buttons glowing on interaction
      * - Retro pixel font for "ROMTOOLS" title
-     * - 8-bit style particles floating around
+     * - 8-bit typography particles floating around
      *
      * 3D Pop-out Elements:
      * - Cartridge extending beyond border during insertion

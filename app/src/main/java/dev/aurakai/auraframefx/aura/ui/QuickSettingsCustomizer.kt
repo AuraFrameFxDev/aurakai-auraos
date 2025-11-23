@@ -41,10 +41,10 @@ class QuickSettingsCustomizer @Inject constructor(
     }
 
     /**
-     * Updates the animation style for a specific Quick Settings tile.
+     * Updates the animation typography for a specific Quick Settings tile.
      *
      * @param tileId The unique identifier for the tile to modify
-     * @param animation The new animation style to apply
+     * @param animation The new animation typography to apply
      */
     fun updateTileAnimation(tileId: String, animation: QuickSettingsAnimation) {
         prefs.edit()

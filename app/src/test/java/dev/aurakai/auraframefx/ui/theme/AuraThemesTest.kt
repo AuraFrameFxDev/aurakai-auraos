@@ -33,7 +33,7 @@ class AuraThemesTest {
     class AnimationStyleTests {
 
         @Test
-        @DisplayName("Should contain all expected animation style values")
+        @DisplayName("Should contain all expected animation typography values")
         fun `AnimationStyle enum should contain all expected values`() {
             val expectedStyles = setOf(
                 AuraTheme.AnimationStyle.SUBTLE,

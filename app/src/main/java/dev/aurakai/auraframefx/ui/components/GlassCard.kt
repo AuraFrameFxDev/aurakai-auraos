@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
  */
 
 /**
- * Glass card style configuration
+ * Glass card typography configuration
  */
 data class GlassCardStyle(
     val backgroundColor: Color = Color.White.copy(alpha = 0.1f),
@@ -85,7 +85,7 @@ object GlassCardStyles {
  * Usage:
  * ```
  * GlassCard(
- *     style = GlassCardStyles.Aura,
+ *     typography = GlassCardStyles.Aura,
  *     onClick = { /* handle click */ }
  * ) {
  *     Text("Glass card content")
