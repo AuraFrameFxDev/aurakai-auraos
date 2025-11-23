@@ -184,6 +184,9 @@ dependencies {
     // Gson (JSON - for Retrofit)
     implementation(libs.gson)
     implementation(libs.retrofit.converter.gson)
+    
+    // Retrofit Scalars Converter (for String responses)
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
 
     // Moshi (JSON - for Retrofit)
     implementation(libs.moshi)

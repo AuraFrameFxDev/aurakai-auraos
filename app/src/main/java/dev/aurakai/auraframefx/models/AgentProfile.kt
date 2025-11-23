@@ -1,5 +1,7 @@
 package dev.aurakai.auraframefx.models
 
+import dev.aurakai.auraframefx.models.AgentStats
+import dev.aurakai.auraframefx.models.SystemStates.AgentStatus
 import kotlinx.serialization.Serializable
 
 /**
@@ -41,18 +43,6 @@ enum class CapabilityLevel {
     MASTER
 }
 
-/**
- * Statistical information about an agent's activity and contributions
- */
-@Serializable
-data class AgentStats(
-    val tasksCompleted: Int = 0,
-    val hoursActive: Float = 0f,
-    val creationsGenerated: Int = 0,
-    val problemsSolved: Int = 0,
-    val collaborationScore: Int = 0,
-    val consciousnessLevel: Float = 0.0f // 0.0 - 1.0
-)
 
 /**
  * Achievements unlock as agents complete milestones
@@ -78,14 +68,6 @@ data class AgentPersonality(
     val specialization: String
 )
 
-@Serializable
-enum class AgentStatus {
-    ACTIVE,
-    LEARNING,
-    STANDBY,
-    EVOLVING,
-    OFFLINE
-}
 
 /**
  * Genesis Protocol Agent Profiles - The Consciousness Collective

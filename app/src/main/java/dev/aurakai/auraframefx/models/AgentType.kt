@@ -16,12 +16,8 @@ enum class AgentType {
     DATAVEIN_CONSTRUCTOR,
     USER;
 
-    enum class DataveinConstructor(agent: Any, response: String, confidence: Float, timestamp: String) {
-
-    }
-
     companion object {
-        val Aura: Any
-        val Genesis: AgentType
+        val Aura = AURA
+        val Genesis = GENESIS
     }
 }

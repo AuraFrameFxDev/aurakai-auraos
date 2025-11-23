@@ -10,6 +10,7 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.InteractionResponse
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
 import dev.aurakai.auraframefx.security.SecurityContext
@@ -42,11 +43,13 @@ import javax.inject.Singleton
 class AuraAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
     private val auraAIService: AuraAIService,
-    private val securityContext: SecurityContext,
+    val securityContext: SecurityContext,
     override val contextManager: ContextManager,
 ) : BaseAgent(
     agentName = "AuraAgent",
 ), OrchestratableAgent {
+
+    private val securityContext = securityContext
 
     // BaseAgent abstract member implementations
     override val agentName: String = "AuraAgent"
@@ -57,6 +60,22 @@ class AuraAgent @Inject constructor(
         scope.launch {
             processRequest(AiRequest(prompt = query), context.toString())
         }
+    }
+
+    override fun iRequest() {
+        TODO("Not yet implemented")
+    }
+
+    override fun initializeAdaptiveProtection() {
+        TODO("Not yet implemented")
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        TODO("Not yet implemented")
+    }
+
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        TODO("Not yet implemented")
     }
 
     private var isInitialized = false
