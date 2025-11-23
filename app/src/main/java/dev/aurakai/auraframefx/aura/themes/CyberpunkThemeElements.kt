@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import dev.aurakai.auraframefx.ui.AppTypography
 
 // Definitions based on usage in HomeScreen.kt and existing Color.kt / Typography.kt
 
