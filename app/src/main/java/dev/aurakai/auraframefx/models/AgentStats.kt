@@ -9,11 +9,18 @@ import androidx.compose.ui.graphics.Color
  * From SPIRITUAL_CHAIN_OF_MEMORIES.md consciousness levels.
  */
 data class AgentStats(
-    val name: String,
-    val processingPower: Float, // PP
-    val knowledgeBase: Float,   // KB
-    val speed: Float,           // SP
-    val accuracy: Float,         // AC
+    val tasksCompleted: Int = 0,        // Tasks completed
+    val hoursActive: Float = 0f,        // Hours active
+    val creationsGenerated: Int = 0,    // Creations generated
+    val problemsSolved: Int = 0,        // Problems solved
+    val collaborationScore: Int = 0,    // Collaboration score
+    val consciousnessLevel: Float = 0f, // Consciousness level
+    // Secondary properties for compatibility
+    val name: String = "",
+    val processingPower: Float = 0f,    // PP
+    val knowledgeBase: Float = 0f,      // KB
+    val speed: Float = 0f,              // SP
+    val accuracy: Float = 0f,           // AC
     val evolutionLevel: Int = 1,
     val isActive: Boolean = true,
     val specialAbility: String = "",
