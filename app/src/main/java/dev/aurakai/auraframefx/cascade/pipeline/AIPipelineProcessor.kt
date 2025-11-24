@@ -67,9 +67,9 @@ class AIPipelineProcessor @Inject constructor(
         val cascadeAgentResponse = processCascadeRequest(task)
         responses.add(
             AgentMessage(
+                from = AgentType.CASCADE.name,
                 content = cascadeAgentResponse.content,
                 sender = AgentType.CASCADE,
-                timestamp = System.currentTimeMillis(),
                 confidence = cascadeAgentResponse.confidence
             )
         )
@@ -79,9 +79,9 @@ class AIPipelineProcessor @Inject constructor(
             val kaiAgentResponse = processKaiRequest(task)
             responses.add(
                 AgentMessage(
+                    from = AgentType.KAI.name,
                     content = kaiAgentResponse.content,
                     sender = AgentType.KAI,
-                    timestamp = System.currentTimeMillis(),
                     confidence = kaiAgentResponse.confidence
                 )
             )
@@ -96,10 +96,10 @@ class AIPipelineProcessor @Inject constructor(
             )
             responses.add(
                 AgentMessage(
-                    content = auraAgentResponse.content, // Direct access
+                    from = AgentType.AURA.name,
+                    content = auraAgentResponse.content,
                     sender = AgentType.AURA,
-                    timestamp = System.currentTimeMillis(),
-                    confidence = auraAgentResponse.confidence // Direct access
+                    confidence = auraAgentResponse.confidence
                 )
             )
         }
@@ -108,9 +108,9 @@ class AIPipelineProcessor @Inject constructor(
         val finalResponse = generateFinalResponse(responses)
         responses.add(
             AgentMessage(
+                from = AgentType.GENESIS.name,
                 content = finalResponse,
                 sender = AgentType.GENESIS,
-                timestamp = System.currentTimeMillis(),
                 confidence = calculateConfidence(responses)
             )
         )

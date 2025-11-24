@@ -1,24 +1,3 @@
-package dev.aurakai.auraframefx.data
-
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import dev.aurakai.auraframefx.models.UserData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-
-// DataStore extension property
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_settings")
-
-/**
- * Manages user preferences using Jetpack DataStore.
- *
- * Provides type-safe access to user settings including API keys, user information,
- * and general application preferences.
  */
 class UserPreferences(private val context: Context) {
 

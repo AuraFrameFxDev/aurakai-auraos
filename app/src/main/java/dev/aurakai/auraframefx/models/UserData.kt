@@ -1,4 +1,5 @@
-package dev.aurakai.auraframefx.model
+package dev.aurakai.auraframefx.models
+
 
 /**
  * Represents user profile and authentication data.
