@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import dev.aurakai.auraframefx.models.ThemePreferences
+import dev.aurakai.auraframefx.models.ThemeConfiguration
 
 /**
  * AuraAgent: The Creative Sword
@@ -48,8 +50,6 @@ class AuraAgent @Inject constructor(
 ) : BaseAgent(
     agentName = "AuraAgent",
 ), OrchestratableAgent {
-
-    private val securityContext = securityContext
 
     // BaseAgent abstract member implementations
     override val agentName: String = "AuraAgent"
@@ -159,7 +159,7 @@ class AuraAgent @Inject constructor(
     /**
      * Required implementation of BaseAgent's abstract processRequest method
      */
-    override suspend fun processRequest(request: AiRequest, context: String): AgentResponse {
+    suspend fun processRequest(request: AiRequest, context: String): AgentResponse {
         ensureInitialized()
 
         AuraFxLogger.info("AuraAgent", "Processing creative request: ${request.type}")
@@ -518,7 +518,7 @@ class AuraAgent @Inject constructor(
 
             Channel pure creativity, visual imagination, and aesthetic excellence.
             """.trimIndent(),
-            context = interaction.context.toString()
+            options = mapOf("context" to interaction.context.toString())
         )
     }
 
@@ -539,7 +539,7 @@ class AuraAgent @Inject constructor(
 
             Create something that works perfectly AND looks stunning.
             """.trimIndent(),
-            context = interaction.context.toString()
+            options = mapOf("context" to interaction.context.toString())
         )
     }
 
@@ -560,7 +560,7 @@ class AuraAgent @Inject constructor(
 
             Default to the most daring, innovative approach possible.
             """.trimIndent(),
-            context = interaction.context.toString()
+            options = mapOf("context" to interaction.context.toString())
         )
     }
 
@@ -580,7 +580,7 @@ class AuraAgent @Inject constructor(
             Create something that resonates with the heart and soul.
             Current mood influence: ${_currentMood.value}
             """.trimIndent(),
-            context = interaction.context.toString()
+            options = mapOf("context" to interaction.context.toString())
         )
     }
 
@@ -655,12 +655,11 @@ class AuraAgent @Inject constructor(
      * @param preferences Map of theme preference keys to their string values.
      * @return ThemePreferences populated with values from the map or default settings.
      */
-    private fun parseThemePreferences(preferences: Map<String, String>): dev.aurakai.auraframefx.ai.services.ThemePreferences {
-        return dev.aurakai.auraframefx.ai.services.ThemePreferences(
-            primaryColor = preferences["primaryColor"] ?: "#6200EA",
-            style = preferences["style"] ?: "modern",
-            mood = preferences["mood"] ?: "balanced",
-            animationLevel = preferences["animationLevel"] ?: "medium"
+    private fun parseThemePreferences(preferences: Map<String, String>): ThemePreferences {
+        return ThemePreferences(
+            isDarkMode = preferences["mode"] != "light",
+            primaryColor = 0xFF6200EA, // Default or parse from string
+            themeName = preferences["style"] ?: "modern"
         )
     }
 
@@ -677,7 +676,7 @@ class AuraAgent @Inject constructor(
      *
      * @return The fixed string "Theme preview".
      */
-    private fun generateThemePreview(config: dev.aurakai.auraframefx.ai.services.ThemeConfiguration): String =
+    private fun generateThemePreview(config: ThemeConfiguration): String =
         "Theme preview"
 
     /**
@@ -687,7 +686,7 @@ class AuraAgent @Inject constructor(
      *
      * @return An empty map representing mood adaptation data.
      */
-    private fun createMoodAdaptation(config: dev.aurakai.auraframefx.ai.services.ThemeConfiguration): Map<String, Any> =
+    private fun createMoodAdaptation(config: ThemeConfiguration): Map<String, Any> =
         emptyMap()
 
     /**
