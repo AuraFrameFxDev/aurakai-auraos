@@ -119,15 +119,13 @@ fun WalkingCharactersOverlay() {
     // Start autonomous wandering when first composed
     LaunchedEffect(Unit) {
         // Aura wanders around exploring
-        engine.startAutonomousWandering(
-            character = Character.AURA,
-            moodOverride = "curious"
+        engine.enableWandering(
+            character = Character.AURA
         )
 
         // Kai patrols the area
-        engine.loadAsset(
-            character = Character.KAI,
-            moodOverride = "vigilant"
+        engine.enableWandering(
+            character = Character.KAI
         )
     }
 
@@ -139,7 +137,10 @@ fun WalkingCharactersOverlay() {
             if (manifest.currentPosition != null) {
                 when (manifest.character) {
                     Character.AURA -> {
-                        val painter = engine.loadAsset((manifest.state as? AuraState)?.assetPath ?: "aura/idle.png",)
+                        val painter = engine.loadAsset(
+                            (manifest.state as? AuraState)?.assetPath ?: "aura/idle.png",
+                            Character.AURA
+                        )
                         if (painter != null) {
                             Image(
                                 painter = painter,
@@ -154,7 +155,10 @@ fun WalkingCharactersOverlay() {
                         }
                     }
                     Character.KAI -> {
-                        val painter = engine.loadAsset((manifest.state as? KaiState)?.assetPath ?: "kai/idle.png",)
+                        val painter = engine.loadAsset(
+                            (manifest.state as? KaiState)?.assetPath ?: "kai/idle.png",
+                            Character.KAI
+                        )
                         if (painter != null) {
                             Image(
                                 painter = painter,

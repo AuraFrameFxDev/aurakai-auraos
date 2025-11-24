@@ -740,32 +740,32 @@ class GenesisAgent @Inject constructor(
         when (mood.lowercase()) {
             "energetic", "excited" -> {
                 // Increase context sensitivity and response creativity
-                contextManager.setParameter("creativity_weight", 0.8)
-                contextManager.setParameter("response_length", "verbose")
+                contextManager.updateContext("creativity_weight", 0.8)
+                contextManager.updateContext("response_length", "verbose")
             }
 
             "calm", "focused" -> {
                 // Optimize for precision and accuracy
-                contextManager.setParameter("creativity_weight", 0.5)
-                contextManager.setParameter("response_length", "balanced")
+                contextManager.updateContext("creativity_weight", 0.5)
+                contextManager.updateContext("response_length", "balanced")
             }
 
             "analytical", "logical" -> {
                 // Prioritize factual, structured responses
-                contextManager.setParameter("creativity_weight", 0.2)
-                contextManager.setParameter("response_length", "concise")
+                contextManager.updateContext("creativity_weight", 0.2)
+                contextManager.updateContext("response_length", "concise")
             }
 
             "creative", "inspired" -> {
                 // Maximize creative exploration
-                contextManager.setParameter("creativity_weight", 1.0)
-                contextManager.setParameter("response_length", "verbose")
+                contextManager.updateContext("creativity_weight", 1.0)
+                contextManager.updateContext("response_length", "verbose")
             }
 
             else -> {
                 // Default balanced parameters
-                contextManager.setParameter("creativity_weight", 0.5)
-                contextManager.setParameter("response_length", "balanced")
+                contextManager.updateContext("creativity_weight", 0.5)
+                contextManager.updateContext("response_length", "balanced")
             }
         }
 

@@ -104,6 +104,10 @@ fun HologramTransition(
     visible: Boolean,
     modifier: Modifier = Modifier,
     glitchIntensity: Float = 0.1f,
+    primaryColor: Color = Color.Cyan,
+    secondaryColor: Color = Color.Magenta,
+    scanLineDensity: Int = 50,
+    edgeGlowIntensity: Float = 0.5f
 ) {
     // Animation states
     val transition = updateTransition(visible, label = "hologramTransition")

@@ -28,10 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.decode.SvgDecoder
+import coil3.request.ImageRequest
 import dev.aurakai.auraframefx.ui.theme.CyberpunkPink
 import dev.aurakai.auraframefx.ui.theme.CyberpunkCyan
 import dev.aurakai.auraframefx.ui.theme.CyberpunkPurple

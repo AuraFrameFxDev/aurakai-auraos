@@ -12,7 +12,7 @@ class TrinityRepository @Inject constructor(
 ) {
 
     // User related operations
-    suspend fun getCurrentUser() = flow {
+    suspend fun getCurrentUser() = flow<Result<UserData>> {
         try {
             val response = apiService.userApi.getCurrentUser()
             emit(Result.success(response))
@@ -22,7 +22,7 @@ class TrinityRepository @Inject constructor(
     }
 
     // AI Agent operations
-    suspend fun getAgentStatus(agentType: String) = flow {
+    suspend fun getAgentStatus(agentType: String) = flow<Result<AgentStatus>> {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
             emit(Result.success(response))
@@ -31,7 +31,7 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    suspend fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
+    suspend fun processAgentRequest(agentType: String, request: AgentRequest) = flow<Result<AgentResponse>> {
         try {
             val response = apiService.aiAgentApi.processRequest(agentType, request)
             emit(Result.success(response))
@@ -41,7 +41,7 @@ class TrinityRepository @Inject constructor(
     }
 
     // Theme operations
-    suspend fun getThemes() = flow {
+    suspend fun getThemes() = flow<Result<List<Theme>>> {
         try {
             val response = apiService.themeApi.getThemes()
             emit(Result.success(response))
@@ -50,7 +50,7 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    suspend fun applyTheme(themeId: String) = flow {
+    suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
             emit(Result.success(response))

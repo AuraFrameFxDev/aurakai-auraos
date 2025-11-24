@@ -7,14 +7,29 @@ import androidx.compose.ui.graphics.Color
 /**
  * Aura theme wrapper for Material3
  */
+/**
+ * Aura theme wrapper for Material3
+ */
 @Composable
-fun AuraTheme(
+fun AuraAppTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
         content = content
     )
+}
+
+/**
+ * Aura Theme Data
+ */
+data class AuraTheme(
+    val accentColor: Color = AuraColors.Primary,
+    val animationStyle: AnimationStyle = AnimationStyle.FLOWING
+) {
+    enum class AnimationStyle {
+        ENERGETIC, CALMING, FLOWING, PULSING, SUBTLE
+    }
 }
 
 /**
