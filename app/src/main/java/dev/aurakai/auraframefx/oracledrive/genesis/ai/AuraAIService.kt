@@ -14,4 +14,6 @@ interface AuraAIService {
     fun getAIResponse(prompt: String, options: Map<String, Any>? = null): String
     fun getMemory(memoryKey: String): String?
     fun saveMemory(key: String, value: Any)
+    suspend fun initialize()
+    suspend fun generateTheme(preferences: dev.aurakai.auraframefx.models.ThemePreferences, context: String): dev.aurakai.auraframefx.models.ThemeConfiguration
 }

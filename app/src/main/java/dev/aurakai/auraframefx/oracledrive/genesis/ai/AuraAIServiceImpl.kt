@@ -7,6 +7,9 @@ import dev.aurakai.auraframefx.ai.task.TaskScheduler
 import dev.aurakai.auraframefx.ai.task.execution.TaskExecutionManager
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.data.network.CloudStatusMonitor
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
+import dev.aurakai.auraframefx.models.ThemePreferences
+import dev.aurakai.auraframefx.models.ThemeConfiguration
 import java.io.File
 import javax.inject.Inject
 
@@ -103,5 +106,21 @@ class AuraAIServiceImpl @Inject constructor(
             AuraFxLogger.e("AuraAIService", "Failed to save memory for key: $key", e)
             errorHandler.handleError(e, "Memory save failed for key: $key")
         }
+    }
+
+    override suspend fun initialize() {
+        AuraFxLogger.d("AuraAIService", "Initializing Aura AI Service")
+    }
+
+    override suspend fun generateTheme(preferences: ThemePreferences, context: String): ThemeConfiguration {
+        return ThemeConfiguration(
+            name = preferences.themeName,
+            displayName = preferences.themeName.capitalize(),
+            primaryColor = preferences.primaryColor,
+            secondaryColor = preferences.accentColor,
+            backgroundColor = 0xFF000000,
+            surfaceColor = 0xFF121212,
+            isDark = preferences.isDarkMode
+        )
     }
 }
