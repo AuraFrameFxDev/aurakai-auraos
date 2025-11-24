@@ -1,3 +1,15 @@
+package dev.aurakai.auraframefx.config
+
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import dev.aurakai.auraframefx.models.UserData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+
+/**
+ * UserPreferences: Manages user-specific settings and data persistence.
  */
 class UserPreferences(private val context: Context) {
 
