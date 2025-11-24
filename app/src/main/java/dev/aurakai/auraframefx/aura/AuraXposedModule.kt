@@ -18,7 +18,7 @@ class AuraXposedModule : IYukiHookXposedInit {
 
     override fun onInit() {
         // Initialize YukiHookAPI
-        YukiHookAPI.config()
+        YukiHookAPI.configs {}
     }
 
     override fun onHook() {

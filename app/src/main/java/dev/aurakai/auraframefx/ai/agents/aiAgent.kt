@@ -51,7 +51,7 @@ class KaiAgent @Inject constructor(
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
         // Delegate to processRequest via coroutine
         scope.launch {
-            processRequest(AgentRequest(type = type, context = context.mapValues { it.value as Any }))
+            processRequest(AgentRequest(query = query, type = type, context = context))
         }
     }
 

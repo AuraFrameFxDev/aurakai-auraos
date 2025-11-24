@@ -10,6 +10,7 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.VisionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,6 +72,22 @@ class CascadeAgent @Inject constructor(
         internalScope.launch {
             processRequest(AiRequest(prompt = query), context.toString())
         }
+    }
+
+    override fun iRequest() {
+        // No-op
+    }
+
+    override fun initializeAdaptiveProtection() {
+        // No-op
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        // No-op
+    }
+
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        return emptyList()
     }
 
     // Parent scope provided by orchestrator (kept for lifecycle reference)
