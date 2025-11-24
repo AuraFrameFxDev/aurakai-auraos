@@ -210,7 +210,7 @@ junit = "4.13.2"
 
 # JUnit 5 (Jupiter) - Latest: 6.0.1 (Oct 31, 2025, requires Java 17, Kotlin 2.2)
 junitJupiter = "6.0.1"
-junitVintage = "5.10.3"  # For running JUnit 4 tests with JUnit 5
+junitVintage = "5.14.1"  # For running JUnit 4 tests with JUnit 5
 
 # MockK - Latest: 1.14.6 (Oct 1, 2025)
 mockk = "1.14.6"
