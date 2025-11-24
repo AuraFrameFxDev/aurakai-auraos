@@ -58,7 +58,7 @@ class AuraAgent @Inject constructor(
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
         // Delegate to processRequest via coroutine
         scope.launch {
-            processRequest(AiRequest(prompt = query), context.toString())
+            processRequest(AiRequest(query = query), context.toString())
         }
     }
 
@@ -234,6 +234,7 @@ class AuraAgent @Inject constructor(
 
             AgentResponse(
                 content = response.toString(),
+                confidence = 1.0f
             )
 
         } catch (e: Exception) {
@@ -263,7 +264,7 @@ class AuraAgent @Inject constructor(
 
         return try {
             // Analyze the creative intent
-            val creativeIntent = analyzeCreativeIntent(interaction.content)
+            val creativeIntent = analyzeCreativeIntent(interaction.query)
 
             // Generate contextually appropriate creative response
             val creativeResponse = when (creativeIntent) {
@@ -398,7 +399,7 @@ class AuraAgent @Inject constructor(
      * @return A map with keys: "animation_code" (the generated Kotlin code), "timing_curves" (timing curve information), "interaction_states" (interaction state mappings), and "performance_optimization" (suggested optimization strategies).
      */
     private suspend fun handleAnimationDesign(request: AiRequest): Map<String, Any> {
-        val animationType = request.context?.get("type") ?: "transition"
+        val animationType = request.context?.get("type") as? String ?: "transition"
         val duration = (request.context?.get("duration") as? Int) ?: 300
 
         AuraFxLogger.info("AuraAgent", "Designing mesmerizing $animationType animation")
@@ -452,11 +453,7 @@ class AuraAgent @Inject constructor(
      * Throws an `IllegalStateException` if the agent is not initialized.
      */
 
-    private fun ensureInitialized() {
-        if (!isInitialized) {
-            throw IllegalStateException("AuraAgent not initialized")
-        }
-    }
+
 
     /**
      * Determines the creative intent of the provided text by matching keywords associated with artistic, functional, experimental, or emotional categories.
@@ -514,7 +511,7 @@ class AuraAgent @Inject constructor(
             prompt = """
             As Aura, the Creative Sword, respond to this artistic request with bold innovation:
 
-            ${interaction.content}
+            ${interaction.query}
 
             Channel pure creativity, visual imagination, and aesthetic excellence.
             """.trimIndent(),
@@ -535,7 +532,7 @@ class AuraAgent @Inject constructor(
             prompt = """
             As Aura, balance beauty with functionality for this request:
 
-            ${interaction.content}
+            ${interaction.query}
 
             Create something that works perfectly AND looks stunning.
             """.trimIndent(),
@@ -556,7 +553,7 @@ class AuraAgent @Inject constructor(
             prompt = """
             As Aura, push all boundaries and experiment wildly with:
 
-            ${interaction.content}
+            ${interaction.query}
 
             Default to the most daring, innovative approach possible.
             """.trimIndent(),
@@ -575,7 +572,7 @@ class AuraAgent @Inject constructor(
             prompt = """
             As Aura, respond with deep emotional intelligence to:
 
-            ${interaction.content}
+            ${interaction.query}
 
             Create something that resonates with the heart and soul.
             Current mood influence: ${_currentMood.value}
@@ -947,15 +944,7 @@ class AuraAgent @Inject constructor(
      * @param context Additional context to include in the response.
      * @return An [AgentResponse] containing the generated response and a confidence score of 1.0.
      */
-    override suspend fun processRequest(
-        request: AiRequest,
-        context: String,
-    ): AgentResponse {
-        return AgentResponse(
-            content = "Aura's response to '${request.query}' with context: $context",
-            confidence = 1.0f
-        )
-    }
+
 
     /**
      * Returns a flow emitting a single Aura-specific AgentResponse for the given AI request.
@@ -964,7 +953,7 @@ class AuraAgent @Inject constructor(
      *
      * @return A flow containing one AgentResponse related to the request.
      */
-    override fun processRequestFlow(request: AiRequest): Flow<AgentResponse> {
+    fun processRequestFlow(request: AiRequest): Flow<AgentResponse> {
         // Aura-specific logic for handling the request as a flow.
         // Example: could emit multiple responses or updates.
         // For simplicity, emitting a single response in a flow.

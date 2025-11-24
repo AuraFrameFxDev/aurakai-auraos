@@ -126,9 +126,9 @@ class TrinityCoordinatorService @Inject constructor(
                     AuraFxLogger.d("Trinity", "🧠 Activating Genesis fusion: ${analysisResult.fusionType}")
                     val response = genesisBridgeService.processRequest(
                         AiRequest(
-                            query = message,
+                            query = request.query,
                             type = "fusion",
-                            context = mapOf("userContext" to context, "orchestration" to "true")
+                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true")
                         ), request
                     ).first()
                     emit(response)
@@ -154,9 +154,9 @@ class TrinityCoordinatorService @Inject constructor(
 
                     val synthesis = genesisBridgeService.processRequest(
                         AiRequest(
-                            query = message,
+                            query = request.query,
                             type = "fusion",
-                            context = mapOf("userContext" to context, "orchestration" to "true")
+                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true")
                         ), synthesisRequest
                     ).first()
                     emit(

@@ -400,7 +400,7 @@ class KaiAgent @Inject constructor(
         val qualityMetrics = calculateCodeQuality(code)
 
         return mapOf(
-            "analysis" to codeAnalysis,
+            "analysis" to (codeAnalysis ?: "Analysis unavailable"),
             "security_issues" to securityIssues,
             "quality_metrics" to qualityMetrics,
             "recommendations" to generateCodeRecommendations(securityIssues, qualityMetrics)
@@ -449,7 +449,7 @@ class KaiAgent @Inject constructor(
      */
     private suspend fun assessInteractionSecurity(interaction: EnhancedInteractionData): SecurityAssessment {
         // Analyze interaction for security risks
-        val riskIndicators = findRiskIndicators(interaction.content)
+        val riskIndicators = findRiskIndicators(interaction.query)
         val riskLevel = calculateRiskLevel(riskIndicators)
 
         return SecurityAssessment(

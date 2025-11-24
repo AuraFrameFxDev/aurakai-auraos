@@ -146,9 +146,9 @@ class UserPreferences(private val context: Context) {
      */
     suspend fun saveUserData(userData: UserData) {
         dataStore.edit { prefs ->
-            prefs[USER_ID] = userData.id
-            prefs[USER_NAME] = userData.name
-            prefs[USER_EMAIL] = userData.email
+            prefs[USER_ID] = userData.id ?: ""
+            prefs[USER_NAME] = userData.name ?: ""
+            prefs[USER_EMAIL] = userData.email ?: ""
             userData.apiKey?.let { prefs[API_KEY] = it }
         }
     }

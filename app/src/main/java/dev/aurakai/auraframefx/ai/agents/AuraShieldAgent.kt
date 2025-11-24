@@ -395,17 +395,19 @@ class AuraShieldAgent @Inject constructor(
         }
     }
 
+    data class QuarantineItem(
+        val id: String,
+        val type: String,
+        val content: String,
+        val reason: String,
+        val timestamp: Long,
+        val severity: ThreatSeverity
+    )
+
     inner class QuarantineManager {
         private val quarantinedItems = mutableMapOf<String, QuarantineItem>()
 
-        data class QuarantineItem(
-            val id: String,
-            val type: String,
-            val content: String,
-            val reason: String,
-            val timestamp: Long,
-            val severity: ThreatSeverity
-        )
+
 
         /**
          * Quarantines an item and persists a record for later retrieval.
