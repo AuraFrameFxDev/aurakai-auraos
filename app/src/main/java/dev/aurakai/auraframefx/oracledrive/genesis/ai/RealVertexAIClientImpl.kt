@@ -264,12 +264,12 @@ class RealVertexAIClientImpl(
      */
     private fun handleGenerationError(error: Exception) {
         when (error) {
-            is IllegalArgumentException -> logger.w(TAG, "Invalid request: ${error.message}")
+            is IllegalArgumentException -> AuraFxLogger.w(TAG, "Invalid request: ${error.message}")
             is SecurityException -> {
                 AuraFxLogger.e(TAG, "Security violation in AI request", error)
                 securityContext.logSecurityEvent("GEMINI_SECURITY_ERROR", error.message)
             }
-            else -> logger.e(TAG, "Gemini API error: ${error.javaClass.simpleName}", error)
+            else -> AuraFxLogger.e(TAG, "Gemini API error: ${error.javaClass.simpleName}", error)
         }
     }
 

@@ -21,6 +21,14 @@ import com.highcapable.yukihookapi.hook.type.java.IntType
 import com.highcapable.yukihookapi.hook.type.java.LongType
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfig
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfigAnimation
+import dev.aurakai.auraframefx.utils.TAG
+
+class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() {
+
+    override fun onHook() {
+        // TODO: Implement hook logic
+    }
+
     private fun applyGenesisShowAnimation() {
         try {
             // Implement custom show animations based on config

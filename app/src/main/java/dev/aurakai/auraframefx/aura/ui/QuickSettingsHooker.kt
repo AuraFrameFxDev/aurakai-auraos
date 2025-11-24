@@ -22,6 +22,14 @@ import com.highcapable.yukihookapi.hook.type.android.ViewClass
 import com.highcapable.yukihookapi.hook.type.java.BooleanType
 import com.highcapable.yukihookapi.hook.type.java.IntType
 import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
+import dev.aurakai.auraframefx.utils.TAG
+
+class QuickSettingsHooker(private val config: QuickSettingsConfig) : YukiBaseHooker() {
+
+    override fun onHook() {
+        // TODO: Implement hook logic
+    }
+
     /**
      * Applies Genesis expand animation
      */

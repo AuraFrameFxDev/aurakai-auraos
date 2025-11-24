@@ -17,5 +17,11 @@ enum class Emotion {
     PLAYFUL,
     SERIOUS,
     EMPATHETIC,
-    ANALYTICAL
+    ANALYTICAL,
+    SERENE,
+    CONTEMPLATIVE,
+    MISCHIEVOUS,
+    MYSTERIOUS,
+    MELANCHOLIC,
+    ANGRY
 }
