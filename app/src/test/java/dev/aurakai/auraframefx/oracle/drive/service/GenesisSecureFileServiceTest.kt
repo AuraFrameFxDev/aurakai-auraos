@@ -12,11 +12,11 @@ import dev.aurakai.auraframefx.oracledrive.service.FileOperationResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import java.io.File
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class GenesisSecureFileServiceTest {
     private val testData = "Test file content".toByteArray()
     private val testDirectory = "test_dir"
 
-    @Before
+    @BeforeEach
     fun setup() {
         hiltRule.inject()
         context = ApplicationProvider.getApplicationContext()
@@ -51,7 +51,7 @@ class GenesisSecureFileServiceTest {
         context.filesDir.listFiles()?.forEach { it.deleteRecursively() }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         // Clean up after each test
         context.filesDir.listFiles()?.forEach { it.deleteRecursively() }

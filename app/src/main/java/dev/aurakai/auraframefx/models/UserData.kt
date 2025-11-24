@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.models
 
+import kotlinx.serialization.Serializable
 
 /**
  * Represents user profile and authentication data.
@@ -10,6 +11,7 @@ package dev.aurakai.auraframefx.models
  * All fields are nullable to support partial data scenarios and
  * allow users to update individual fields independently.
  */
+@Serializable
 data class UserData(
     /**
      * Unique user identifier (UUID or database ID).

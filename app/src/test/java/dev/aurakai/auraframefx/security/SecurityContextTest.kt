@@ -1,12 +1,11 @@
 package dev.aurakai.auraframefx.security
 
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Comprehensive unit tests for DefaultSecurityContext.
@@ -17,13 +16,13 @@ class SecurityContextTest {
 
     private lateinit var securityContext: DefaultSecurityContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         securityContext = DefaultSecurityContext()
     }
 
     // Security State Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test initial security state is not in error`() = runTest {
         val state = securityContext.securityState.first()
         assertFalse("Initial state should not be in error", state.errorState)
@@ -34,7 +33,7 @@ class SecurityContextTest {
     fun `test setSecurityError updates state correctly`() = runTest {
         val errorMessage = "Test security error"
         securityContext.setSecurityError(errorMessage)
-        
+
         val state = securityContext.securityState.first()
         assertTrue("State should be in error", state.errorState)
         assertEquals("Error message should match", errorMessage, state.errorMessage)
@@ -44,7 +43,7 @@ class SecurityContextTest {
     fun `test clearSecurityError resets state`() = runTest {
         securityContext.setSecurityError("Error occurred")
         securityContext.clearSecurityError()
-        
+
         val state = securityContext.securityState.first()
         assertFalse("State should not be in error after clearing", state.errorState)
         assertNull("Error message should be null after clearing", state.errorMessage)
@@ -54,7 +53,7 @@ class SecurityContextTest {
     fun `test multiple security error updates`() = runTest {
         securityContext.setSecurityError("First error")
         securityContext.setSecurityError("Second error")
-        
+
         val state = securityContext.securityState.first()
         assertEquals("Should have latest error message", "Second error", state.errorMessage)
     }
@@ -63,27 +62,27 @@ class SecurityContextTest {
     @Test
     fun `test initial encryption status is NOT_INITIALIZED`() = runTest {
         val status = securityContext.encryptionStatus.first()
-        assertEquals("Initial encryption status should be NOT_INITIALIZED", 
+        assertEquals("Initial encryption status should be NOT_INITIALIZED",
             EncryptionStatus.NOT_INITIALIZED, status)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test setEncryptionStatus updates correctly`() = runTest {
         securityContext.setEncryptionStatus(EncryptionStatus.ACTIVE)
-        
+
         val status = securityContext.encryptionStatus.first()
         assertEquals("Encryption status should be ACTIVE", EncryptionStatus.ACTIVE, status)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test encryption status transitions`() = runTest {
         // Test typical lifecycle transitions
         securityContext.setEncryptionStatus(EncryptionStatus.ACTIVE)
         assertEquals(EncryptionStatus.ACTIVE, securityContext.encryptionStatus.first())
-        
+
         securityContext.setEncryptionStatus(EncryptionStatus.DISABLED)
         assertEquals(EncryptionStatus.DISABLED, securityContext.encryptionStatus.first())
-        
+
         securityContext.setEncryptionStatus(EncryptionStatus.ERROR)
         assertEquals(EncryptionStatus.ERROR, securityContext.encryptionStatus.first())
     }
@@ -99,13 +98,13 @@ class SecurityContextTest {
     fun `test updatePermissions with single permission`() = runTest {
         val permissions = mapOf("READ" to true)
         securityContext.updatePermissions(permissions)
-        
+
         val state = securityContext.permissionsState.first()
         assertEquals(1, state.size)
         assertTrue("READ permission should be granted", state["READ"] == true)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test updatePermissions with multiple permissions`() = runTest {
         val permissions = mapOf(
             "READ" to true,
@@ -114,7 +113,7 @@ class SecurityContextTest {
             "DELETE" to false
         )
         securityContext.updatePermissions(permissions)
-        
+
         val state = securityContext.permissionsState.first()
         assertEquals(4, state.size)
         assertTrue(state["READ"] == true)
@@ -127,14 +126,14 @@ class SecurityContextTest {
     fun `test updatePermissions replaces previous permissions`() = runTest {
         securityContext.updatePermissions(mapOf("OLD" to true))
         securityContext.updatePermissions(mapOf("NEW" to true))
-        
+
         val state = securityContext.permissionsState.first()
         assertEquals(1, state.size)
         assertFalse("Old permission should not exist", state.containsKey("OLD"))
         assertTrue("New permission should exist", state.containsKey("NEW"))
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test hasPermission always returns true in development mode`() {
         assertTrue(securityContext.hasPermission("ANY_PERMISSION"))
         assertTrue(securityContext.hasPermission("READ"))
@@ -152,42 +151,42 @@ class SecurityContextTest {
     @Test
     fun `test startThreatDetection activates monitoring`() = runTest {
         securityContext.startThreatDetection()
-        
+
         val isActive = securityContext.threatDetectionActive.first()
         assertTrue("Threat detection should be active", isActive)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test startThreatDetection sets encryption to ACTIVE`() = runTest {
         securityContext.startThreatDetection()
-        
+
         val encryptionStatus = securityContext.encryptionStatus.first()
-        assertEquals("Encryption should be ACTIVE when threat detection starts", 
+        assertEquals("Encryption should be ACTIVE when threat detection starts",
             EncryptionStatus.ACTIVE, encryptionStatus)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test stopThreatDetection deactivates monitoring`() = runTest {
         securityContext.startThreatDetection()
         securityContext.stopThreatDetection()
-        
+
         val isActive = securityContext.threatDetectionActive.first()
         assertFalse("Threat detection should be inactive after stopping", isActive)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test threat detection lifecycle`() = runTest {
         // Initial state
         assertFalse(securityContext.threatDetectionActive.first())
-        
+
         // Start
         securityContext.startThreatDetection()
         assertTrue(securityContext.threatDetectionActive.first())
-        
+
         // Stop
         securityContext.stopThreatDetection()
         assertFalse(securityContext.threatDetectionActive.first())
-        
+
         // Restart
         securityContext.startThreatDetection()
         assertTrue(securityContext.threatDetectionActive.first())
@@ -199,12 +198,12 @@ class SecurityContextTest {
         assertEquals("genesis_user", securityContext.getCurrentUser())
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test isSecureMode returns false in development`() {
         assertFalse("Should not be in secure mode by default", securityContext.isSecureMode())
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test validateAccess always allows in development`() {
         assertTrue(securityContext.validateAccess("/secure/resource"))
         assertTrue(securityContext.validateAccess("/public/resource"))
@@ -215,7 +214,7 @@ class SecurityContextTest {
     @Test
     fun `test verifyApplicationIntegrity returns valid by default`() {
         val integrity = securityContext.verifyApplicationIntegrity()
-        
+
         assertTrue("Application should be valid", integrity.isValid)
         assertEquals("default_signature_hash", integrity.signatureHash)
     }
@@ -224,7 +223,7 @@ class SecurityContextTest {
     fun `test verifyApplicationIntegrity is consistent`() {
         val integrity1 = securityContext.verifyApplicationIntegrity()
         val integrity2 = securityContext.verifyApplicationIntegrity()
-        
+
         assertEquals(integrity1.signatureHash, integrity2.signatureHash)
         assertEquals(integrity1.isValid, integrity2.isValid)
     }
@@ -237,7 +236,7 @@ class SecurityContextTest {
             details = "Test event",
             severity = EventSeverity.LOW
         )
-        
+
         // Should not throw
         securityContext.logSecurityEvent(event)
     }
@@ -249,7 +248,7 @@ class SecurityContextTest {
             SecurityEvent(SecurityEventType.PERMISSION_VIOLATION, "Permission denied", EventSeverity.MEDIUM),
             SecurityEvent(SecurityEventType.ACCESS_DENIED, "Access denied", EventSeverity.HIGH)
         )
-        
+
         events.forEach { event ->
             // Should not throw
             securityContext.logSecurityEvent(event)
@@ -275,25 +274,25 @@ class SecurityContextTest {
         val state1 = SecurityState(errorState = true, errorMessage = "Error")
         val state2 = SecurityState(errorState = true, errorMessage = "Error")
         val state3 = SecurityState(errorState = false, errorMessage = null)
-        
+
         assertEquals(state1, state2)
         assertNotEquals(state1, state3)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test SecurityState copy functionality`() {
         val original = SecurityState(errorState = true, errorMessage = "Original")
         val copied = original.copy(errorMessage = "Modified")
-        
+
         assertTrue(copied.errorState)
         assertEquals("Modified", copied.errorMessage)
         assertEquals("Original", original.errorMessage)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test ApplicationIntegrity data class`() {
         val integrity = ApplicationIntegrity(signatureHash = "abc123", isValid = true)
-        
+
         assertEquals("abc123", integrity.signatureHash)
         assertTrue(integrity.isValid)
     }
@@ -305,7 +304,7 @@ class SecurityContextTest {
             details = "Unauthorized access attempt",
             severity = EventSeverity.CRITICAL
         )
-        
+
         assertEquals(SecurityEventType.ACCESS_DENIED, event.type)
         assertEquals("Unauthorized access attempt", event.details)
         assertEquals(EventSeverity.CRITICAL, event.severity)
@@ -321,7 +320,7 @@ class SecurityContextTest {
         assertTrue(types.contains(SecurityEventType.ACCESS_DENIED))
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test EventSeverity enum values`() {
         val severities = EventSeverity.values()
         assertEquals(4, severities.size)

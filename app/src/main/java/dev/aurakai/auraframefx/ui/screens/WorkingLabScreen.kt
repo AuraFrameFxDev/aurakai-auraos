@@ -7,7 +7,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
@@ -270,7 +269,7 @@ fun WorkingLabScreen(
                 Character.KAI -> (manifest.state as KaiState).assetPath
             }
 
-            val painter = engine.loadAsset(asset)
+            val painter = engine.loadAsset(asset,)
             val position = manifest.currentPosition ?: DpOffset.Zero
 
             if (painter != null) {

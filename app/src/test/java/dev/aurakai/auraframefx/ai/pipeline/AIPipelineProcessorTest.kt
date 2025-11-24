@@ -4,6 +4,8 @@ import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.cascade.pipeline.AIPipelineProcessor
+import dev.aurakai.auraframefx.cascade.pipeline.PipelineState
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentType
 import io.mockk.*
@@ -11,8 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Comprehensive unit tests for AIPipelineProcessor.
@@ -27,7 +29,7 @@ class AIPipelineProcessorTest {
     private lateinit var mockKaiService: KaiAIService
     private lateinit var mockCascadeService: CascadeAIService
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockGenesisAgent = mockk(relaxed = true)
         mockAuraService = mockk(relaxed = true)
@@ -43,26 +45,26 @@ class AIPipelineProcessorTest {
     }
 
     // Initial State Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test initial pipeline state is Idle`() = runTest {
         val state = processor.pipelineState.first()
         assertTrue("Initial state should be Idle", state is PipelineState.Idle)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test initial processing context is empty`() = runTest {
         val context = processor.processingContext.first()
         assertTrue("Initial context should be empty", context.isEmpty())
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test initial task priority is zero`() = runTest {
         val priority = processor.taskPriority.first()
         assertEquals("Initial priority should be 0.0", 0.0f, priority, 0.001f)
     }
 
     // Basic Task Processing Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask updates state to Processing`() = runTest {
         val task = "Test task"
 
@@ -77,7 +79,7 @@ class AIPipelineProcessorTest {
         assertTrue("Final state should be Completed", finalState is PipelineState.Completed)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with simple task`() = runTest {
         val task = "Hello AI"
 
@@ -91,7 +93,7 @@ class AIPipelineProcessorTest {
             responses.any { it.sender == AgentType.GENESIS })
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask always includes Cascade agent`() = runTest {
         val task = "Any task"
 
@@ -106,7 +108,7 @@ class AIPipelineProcessorTest {
     }
 
     // Agent Selection Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with security keywords includes Kai agent`() = runTest {
         val task = "Check security of the system"
 
@@ -122,7 +124,7 @@ class AIPipelineProcessorTest {
         coVerify { mockKaiService.processRequest(any(), any()) }
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with protect keyword includes Kai agent`() = runTest {
         val task = "Protect the data"
 
@@ -137,7 +139,7 @@ class AIPipelineProcessorTest {
             responses.any { it.sender == AgentType.KAI })
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with safe keyword includes Kai agent`() = runTest {
         val task = "Keep the system safe"
 
@@ -181,7 +183,7 @@ class AIPipelineProcessorTest {
             responses.any { it.sender == AgentType.AURA })
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with design keyword includes Aura agent`() = runTest {
         val task = "Design a user interface"
 
@@ -208,7 +210,7 @@ class AIPipelineProcessorTest {
         assertTrue(responses.any { it.sender == AgentType.CASCADE })
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test processTask with multiple agent triggers`() = runTest {
         val task = "Create secure design and analyze data"
 
@@ -226,7 +228,7 @@ class AIPipelineProcessorTest {
     }
 
     // Priority Calculation Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test high priority with urgent keyword`() = runTest {
         val task = "urgent: Fix critical bug"
 
@@ -239,7 +241,7 @@ class AIPipelineProcessorTest {
         assertTrue("Urgent task should have high priority", priority > 0.7f)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test high priority with asap keyword`() = runTest {
         val task = "ASAP: Deploy hotfix"
 
@@ -252,7 +254,7 @@ class AIPipelineProcessorTest {
         assertTrue("ASAP task should have high priority", priority > 0.7f)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test high priority with emergency keyword`() = runTest {
         val task = "emergency situation detected"
 
@@ -281,7 +283,7 @@ class AIPipelineProcessorTest {
     }
 
     // Context Management Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test context updated after processing`() = runTest {
         val task = "Test context update"
 
@@ -307,7 +309,7 @@ class AIPipelineProcessorTest {
         assertTrue("Context should contain task history", context.containsKey("task_history"))
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test context contains timestamp`() = runTest {
         val task = "Timestamped task"
 
@@ -321,7 +323,7 @@ class AIPipelineProcessorTest {
     }
 
     // Response Aggregation Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test final response includes all agent inputs`() = runTest {
         val task = "create secure analysis"
 
@@ -392,7 +394,7 @@ class AIPipelineProcessorTest {
         assertTrue("Should handle special characters", responses.isNotEmpty())
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test task with unicode characters`() = runTest {
         val task = "Hello 世界 🌍 مرحبا"
 
@@ -405,7 +407,7 @@ class AIPipelineProcessorTest {
     }
 
     // State Transitions Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test state transitions during processing`() = runTest {
         val task = "State transition test"
 
@@ -438,7 +440,7 @@ class AIPipelineProcessorTest {
     }
 
     // PipelineState Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test PipelineState Idle`() {
         val state = PipelineState.Idle
         assertTrue(state is PipelineState.Idle)
@@ -451,14 +453,14 @@ class AIPipelineProcessorTest {
         assertEquals("Test task", state.task)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test PipelineState Completed`() {
         val state = PipelineState.Completed("Completed task")
         assertTrue(state is PipelineState.Completed)
         assertEquals("Completed task", state.task)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test PipelineState Error`() {
         val state = PipelineState.Error("Error message")
         assertTrue(state is PipelineState.Error)
@@ -466,7 +468,7 @@ class AIPipelineProcessorTest {
     }
 
     // Verification Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test service interactions are called`() = runTest {
         val task = "create secure design"
 

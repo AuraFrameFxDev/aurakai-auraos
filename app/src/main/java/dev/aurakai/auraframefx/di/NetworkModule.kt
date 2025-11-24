@@ -1,121 +1,25 @@
 package dev.aurakai.auraframefx.di
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.aurakai.auraframefx.BuildConfig
-import dev.aurakai.auraframefx.di.qualifiers.BaseUrl
-import dev.aurakai.auraframefx.network.AuraApiService
-import dev.aurakai.auraframefx.network.AuthApi
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.concurrent.TimeUnit
+import dev.aurakai.auraframefx.network.model.*
 import javax.inject.Singleton
 
-/**
- * Dagger Hilt module that provides network-related dependencies.
- * TEMPORARY FIX: Removed circular dependency with AuthInterceptor
- */
 @Module
-@InstallIn(/* ...value = */ SingletonComponent::class)
-object NetworkModule {
+@InstallIn(SingletonComponent::class)
+abstract class NetworkModule {
 
-    /**
-     * Selects the base URL for API requests based on build configuration and environment.
-     *
-     * In debug builds this returns the `API_BASE_URL` environment variable if present; otherwise it returns
-     * the local development default `http://10.0.2.2:5000/api/v1/`. In non-debug (release) builds it returns
-     * the production base URL `https://api.auraframefx.com/v1/`.
-     *
-     * @return The base URL string to be used by Retrofit.
-     */
-    @Provides
-    @BaseUrl
+    @Binds
     @Singleton
-    fun provideBaseUrl(): String {
-        // Environment-based URL configuration
-        // Debug builds use local development server
-        // Release builds use production API
-        return if (BuildConfig.DEBUG) {
-            // For local development, you can override this with:
-            // BuildConfig field or environment variable
-            System.getenv("API_BASE_URL") ?: "http://10.0.2.2:5000/api/v1/"
-        } else {
-            "https://api.auraframefx.com/v1/"
-        }
-    }
+    abstract fun bindUserApi(impl: UserApiImpl): UserApi
 
-    /**
-         * Provides a Moshi instance configured for Kotlin data classes.
-         *
-         * Configured with KotlinJsonAdapterFactory to support Kotlin-specific types and nullability.
-         *
-         * @return A Moshi instance with Kotlin JSON adapter support.
-         */
-        @Provides
+    @Binds
     @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    abstract fun bindAIAgentApi(impl: AIAgentApiImpl): AIAgentApi
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
-        }
-    }
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            // TEMPORARY: Removed AuthInterceptor to fix circular dependency
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        moshi: Moshi,
-        @BaseUrl baseUrl: String,
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi {
-        return retrofit.create(AuthApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuraApiService(retrofit: Retrofit): AuraApiService {
-        return retrofit.create(AuraApiService::class.java)
-    }
+    abstract fun bindThemeApi(impl: ThemeApiImpl): ThemeApi
 }

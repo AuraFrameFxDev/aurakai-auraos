@@ -3,8 +3,8 @@
 package dev.aurakai.auraframefx.oracle.drive.utils
 
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 
 /**
@@ -15,7 +15,7 @@ class EncryptionManagerTest {
 
     private lateinit var encryptionManager: EncryptionManager
 
-    @Before
+    @BeforeEach
     fun setup() {
         encryptionManager = EncryptionManager()
     }
@@ -25,7 +25,7 @@ class EncryptionManagerTest {
     fun `test encrypt returns same data in placeholder implementation`() {
         val originalData = "test data".toByteArray()
         val encryptedData = encryptionManager.encrypt(originalData)
-        
+
         assertArrayEquals("Placeholder should return same data", originalData, encryptedData)
     }
 
@@ -33,7 +33,7 @@ class EncryptionManagerTest {
     fun `test decrypt returns same data in placeholder implementation`() {
         val encryptedData = "encrypted data".toByteArray()
         val decryptedData = encryptionManager.decrypt(encryptedData)
-        
+
         assertArrayEquals("Placeholder should return same data", encryptedData, decryptedData)
     }
 
@@ -42,8 +42,8 @@ class EncryptionManagerTest {
         val originalData = "sensitive information".toByteArray()
         val encrypted = encryptionManager.encrypt(originalData)
         val decrypted = encryptionManager.decrypt(encrypted)
-        
-        assertArrayEquals("Decrypt(Encrypt(data)) should equal original data", 
+
+        assertArrayEquals("Decrypt(Encrypt(data)) should equal original data",
             originalData, decrypted)
     }
 
@@ -52,7 +52,7 @@ class EncryptionManagerTest {
     fun `test encrypt with empty byte array`() {
         val emptyData = ByteArray(0)
         val result = encryptionManager.encrypt(emptyData)
-        
+
         assertEquals("Should handle empty array", 0, result.size)
         assertArrayEquals(emptyData, result)
     }
@@ -61,18 +61,18 @@ class EncryptionManagerTest {
     fun `test decrypt with empty byte array`() {
         val emptyData = ByteArray(0)
         val result = encryptionManager.decrypt(emptyData)
-        
+
         assertEquals("Should handle empty array", 0, result.size)
         assertArrayEquals(emptyData, result)
     }
 
     // Various Data Types Tests
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test encrypt with string data`() {
         val text = "Hello, World!"
         val data = text.toByteArray(StandardCharsets.UTF_8)
         val encrypted = encryptionManager.encrypt(data)
-        
+
         assertArrayEquals(data, encrypted)
         assertEquals(text, String(encrypted, StandardCharsets.UTF_8))
     }
@@ -81,7 +81,7 @@ class EncryptionManagerTest {
     fun `test encrypt with binary data`() {
         val binaryData = byteArrayOf(0x00, 0x01, 0xFF.toByte(), 0x7F, 0x80.toByte())
         val encrypted = encryptionManager.encrypt(binaryData)
-        
+
         assertArrayEquals(binaryData, encrypted)
     }
 
@@ -89,7 +89,7 @@ class EncryptionManagerTest {
     fun `test encrypt with large data`() {
         val largeData = ByteArray(1024 * 1024) { it.toByte() } // 1MB
         val encrypted = encryptionManager.encrypt(largeData)
-        
+
         assertEquals("Size should be preserved", largeData.size, encrypted.size)
         assertArrayEquals(largeData, encrypted)
     }
@@ -99,7 +99,7 @@ class EncryptionManagerTest {
         val specialText = "!@#$%^&*()_+{}|:<>?[]\\;',./`~"
         val data = specialText.toByteArray(StandardCharsets.UTF_8)
         val encrypted = encryptionManager.encrypt(data)
-        
+
         assertArrayEquals(data, encrypted)
         assertEquals(specialText, String(encrypted, StandardCharsets.UTF_8))
     }
@@ -109,7 +109,7 @@ class EncryptionManagerTest {
         val unicodeText = "Hello 世界 🌍 مرحبا"
         val data = unicodeText.toByteArray(StandardCharsets.UTF_8)
         val encrypted = encryptionManager.encrypt(data)
-        
+
         assertArrayEquals(data, encrypted)
         assertEquals(unicodeText, String(encrypted, StandardCharsets.UTF_8))
     }
@@ -120,16 +120,16 @@ class EncryptionManagerTest {
         val data = "test".toByteArray()
         val result1 = encryptionManager.encrypt(data)
         val result2 = encryptionManager.encrypt(data)
-        
+
         assertArrayEquals("Multiple encryptions should be consistent", result1, result2)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test multiple decrypt operations on same data`() {
         val data = "test".toByteArray()
         val result1 = encryptionManager.decrypt(data)
         val result2 = encryptionManager.decrypt(data)
-        
+
         assertArrayEquals("Multiple decryptions should be consistent", result1, result2)
     }
 
@@ -140,7 +140,7 @@ class EncryptionManagerTest {
         val decrypted1 = encryptionManager.decrypt(encrypted1)
         val encrypted2 = encryptionManager.encrypt(decrypted1)
         val decrypted2 = encryptionManager.decrypt(encrypted2)
-        
+
         assertArrayEquals("Chained operations should preserve data", original, decrypted2)
     }
 
@@ -149,9 +149,9 @@ class EncryptionManagerTest {
     fun `test data not modified by reference`() {
         val originalData = "test data".toByteArray()
         val originalCopy = originalData.copyOf()
-        
+
         val encrypted = encryptionManager.encrypt(originalData)
-        
+
         assertArrayEquals("Original data should not be modified", originalCopy, originalData)
     }
 
@@ -159,12 +159,12 @@ class EncryptionManagerTest {
     fun `test different data produces different results`() {
         val data1 = "data1".toByteArray()
         val data2 = "data2".toByteArray()
-        
+
         val result1 = encryptionManager.encrypt(data1)
         val result2 = encryptionManager.encrypt(data2)
-        
+
         // In placeholder implementation, they would be different because input is different
-        assertFalse("Different inputs should produce different outputs", 
+        assertFalse("Different inputs should produce different outputs",
             result1.contentEquals(result2))
     }
 
@@ -173,26 +173,26 @@ class EncryptionManagerTest {
     fun `test single byte encryption`() {
         val singleByte = byteArrayOf(0x42)
         val encrypted = encryptionManager.encrypt(singleByte)
-        
+
         assertEquals(1, encrypted.size)
         assertArrayEquals(singleByte, encrypted)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test all zero bytes`() {
         val zeros = ByteArray(100) { 0 }
         val encrypted = encryptionManager.encrypt(zeros)
         val decrypted = encryptionManager.decrypt(encrypted)
-        
+
         assertArrayEquals(zeros, decrypted)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test all 0xFF bytes`() {
         val maxBytes = ByteArray(100) { 0xFF.toByte() }
         val encrypted = encryptionManager.encrypt(maxBytes)
         val decrypted = encryptionManager.decrypt(encrypted)
-        
+
         assertArrayEquals(maxBytes, decrypted)
     }
 
@@ -201,7 +201,7 @@ class EncryptionManagerTest {
         val pattern = ByteArray(100) { if (it % 2 == 0) 0xAA.toByte() else 0x55 }
         val encrypted = encryptionManager.encrypt(pattern)
         val decrypted = encryptionManager.decrypt(encrypted)
-        
+
         assertArrayEquals(pattern, decrypted)
     }
 
@@ -210,11 +210,11 @@ class EncryptionManagerTest {
     fun `test multiple manager instances behave consistently`() {
         val manager1 = EncryptionManager()
         val manager2 = EncryptionManager()
-        
+
         val data = "test".toByteArray()
         val result1 = manager1.encrypt(data)
         val result2 = manager2.encrypt(data)
-        
+
         assertArrayEquals("Different instances should behave the same", result1, result2)
     }
 
@@ -228,12 +228,12 @@ class EncryptionManagerTest {
     @Test
     fun `test encryption preserves data length`() {
         val testSizes = listOf(0, 1, 10, 100, 1000, 10000)
-        
+
         testSizes.forEach { size ->
             val data = ByteArray(size) { it.toByte() }
             val encrypted = encryptionManager.encrypt(data)
-            
-            assertEquals("Encrypted data should have same length for size $size", 
+
+            assertEquals("Encrypted data should have same length for size $size",
                 size, encrypted.size)
         }
     }
@@ -241,12 +241,12 @@ class EncryptionManagerTest {
     @Test
     fun `test decryption preserves data length`() {
         val testSizes = listOf(0, 1, 10, 100, 1000, 10000)
-        
+
         testSizes.forEach { size ->
             val data = ByteArray(size) { it.toByte() }
             val decrypted = encryptionManager.decrypt(data)
-            
-            assertEquals("Decrypted data should have same length for size $size", 
+
+            assertEquals("Decrypted data should have same length for size $size",
                 size, decrypted.size)
         }
     }
@@ -256,11 +256,11 @@ class EncryptionManagerTest {
     fun `test encrypting JSON data`() {
         val jsonData = """{"user":"alice","token":"abc123","timestamp":1234567890}"""
         val data = jsonData.toByteArray(StandardCharsets.UTF_8)
-        
+
         val encrypted = encryptionManager.encrypt(data)
         val decrypted = encryptionManager.decrypt(encrypted)
         val decryptedJson = String(decrypted, StandardCharsets.UTF_8)
-        
+
         assertEquals(jsonData, decryptedJson)
     }
 
@@ -268,11 +268,11 @@ class EncryptionManagerTest {
     fun `test encrypting XML data`() {
         val xmlData = """<?xml version="1.0"?><root><item>value</item></root>"""
         val data = xmlData.toByteArray(StandardCharsets.UTF_8)
-        
+
         val encrypted = encryptionManager.encrypt(data)
         val decrypted = encryptionManager.decrypt(encrypted)
         val decryptedXml = String(decrypted, StandardCharsets.UTF_8)
-        
+
         assertEquals(xmlData, decryptedXml)
     }
 
@@ -280,10 +280,10 @@ class EncryptionManagerTest {
     fun `test encrypting base64 encoded data`() {
         val base64Data = "SGVsbG8gV29ybGQh" // "Hello World!" in base64
         val data = base64Data.toByteArray(StandardCharsets.UTF_8)
-        
+
         val encrypted = encryptionManager.encrypt(data)
         val decrypted = encryptionManager.decrypt(encrypted)
-        
+
         assertEquals(base64Data, String(decrypted, StandardCharsets.UTF_8))
     }
 }

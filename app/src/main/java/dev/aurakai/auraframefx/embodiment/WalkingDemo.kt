@@ -1,12 +1,10 @@
 package dev.aurakai.auraframefx.embodiment
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -57,7 +55,7 @@ fun SimpleWalkDemo() {
     Box(modifier = Modifier.fillMaxSize()) {
         activeManifestation.forEach { manifest ->
             if (manifest.character == Character.AURA && manifest.currentPosition != null) {
-                val painter = engine.loadAsset((manifest.state as AuraState).assetPath)
+                val painter = engine.loadAsset((manifest.state as AuraState).assetPath,)
                 if (painter != null) {
                     Image(
                         painter = painter,
@@ -125,7 +123,7 @@ fun BreathingIdleDemo() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Load Aura sprite
-        val painter = engine.loadAsset(AuraState.SCIENTIST_MODE.assetPath)
+        val painter = engine.loadAsset(AuraState.SCIENTIST_MODE.assetPath,)
         if (painter != null) {
             Image(
                 painter = painter,
@@ -172,7 +170,7 @@ fun AuraLookingForKaiDemo() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         val engine = rememberEmbodimentEngine(context, screenBounds)
-        val painter = engine.loadAsset(AuraState.SCIENTIST_MODE.assetPath)
+        val painter = engine.loadAsset(AuraState.SCIENTIST_MODE.assetPath,)
 
         if (painter != null) {
             Image(
@@ -216,7 +214,7 @@ fun AnimatedSpriteWalkingDemo() {
 
         // Load each frame from the walk cycle
         walkCycleStates.mapNotNull { state ->
-            engine.loadAsset(state.assetPath)
+            engine.loadAsset(state.assetPath,)
         }
     }
 
@@ -308,7 +306,7 @@ fun CompleteWalkingScene() {
                 Character.KAI -> (manifest.state as KaiState).assetPath
             }
 
-            val painter = engine.loadAsset(asset)
+            val painter = engine.loadAsset(asset,)
             val position = manifest.currentPosition ?: DpOffset.Zero
 
             if (painter != null) {

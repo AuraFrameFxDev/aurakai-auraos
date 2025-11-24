@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.repository
 
-import dev.aurakai.auraframefx.network.AuraApiService
+import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.*
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TrinityRepository @Inject constructor(
-    private val apiService: AuraApiService,
+    private val apiService: AuraApiServiceWrapper,
 ) {
 
     // User related operations

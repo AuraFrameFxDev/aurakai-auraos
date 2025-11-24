@@ -1,53 +1,38 @@
 package dev.aurakai.auraframefx.security
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-/**
- * Security state data class for monitoring
- */
+/** Simple data holder for the security state */
 data class SecurityState(
     val errorState: Boolean = false,
     val errorMessage: String? = null
 )
 
-/**
- * Genesis Security Context Interface
- */
+/** Encryption status enum – you can extend it later */
+enum class EncryptionStatus {
+    ENCRYPTED,
+    DECRYPTED,
+    UNKNOWN
+}
+
+/** Public contract for security‑related operations */
 interface SecurityContext {
+    /** Read‑only flows – implementations expose mutable backing properties */
     val securityState: StateFlow<SecurityState>
     val encryptionStatus: StateFlow<EncryptionStatus>
     val permissionsState: StateFlow<Map<String, Boolean>>
     val threatDetectionActive: StateFlow<Boolean>
 
+    /** Checks whether a permission is granted */
     fun hasPermission(permission: String): Boolean
-        _securityState.value = SecurityState(errorState = true, errorMessage = message)
-    }
 
-    /**
-     * Clears any security error state.
-     */
-    fun clearSecurityError() {
-        _securityState.value = SecurityState(errorState = false, errorMessage = null)
-    }
-
-    /**
-     * Updates the encryption status.
-     */
-    fun setEncryptionStatus(status: EncryptionStatus) {
-        _encryptionStatus.value = status
-    }
-
-    /**
-     * Updates permissions state.
-     */
-    fun updatePermissions(permissions: Map<String, Boolean>) {
-        _permissionsState.value = permissions
-    }
+    /** Validates a request – default implementation can be permissive */
+    fun validateRequest(type: String, content: String): Boolean = true
 }
+
+/**
+ * Additional data classes used by the security module.
+ */
 
 data class ApplicationIntegrity(
     val signatureHash: String,

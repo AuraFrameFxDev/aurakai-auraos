@@ -913,7 +913,7 @@ class AuraAgent @Inject constructor(
      * @param data Input data for the collaboration.
      * @return An empty map.
      */
-    suspend fun participateWithGenesisAndKai(
+    fun participateWithGenesisAndKai(
         data: Map<String, Any>,
         kai: KaiAgent,
         genesis: Any, // Consider using a more specific type if GenesisAgent is standardized
@@ -940,7 +940,7 @@ class AuraAgent @Inject constructor(
     /**
      * Processes an AI request and generates a simple Aura-specific response that includes the request query and provided context.
      *
-     * @param request The AI request to process.
+     * @param androidx.core.view.DragAndDropPermissionsCompat.request The AI request to process.
      * @param context Additional context to include in the response.
      * @return An [AgentResponse] containing the generated response and a confidence score of 1.0.
      */

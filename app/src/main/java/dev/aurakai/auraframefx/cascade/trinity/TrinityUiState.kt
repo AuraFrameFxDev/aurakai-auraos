@@ -1,6 +1,8 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * UI state for Trinity coordination screen
@@ -9,13 +11,13 @@ import kotlinx.serialization.Serializable
 data class TrinityUiState(
     val isLoading: Boolean = false,
     val message: String = "",
-    val user: dev.aurakai.auraframefx.models.UserData? = null,
+    @Contextual val user: dev.aurakai.auraframefx.models.UserData? = null,
     val agentStatus: Map<String, String> = emptyMap(),
     val availableThemes: List<Theme> = emptyList(),
     val lastAgentResponse: String? = null,
     val lastAgentType: String? = null,
-    val refresh: () -> Unit = {},
-    val applyTheme: (String) -> Unit = {}
+    @Transient val refresh: () -> Unit = {},
+    @Transient val applyTheme: (String) -> Unit = {}
 )
 
 /**

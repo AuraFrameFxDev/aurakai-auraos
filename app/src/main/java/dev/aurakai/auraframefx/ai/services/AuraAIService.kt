@@ -31,7 +31,4 @@ class AuraAIService @Inject constructor(
         emit(AgentResponse(response, 1.0f))
     }
 
-    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
-        return null
-    }
 }

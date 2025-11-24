@@ -1,11 +1,12 @@
 package dev.aurakai.auraframefx.model
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class EnhancedInteractionData(
     val content: String,
-    val context: Map<String, Any> = emptyMap(),
+    @Contextual val context: Map<String, Any> = emptyMap(),
     val timestamp: Long = System.currentTimeMillis(),
     val userId: String? = null,
     val sessionId: String? = null
@@ -17,7 +18,7 @@ data class InteractionResponse(
     val agent: String,
     val confidence: Float,
     val timestamp: String,
-    val metadata: Map<String, Any> = emptyMap()
+    @Contextual val metadata: Map<String, Any> = emptyMap()
 )
 
 @Serializable

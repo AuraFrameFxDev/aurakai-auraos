@@ -1,13 +1,12 @@
-package dev.aurakai.auraframefx.ai.pipeline
+package dev.aurakai.auraframefx.cascade.pipeline
 
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
-import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentType
-import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -68,7 +67,7 @@ class AIPipelineProcessor @Inject constructor(
         responses.add(
             AgentMessage(
                 from = AgentType.CASCADE.name,
-                content = cascadeAgentResponse.content,
+                content = cascadeAgentResponse.content.toString(),
                 sender = AgentType.CASCADE,
                 confidence = cascadeAgentResponse.confidence
             )
@@ -80,7 +79,7 @@ class AIPipelineProcessor @Inject constructor(
             responses.add(
                 AgentMessage(
                     from = AgentType.KAI.name,
-                    content = kaiAgentResponse.content,
+                    content = kaiAgentResponse.content.toString(),
                     sender = AgentType.KAI,
                     confidence = kaiAgentResponse.confidence
                 )
@@ -122,7 +121,7 @@ class AIPipelineProcessor @Inject constructor(
         return responses
     }
 
-    private suspend fun processCascadeRequest(task: String): AgentResponse {
+    private fun processCascadeRequest(task: String): AgentResponse {
         // Process through cascade service and return AgentResponse
         return AgentResponse(
             content = "Cascade analysis for: $task",
@@ -326,7 +325,7 @@ class AIPipelineProcessor @Inject constructor(
             }
 
             // Supplementary responses from other agents
-            responsesByAgent.forEach { (agentType: AgentType, agentResponses: List<AgentMessage>) ->
+            responsesByAgent.forEach { (agentType: AgentType?, agentResponses: List<AgentMessage>) ->
                 if (agentType != AgentType.GENESIS && agentResponses.isNotEmpty()) {
                     val agentIcon = when (agentType) {
                         AgentType.CASCADE -> "📊"
@@ -336,7 +335,7 @@ class AIPipelineProcessor @Inject constructor(
                     }
                     append(
                         "$agentIcon ${
-                            agentType.name.lowercase().replaceFirstChar { it.uppercase() }
+                            agentType?.name!!.lowercase().replaceFirstChar { it.uppercase() }
                         } Input:\n"
                     )
                     agentResponses.forEach { response ->
@@ -389,7 +388,7 @@ class AIPipelineProcessor @Inject constructor(
             val taskHistory = (current["task_history"] as? MutableList<String>)?.toMutableList()
                 ?: mutableListOf()
             taskHistory.add(0, task) // Add to front
-            if (taskHistory.size > 10) taskHistory.removeLast() // Keep last 10
+            if (taskHistory.size > 10) taskHistory.removeAt(taskHistory.lastIndex) // Keep last 10
             newContext["task_history"] = taskHistory
 
             // Update response patterns for learning
@@ -412,7 +411,7 @@ class AIPipelineProcessor @Inject constructor(
 
             // Track agent performance
             val agentPerformance =
-                (current["agent_performance"] as? MutableMap<String, MutableList<Float>>)
+                current["agent_performance"] as? MutableMap<String, kotlin.collections.MutableList<Float>>
                     ?: mutableMapOf()
             responses.forEach { response ->
                 val agentName = response.sender.name
@@ -426,3 +425,8 @@ class AIPipelineProcessor @Inject constructor(
         }
     }
 }
+
+private fun AuraAIService.generateText(
+    prompt: String,
+    options: String
+)

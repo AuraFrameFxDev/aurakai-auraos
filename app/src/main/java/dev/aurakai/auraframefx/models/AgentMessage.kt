@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.models
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,6 +16,6 @@ data class AgentMessage(
     val type: String = "info",
     val metadata: Map<String, String> = emptyMap(),
     // Backward compatibility fields
-    val sender: AgentType? = null,       // Old API compatibility
+    @Contextual val sender: AgentType? = null,       // Old API compatibility
     val confidence: Float = 0.8f         // Old API compatibility
 )

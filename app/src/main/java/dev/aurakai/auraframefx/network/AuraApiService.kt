@@ -1,10 +1,13 @@
 package dev.aurakai.auraframefx.network
 
 import dev.aurakai.auraframefx.ai.config.AIConfig
+import dev.aurakai.auraframefx.network.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Genesis-OS Aura API Service
@@ -36,3 +39,13 @@ interface AuraApiService {
     @POST("analytics/query")
     suspend fun processAnalytics(@Body query: Map<String, Any>): String
 }
+
+/**
+ * Wrapper class that provides access to sub-APIs
+ */
+@Singleton
+class AuraApiServiceWrapper @Inject constructor(
+    val userApi: UserApi,
+    val aiAgentApi: AIAgentApi,
+    val themeApi: ThemeApi
+)

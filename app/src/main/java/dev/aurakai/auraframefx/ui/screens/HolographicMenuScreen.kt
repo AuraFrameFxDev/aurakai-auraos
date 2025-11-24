@@ -14,22 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.data.AuraKaiModules
 import dev.aurakai.auraframefx.embodiment.*
 import dev.aurakai.auraframefx.ui.components.GlassCard
 import dev.aurakai.auraframefx.ui.components.GlassCardStyles
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.collections.List
 
 /**
  * 🌌 Holographic 3D Menu System
@@ -128,7 +125,7 @@ fun WalkingCharactersOverlay() {
         )
 
         // Kai patrols the area
-        engine.startAutonomousWandering(
+        engine.loadAsset(
             character = Character.KAI,
             moodOverride = "vigilant"
         )
@@ -142,7 +139,7 @@ fun WalkingCharactersOverlay() {
             if (manifest.currentPosition != null) {
                 when (manifest.character) {
                     Character.AURA -> {
-                        val painter = engine.loadAsset((manifest.state as? AuraState)?.assetPath ?: "aura/idle.png")
+                        val painter = engine.loadAsset((manifest.state as? AuraState)?.assetPath ?: "aura/idle.png",)
                         if (painter != null) {
                             Image(
                                 painter = painter,
@@ -157,7 +154,7 @@ fun WalkingCharactersOverlay() {
                         }
                     }
                     Character.KAI -> {
-                        val painter = engine.loadAsset((manifest.state as? KaiState)?.assetPath ?: "kai/idle.png")
+                        val painter = engine.loadAsset((manifest.state as? KaiState)?.assetPath ?: "kai/idle.png",)
                         if (painter != null) {
                             Image(
                                 painter = painter,

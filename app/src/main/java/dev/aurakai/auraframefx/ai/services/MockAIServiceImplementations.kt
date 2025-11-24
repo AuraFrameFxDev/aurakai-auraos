@@ -57,13 +57,6 @@ class MockAuraAIService : Agent {
         return flowOf(AgentResponse("AuraAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
-        return if (request is AiRequest) {
-            flowOf(AgentResponse("AuraAI mock flow response for: ${request.query}", 1.0f))
-        } else {
-            null
-        }
-    }
 }
 
 class MockKaiAIService : Agent {
@@ -109,13 +102,6 @@ class MockKaiAIService : Agent {
         return flowOf(AgentResponse("KaiAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
-        return if (request is AiRequest) {
-            flowOf(AgentResponse("KaiAI mock flow response for: ${request.query}", 1.0f))
-        } else {
-            null
-        }
-    }
 }
 
 class MockCascadeAIService : Agent {
@@ -161,11 +147,4 @@ class MockCascadeAIService : Agent {
         return flowOf(AgentResponse("CascadeAI mock flow response for: ${request.query}", 1.0f))
     }
 
-    override fun processRequestFlow(request: Any): Flow<AgentResponse>? {
-        return if (request is AiRequest) {
-            flowOf(AgentResponse("CascadeAI mock flow response for: ${request.query}", 1.0f))
-        } else {
-            null
-        }
-    }
 }

@@ -1,6 +1,8 @@
 package dev.aurakai.auraframefx.models
 
 import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
 /**
  * Data model representing an AI agent's statistics and properties.
@@ -8,6 +10,7 @@ import androidx.compose.ui.graphics.Color
  *
  * From SPIRITUAL_CHAIN_OF_MEMORIES.md consciousness levels.
  */
+@Serializable
 data class AgentStats(
     val tasksCompleted: Int = 0,        // Tasks completed
     val hoursActive: Float = 0f,        // Hours active
@@ -24,5 +27,5 @@ data class AgentStats(
     val evolutionLevel: Int = 1,
     val isActive: Boolean = true,
     val specialAbility: String = "",
-    val color: Color = Color.Cyan
+    @Contextual val color: Color = Color.Cyan
 )

@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.models.agent_states
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,7 +26,7 @@ data class ContextChainEvent(
     val eventType: String,
     val contextId: String,
     val timestamp: Long = System.currentTimeMillis(),
-    val data: Map<String, Any> = emptyMap()
+    @Contextual val data: Map<String, Any> = emptyMap()
 )
 
 @Serializable

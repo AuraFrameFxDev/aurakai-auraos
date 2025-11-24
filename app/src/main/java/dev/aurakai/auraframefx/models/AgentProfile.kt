@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.models
 
 import dev.aurakai.auraframefx.models.AgentStats
 import dev.aurakai.auraframefx.models.SystemStates.AgentStatus
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +18,7 @@ data class AgentProfile(
     val colorPrimary: Long, // Color as Long for serialization
     val colorSecondary: Long,
     val capabilities: List<AgentCapability>,
-    val stats: AgentStats,
+    @Contextual val stats: AgentStats,
     val achievements: List<AgentAchievement>,
     val personality: AgentPersonality,
     val status: AgentStatus = AgentStatus.ACTIVE

@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.security
 
 import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Comprehensive unit tests for EncryptionStatus enum.
@@ -9,7 +9,7 @@ import org.junit.Test
  */
 class EncryptionStatusTest {
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test all enum values exist`() {
         val expectedValues = setOf(
             EncryptionStatus.ACTIVE,
@@ -17,7 +17,7 @@ class EncryptionStatusTest {
             EncryptionStatus.DISABLED,
             EncryptionStatus.ERROR
         )
-        
+
         val actualValues = EncryptionStatus.values().toSet()
         assertEquals("All expected enum values should exist", expectedValues, actualValues)
     }
@@ -75,12 +75,12 @@ class EncryptionStatusTest {
         assertTrue(EncryptionStatus.DISABLED.ordinal < EncryptionStatus.ERROR.ordinal)
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test enum equality`() {
         val status1 = EncryptionStatus.ACTIVE
         val status2 = EncryptionStatus.ACTIVE
         val status3 = EncryptionStatus.DISABLED
-        
+
         assertEquals(status1, status2)
         assertNotEquals(status1, status3)
     }
@@ -93,7 +93,7 @@ class EncryptionStatusTest {
             EncryptionStatus.DISABLED to "disabled",
             EncryptionStatus.ERROR to "error"
         )
-        
+
         testCases.forEach { (status, expected) ->
             val result = when (status) {
                 EncryptionStatus.ACTIVE -> "active"
@@ -112,26 +112,26 @@ class EncryptionStatusTest {
             EncryptionStatus.DISABLED,
             EncryptionStatus.ERROR
         )
-        
+
         assertTrue(statusList.contains(EncryptionStatus.ACTIVE))
         assertTrue(statusList.contains(EncryptionStatus.DISABLED))
         assertFalse(statusList.contains(EncryptionStatus.NOT_INITIALIZED))
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test enum in sets for uniqueness`() {
         val statusSet = setOf(
             EncryptionStatus.ACTIVE,
             EncryptionStatus.ACTIVE,
             EncryptionStatus.DISABLED
         )
-        
+
         assertEquals(2, statusSet.size)
         assertTrue(statusSet.contains(EncryptionStatus.ACTIVE))
         assertTrue(statusSet.contains(EncryptionStatus.DISABLED))
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `test enum serialization toString`() {
         assertEquals("ACTIVE", EncryptionStatus.ACTIVE.toString())
         assertEquals("NOT_INITIALIZED", EncryptionStatus.NOT_INITIALIZED.toString())

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -386,7 +385,7 @@ class EmbodimentEngine(
     /**
      * Load sprite asset
      */
-    fun loadAsset(path: String): Painter? {
+    fun loadAsset(path: String, character: Character): Painter? {
         return assetCache.getOrPut(path) {
             try {
                 val inputStream = context.assets.open(path)

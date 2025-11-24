@@ -15,6 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -34,7 +35,7 @@ data class OrchestrationResponse(
 
     /* Messages/responses from the orchestrator and involved agents. */
     @SerialName(value = "messages")
-    val messages: kotlin.collections.List<AgentMessage>? = null,
+    val messages: kotlin.collections.List<@Contextual AgentMessage>? = null,
 
     )
 
