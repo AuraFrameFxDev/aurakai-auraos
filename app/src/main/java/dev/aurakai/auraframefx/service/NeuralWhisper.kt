@@ -46,14 +46,7 @@ class NeuralWhisper @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     // Conversation state tracking
-    private val _conversationState = MutableStateFlow(
-        ConversationState(
-            isActive = false,
-            currentSpeaker = null,
-            transcriptSegments = emptyList(),
-            timestamp = System.currentTimeMillis()
-        )
-    )
+    private val _conversationState = MutableStateFlow<ConversationState>(ConversationState.Idle())
     val conversationState: StateFlow<ConversationState> = _conversationState.asStateFlow()
 
     // Recording state
@@ -139,10 +132,7 @@ class NeuralWhisper @Inject constructor(
             isRecording = true
 
             // Update conversation state
-            _conversationState.value = _conversationState.value.copy(
-                isActive = true,
-                timestamp = System.currentTimeMillis()
-            )
+            _conversationState.value = ConversationState.Listening(isActive = true)
 
             Timber.i("NeuralWhisper: Recording started")
             true
@@ -195,10 +185,7 @@ class NeuralWhisper @Inject constructor(
             isTranscribing = false
 
             // Update conversation state
-            _conversationState.value = _conversationState.value.copy(
-                isActive = false,
-                timestamp = System.currentTimeMillis()
-            )
+            _conversationState.value = ConversationState.Idle()
 
             Timber.i("NeuralWhisper: Recording stopped")
             "Recording stopped successfully"
@@ -275,11 +262,7 @@ class NeuralWhisper @Inject constructor(
                             Timber.i("NeuralWhisper: Transcribed: '$transcript' (confidence: $confidence)")
 
                             // Update conversation state with new transcript
-                            val currentSegments = _conversationState.value.transcriptSegments
-                            _conversationState.value = _conversationState.value.copy(
-                                transcriptSegments = currentSegments + transcript,
-                                timestamp = System.currentTimeMillis()
-                            )
+                            _conversationState.value = ConversationState.Responding(responseText = transcript)
                         }
                     }
 
@@ -288,6 +271,7 @@ class NeuralWhisper @Inject constructor(
                         val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         matches?.firstOrNull()?.let { partial ->
                             Timber.d("NeuralWhisper: Partial: '$partial'")
+                            _conversationState.value = ConversationState.Processing(partialTranscript = partial)
                         }
                     }
 
