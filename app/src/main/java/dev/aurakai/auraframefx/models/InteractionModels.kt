@@ -22,7 +22,7 @@ data class InteractionResponse(
 )
 
 @Serializable
-enum class AgentType {
+enum class AgentCapabilityCategory {
     CREATIVE,
     SECURITY,
     ANALYSIS,
