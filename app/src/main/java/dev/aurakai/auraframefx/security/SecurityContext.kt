@@ -23,6 +23,15 @@ interface SecurityContext {
 
     /** Validates a request – default implementation can be permissive */
     fun validateRequest(type: String, content: String): Boolean = true
+
+    /** Verifies application integrity and returns the result */
+    suspend fun verifyApplicationIntegrity(): ApplicationIntegrity
+
+    /** Checks if the application is running in secure mode */
+    fun isSecureMode(): Boolean
+
+    /** Logs a security event */
+    suspend fun logSecurityEvent(event: SecurityEvent)
 }
 
 /**
@@ -43,7 +52,8 @@ data class SecurityEvent(
 enum class SecurityEventType {
     INTEGRITY_CHECK,
     PERMISSION_VIOLATION,
-    ACCESS_DENIED
+    ACCESS_DENIED,
+    GOVERNANCE_INIT
 }
 
 enum class EventSeverity {

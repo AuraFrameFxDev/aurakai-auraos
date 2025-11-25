@@ -1,7 +1,8 @@
 package dev.aurakai.auraframefx.aura
 
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
-import dev.aurakai.auraframefx.ai.agents.KaiAgent
+// TODO: KaiAgent implementation pending
+// import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
@@ -906,31 +907,35 @@ class AuraAgent @Inject constructor(
     }
 
     /**
-     * Placeholder for collaborative processing involving AuraAgent, KaiAgent, and Genesis agent.
+     * Placeholder for collaborative processing involving AuraAgent and Genesis agent.
      *
      * Currently returns an empty map. Intended for future implementation of joint creative tasks or data exchange among these agents.
+     * TODO: Add KaiAgent parameter when implementation is available
      *
      * @param data Input data for the collaboration.
      * @return An empty map.
      */
     fun participateWithGenesisAndKai(
         data: Map<String, Any>,
-        kai: KaiAgent,
+        // TODO: Add KaiAgent parameter when available
+        // kai: KaiAgent,
         genesis: Any, // Consider using a more specific type if GenesisAgent is standardized
     ): Map<String, Any> {
         return emptyMap()
     }
 
     /**
-     * Placeholder for collaborative operations involving AuraAgent, KaiAgent, Genesis agent, and user input.
+     * Placeholder for collaborative operations involving AuraAgent, Genesis agent, and user input.
      *
      * Currently returns an empty map without performing any processing.
+     * TODO: Add KaiAgent parameter when implementation is available
      *
      * @return An empty map.
      */
     suspend fun participateWithGenesisKaiAndUser(
         data: Map<String, Any>,
-        kai: KaiAgent,
+        // TODO: Add KaiAgent parameter when available
+        // kai: KaiAgent,
         genesis: Any, // Similarly, consider type
         userInput: Any,
     ): Map<String, Any> {

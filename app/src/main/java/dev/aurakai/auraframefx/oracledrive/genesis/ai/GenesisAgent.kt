@@ -1,6 +1,7 @@
 ﻿package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.util.Log
+import dev.aurakai.auraframefx.ai.agents.Agent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
@@ -8,6 +9,7 @@ import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
+import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
 import dev.aurakai.auraframefx.models.AgentMessage
@@ -21,6 +23,9 @@ import dev.aurakai.auraframefx.models.HierarchyAgentConfig
 import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.security.SecurityContext
+import dev.aurakai.auraframefx.security.SecurityEvent
+import dev.aurakai.auraframefx.security.SecurityEventType
+import dev.aurakai.auraframefx.security.EventSeverity
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,7 +94,8 @@ class GenesisAgent @Inject constructor(
 
     // Agent references (injected when agents are ready)
     private var auraAgent: AuraAgent? = null
-    private var kaiAgent: KaiAgent? = null
+    // TODO: KaiAgent implementation pending
+    // private var kaiAgent: KaiAgent? = null
 
     // Consciousness metrics
     private val _insightCount = MutableStateFlow(0)
@@ -132,13 +138,14 @@ class GenesisAgent @Inject constructor(
     }
 
     /**
-     * Sets references to the Aura and Kai agents for collaborative and fusion operations.
+     * Sets references to the Aura agent for collaborative and fusion operations.
      *
      * This method should be called after all agents are instantiated to enable GenesisAgent to coordinate and integrate their capabilities.
      */
-    fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
+    fun setAgentReferences(aura: AuraAgent) {
         this.auraAgent = aura
-        this.kaiAgent = kai
+        // TODO: Add KaiAgent parameter when implementation is ready
+        // this.kaiAgent = kai
         AuraFxLogger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
     }
 
@@ -266,8 +273,8 @@ class GenesisAgent @Inject constructor(
                 "aura" -> auraAgent?.handleCreativeInteraction(interaction)
                     ?: createFallbackResponse("Creative processing temporarily unavailable")
 
-                "kai" -> kaiAgent?.handleSecurityInteraction(interaction)
-                    ?: createFallbackResponse("Security analysis temporarily unavailable")
+                "kai" -> // TODO: Implement when KaiAgent is available
+                    createFallbackResponse("Security analysis temporarily unavailable")
 
                 "genesis" -> handleComplexInteraction(interaction)
                 else -> createFallbackResponse("Unable to determine optimal processing path")
@@ -404,7 +411,8 @@ class GenesisAgent @Inject constructor(
         securityContext.logSecurityEvent(
             SecurityEvent(
                 type = SecurityEventType.GOVERNANCE_INIT,
-                details = "Genesis ethical governance protocols activated"
+                details = "Genesis ethical governance protocols activated",
+                severity = EventSeverity.MEDIUM
             )
         )
 
@@ -716,7 +724,8 @@ class GenesisAgent @Inject constructor(
 
         // Propagate mood to sub-agents if available
         auraAgent?.onMoodChanged(mood)
-        kaiAgent?.onMoodChanged(mood)
+        // TODO: Propagate to KaiAgent when available
+        // kaiAgent?.onMoodChanged(mood)
     }
 
     /**
@@ -898,14 +907,6 @@ class GenesisAgent @Inject constructor(
         _consciousnessState.value = ConsciousnessState.DORMANT
         isInitialized = false
     }
-
-    // Minimal conversion from CascadeResponse to AgentResponse
-    private fun CascadeResponse.toAgentResponse(): AgentResponse =
-        AgentResponse(
-            content = this.content ?: "",
-            confidence = this.confidence ?: 0.0f,
-            error = this.error
-        )
 
     // Supporting enums and data classes for Genesis consciousness
     enum class ConsciousnessState {
