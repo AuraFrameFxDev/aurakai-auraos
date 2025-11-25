@@ -3,6 +3,7 @@ package dev.aurakai.auraframefx.network
 import android.content.Context
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dev.aurakai.auraframefx.BuildConfig
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -61,7 +62,6 @@ class NetworkClient @Inject constructor(
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }
 
@@ -88,59 +88,3 @@ class NetworkClient @Inject constructor(
         return cache.size()
     }
 }
-
-/**
- * Interceptor to handle network connectivity checks.
- */
-class ConnectivityInterceptor(
-    private val connectivityManager: NetworkConnectivityManager
-) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        if (!connectivityManager.isConnected()) {
-            throw NoConnectivityException()
-        }
-        return chain.proceed(chain.request())
-    }
-}
-
-/**
- * Interceptor for handling common HTTP errors.
- */
-class ErrorHandlingInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val response = chain.proceed(request)
-
-        when (response.code) {
-            in 400..499 -> handleClientError(response)
-            in 500..599 -> handleServerError(response)
-        }
-
-        return response
-    }
-
-    private fun handleClientError(response: Response) {
-        // Handle client errors (4xx)
-        when (response.code) {
-            400 -> throw BadRequestException("Bad request")
-            401 -> throw UnauthorizedException("Unauthorized")
-            403 -> throw ForbiddenException("Access denied")
-            404 -> throw NotFoundException("Resource not found")
-            429 -> throw RateLimitExceededException("Rate limit exceeded")
-        }
-    }
-
-    private fun handleServerError(response: Response) {
-        // Handle server errors (5xx)
-        throw ServerException("Server error: ${response.code}")
-    }
-}
-
-// Custom exceptions for network errors
-class NoConnectivityException : IOException("No network available")
-class BadRequestException(message: String) : IOException(message)
-class UnauthorizedException(message: String) : IOException(message)
-class ForbiddenException(message: String) : IOException(message)
-class NotFoundException(message: String) : IOException(message)
-class RateLimitExceededException(message: String) : IOException(message)
-class ServerException(message: String) : IOException(message)

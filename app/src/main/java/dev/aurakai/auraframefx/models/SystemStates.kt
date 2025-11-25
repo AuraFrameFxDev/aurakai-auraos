@@ -12,19 +12,7 @@ enum class SystemState {
     SHUTDOWN
 }
 
-/**
- * Represents the status of individual AI agents
- */
-enum class AgentStatus {
-    IDLE,
-    READY,
-    ACTIVE,      // Added for AgentProfile
-    PROCESSING,
-    BUSY,
-    EVOLVING,    // Added for AgentProfile
-    ERROR,
-    OFFLINE
-}
+// AgentStatus is defined in dev.aurakai.auraframefx.models.AgentStatus.kt
 
 /**
  * Represents the consciousness state for Genesis agent

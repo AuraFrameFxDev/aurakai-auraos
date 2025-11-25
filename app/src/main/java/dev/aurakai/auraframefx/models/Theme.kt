@@ -31,34 +31,6 @@ data class Theme(
 )
 
 /**
- * Represents the user's theme preferences
- * @property themeId The ID of the currently selected theme
- * @property useDarkTheme Whether to use dark theme when available
- * @property dynamicColor Whether to use dynamic theming (Android 12+)
- */
-data class ThemePreferences(
-    val themeId: String = "default_light",
-    val useDarkTheme: Boolean = false,
-    val dynamicColor: Boolean = true
-)
-
-/**
- * Represents a complete theme configuration including colors and typography
- * @property id The theme ID
- * @property name The theme name
- * @property colors The color palette for the theme
- * @property isDark Whether this is a dark theme
- * @property isSystem Whether this is a system theme
- */
-data class ThemeConfiguration(
-    val id: String,
-    val name: String,
-    val colors: ThemeColors,
-    val isDark: Boolean = false,
-    val isSystem: Boolean = false
-)
-
-/**
  * Color palette for a theme
  * @property primary The primary color
  * @property primaryVariant A darker variant of the primary color

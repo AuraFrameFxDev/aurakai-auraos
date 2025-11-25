@@ -71,11 +71,15 @@ android {
         viewBinding = true
     }
 
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = libs.versions.cmake.get()
-        }
+//    externalNativeBuild {
+//        cmake {
+//            path = file("src/main/cpp/CMakeLists.txt")
+//            version = libs.versions.cmake.get()
+//        }
+//    }
+
+    kotlinOptions {
+        freeCompilerArgs += "-Xcontext-parameters"
     }
 }
 

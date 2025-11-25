@@ -60,7 +60,7 @@ class DefaultSecurityContext @Inject constructor(
         _threatDetectionActive.value = active
     }
 
-    override fun verifyApplicationIntegrity(): Boolean {
+    override suspend fun verifyApplicationIntegrity(): ApplicationIntegrity {
         // Check if the app has been tampered with
         // This is a basic implementation - in production, you should implement proper integrity checks
         try {
@@ -86,12 +86,13 @@ class DefaultSecurityContext @Inject constructor(
                            "google_sdk" == Build.PRODUCT
             
             // Return true only if all checks pass
-            return !isDebuggable && isInstalledFromTrustedSource && !isEmulator
+            val isValid = !isDebuggable && isInstalledFromTrustedSource && !isEmulator
+            return ApplicationIntegrity(signatureHash = "unknown", isValid = isValid)
             
         } catch (e: Exception) {
             // Log the error and return false if any check fails
             UnifiedLoggingSystem.e("Application integrity check failed", e)
-            return false
+            return ApplicationIntegrity(signatureHash = "error", isValid = false)
         }
     }
 
@@ -119,5 +120,9 @@ class DefaultSecurityContext @Inject constructor(
             UnifiedLoggingSystem.e("Secure mode check failed", e)
             return false
         }
+    }
+
+    override suspend fun logSecurityEvent(event: SecurityEvent) {
+        UnifiedLoggingSystem.i("Security Event: ${event.type} - ${event.details}")
     }
 }
