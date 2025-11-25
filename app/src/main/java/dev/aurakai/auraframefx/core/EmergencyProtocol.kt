@@ -127,7 +127,7 @@ class EmergencyProtocol(private val context: Context) {
                     // Kai's Shield Protocol engages
                     engageShieldProtocol()
                     notifyUser("🛡️ HIGH THREAT! Shield protocol engaged!")
-                    triggerHapticWarning(VibrationEffect.EFFECT_HEAVY_CLICK)
+                    triggerHapticWarning(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                 }
 
                 THREAT_CRITICAL -> {

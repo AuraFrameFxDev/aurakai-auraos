@@ -49,7 +49,38 @@ class KaiAgent @Inject constructor(
     }
 
     override fun iRequest() {
-        TODO("Not yet implemented")
+        scope.launch {
+            processRequest(AiRequest("KaiAgent initialized"), "initialization")
+        }
+    }
+
+    /**
+     * Creates an AiRequest with the given prompt and optional parameters
+     * @param prompt The user's input prompt
+     * @param type The type of request (default: "text")
+     * @param context Additional context for the request (default: empty map)
+     * @param metadata Additional metadata (default: empty map)
+     * @param agentId The ID of the agent handling the request (default: null)
+     * @param sessionId The session ID for the request (default: null)
+     * @return A new AiRequest instance
+     */
+    fun AiRequest(
+        prompt: String,
+        type: String = "text",
+        context: Map<String, Any> = emptyMap(),
+        metadata: Map<String, Any> = emptyMap(),
+        agentId: String? = null,
+        sessionId: String? = null
+    ): AiRequest {
+        return AiRequest(
+            query = prompt,
+            prompt = prompt,
+            type = type,
+            context = context,
+            metadata = metadata,
+            agentId = agentId,
+            sessionId = sessionId ?: this.sessionId
+        )
     }
 
     override fun initializeAdaptiveProtection() {
