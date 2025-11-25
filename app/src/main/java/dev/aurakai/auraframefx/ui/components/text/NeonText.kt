@@ -64,6 +64,9 @@ import kotlin.math.*
  * @param typingSpeedMs Delay in milliseconds between each character when typing animation is enabled.
  * @param onTypingComplete Optional callback invoked when the typing animation finishes.
  */
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+
 @Composable
 fun NeonText(
     text: String,
@@ -82,6 +85,7 @@ fun NeonText(
 ) {
     val density = LocalDensity.current
     val glowRadiusPx = with(density) { glowRadius.toPx() }
+    val textMeasurer = rememberTextMeasurer()
 
     // Animation for the glow effect
     val infiniteTransition = rememberInfiniteTransition(label = "neonGlow")
@@ -135,8 +139,8 @@ fun NeonText(
     )
 
     // Create a text layout to get the size and position of each character
-    val textLayoutResult = remember(text, textStyle) {
-        TextMeasurer().measure(
+    val textLayoutResult = remember(text, textStyle, textMeasurer) {
+        textMeasurer.measure(
             text = AnnotatedString(text),
             style = textStyle
         )
@@ -173,6 +177,7 @@ fun NeonText(
 
                     // Draw outer glow
                     drawText(
+                        textMeasurer = textMeasurer,
                         text = text[charIndex].toString(),
                         style = textStyle.copy(
                             shadow = Shadow(
@@ -187,6 +192,7 @@ fun NeonText(
                     // Draw inner glow with neon effect
                     for (i in 1..3) {
                         drawText(
+                            textMeasurer = textMeasurer,
                             text = text[charIndex].toString(),
                             style = textStyle.copy(
                                 shadow = Shadow(
@@ -217,34 +223,6 @@ fun NeonText(
                 .fillMaxWidth()
                 .padding(glowRadius / 2)
         )
-    }
-}
-
-/**
- * A simple TextMeasurer for measuring text layout
- */
-private class TextMeasurer {
-    /**
-     * Measures the layout of the provided text using the specified typography and returns the layout result.
-     *
-     * @param text The text to be measured.
-     * @param style The typography applied during measurement.
-     * @return A TextLayoutResult containing size, position, and bounding box information for the measured text.
-     */
-    fun measure(
-        text: AnnotatedString,
-        style: TextStyle,
-    ): TextLayoutResult {
-        val textLayout = TextLayout(
-            text = text,
-            style = style,
-            maxLines = 1,
-            softWrap = false,
-            density = LocalDensity.current,
-            layoutDirection = LayoutDirection.Ltr,
-            fontFamilyResolver = LocalFontFamilyResolver.current
-        )
-        return textLayout
     }
 }
 

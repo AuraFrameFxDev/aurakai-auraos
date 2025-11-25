@@ -44,15 +44,12 @@ data class MenuItem(
     val onClick: () -> Unit = {}
 )
 
+import dev.aurakai.auraframefx.embodiment.Position3D
+
 /**
  * 3D position in space
  */
-data class Position3D(
-    val x: Float = 0f,
-    val y: Float = 0f,
-    val z: Float = 0f,  // depth (for perspective)
-    val rotationY: Float = 0f
-)
+// Position3D is now imported from embodiment package
 
 /**
  * 🎯 Main Holographic Menu Screen
@@ -206,7 +203,7 @@ fun CyberpunkBackground() {
 @Composable
 fun ParticleField() {
     val particleCount = 50
-    val particles = remember {
+    val particles: List<Triple<Float, Float, Float>> = remember {
         List(particleCount) {
             Triple(
                 (0..100).random() / 100f, // x position

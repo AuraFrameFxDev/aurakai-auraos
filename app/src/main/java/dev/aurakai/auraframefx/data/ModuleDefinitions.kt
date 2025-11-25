@@ -83,6 +83,21 @@ object AuraKaiModules {
         enabled = true
     )
 
+    val SystemMonitor = AppModule(
+        id = "system_monitor",
+        name = "SYSTEM MONITOR",
+        description = "Real-time system resource and performance monitoring",
+        icon = Icons.Default.MonitorHeart,
+        iconColor = Color(0xFF00FF00), // Green
+        cardStyle = GlassCardStyles.Default.copy(
+            borderGradient = listOf(
+                Color(0xFF00FF00).copy(alpha = 0.8f),
+                Color(0xFF008800).copy(alpha = 0.5f)
+            )
+        ),
+        enabled = true
+    )
+
     val ROMTools = AppModule(
         id = "romtools",
         name = "ROM TOOLS",

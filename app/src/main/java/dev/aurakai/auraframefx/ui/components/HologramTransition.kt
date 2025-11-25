@@ -99,6 +99,10 @@ import kotlin.random.Random
  * @param glitchIntensity Strength of glitch transforms and noise (0 = disabled; larger values increase effect).
  * @param edgeGlowIntensity Scalar multiplier (typically 0..1) that modulates the alpha of edge glow rendering.
  */
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.withTransform
+
 @Composable
 fun HologramTransition(
     visible: Boolean,
@@ -107,7 +111,8 @@ fun HologramTransition(
     primaryColor: Color = Color.Cyan,
     secondaryColor: Color = Color.Magenta,
     scanLineDensity: Int = 50,
-    edgeGlowIntensity: Float = 0.5f
+    edgeGlowIntensity: Float = 0.5f,
+    content: @Composable () -> Unit
 ) {
     // Animation states
     val transition = updateTransition(visible, label = "hologramTransition")
@@ -133,7 +138,7 @@ fun HologramTransition(
     // Draw the hologram effect
     Box(
         modifier = modifier
-            .clipToBounds()
+            .clip(RectangleShape)
             .graphicsLayer { this.alpha = alpha }
     ) {
         // Content

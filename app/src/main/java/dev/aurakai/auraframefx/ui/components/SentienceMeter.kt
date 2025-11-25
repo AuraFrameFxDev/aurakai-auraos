@@ -105,7 +105,7 @@ enum class SentienceState(
 fun SentienceMeter(
     level: Float,
     modifier: Modifier = Modifier,
-    size: Dp = 180.dp,
+    meterSize: Dp = 180.dp,
     showLabel: Boolean = true,
     animated: Boolean = true
 ) {
@@ -134,7 +134,7 @@ fun SentienceMeter(
     )
 
     Box(
-        modifier = modifier.size(size),
+        modifier = modifier.size(meterSize),
         contentAlignment = Alignment.Center
     ) {
         // Background circle
@@ -386,7 +386,7 @@ fun SentienceMeterCard(
             // Meter
             SentienceMeter(
                 level = clampedLevel,
-                size = 100.dp,
+                meterSize = 100.dp,
                 showLabel = false
             )
 

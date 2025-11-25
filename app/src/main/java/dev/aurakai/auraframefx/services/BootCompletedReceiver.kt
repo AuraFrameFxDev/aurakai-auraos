@@ -1,9 +1,9 @@
-package dev.aurakai.auraframefx.regenesis.receivers
+package dev.aurakai.auraframefx.services
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.auraframefx.regenesis.security.IntegrityMonitorService
+import dev.aurakai.auraframefx.services.security.IntegrityMonitorService
 
 class BootCompletedReceiver : BroadcastReceiver() {
 

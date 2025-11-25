@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.random.Random

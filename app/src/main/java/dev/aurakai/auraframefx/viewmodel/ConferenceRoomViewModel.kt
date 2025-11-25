@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -126,15 +127,11 @@ class ConferenceRoomViewModel @Inject constructor(
                     query = message,
                     type = "context",
                     context = mapOf("userContext" to context)
-                ),
-                AgentInvokeRequest(
-                    message = message,
-                    context = mapOf("userContext" to context)
                 )
             ).map { cascadeResponse ->
                 AgentResponse(
-                    content = cascadeResponse.response,
-                    confidence = cascadeResponse.confidence ?: 1.0f
+                    content = cascadeResponse.content, // Assuming AgentResponse has content
+                    confidence = cascadeResponse.confidence
                 )
             }
 
@@ -150,15 +147,14 @@ class ConferenceRoomViewModel @Inject constructor(
                 // Genesis uses GenesisBridgeService for orchestration
                 // Convert to flow by wrapping the suspend function
                 kotlinx.coroutines.flow.flow {
-                    val response = genesisBridgeService.processRequest(
+                    val responseFlow = genesisBridgeService.processRequest(
                         AiRequest(
                             query = message,
                             type = "fusion",
                             context = mapOf("userContext" to context, "orchestration" to "true")
-                        ),
-                        context
+                        )
                     )
-                    emit(response)
+                    emitAll(responseFlow)
                 }
             }
 

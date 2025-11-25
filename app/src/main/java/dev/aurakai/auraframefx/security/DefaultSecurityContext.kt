@@ -1,5 +1,11 @@
 package dev.aurakai.auraframefx.security
 
+import android.app.KeyguardManager
+import android.app.admin.DevicePolicyManager
+import android.content.Context
+import android.os.Build
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.aurakai.auraframefx.utils.UnifiedLoggingSystem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -13,7 +19,9 @@ import javax.inject.Singleton
  * real checks later.
  */
 @Singleton
-class DefaultSecurityContext @Inject constructor() : SecurityContext {
+class DefaultSecurityContext @Inject constructor(
+    @ApplicationContext private val context: Context
+) : SecurityContext {
 
     // Backing mutable flows – private to this class
     private val _securityState = MutableStateFlow(SecurityState())
