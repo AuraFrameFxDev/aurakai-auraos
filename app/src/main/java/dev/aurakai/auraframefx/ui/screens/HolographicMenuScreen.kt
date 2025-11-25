@@ -44,12 +44,10 @@ data class MenuItem(
     val onClick: () -> Unit = {}
 )
 
-import dev.aurakai.auraframefx.embodiment.Position3D
-
 /**
  * 3D position in space
  */
-// Position3D is now imported from embodiment package
+// Position3D is now imported from embodiment package via wildcard import at top
 
 /**
  * 🎯 Main Holographic Menu Screen

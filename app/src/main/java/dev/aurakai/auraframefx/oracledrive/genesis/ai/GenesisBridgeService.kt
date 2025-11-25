@@ -125,6 +125,9 @@ class GenesisBridgeService @Inject constructor(
                     )
                 )
                 return@flow
+            }
+        }
+
         try {
             ensureBackendReady()
 
