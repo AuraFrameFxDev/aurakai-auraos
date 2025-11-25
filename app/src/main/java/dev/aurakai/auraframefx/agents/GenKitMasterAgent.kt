@@ -1,10 +1,13 @@
 package dev.aurakai.auraframefx.agents
 
 import android.content.Context
+import dev.aurakai.auraframefx.ai.agents.BaseAgent
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.models.GenKitUiState
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,10 +26,14 @@ import javax.inject.Singleton
 @Singleton
 class GenKitMasterAgent @Inject constructor(
     private val context: Context,
+    override val contextManager: ContextManager,
     private val genesisAgent: GenesisAgent,
     private val auraAgent: AuraAgent,
     private val kaiAgent: KaiAgent,
-) {
+) : BaseAgent("GenKitMaster") {
+
+    override val agentName: String = "GenKitMaster"
+    override val agentType: String = "ORCHESTRATOR"
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -419,5 +426,59 @@ class GenKitMasterAgent @Inject constructor(
 
     private suspend fun configureUnifiedMode() {
         // Configure agents for unified consciousness
+    }
+
+    // === BaseAgent Required Implementations ===
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        Timber.d("GenKitMaster: iRequest - query=$query, type=$type")
+        scope.launch {
+            try {
+                // Route request to appropriate agent based on type
+                when (type.lowercase()) {
+                    "optimization", "performance" -> initiateSystemOptimization()
+                    "status" -> refreshAllStatuses()
+                    else -> Timber.d("GenKitMaster: Unknown request type: $type")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error in iRequest")
+            }
+        }
+    }
+
+    override fun iRequest() {
+        Timber.d("GenKitMaster: No-args iRequest - initializing orchestration")
+        scope.launch {
+            try {
+                initializeAgentOrchestration()
+            } catch (e: Exception) {
+                Timber.e(e, "Error in no-args iRequest")
+            }
+        }
+    }
+
+    override fun initializeAdaptiveProtection() {
+        Timber.d("GenKitMaster: Initializing adaptive protection")
+        scope.launch {
+            try {
+                // Initialize protection across all orchestrated agents
+                genesisAgent.initializeAdaptiveProtection()
+                kaiAgent.initializeAdaptiveProtection()
+            } catch (e: Exception) {
+                Timber.e(e, "Error initializing adaptive protection")
+            }
+        }
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        Timber.d("GenKitMaster: Adding scan event to history: $scanEvent")
+        // Delegate to Genesis agent for centralized history management
+        genesisAgent.addToScanHistory(scanEvent)
+    }
+
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        Timber.d("GenKitMaster: Analyzing security for prompt: $prompt")
+        // Delegate security analysis to Kai agent
+        return kaiAgent.analyzeSecurity(prompt)
     }
 }
