@@ -19,7 +19,7 @@ data class ThemeResponse(
     val themes: List<Theme>
 )
 
-import dev.aurakai.auraframefx.aura.themes.Theme
+// Theme is defined in Theme.kt in the same package
 
 @Serializable
 data class ApplyThemeResponse(

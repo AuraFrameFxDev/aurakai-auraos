@@ -8,6 +8,8 @@ data class SecurityState(
     val errorMessage: String? = null
 )
 
+// EncryptionStatus is defined in EncryptionStatus.kt in the same package
+
 /** Public contract for security‑related operations */
 interface SecurityContext {
     /** Read‑only flows – implementations expose mutable backing properties */
