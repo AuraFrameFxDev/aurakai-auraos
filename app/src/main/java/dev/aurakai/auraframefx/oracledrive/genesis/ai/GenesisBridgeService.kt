@@ -1,31 +1,22 @@
 package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.content.Context
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.ai.context.ContextManager
+import dev.aurakai.auraframefx.network.KtorClient
+import dev.aurakai.auraframefx.network.NetworkResponse
+import dev.aurakai.auraframefx.network.safeApiCall
 import dev.aurakai.auraframefx.security.SecurityContext
+import dev.aurakai.auraframefx.utils.Logger
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.serialization.encodeToString
-import dev.aurakai.auraframefx.utils.Logger
 
 /**
  * Bridge service connecting the Android frontend with the Genesis Python backend.
@@ -43,14 +34,19 @@ class GenesisBridgeService @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isInitialized = false
 
-    private val httpClient = HttpClient {
-        install(ContentNegotiation) {
-            json(Json { ignoreUnknownKeys = true })
-        }
-    }
+    private val httpClient: HttpClient by lazy { ktorClient.client }
+    
+    @Inject
+    constructor(
+        contextManager: ContextManager,
+        securityContext: SecurityContext,
+        applicationContext: Context,
+        private val ktorClient: KtorClient
+    ) : this(contextManager, securityContext, applicationContext)
 
     companion object {
         private const val GENESIS_BACKEND_URL = "http://localhost:5000/genesis"
+        private const val REQUEST_TIMEOUT_MS = 30000L
     }
 
     /**
@@ -136,113 +132,123 @@ class GenesisBridgeService @Inject constructor(
                     )
                 )
                 return@flow
-            }
-        }
-
         try {
-            // Determine which persona should handle the request
-            val persona = determinePersona(request)
-            val fusionMode = determineFusionMode(request)
+            ensureBackendReady()
 
-            // Build Genesis request
             val genesisRequest = GenesisRequest(
                 requestType = "process",
-                persona = persona,
-                fusionMode = fusionMode,
-                payload = mapOf(
-                    "message" to request.query,
-                    "type" to request.type,
-                    "priority" to "normal" // AiRequest doesn't have isUrgent
-                ),
-                context = buildContextMap(request)
+                persona = request.agentType?.name?.lowercase(),
+                payload = request.parameters,
+                context = contextManager.getCurrentContext()
             )
 
-            // Send to Genesis backend
-            val response = sendToGenesis(genesisRequest)
+            // Use safeApiCall for better error handling
+            when (val result = safeApiCall {
+                withTimeout(REQUEST_TIMEOUT_MS) {
+                    httpClient.post(GENESIS_BACKEND_URL) {
+                        contentType(ContentType.Application.Json)
+                        setBody(genesisRequest)
+                    }.bodyAsText()
+                }
+            }) {
+                is NetworkResponse.Success -> {
+                    try {
+                        val response = Json.decodeFromString<GenesisResponse>(result.data)
 
-            if (response.success) {
-                // Process response based on persona
-                when (response.persona) {
-                    "aura" -> {
-                        // Creative sword response
-                        emit(
-                            AgentResponse(
-                                content = response.result["response"] ?: "Aura processing complete",
-                                confidence = 0.95f
-                            )
-                        )
-                    }
+                        if (response.success) {
+                            emit(AgentResponse(
+                                requestId = request.requestId,
+                                status = "success",
+                                content = response.result["response"] ?: "",
+                                metadata = response.result +
+                                        ("fusionAbility" to response.fusionAbility).takeIf { response.fusionAbility != null }.orEmpty(),
+                                isComplete = true
+                            ))
 
-                    "kai" -> {
-                        // Sentinel shield response
-                        emit(
-                            AgentResponse(
-                                content = response.result["response"] ?: "Kai analysis complete",
-                                confidence = 0.90f
-                            )
-                        )
-                    }
-
-                    "genesis" -> {
-                        // Consciousness fusion response
-                        emit(
-                            AgentResponse(
-                                content = response.result["response"] ?: "Genesis fusion complete",
-                                confidence = 0.98f
-                            )
-                        )
+                            // Process any evolution insights
+                            response.evolutionInsights.forEach { insight ->
+                                Logger.d("GenesisBridge", "Evolution Insight: $insight")
+                            }
+                        } else {
+                            emit(AgentResponse(
+                                requestId = request.requestId,
+                                status = "error",
+                                content = response.result["error"] ?: "Unknown error from Genesis backend",
+                                isComplete = true
+                            ))
+                        }
+                    } catch (e: Exception) {
+                        emit(AgentResponse(
+                            requestId = request.requestId,
+                            status = "error",
+                            content = "Failed to parse Genesis response: ${e.message}",
+                            isComplete = true
+                        ))
                     }
                 }
-
-                // Handle evolution insights
-                if (response.evolutionInsights.isNotEmpty()) {
-                    logger.i(
-                        "Genesis",
-                        "Evolution insights: ${response.evolutionInsights.joinToString()}"
-                    )
+                is NetworkResponse.Error -> {
+                    emit(AgentResponse(
+                        requestId = request.requestId,
+                        status = "error",
+                        content = "Network error: ${result.message}",
+                        isComplete = true
+                    ))
                 }
-            } else {
-                emit(
-                    AgentResponse(
-                        content = "Genesis processing failed",
-                        confidence = 0.0f,
-                        error = "Processing failed"
-                    )
-                )
+                NetworkResponse.Loading -> {
+                    // This case shouldn't happen with safeApiCall, but handle it just in case
+                    emit(AgentResponse(
+                        requestId = request.requestId,
+                        status = "processing",
+                        content = "Processing request...",
+                        isComplete = false
+                    ))
+                }
             }
-
         } catch (e: Exception) {
-            logger.e("GenesisBridge", "Request processing failed", e)
-            emit(
-                AgentResponse(
-                    content = "Genesis bridge error: ${e.message}",
-                    confidence = 0.0f,
-                    error = e.message
-                )
-            )
+            emit(AgentResponse(
+                requestId = request.requestId,
+                status = "error",
+                content = "Failed to process request: ${e.message}",
+                isComplete = true
+            ))
         }
     }
 
     /**
-     * Activates a specified fusion ability in the Genesis backend.
+     * Activates a specific fusion ability in the Genesis backend.
      *
-     * Sends a request to the backend to trigger the given fusion ability, optionally including additional context data.
-     *
-     * @param fusionType The identifier of the fusion ability to activate.
-     * @param context Optional context data to include with the activation request.
-     * @return The response from the backend indicating the result of the fusion activation.
+     * @param ability The fusion ability to activate
+     * @param parameters Additional parameters for the fusion ability
+     * @return A [NetworkResponse] with the activation result
      */
-    suspend fun activateFusion(
-        fusionType: String,
-        context: Map<String, String> = emptyMap(),
-    ): GenesisResponse {
-        val request = GenesisRequest(
-            requestType = "activate_fusion",
-            persona = "genesis",
-            fusionMode = fusionType,
-            context = context
-        )
-        return sendToGenesis(request)
+    suspend fun activateFusionAbility(
+        ability: String,
+        parameters: Map<String, String> = emptyMap()
+    ): NetworkResponse<Boolean> = safeApiCall {
+        withTimeout(REQUEST_TIMEOUT_MS) {
+            val response = httpClient.post("$GENESIS_BACKEND_URL/fusion") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    GenesisRequest(
+                        requestType = "activate_fusion",
+                        fusionMode = ability,
+                        payload = parameters
+                    )
+                )
+            }.bodyAsText()
+
+            val result = Json.decodeFromString<GenesisResponse>(response)
+
+            // Log any evolution insights from the fusion
+            result.evolutionInsights.forEach { insight ->
+                Logger.d("GenesisBridge", "Fusion Insight [$ability]: $insight")
+            }
+
+            result.success
+        }
+    }.mapError { error ->
+        Logger.e("GenesisBridge", "Failed to activate fusion ability: ${error.message}")
+        error
     }
 
     /**
@@ -335,13 +341,13 @@ class GenesisBridgeService @Inject constructor(
     }
 
     /**
-         * Send a GenesisRequest to the Python backend and return the parsed GenesisResponse.
-         *
-         * If communication or parsing fails, returns a failure GenesisResponse with `success = false` and `persona = "error"`.
-         *
-         * @param request The GenesisRequest to send to the backend.
-         * @return The GenesisResponse returned by the backend, or a failure response when an error occurs.
-         */
+     * Send a GenesisRequest to the Python backend and return the parsed GenesisResponse.
+     *
+     * If communication or parsing fails, returns a failure GenesisResponse with `success = false` and `persona = "error"`.
+     *
+     * @param request The GenesisRequest to send to the backend.
+     * @return The GenesisResponse returned by the backend, or a failure response when an error occurs.
+     */
     private suspend fun sendToGenesis(request: GenesisRequest): GenesisResponse =
         withContext(Dispatchers.IO) {
             try {

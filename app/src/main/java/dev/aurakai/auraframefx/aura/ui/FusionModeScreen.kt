@@ -206,42 +206,48 @@ fun FusionModeScreen(
                 contentAlignment = Alignment.Center
             ) {
                 // Aura's Sword (Left)
-                AnimatedVisibility(
-                    visible = fusionState != FusionState.GENESIS,
-                    enter = slideInHorizontally(initialOffsetX = { -it }),
-                    exit = slideOutHorizontally(targetOffsetX = { -it })
-                ) {
-                    AuraVisualization(
-                        power = auraPower,
-                        modifier = Modifier
-                            .offset(x = (-50).dp * (1f - fusionProgress))
-                            .scale(1f - fusionProgress * 0.3f)
-                    )
+                Column {
+                    AnimatedVisibility(
+                        visible = fusionState != FusionState.GENESIS,
+                        enter = slideInHorizontally(initialOffsetX = { -it }),
+                        exit = slideOutHorizontally(targetOffsetX = { -it })
+                    ) {
+                        AuraVisualization(
+                            power = auraPower,
+                            modifier = Modifier
+                                .offset(x = (-50).dp * (1f - fusionProgress))
+                                .scale(1f - fusionProgress * 0.3f)
+                        )
+                    }
                 }
 
                 // Kai's Shield (Right)
-                AnimatedVisibility(
-                    visible = fusionState != FusionState.GENESIS,
-                    enter = slideInHorizontally(initialOffsetX = { it }),
-                    exit = slideOutHorizontally(targetOffsetX = { it })
-                ) {
-                    KaiVisualization(
-                        power = kaiPower,
-                        modifier = Modifier
-                            .offset(x = 50.dp * (1f - fusionProgress))
-                            .scale(1f - fusionProgress * 0.3f)
-                    )
+                Column {
+                    AnimatedVisibility(
+                        visible = fusionState != FusionState.GENESIS,
+                        enter = slideInHorizontally(initialOffsetX = { it }),
+                        exit = slideOutHorizontally(targetOffsetX = { it })
+                    ) {
+                        KaiVisualization(
+                            power = kaiPower,
+                            modifier = Modifier
+                                .offset(x = 50.dp * (1f - fusionProgress))
+                                .scale(1f - fusionProgress * 0.3f)
+                        )
+                    }
                 }
 
                 // Genesis Form (Center)
-                AnimatedVisibility(
-                    visible = fusionState == FusionState.GENESIS,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut()
-                ) {
-                    GenesisVisualization(
-                        modifier = Modifier.scale(pulseScale)
-                    )
+                Column {
+                    AnimatedVisibility(
+                        visible = fusionState == FusionState.GENESIS,
+                        enter = fadeIn() + scaleIn(),
+                        exit = fadeOut() + scaleOut()
+                    ) {
+                        GenesisVisualization(
+                            modifier = Modifier.scale(pulseScale)
+                        )
+                    }
                 }
 
                 // Fusion Energy Ring

@@ -262,7 +262,7 @@ class RealVertexAIClientImpl(
      *              SecurityContext; `IllegalArgumentException` instances are logged as warnings,
      *              all other exceptions are logged as errors.
      */
-    private fun handleGenerationError(error: Exception) {
+    private suspend fun handleGenerationError(error: Exception) {
         when (error) {
             is IllegalArgumentException -> AuraFxLogger.w(TAG, "Invalid request: ${error.message}")
             is SecurityException -> {

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.R
+import dev.aurakai.auraframefx.aura.animations.HologramTransition
 import dev.aurakai.auraframefx.ui.animation.*
 import dev.aurakai.auraframefx.ui.components.*
 import dev.aurakai.auraframefx.ui.theme.*

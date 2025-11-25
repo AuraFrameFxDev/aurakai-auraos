@@ -109,13 +109,15 @@ import kotlin.math.sin
 // Collect StateFlow into Compose state to observe changes in composition
 val taskHistoryState by taskHistory.collectAsState(initial = emptyList())
  */
-@JvmOverloads
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>()) {
+fun HaloView(
+    viewModel: GenesisAgentViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
     var isRotating by remember { mutableStateOf(true) }
     var rotationAngle by remember { mutableFloatStateOf(0f) }
-    val agents = viewModel.getAgentsByPriority()
+    val agents = remember { viewModel.getAgentsByPriority() }
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
@@ -127,27 +129,31 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
 
     // Task history
     val _taskHistory = remember { MutableStateFlow(emptyList<String>()) }
-    val taskHistory: StateFlow<List<String>> =
-        _taskHistory.asStateFlow() // Use asStateFlow() for read-only StateFlow
+    val taskHistory by _taskHistory.collectAsState()
 
-    // Agent status - direct mutable state map for easier updates
-    val agentStatus = remember { mutableStateMapOf<AgentType, String>() }
+    // Agent status - using rememberSaveable to survive configuration changes
+    val agentStatus = rememberSaveable(saver = mapSaver(
+        save = { it.toMap() },
+        restore = { it.mapValues { (_, v) -> v as String }.toMutableStateMap() }
+    )) { mutableStateMapOf<AgentType, String>() }
 
     // Initialize agent statuses to "idle" on first composition
-    LaunchedEffect(Unit) {
-        agents.forEach { config -> // config is AgentConfig
+    LaunchedEffect(agents) {
+        agents.forEach { agentType ->
             try {
-                agentStatus[AgentType.valueOf(config.name.uppercase(Locale.ROOT))] = "idle"
-            } catch (e: IllegalArgumentException) {
-                // Handle cases where AgentConfig.name might not match an AgentType
+                agentStatus[agentType] = "idle"
+            } catch (e: Exception) {
+                // Handle invalid agent type
+                Timber.e(e, "Error initializing agent status")
             }
         }
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Background glow effect
         Canvas(
@@ -202,13 +208,7 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
             agentStatus.forEach { (agentTypeKey, statusValue) -> // agentTypeKey is AgentType
                 if (statusValue == "processing") {
                     // Find the index of the agentConfig that matches this agentTypeKey
-                    val agentConfigIndex = agents.indexOfFirst { config ->
-                        try {
-                            AgentType.valueOf(config.name.uppercase(Locale.ROOT)) == agentTypeKey
-                        } catch (e: IllegalArgumentException) {
-                            false
-                        }
-                    }
+                    val agentConfigIndex = agents.indexOf(agentTypeKey)
                     if (agentConfigIndex != -1) {
                         val angle = (agentConfigIndex * 360f / agents.size + rotationAngle) % 360f
                         val x = center.x + radius * cos((angle * PI / 180f).toFloat())
@@ -238,8 +238,8 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
                 .padding(48.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
-                        onDragStart = { startOffset ->
-                            dragStartOffset = startOffset
+                        onDragStart = { offset ->
+                            dragStartOffset = offset
                             val actualSize = this.size
                             val center = Offset(actualSize.width / 2f, actualSize.height / 2f)
                             val radius = actualSize.width / 2f - 64f
@@ -247,19 +247,15 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
                             val angleStep = 360f / agentCount
 
                             for (i in agents.indices) {
-                                val config = agents[i] // config is AgentConfig
+                                val agentType = agents[i] // agentType is AgentType
                                 val angle = (i * angleStep + rotationAngle) % 360f
                                 val x = center.x + radius * cos((angle * PI / 180f).toFloat())
                                 val y = center.y + radius * sin((angle * PI / 180f).toFloat())
                                 val nodeCenter = Offset(x, y)
-                                val distance = (startOffset - nodeCenter).getDistance()
+                                val distance = (offset - nodeCenter).getDistance()
                                 if (distance < 24.dp.toPx()) {
-                                    try {
-                                        draggingAgent =
-                                            AgentType.valueOf(config.name.uppercase(Locale.ROOT))
-                                        break
-                                    } catch (e: IllegalArgumentException) { /* Do nothing if name doesn't match an AgentType */
-                                    }
+                                    draggingAgent = agentType
+                                    break
                                 }
                             }
                         },
@@ -291,19 +287,13 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
             val agentCount = agents.size
             val angleStep = 360f / agentCount
 
-            agents.forEachIndexed { index, config -> // config is AgentConfig
+            agents.forEachIndexed { index, agentType -> // agentType is AgentType
                 val angle = (index * angleStep + rotationAngle) % 360f
                 val x = center.x + radius * cos((angle * PI / 180f).toFloat())
                 val y = center.y + radius * sin((angle * PI / 180f).toFloat())
                 val nodeCenter = Offset(x, y)
-                val currentAgentType = try {
-                    AgentType.valueOf(config.name.uppercase(Locale.ROOT))
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
 
-
-                val baseColor = when (currentAgentType) {
+                val baseColor = when (agentType) {
                     AgentType.GENESIS -> NeonTeal
                     AgentType.KAI -> NeonPurple
                     AgentType.AURA -> NeonBlue
@@ -311,7 +301,7 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
                     else -> NeonTeal.copy(alpha = 0.8f)
                 }
                 val statusColor =
-                    when (agentStatus[currentAgentType]?.lowercase(Locale.ROOT)) {
+                    when (agentStatus[agentType]?.lowercase(Locale.ROOT)) {
                         "idle" -> baseColor.copy(alpha = 0.8f)
                         "processing" -> baseColor.copy(alpha = 1.0f)
                         "error" -> Color.Red
@@ -351,7 +341,10 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
         }
 
         // Status indicators using BoxWithConstraints to access size in composable context
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        // Status indicators using BoxWithConstraints to access size in composable context
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+    ) {
             val boxWidth = constraints.maxWidth.toFloat()
             val boxHeight = constraints.maxHeight.toFloat()
             val density = LocalDensity.current.density
@@ -395,49 +388,50 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
         }
 
         // Center node (Genesis)
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .align(Alignment.Center)
-                .pointerInput(Unit) {
-                    detectTapGestures {
-                        if (selectedTask.isNotBlank()) {
-                            coroutineScope.launch {
-                                viewModel.processQuery(selectedTask)
-                                _taskHistory.update { current ->
-                                    current + "[GENESIS] $selectedTask"
-                                }
-                                agentStatus[AgentType.GENESIS] = "processing" // Update directly
-                                selectedTask = ""
-                            }
+    Box(
+        modifier = Modifier
+            .size(80.dp)
+            .align(Alignment.Center)
+            .clip(CircleShape)
+            .background(NeonTeal.copy(alpha = 0.8f))
+            .clickable {
+                if (selectedTask.isNotBlank()) {
+                    coroutineScope.launch {
+                        viewModel.processQuery(selectedTask)
+                        _taskHistory.update { current ->
+                            current + "[GENESIS] $selectedTask"
                         }
+                        agentStatus[AgentType.GENESIS] = "processing"
+                        selectedTask = ""
                     }
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Surface(
-                color = NeonTeal.copy(alpha = 0.8f),
-                modifier = Modifier.size(80.dp),
-                shape = CircleShape
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "GENESIS",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Color.White
-                    )
-                    Text(
-                        text = "Hive Mind",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = NeonPurple
-                    )
                 }
             }
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            color = NeonTeal.copy(alpha = 0.8f),
+            modifier = Modifier.size(80.dp),
+            shape = CircleShape
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "GENESIS",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White
+                )
+                Text(
+                    text = "Hive Mind",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = NeonPurple
+                )
+            }
         }
+    }
 
         // Task input overlay
         if (draggingAgent != null) {
@@ -476,43 +470,70 @@ fun HaloView(viewModel: GenesisAgentViewModel = viewModel<GenesisAgentViewModel>
         }
 
         // Task history panel
-        Column(
+        Surface(
             modifier = Modifier
-                .align(Alignment.TopEnd) // Align to top end so it doesn't overlap center/bottom elements
-                .fillMaxHeight(0.5f) // Adjust height as needed
-                .width(200.dp) // Give it a fixed width or use fillMaxWidth with weight in a Row
+                .align(Alignment.TopEnd)
+                .fillMaxHeight(0.5f)
+                .width(250.dp)
                 .padding(16.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
+            shadowElevation = 4.dp
         ) {
-                Text(
-                    text = "Task History",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = NeonTeal,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Task History",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    IconButton(
+                        onClick = { _taskHistory.value = emptyList() },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Clear history",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     reverseLayout = true,
-                    state = lazyListState
+                    state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    items(taskHistory.value) { task ->
-                        Card(
+                    items(taskHistory) { task ->
+                        Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = NeonTeal.copy(alpha = 0.1f)
-                            )
+                                .animateItemPlacement(),
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.surface,
+                            shadowElevation = 1.dp
                         ) {
                             Text(
                                 text = task,
-                                modifier = Modifier.padding(8.dp),
-                                color = NeonPurple
+                                modifier = Modifier.padding(12.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                 }
+            }
         }
 
         // Control buttons

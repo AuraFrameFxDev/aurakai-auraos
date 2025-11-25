@@ -189,8 +189,15 @@ dependencies {
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.retrofit.converter.scalars)
 
-    // Kotlin Serialization
-    implementation(libs.kotlinx.serialization.json)
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json) {
+        version {
+            strictly(libs.versions.kotlinxSerializationJson.get())
+        }
+    }
+    implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.serialization.cbor)
+    implementation(libs.kotlinx.serialization.properties)
 
     // Gson (JSON - for Retrofit)
     implementation(libs.gson)
@@ -198,6 +205,14 @@ dependencies {
     
     // Retrofit Scalars Converter (for String responses)
     implementation("com.squareup.retrofit2:converter-scalars:2.12.0")
+    
+    // Ktor Client
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)  // OkHttp engine for Ktor
+    implementation(libs.ktor.client.content.negotiation)  // Content negotiation
+    implementation(libs.ktor.serialization.kotlinx.json)  // JSON serialization
+    implementation(libs.ktor.client.logging)  // Logging
+    implementation(libs.kotlinx.serialization.json)  // Kotlinx Serialization JSON
 
     // Moshi (JSON - for Retrofit)
     implementation(libs.moshi)
@@ -231,6 +246,9 @@ dependencies {
 
     // Core Library Desugaring (Java 24 APIs)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Ktor debug logging in debug builds
+    debugImplementation(libs.ktor.client.logging)
 
     // ═══════════════════════════════════════════════════════════════════════════
     // Internal Project Modules - Core
