@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,6 +47,9 @@ class CascadeAgent @Inject constructor(
     // State management
     private val _visionState = MutableStateFlow(VisionState())
     val visionState: StateFlow<VisionState> = _visionState.asStateFlow()
+
+    // Session management
+    private val sessionId: String = "cascade_${System.currentTimeMillis()}"
 
     /**
      * Creates an AiRequest with the given prompt and optional parameters
