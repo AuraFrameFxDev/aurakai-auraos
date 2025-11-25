@@ -1,3 +1,7 @@
+import com.android.aaptcompiler.compileResource
+import org.gradle.api.internal.properties.GradleProperties
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
+
 // ═══════════════════════════════════════════════════════════════════════════
 // PRIMARY CONVENTION PLUGIN - All-in-one Application Configuration
 // ═══════════════════════════════════════════════════════════════════════════
@@ -70,18 +74,12 @@ android {
         compose = true
         viewBinding = true
     }
-
-//    externalNativeBuild {
-//        cmake {
-//            path = file("src/main/cpp/CMakeLists.txt")
-//            version = libs.versions.cmake.get()
-//        }
-//    }
-
-    kotlinOptions {
-        freeCompilerArgs += "-Xcontext-parameters"
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.8.4"
     }
 }
+
+
 
 dependencies {
     // ═══════════════════════════════════════════════════════════════════════════
@@ -103,14 +101,14 @@ dependencies {
 
     // Hilt Dependency Injection (MUST be added before afterEvaluate)
     implementation(libs.hilt.android)
-    
+
     // Network & Serialization
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
-    
+
     // Logging
     implementation(libs.timber)
     // Use the Hilt compiler with KSP (compiler artifact), not the runtime artifact
@@ -207,10 +205,10 @@ dependencies {
     // Gson (JSON - for Retrofit)
     implementation(libs.gson)
     implementation(libs.retrofit.converter.gson)
-    
+
     // Retrofit Scalars Converter (for String responses)
     implementation("com.squareup.retrofit2:converter-scalars:2.12.0")
-    
+
     // Ktor Client
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)  // OkHttp engine for Ktor
