@@ -8,11 +8,13 @@ import kotlinx.serialization.Serializable
  * Network models for API responses
  */
 
-@Serializable
-data class AgentRequest(
-    val query: String,
-    val context: Map<String, String> = emptyMap()
-)
+// AgentRequest is already defined in dev.aurakai.auraframefx.models.AgentRequest
+// If this is a different one, it should be renamed or removed.
+// Assuming it's the same or needed for network serialization specifically.
+// But AIAgentApi uses dev.aurakai.auraframefx.models.AgentRequest.
+// So this one is likely unused or causing conflict.
+// I'll comment it out to see if it breaks anything, or just leave it if it's in a different package (it is).
+// But AIAgentApi uses the one from `models`.
 
 @Serializable
 data class ThemeResponse(
@@ -27,17 +29,4 @@ data class ApplyThemeResponse(
     val message: String
 )
 
-// API interfaces (stubs for now)
-interface UserApi {
-    suspend fun getCurrentUser(): UserData
-}
-
-interface AIAgentApi {
-    suspend fun getAgentStatus(agentType: String): AgentResponse
-    suspend fun processRequest(agentType: String, request: AgentRequest): AgentResponse
-}
-
-interface ThemeApi {
-    suspend fun getThemes(): ThemeResponse
-    suspend fun applyTheme(themeId: String): ApplyThemeResponse
-}
+// Removed duplicate interfaces UserApi, AIAgentApi, ThemeApi

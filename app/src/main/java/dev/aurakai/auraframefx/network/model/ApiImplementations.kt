@@ -1,7 +1,10 @@
 package dev.aurakai.auraframefx.network.model
 
+import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.UserData
+import dev.aurakai.auraframefx.network.AIAgentApi
+import dev.aurakai.auraframefx.network.api.ThemeApi
+import dev.aurakai.auraframefx.network.api.UserApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,11 +13,11 @@ import javax.inject.Singleton
  */
 @Singleton
 class UserApiImpl @Inject constructor() : UserApi {
-    override suspend fun getCurrentUser(): UserData {
+    override suspend fun getCurrentUser(): User {
         // TODO: Implement actual API call
-        return UserData(
+        return User(
             id = "stub-user",
-            name = "Stub User",
+            username = "Stub User",
             email = "stub@aurakai.dev"
         )
     }
@@ -49,22 +52,21 @@ class AIAgentApiImpl @Inject constructor() : AIAgentApi {
  */
 @Singleton
 class ThemeApiImpl @Inject constructor() : ThemeApi {
-    override suspend fun getThemes(): ThemeResponse {
+    override suspend fun getThemes(): List<Theme> {
         // TODO: Implement actual API call
-        return ThemeResponse(
-            themes = listOf(
-                Theme("dark", "Dark Theme", "Default dark theme"),
-                Theme("light", "Light Theme", "Light theme"),
-                Theme("cyberpunk", "Cyberpunk", "Neon cyberpunk theme")
-            )
+        return listOf(
+            Theme("dark", "Dark Theme", "Default dark theme"),
+            Theme("light", "Light Theme", "Light theme"),
+            Theme("cyberpunk", "Cyberpunk", "Neon cyberpunk theme")
         )
     }
 
-    override suspend fun applyTheme(themeId: String): ApplyThemeResponse {
+    override suspend fun applyTheme(themeId: String): Theme {
         // TODO: Implement actual API call
-        return ApplyThemeResponse(
-            success = true,
-            message = "Theme $themeId applied"
-        )
+        return Theme(themeId, "Applied Theme", "Theme applied successfully")
+    }
+
+    override suspend fun getActiveTheme(): Theme {
+        return Theme("dark", "Dark Theme", "Default dark theme", isActive = true)
     }
 }

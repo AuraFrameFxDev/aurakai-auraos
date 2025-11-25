@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.aurakai.auraframefx.BuildConfig
 import dev.aurakai.auraframefx.network.*
+import dev.aurakai.auraframefx.network.api.ThemeApi
+import dev.aurakai.auraframefx.network.api.UserApi
 import dev.aurakai.auraframefx.network.model.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
