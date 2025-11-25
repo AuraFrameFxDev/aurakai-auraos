@@ -69,9 +69,10 @@ class NeuralWhisperAgent @Inject constructor(
             try {
                 // Record this request as a learning event
                 val learningEvent = LearningEvent(
-                    eventType = type,
-                    eventData = mapOf("query" to query, "context" to context),
-                    timestamp = System.currentTimeMillis()
+                    type = type,
+                    content = query,
+                    timestamp = System.currentTimeMillis(),
+                    metadata = context
                 )
                 recordLearningEvent(learningEvent)
             } catch (e: Exception) {
@@ -109,9 +110,10 @@ class NeuralWhisperAgent @Inject constructor(
         Timber.d("NeuralWhisper: Adding scan event to history: $scanEvent")
         // Record as a learning event for pattern recognition
         val learningEvent = LearningEvent(
-            eventType = "scan",
-            eventData = mapOf("scan_event" to scanEvent),
-            timestamp = System.currentTimeMillis()
+            type = "scan",
+            content = scanEvent.toString(),
+            timestamp = System.currentTimeMillis(),
+            metadata = mapOf("scan_event" to scanEvent)
         )
         recordLearningEvent(learningEvent)
     }
