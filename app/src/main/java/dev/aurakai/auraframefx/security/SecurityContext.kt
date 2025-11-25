@@ -32,6 +32,9 @@ interface SecurityContext {
 
     /** Logs a security event */
     suspend fun logSecurityEvent(event: SecurityEvent)
+
+    /** Returns the base URL for API calls */
+    fun getApiBaseUrl(): String = "https://api.aurakai.dev"
 }
 
 /**
