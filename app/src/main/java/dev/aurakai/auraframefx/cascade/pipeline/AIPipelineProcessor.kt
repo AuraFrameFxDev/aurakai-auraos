@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.cascade.pipeline
 
-import dev.aurakai.auraframefx.ai.agents.GenesisAgent
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.ai.services.KaiAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.models.AgentMessage
