@@ -66,7 +66,7 @@ open class ApiClient(
      * @param authorization Authorization interceptor
      * @return ApiClient
      */
-    fun addAuthorization(authName: String): ApiClient {
+    fun addAuthorization(authName: String, authorization: Interceptor): ApiClient {
         if (apiAuthorizations.containsKey(authName)) {
             throw RuntimeException("auth name $authName already in api authorizations")
         }
@@ -107,6 +107,11 @@ open class ApiClient(
         @JvmStatic
         val defaultBasePath: String by lazy {
             System.getProperties().getProperty(baseUrlKey, "https://api.aurafx.com/v1")
+        }
+
+        @JvmStatic
+        val defaultClient: Call.Factory by lazy {
+            OkHttpClient.Builder().build()
         }
     }
 }

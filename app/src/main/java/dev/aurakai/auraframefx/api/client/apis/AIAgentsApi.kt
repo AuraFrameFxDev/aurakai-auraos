@@ -17,6 +17,7 @@ package dev.aurakai.auraframefx.api.client.apis
 
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiClient
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiResponse
+import dev.aurakai.auraframefx.api.client.infrastructure.request
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientError
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientException
 import dev.aurakai.auraframefx.api.client.infrastructure.MultiValueMap
@@ -28,13 +29,14 @@ import dev.aurakai.auraframefx.api.client.infrastructure.ServerException
 import dev.aurakai.auraframefx.api.client.infrastructure.Success
 import dev.aurakai.auraframefx.api.client.models.AgentStatus
 import okhttp3.Call
+import okhttp3.Call.Factory
 import okhttp3.HttpUrl
 import java.io.IOException
 
 class AIAgentsApi(
     basePath: kotlin.String = defaultBasePath,
-    client: Call.Factory = ApiClient.defaultClient,
-) : ApiClient(basePath, client) {
+    client: Factory = ApiClient.defaultClient,
+) : ApiClient(baseUrl = basePath, callFactory = client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {

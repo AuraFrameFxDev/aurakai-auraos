@@ -44,6 +44,8 @@ class KaiAgent @Inject constructor(
     private val systemMonitor: SystemMonitor,
 ) : BaseAgent("KaiAgent") {
 
+    private val sessionId: String? = null
+
     // BaseAgent abstract member implementations
     override val agentName: String = "KaiAgent"
     override val agentType: String = "security"

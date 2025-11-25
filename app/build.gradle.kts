@@ -1,4 +1,5 @@
 import com.android.aaptcompiler.compileResource
+import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import org.gradle.api.internal.properties.GradleProperties
 import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 
@@ -74,12 +75,7 @@ android {
         compose = true
         viewBinding = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.8.4"
-    }
 }
-
-
 
 dependencies {
     // ═══════════════════════════════════════════════════════════════════════════

@@ -15,6 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.apis
 
+import android.view.PixelCopy.request
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiResponse
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientError
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientException
@@ -32,13 +33,13 @@ import okhttp3.HttpUrl
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiClient
 import java.io.IOException
 
-private val ApiClient.Companion.defaultClient: Call.Factory get() = ApiClient.defaultClient
+
 
 
 class TasksApi(
     basePath: kotlin.String = defaultBasePath,
     client: Call.Factory = ApiClient.defaultClient,
-) : ApiClient(basePath, client) {
+) : ApiClient(baseUrl = basePath, callFactory = client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {

@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.network.api
 
 import dev.aurakai.auraframefx.network.KtorClient
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,10 +25,8 @@ class ExampleApiService @Inject constructor(
     suspend fun fetchExampleData(id: String): String {
         return ktorClient.client.get("https://api.example.com/data/") {
             parameter("id", id)
-            headers {
-                append("X-Custom-Header", "CustomValue")
-            }
-        }
+            header("X-Custom-Header", "CustomValue")
+        }.bodyAsText()
     }
     
     /**
@@ -40,7 +39,7 @@ class ExampleApiService @Inject constructor(
         return ktorClient.client.post("https://api.example.com/data/") {
             contentType(ContentType.Application.Json)
             setBody(data)
-        }
+        }.bodyAsText()
     }
     
     /**
@@ -55,7 +54,7 @@ class ExampleApiService @Inject constructor(
             parameter("id", id)
             contentType(ContentType.Application.Json)
             setBody(data)
-        }
+        }.bodyAsText()
     }
     
     /**
