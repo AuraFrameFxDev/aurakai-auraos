@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.serialization
 
-import dev.aurakai.auraframefx.system.lockscreen.model.HapticFeedbackConfig
+import dev.aurakai.auraframefx.ui.HapticFeedbackConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimationConfig
 import kotlinx.datetime.Instant
 import kotlinx.serialization.modules.SerializersModule

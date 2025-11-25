@@ -66,7 +66,7 @@ open class ApiClient(
      * @param authorization Authorization interceptor
      * @return ApiClient
      */
-    fun addAuthorization(authName: String, authorization: Interceptor): ApiClient {
+    fun addAuthorization(authName: String): ApiClient {
         if (apiAuthorizations.containsKey(authName)) {
             throw RuntimeException("auth name $authName already in api authorizations")
         }

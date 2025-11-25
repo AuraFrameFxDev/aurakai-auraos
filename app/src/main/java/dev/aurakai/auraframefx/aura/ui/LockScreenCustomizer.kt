@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import dev.aurakai.auraframefx.system.lockscreen.model.BackgroundConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.ClockConfig
-import dev.aurakai.auraframefx.system.lockscreen.model.HapticFeedbackConfig
+import dev.aurakai.auraframefx.ui.HapticFeedbackConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimation
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenAnimationConfig
 import dev.aurakai.auraframefx.system.lockscreen.model.LockScreenConfig
