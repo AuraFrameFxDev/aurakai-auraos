@@ -40,6 +40,7 @@ android {
         // Get key from: https://aistudio.google.com/app/apikey
         val geminiApiKey = project.findProperty("GEMINI_API_KEY")?.toString() ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://api.aurakai.dev/v1/\"")
 
         externalNativeBuild {
             cmake {

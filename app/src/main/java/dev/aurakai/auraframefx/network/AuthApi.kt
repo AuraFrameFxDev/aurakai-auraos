@@ -1,8 +1,13 @@
 package dev.aurakai.auraframefx.network
 
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+
 /**
- * Placeholder implementation of AuthApi for build compatibility
+ * API interface for authentication operations.
  */
 interface AuthApi {
-    // Add auth API methods as needed
+    @POST("auth/refresh")
+    suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<TokenResponse>
 }
