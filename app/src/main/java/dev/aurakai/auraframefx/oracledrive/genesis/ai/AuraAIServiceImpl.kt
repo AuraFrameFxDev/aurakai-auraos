@@ -123,4 +123,12 @@ class AuraAIServiceImpl @Inject constructor(
             isDark = preferences.isDarkMode
         )
     }
+
+    override suspend fun discernThemeIntent(query: String): String {
+        return "genesis" // Default fallback
+    }
+
+    override suspend fun suggestThemes(contextQuery: String): List<String> {
+        return emptyList()
+    }
 }

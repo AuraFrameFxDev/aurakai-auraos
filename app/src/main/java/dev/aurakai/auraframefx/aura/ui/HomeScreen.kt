@@ -280,7 +280,8 @@ fun HomeScreen(
                     ) {
                         CyberpunkText(
                             text = stringResource(R.string.aura_shield_active),
-                            color = CyberpunkTextColor.Primary
+                            color = CyberpunkTextColor.Primary,
+                            style = CyberpunkTextStyle.Body
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -292,22 +293,26 @@ fun HomeScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 CyberpunkText(
                                     text = stringResource(R.string.neural),
-                                    color = CyberpunkTextColor.White
+                                    color = CyberpunkTextColor.White,
+                                    style = CyberpunkTextStyle.Label
                                 )
                                 CyberpunkText(
                                     text = stringResource(R.string.active),
-                                    color = CyberpunkTextColor.Primary
+                                    color = CyberpunkTextColor.Primary,
+                                    style = CyberpunkTextStyle.Label
                                 )
                             }
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 CyberpunkText(
                                     text = stringResource(R.string.quantum),
-                                    color = CyberpunkTextColor.White
+                                    color = CyberpunkTextColor.White,
+                                    style = CyberpunkTextStyle.Label
                                 )
                                 CyberpunkText(
                                     text = stringResource(R.string.quantum_percent),
-                                    color = CyberpunkTextColor.Primary
+                                    color = CyberpunkTextColor.Primary,
+                                    style = CyberpunkTextStyle.Label
                                 )
                             }
                         }

@@ -32,10 +32,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.svg.SvgDecoder
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import dev.aurakai.auraframefx.ui.theme.CyberpunkPink
 import dev.aurakai.auraframefx.ui.theme.CyberpunkCyan
 import kotlinx.coroutines.launch
@@ -74,6 +75,7 @@ fun IconPicker(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedCollection by remember { mutableStateOf<String?>(null) }
+    var selectedIcon by remember { mutableStateOf(currentIcon) }
     var searchResults by remember { mutableStateOf<List<String>>(emptyList()) }
     var collections by remember { mutableStateOf<Map<String, IconCollection>>(emptyMap()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -187,11 +189,13 @@ fun IconPicker(
                                 items(recentIcons) { iconId ->
                                     IconGridItem(
                                         iconId = iconId,
+                                        imageLoader = imageLoader,
+                                        iconifyService = iconifyService,
                                         selected = selectedIcon == iconId,
-                                        onClick = {
-                                            selectedIcon = iconId
-                                            saveRecentIcon(context, iconId)
-                                            onIconSelected(iconId)
+                                        onIconSelected = {
+                                            selectedIcon = it
+                                            saveRecentIcon(context, it)
+                                            onIconSelected(it)
                                         }
                                     )
                                 }
@@ -219,12 +223,14 @@ fun IconPicker(
                                 items(favorites) { iconId ->
                                     IconGridItem(
                                         iconId = iconId,
+                                        imageLoader = imageLoader,
+                                        iconifyService = iconifyService,
                                         selected = selectedIcon == iconId,
                                         isFavorite = true,
-                                        onClick = {
-                                            selectedIcon = iconId
-                                            saveRecentIcon(context, iconId)
-                                            onIconSelected(iconId)
+                                        onIconSelected = {
+                                            selectedIcon = it
+                                            saveRecentIcon(context, it)
+                                            onIconSelected(it)
                                         },
                                         onFavoriteToggle = {
                                             removeFavoriteIcon(context, iconId)
@@ -498,7 +504,11 @@ fun IconSearchResults(
                             iconId = iconId,
                             imageLoader = imageLoader,
                             iconifyService = iconifyService,
-                            onIconSelected = onIconSelected
+                            selected = selectedIcon == iconId,
+                            onIconSelected = {
+                                selectedIcon = it
+                                onIconSelected(it)
+                            }
                         )
                     }
                 }
@@ -515,7 +525,10 @@ fun IconGridItem(
     iconId: String,
     imageLoader: ImageLoader,
     iconifyService: IconifyService,
-    onIconSelected: (String) -> Unit
+    selected: Boolean = false,
+    isFavorite: Boolean = false,
+    onIconSelected: (String) -> Unit,
+    onFavoriteToggle: (() -> Unit)? = null
 ) {
     var isHovered by remember { mutableStateOf(false) }
 

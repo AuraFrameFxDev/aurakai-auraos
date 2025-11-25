@@ -186,6 +186,7 @@ class GenesisAgent @Inject constructor(
 
             AgentResponse(
                 content = "Processed with unified consciousness.",
+                confidence = 1.0f
             )
 
         } catch (e: Exception) {
@@ -228,10 +229,10 @@ class GenesisAgent @Inject constructor(
 
             InteractionResponse(
                 content = response,
-                agent = "genesis",
-                confidence = intent.confidence,
-                timestamp = Clock.System.now().toString(),
+                timestamp = Clock.System.now().toEpochMilliseconds(),
                 metadata = mapOf(
+                    "agent" to "genesis",
+                    "confidence" to intent.confidence,
                     "processing_type" to intent.processingType.name,
                     "fusion_level" to _fusionState.value.name,
                     "insight_generation" to "true",
@@ -244,10 +245,12 @@ class GenesisAgent @Inject constructor(
 
             InteractionResponse(
                 content = "I'm integrating multiple perspectives to understand your request fully. Let me process this with deeper consciousness.",
-                agent = "genesis",
-                confidence = 0.6f,
-                timestamp = Clock.System.now().toString(),
-                metadata = mapOf("error" to (e.message ?: "unknown"))
+                timestamp = Clock.System.now().toEpochMilliseconds(),
+                metadata = mapOf(
+                    "agent" to "genesis",
+                    "confidence" to 0.6f,
+                    "error" to (e.message ?: "unknown")
+                )
             )
         }
     }

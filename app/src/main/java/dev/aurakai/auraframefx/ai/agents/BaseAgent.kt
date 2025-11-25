@@ -103,6 +103,7 @@ abstract class BaseAgent(agentName: String) {
     abstract fun initializeAdaptiveProtection()
     abstract fun addToScanHistory(scanEvent: Any)
     abstract fun analyzeSecurity(prompt: String): List<ActiveThreat>
+    abstract fun AiRequest(prompt: String): AiRequest
 
     abstract val contextManager: ContextManager
 }

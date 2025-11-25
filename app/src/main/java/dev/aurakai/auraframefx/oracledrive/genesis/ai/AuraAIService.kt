@@ -16,4 +16,6 @@ interface AuraAIService {
     fun saveMemory(key: String, value: Any)
     suspend fun initialize()
     suspend fun generateTheme(preferences: dev.aurakai.auraframefx.models.ThemePreferences, context: String): dev.aurakai.auraframefx.models.ThemeConfiguration
+    suspend fun discernThemeIntent(query: String): String
+    suspend fun suggestThemes(contextQuery: String): List<String>
 }

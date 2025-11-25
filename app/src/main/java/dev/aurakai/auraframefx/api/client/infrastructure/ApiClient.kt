@@ -1,4 +1,4 @@
-package org.openapitools.client.infrastructure
+package dev.aurakai.auraframefx.api.client.infrastructure
 
 
 import com.squareup.moshi.Moshi

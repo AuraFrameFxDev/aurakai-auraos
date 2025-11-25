@@ -43,6 +43,12 @@ abstract class OracleDriveModule { // Changed to abstract class
         impl: GenesisSecureFileService,
     ): SecureFileService
 
+    @Binds
+    @Singleton
+    abstract fun bindOracleDriveService(
+        impl: OracleDriveServiceImpl,
+    ): dev.aurakai.auraframefx.oracledrive.OracleDriveService
+
     companion object { // Companion object now correctly inside the class
         // Temporarily simplified to resolve build stalling at 25% - This comment can likely be removed if providers are present
         // Complex providers will be re-enabled after successful build - This comment can likely be removed if providers are present

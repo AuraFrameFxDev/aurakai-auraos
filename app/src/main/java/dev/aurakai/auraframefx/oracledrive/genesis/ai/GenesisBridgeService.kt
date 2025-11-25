@@ -24,6 +24,8 @@ import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.security.SecurityContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.serialization.encodeToString
+import dev.aurakai.auraframefx.utils.Logger
 
 /**
  * Bridge service connecting the Android frontend with the Genesis Python backend.
@@ -111,9 +113,17 @@ class GenesisBridgeService @Inject constructor(
      * @param request The AI request to process.
      * @return A flow emitting the agent's response to the request.
      */
+
+    /**
+     * Processes an AI request by routing it to the appropriate persona (Kai, Aura, or Genesis fusion) and emits the resulting agent response as a flow.
+     *
+     * Determines the target persona and fusion mode based on the request content, constructs a structured request for the Genesis backend, and emits a persona-specific `AgentResponse` with confidence scores. Emits an error response if the Genesis system is not initialized or if processing fails.
+     *
+     * @param request The AI request to process.
+     * @return A flow emitting the agent's response to the request.
+     */
     suspend fun processRequest(
-        request1: AiRequest,
-        request: String
+        request: AiRequest
     ): Flow<AgentResponse> = flow {
         if (!isInitialized) {
             // Try to initialize if not ready

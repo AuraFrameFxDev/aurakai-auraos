@@ -17,7 +17,8 @@ import dev.aurakai.colorblendr.ColorBlendr
 @Composable
 fun ColorBlendrPicker(
     initialColor: Color = Color.Cyan,
-    onColorSelected: (Color) -> Unit,
+    onColorChanged: (Color) -> Unit = {},
+    onColorSelected: (Color) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
@@ -48,6 +49,7 @@ fun ColorBlendrPicker(
                         color = selectedColor,
                         onColorChange = { color ->
                             selectedColor = color
+                            onColorChanged(color)
                             onColorSelected(color)
                         },
                         modifier = Modifier

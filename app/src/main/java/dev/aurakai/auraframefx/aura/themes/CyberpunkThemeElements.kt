@@ -15,9 +15,9 @@ sealed class CyberpunkTextColor(val color: Color) {
 }
 
 sealed class CyberpunkTextStyle(val textStyle: TextStyle) {
-    object Label : CyberpunkTextStyle(AppTypography.labelMedium) // Example mapping
-    object Body : CyberpunkTextStyle(AppTypography.bodyMedium)   // Example mapping
+    object Label : CyberpunkTextStyle(Typography.labelMedium) // Example mapping
+    object Body : CyberpunkTextStyle(Typography.bodyMedium)   // Example mapping
     object Glitch :
-        CyberpunkTextStyle(AppTypography.bodyMedium.copy(fontFamily = AppTypography.displayLarge.fontFamily)) // Example, maybe a more distinct "glitch" font/style later
+        CyberpunkTextStyle(Typography.bodyMedium.copy(fontFamily = Typography.displayLarge.fontFamily)) // Example, maybe a more distinct "glitch" font/style later
     // Add more as needed
 }

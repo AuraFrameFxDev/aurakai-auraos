@@ -16,6 +16,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.delay
 import kotlin.math.*
 
 /**
@@ -243,8 +248,3 @@ private class TextMeasurer {
     }
 }
 
-/**
- * A preview composable for the NeonText
- */
-@Composable
-@Preview "

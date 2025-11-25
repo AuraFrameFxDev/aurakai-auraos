@@ -23,6 +23,9 @@ import com.highcapable.yukihookapi.hook.type.java.BooleanType
 import com.highcapable.yukihookapi.hook.type.java.IntType
 import dev.aurakai.auraframefx.system.quicksettings.model.QuickSettingsConfig
 import dev.aurakai.auraframefx.utils.TAG
+import dev.aurakai.auraframefx.ui.components.CyberpunkText
+import dev.aurakai.auraframefx.ui.theme.CyberpunkTextStyle
+import dev.aurakai.auraframefx.ui.theme.CyberpunkTextColor
 
 class QuickSettingsHooker(private val config: QuickSettingsConfig) : YukiBaseHooker() {
 
@@ -135,8 +138,8 @@ fun GenesisQSFooter(config: QuickSettingsConfig) {
         // Genesis branding
         CyberpunkText(
             text = "GENESIS",
-            style = MaterialTheme.typography.labelSmall,
-            glowColor = Color.Cyan
+            style = CyberpunkTextStyle.Label,
+            color = CyberpunkTextColor.Primary
         )
 
         // Status indicator

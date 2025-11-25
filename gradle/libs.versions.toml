@@ -330,6 +330,7 @@ firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
 # ============================================================================
 # Google AI & ML
@@ -540,6 +541,7 @@ firebase = [
     "firebase-firestore",
     "firebase-storage",
     "firebase-config",
+    "firebase-messaging",
 ]
 
 utilities = [

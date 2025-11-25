@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.system.lockscreen.model
 
 import dev.aurakai.auraframefx.system.overlay.model.OverlayShape
 import dev.aurakai.auraframefx.ui.model.ImageResource
+import dev.aurakai.auraframefx.ui.HapticFeedbackConfig
 
 /**
  * Configuration for lock screen customization
@@ -25,7 +26,7 @@ data class ClockConfig(
     val fontStyle: String = "default"
 )
 
-import dev.aurakai.auraframefx.ui.HapticFeedbackConfig
+
 
 /**
  * Animation configuration for lock screen
