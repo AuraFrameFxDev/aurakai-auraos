@@ -198,6 +198,7 @@ fun HomeScreen(
                                 primaryColor = NeonPink,
                                 secondaryColor = NeonBlue
                             ),
+                        title = "",
                         cornerStyle = CornerStyle.ROUNDED,
                         backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {
@@ -220,6 +221,7 @@ fun HomeScreen(
                                 primaryColor = NeonCyan,
                                 secondaryColor = NeonBlue
                             ),
+                        title = "",
                         cornerStyle = CornerStyle.ROUNDED,
                         backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {
@@ -242,6 +244,7 @@ fun HomeScreen(
                                 primaryColor = NeonGreen,
                                 secondaryColor = NeonBlue
                             ),
+                        title = "",
                         cornerStyle = CornerStyle.ROUNDED,
                         backgroundStyle = BackgroundStyle.HEX_GRID
                     ) {

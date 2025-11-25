@@ -23,5 +23,7 @@ data class MoodState(
         val EXCITED = MoodState(emotion = Emotion.EXCITED, valence = 0.7f, arousal = 0.9f)
         val CALM = MoodState(emotion = Emotion.SERENE, valence = 0.3f, arousal = -0.8f) // SERENE maps to CALM concept
         val FOCUSED = MoodState(emotion = Emotion.FOCUSED, valence = 0.2f, arousal = 0.4f)
+        val CURIOUS = MoodState(emotion = Emotion.CURIOUS, valence = 0.5f, arousal = 0.6f)
+        val PLAYFUL = MoodState(emotion = Emotion.PLAYFUL, valence = 0.7f, arousal = 0.7f)
     }
 }

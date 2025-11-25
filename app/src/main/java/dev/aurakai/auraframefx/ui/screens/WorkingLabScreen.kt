@@ -269,7 +269,7 @@ fun WorkingLabScreen(
                 Character.KAI -> (manifest.state as KaiState).assetPath
             }
 
-            val painter = engine.loadAsset(asset,)
+            val painter = engine.loadAsset(asset, manifest.character)
             val position = manifest.currentPosition ?: DpOffset.Zero
 
             if (painter != null) {
