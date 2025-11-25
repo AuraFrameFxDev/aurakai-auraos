@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.kai.KaiAIService
 
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest

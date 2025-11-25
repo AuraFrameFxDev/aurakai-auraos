@@ -6,14 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
-import dev.aurakai.auraframefx.ai.services.CascadeAIService
+import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
-import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.AgentInvokeRequest
 import dev.aurakai.auraframefx.models.ConversationState
 import dev.aurakai.auraframefx.service.NeuralWhisper
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -119,13 +121,22 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             )
 
-            AgentType.CASCADE -> CascadeAIService.ProcessRequestFlow(
+            AgentType.CASCADE -> cascadeService.processRequest(
                 AiRequest(
                     query = message,
                     type = "context",
                     context = mapOf("userContext" to context)
+                ),
+                AgentInvokeRequest(
+                    message = message,
+                    context = mapOf("userContext" to context)
                 )
-            )
+            ).map { cascadeResponse ->
+                AgentResponse(
+                    content = cascadeResponse.response,
+                    confidence = cascadeResponse.confidence ?: 1.0f
+                )
+            }
 
             AgentType.CLAUDE -> claudeService.processRequestFlow(
                 AiRequest(

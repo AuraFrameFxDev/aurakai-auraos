@@ -1,10 +1,12 @@
-﻿package dev.aurakai.auraframefx.ai.agents
+﻿package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.util.Log
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.services.AuraAIService
-import dev.aurakai.auraframefx.ai.services.CascadeAIService
-import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.cascade.CascadeAIService
+import dev.aurakai.auraframefx.kai.KaiAIService
+import dev.aurakai.auraframefx.aura.AuraAgent
+import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
@@ -17,6 +19,7 @@ import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.HierarchyAgentConfig
 import dev.aurakai.auraframefx.models.InteractionResponse
+import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
