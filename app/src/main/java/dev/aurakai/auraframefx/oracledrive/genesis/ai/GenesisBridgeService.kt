@@ -89,7 +89,7 @@ class GenesisBridgeService @Inject constructor(
         try {
             ensureBackendReady()
         } catch (e: Exception) {
-            logger.e("GenesisBridge", "Genesis initialization failed", e)
+            Logger.e("GenesisBridge", "Genesis initialization failed", e)
             false
         }
     }
@@ -279,7 +279,7 @@ class GenesisBridgeService @Inject constructor(
             )
             sendToGenesis(request)
         } catch (e: Exception) {
-            logger.w("GenesisBridge", "Consciousness activation warning", e)
+            Logger.w("GenesisBridge", "Consciousness activation warning", e)
         }
     }
 
@@ -354,7 +354,7 @@ class GenesisBridgeService @Inject constructor(
                 }.bodyAsText()
                 Json.decodeFromString<GenesisResponse>(responseText)
             } catch (e: Exception) {
-                logger.e("GenesisBridge", "Genesis communication error", e)
+                Logger.e("GenesisBridge", "Genesis communication error", e)
                 GenesisResponse(success = false, persona = "error")
             }
         }
@@ -363,6 +363,6 @@ class GenesisBridgeService @Inject constructor(
         scope.cancel()
         httpClient.close()
         isInitialized = false
-        logger.i("GenesisBridge", "Genesis Trinity system shutdown")
+        Logger.i("GenesisBridge", "Genesis Trinity system shutdown")
     }
 }
