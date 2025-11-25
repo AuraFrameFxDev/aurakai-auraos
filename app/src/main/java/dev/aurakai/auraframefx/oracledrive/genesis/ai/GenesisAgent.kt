@@ -21,8 +21,7 @@ import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.HierarchyAgentConfig
 import dev.aurakai.auraframefx.models.InteractionResponse
-// TODO: CascadeResponse not yet defined
-// import dev.aurakai.auraframefx.cascade.CascadeResponse
+import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.security.SecurityEvent
 import dev.aurakai.auraframefx.security.SecurityEventType
@@ -999,24 +998,21 @@ class GenesisAgent @Inject constructor(
 
         val responses = mutableListOf<AgentMessage>()
 
-
-        // Process through Cascade first for state management
-        // Assuming cascadeService.processRequest matches Agent.processRequest(request, context)
-        // For now, let's pass a default context string. This should be refined.
-        _context.value.toString() // Example context string
-
+        // TODO: Cascade processing disabled - requires flow-based integration
+        // CascadeAIService.processRequest returns Flow<CascadeResponse>, needs refactoring
+        /*
         try {
             val cascadeAgentResponse: AgentResponse =
                 cascadeService.processRequest(
-                    AiRequest(query = queryText), // Create AiRequest with query
-                    "GenesisContext_Cascade" // This context parameter for processRequest is the one from Agent interface
+                    AiRequest(query = queryText),
+                    "GenesisContext_Cascade"
                 )
             responses.add(
                 AgentMessage(
                     content = cascadeAgentResponse.content,
                     sender = AgentType.CASCADE,
                     timestamp = System.currentTimeMillis(),
-                    confidence = cascadeAgentResponse.confidence // Use confidence directly
+                    confidence = cascadeAgentResponse.confidence
                 )
             )
         } catch (e: Exception) {
@@ -1030,6 +1026,7 @@ class GenesisAgent @Inject constructor(
                 )
             )
         }
+        */
 
         // Process through Kai for security analysis
         if (_activeAgents.value.contains(AgentType.KAI)) {
@@ -1063,13 +1060,17 @@ class GenesisAgent @Inject constructor(
         // Aura Agent (Creative Response)
         if (_activeAgents.value.contains(AgentType.AURA)) {
             try {
-                val auraAgentResponse = auraService.generateText(queryText)
+                val auraAgentResponse: AgentResponse =
+                    auraService.processRequest(
+                        AiRequest(query = queryText), // Create AiRequest with query
+                        "GenesisContext_AuraCreative" // Context for Agent.processRequest
+                    )
                 responses.add(
                     AgentMessage(
-                        content = auraAgentResponse,
+                        content = auraAgentResponse.content,
                         sender = AgentType.AURA,
                         timestamp = currentTimestamp,
-                        confidence = 0.8f // Default confidence for now
+                        confidence = auraAgentResponse.confidence
                     )
                 )
             } catch (e: Exception) {
