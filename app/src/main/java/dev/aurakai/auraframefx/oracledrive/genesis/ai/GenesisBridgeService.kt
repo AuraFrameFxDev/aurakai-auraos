@@ -30,19 +30,12 @@ class GenesisBridgeService @Inject constructor(
     private val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val applicationContext: Context,
+    private val ktorClient: KtorClient
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isInitialized = false
 
     private val httpClient: HttpClient by lazy { ktorClient.client }
-    
-    @Inject
-    constructor(
-        contextManager: ContextManager,
-        securityContext: SecurityContext,
-        applicationContext: Context,
-        private val ktorClient: KtorClient
-    ) : this(contextManager, securityContext, applicationContext)
 
     companion object {
         private const val GENESIS_BACKEND_URL = "http://localhost:5000/genesis"
