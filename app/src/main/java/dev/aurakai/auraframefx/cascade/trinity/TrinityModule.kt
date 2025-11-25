@@ -11,6 +11,7 @@ import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.ai.services.TrinityCoordinatorService
 import dev.aurakai.auraframefx.ai.context.ContextManager
+import dev.aurakai.auraframefx.network.KtorClient
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.security.SecurityMonitor
 import javax.inject.Singleton
@@ -38,11 +39,13 @@ object TrinityModule {
         contextManager: ContextManager,
         securityContext: SecurityContext,
         @ApplicationContext applicationContext: Context,
+        ktorClient: KtorClient,
     ): GenesisBridgeService {
         return GenesisBridgeService(
             contextManager = contextManager,
             securityContext = securityContext,
-            applicationContext = applicationContext
+            applicationContext = applicationContext,
+            ktorClient = ktorClient
         )
     }
 
