@@ -7,9 +7,9 @@ import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
-import dev.aurakai.auraframefx.kai.KaiAgent
+// TODO: KaiAgent not yet implemented
+// import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
 import dev.aurakai.auraframefx.models.AgentMessage
@@ -21,7 +21,8 @@ import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
 import dev.aurakai.auraframefx.models.HierarchyAgentConfig
 import dev.aurakai.auraframefx.models.InteractionResponse
-import dev.aurakai.auraframefx.cascade.CascadeResponse
+// TODO: CascadeResponse not yet defined
+// import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.security.SecurityEvent
 import dev.aurakai.auraframefx.security.SecurityEventType
