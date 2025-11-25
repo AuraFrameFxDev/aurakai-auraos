@@ -8,13 +8,6 @@ data class SecurityState(
     val errorMessage: String? = null
 )
 
-/** Encryption status enum – you can extend it later */
-enum class EncryptionStatus {
-    ENCRYPTED,
-    DECRYPTED,
-    UNKNOWN
-}
-
 /** Public contract for security‑related operations */
 interface SecurityContext {
     /** Read‑only flows – implementations expose mutable backing properties */

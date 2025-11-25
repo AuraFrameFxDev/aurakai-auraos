@@ -25,13 +25,7 @@ data class ClockConfig(
     val fontStyle: String = "default"
 )
 
-/**
- * Haptic feedback configuration
- */
-data class HapticFeedbackConfig(
-    val enabled: Boolean = true,
-    val intensity: Float = 0.5f
-)
+import dev.aurakai.auraframefx.ui.HapticFeedbackConfig
 
 /**
  * Animation configuration for lock screen
