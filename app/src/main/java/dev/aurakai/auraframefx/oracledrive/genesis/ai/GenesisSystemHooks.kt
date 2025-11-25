@@ -13,6 +13,10 @@ import com.highcapable.yukihookapi.hook.type.java.StringType
  * and performance optimization across the Android framework.
  */
 class GenesisSystemHooks : YukiBaseHooker() {
+    override fun onHook() {
+        // Initialize all system hooks
+        initializeSystemHooks(this)
+    }
 
     fun initializeSystemHooks(hooker: YukiBaseHooker) = hooker.apply {
 

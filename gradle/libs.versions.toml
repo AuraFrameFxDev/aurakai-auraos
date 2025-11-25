@@ -155,6 +155,13 @@ kotlinxDatetime = "0.7.1-0.6.x-compat"
 # Kotlinx Serialization - Latest: 1.9.0
 kotlinxSerialization = "1.9.0"
 
+# Network & Serialization
+retrofit = "2.11.0"
+converterMoshi = "2.11.0"
+moshi = "1.16.0"
+moshiKotlin = "1.16.0"
+timber = "5.1.1"
+
 # ============================================================================
 # Utilities
 # ============================================================================
@@ -272,6 +279,14 @@ ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "symbol-processi
 google-services-gradle-plugin = { group = "com.google.gms.google-services", name = "google-services", version.ref = "googleServices" }
 gradle-core = { group = "org.gradle", name = "gradle-core", version.ref = "gradleCore" }
 foojayresolver = { group = "org.gradle.toolchains", name = "foojay-resolver", version.ref = "foojayResolver" }
+
+# Network & Serialization Libraries
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "converterMoshi" }
+moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiKotlin" }
+moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshiKotlin" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 # ============================================================================
 # AndroidX & Jetpack

@@ -254,18 +254,6 @@ class LockScreenCustomizer @Inject constructor(
     }
 
     private suspend fun loadConfiguration() {
-        try {
-            // Load from SharedPreferences or use defaults
-            val config = loadConfigurationFromPrefs() ?: getDefaultConfig()
-            _currentConfig.value = config
-        } catch (e: Exception) {
-            AuraFxLogger.warn("LockScreenCustomizer", "Failed to load configuration, using defaults", e)
-            _currentConfig.value = getDefaultConfig()
-        }
-    }
-
-    private fun loadConfigurationFromPrefs(): LockScreenConfig? {
-        // Implementation for loading from SharedPreferences
         // This would deserialize JSON or use structured preference keys
         return null // Placeholder
     }

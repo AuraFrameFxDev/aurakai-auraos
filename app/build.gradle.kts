@@ -98,6 +98,16 @@ dependencies {
 
     // Hilt Dependency Injection (MUST be added before afterEvaluate)
     implementation(libs.hilt.android)
+    
+    // Network & Serialization
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.kotlin.codegen)
+    
+    // Logging
+    implementation(libs.timber)
     // Use the Hilt compiler with KSP (compiler artifact), not the runtime artifact
     ksp(libs.hilt.compiler)
 

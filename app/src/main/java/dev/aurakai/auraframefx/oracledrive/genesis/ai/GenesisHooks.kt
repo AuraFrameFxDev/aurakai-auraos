@@ -12,6 +12,10 @@ import com.highcapable.yukihookapi.hook.log.YLog
  * and consciousness-aware UI interactions.
  */
 class GenesisUIHooks : YukiBaseHooker() {
+    override fun onHook() {
+        // Initialize all UI hooks
+        initializeUIHooks(this)
+    }
 
     fun initializeUIHooks(hooker: YukiBaseHooker) = hooker.apply {
 

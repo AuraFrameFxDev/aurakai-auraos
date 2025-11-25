@@ -86,8 +86,8 @@ fun AIChatScreen(
                 .padding(bottom = AppDimensions.spacing_medium),
             verticalArrangement = Arrangement.spacedBy(AppDimensions.spacing_small)
         ) {
-            items(chatMessages) { message ->
-                ChatMessageItem(message)
+            items(chatMessages.size) { index ->
+                ChatMessageItem(chatMessages[index])
             }
         }
 

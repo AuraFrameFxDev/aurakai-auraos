@@ -107,7 +107,7 @@ fun ThemePreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun LightThemePreview() {
-    AuraFrameFXTheme(useDarkTheme = false) {
+    AuraFrameFXTheme(darkTheme = false) {
         ThemePreview()
     }
 }
@@ -118,7 +118,7 @@ fun LightThemePreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun DarkThemePreview() {
-    AuraFrameFXTheme(useDarkTheme = true) {
+    AuraFrameFXTheme(darkTheme = true) {
         ThemePreview()
     }
 }
@@ -129,7 +129,7 @@ fun DarkThemePreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun DynamicThemePreview() {
-    AuraFrameFXTheme(useDarkTheme = true, dynamicColor = true) {
+    AuraFrameFXTheme(darkTheme = true) {
         ThemePreview()
     }
 }

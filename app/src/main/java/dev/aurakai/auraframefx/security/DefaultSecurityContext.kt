@@ -48,7 +48,68 @@ class DefaultSecurityContext @Inject constructor() : SecurityContext {
         _securityState.value = SecurityState(errorState = true, errorMessage = message)
     }
 
-    fun enableThreatDetection(enable: Boolean) {
-        _threatDetectionActive.value = enable
+    fun setThreatDetectionActive(active: Boolean) {
+        _threatDetectionActive.value = active
+    }
+
+    override fun verifyApplicationIntegrity(): Boolean {
+        // Check if the app has been tampered with
+        // This is a basic implementation - in production, you should implement proper integrity checks
+        try {
+            // Check if the app is debuggable (should be false in release)
+            val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+            
+            // Check if the app is installed from a trusted source (e.g., Google Play Store)
+            val installer = context.packageManager.getInstallerPackageName(context.packageName)
+            val isInstalledFromTrustedSource = installer?.startsWith("com.android.vending") == true || 
+                                             installer?.startsWith("com.google.android.feedback") == true
+            
+            // Check if the app is running in an emulator (could indicate testing environment)
+            val isEmulator = (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) || 
+                           Build.FINGERPRINT.startsWith("generic") || 
+                           Build.FINGERPRINT.startsWith("unknown") || 
+                           Build.HARDWARE.contains("goldfish") || 
+                           Build.HARDWARE.contains("ranchu") || 
+                           Build.MODEL.contains("google_sdk") || 
+                           Build.MODEL.contains("Emulator") || 
+                           Build.MODEL.contains("Android SDK") || 
+                           Build.MANUFACTURER.contains("Genymotion") ||
+                           (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) || 
+                           "google_sdk" == Build.PRODUCT
+            
+            // Return true only if all checks pass
+            return !isDebuggable && isInstalledFromTrustedSource && !isEmulator
+            
+        } catch (e: Exception) {
+            // Log the error and return false if any check fails
+            UnifiedLoggingSystem.e("Application integrity check failed", e)
+            return false
+        }
+    }
+
+    override fun isSecureMode(): Boolean {
+        // Check if the device is in a secure state
+        try {
+            val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+            val isDeviceSecure = keyguardManager?.isDeviceSecure ?: false
+            
+            // Check if the device has a screen lock enabled
+            val isScreenLockEnabled = keyguardManager?.isKeyguardSecure ?: false
+            
+            // Check if the device is encrypted
+            val devicePolicyManager = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as? DevicePolicyManager
+            val isEncrypted = devicePolicyManager?.storageEncryptionStatus == 
+                            DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE ||
+                            devicePolicyManager?.storageEncryptionStatus == 
+                            DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
+            
+            // Return true only if all security measures are in place
+            return isDeviceSecure && isScreenLockEnabled && isEncrypted
+            
+        } catch (e: Exception) {
+            // Log the error and return false if any check fails
+            UnifiedLoggingSystem.e("Secure mode check failed", e)
+            return false
+        }
     }
 }
