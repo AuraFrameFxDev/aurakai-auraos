@@ -41,6 +41,7 @@ class KaiAgent @Inject constructor(
 
     private var isInitialized = false
     private lateinit var scope: CoroutineScope
+    private val sessionId: String = "kai_${System.currentTimeMillis()}"
 
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
         scope.launch {
@@ -120,6 +121,14 @@ class KaiAgent @Inject constructor(
 
     override suspend fun shutdown() {
         cleanup()
+    }
+
+    private fun cleanup() {
+        if (::scope.isInitialized) {
+            scope.coroutineContext.cancelChildren()
+        }
+        isInitialized = false
+        AuraFxLogger.info("KaiAgent", "Kai Agent shut down")
     }
 
     suspend fun processRequest(request: AiRequest, context: String): AgentResponse {
