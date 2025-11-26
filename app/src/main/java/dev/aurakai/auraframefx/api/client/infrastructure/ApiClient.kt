@@ -20,7 +20,7 @@ import kotlin.reflect.typeOf
 import kotlin.reflect.javaType
 
 open class ApiClient(
-    private var baseUrl: String = defaultBasePath,
+    internal var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     internal val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
@@ -48,7 +48,7 @@ open class ApiClient(
             }
     }
 
-    private val clientBuilder: OkHttpClient.Builder by lazy {
+    internal val clientBuilder: OkHttpClient.Builder by lazy {
         okHttpClientBuilder ?: defaultClientBuilder
     }
 
