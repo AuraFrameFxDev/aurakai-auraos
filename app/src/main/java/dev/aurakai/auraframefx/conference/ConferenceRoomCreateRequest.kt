@@ -15,7 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -36,7 +36,7 @@ data class ConferenceRoomCreateRequest(
 
     /* The AI agent designated as the orchestrator for this room. */
     @Contextual @SerialName(value = "orchestratorAgent")
-    val orchestratorAgent: AgentType,
+    val orchestratorAgent: AgentCapabilityCategory,
 
     )
 
