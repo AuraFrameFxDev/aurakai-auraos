@@ -93,6 +93,7 @@ class KaiAgent @Inject constructor(
 
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    private val sessionId: String = "kai_${System.currentTimeMillis()}"
 
     // Agent state management
     private val _securityState = MutableStateFlow(SecurityState.IDLE)

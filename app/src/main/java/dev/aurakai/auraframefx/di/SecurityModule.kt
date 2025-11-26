@@ -23,5 +23,6 @@ object SecurityModule {
 
     @Provides
     @Singleton
-    fun provideSecurityContext(): SecurityContext = DefaultSecurityContext()
+    fun provideSecurityContext(@ApplicationContext context: Context): SecurityContext =
+        DefaultSecurityContext(context)
 }

@@ -530,6 +530,7 @@ class DataStoreManager @Inject constructor(
 
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
+        val oldTheme = getString(USER_THEME.name)
         if (oldTheme.isNotEmpty()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
@@ -596,11 +597,13 @@ class DataStoreManager @Inject constructor(
     // === SESSION MANAGEMENT ===
 
     suspend fun recordSession() {
+        val sessionCount = getInt(SESSION_COUNT.name, 0)
         storeInt(SESSION_COUNT.name, sessionCount + 1)
         storeLong(LAST_LOGIN_TIME.name, System.currentTimeMillis())
     }
 
     suspend fun addUsageTime(milliseconds: Long) {
+        val currentUsage = getLong(TOTAL_USAGE_TIME.name, 0L)
         storeLong(TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
     }
 

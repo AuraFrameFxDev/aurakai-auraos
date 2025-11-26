@@ -15,7 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -48,7 +48,7 @@ data class HistoricalTask(
 
     /* The agent that executed the task. */
     @Contextual @SerialName(value = "agentType")
-    val agentType: AgentType,
+    val agentType: AgentCapabilityCategory,
 
     @SerialName(value = "status")
     val status: HistoricalTask.Status,
