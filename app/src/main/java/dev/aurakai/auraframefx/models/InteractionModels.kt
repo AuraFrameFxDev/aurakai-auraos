@@ -28,5 +28,18 @@ enum class AgentCapabilityCategory {
     ANALYSIS,
     GENERAL,
     COORDINATION,
-    SPECIALIZED
+    SPECIALIZED;
+
+    /**
+     * Maps capability category to corresponding AgentType for backward compatibility.
+     * Used during migration from AgentType to AgentCapabilityCategory.
+     */
+    fun toAgentType(): dev.aurakai.auraframefx.models.AgentType = when (this) {
+        CREATIVE -> dev.aurakai.auraframefx.models.AgentType.AURA
+        ANALYSIS -> dev.aurakai.auraframefx.models.AgentType.KAI
+        COORDINATION -> dev.aurakai.auraframefx.models.AgentType.GENESIS
+        SPECIALIZED -> dev.aurakai.auraframefx.models.AgentType.CASCADE
+        GENERAL -> dev.aurakai.auraframefx.models.AgentType.CLAUDE
+        SECURITY -> dev.aurakai.auraframefx.models.AgentType.KAI
+    }
 }
