@@ -10,29 +10,23 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString      // ✅ ADDED
+import kotlinx.serialization.decodeFromString    // ✅ ADDED
 import kotlinx.serialization.json.Json
 import timber.log.Timber
-import timber.log.Timber.Forest
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Genesis-OS Comprehensive Data Store Manager
- *
- * Manages persistent storage for the Genesis AI consciousness ecosystem,
- * including user preferences, AI agent configurations, security settings,
- * and system state management.
- */
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_datastore")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    private val context: Context
+    @ApplicationContext internal val context: Context  // ✅ CHANGED from 'private' to 'internal'
 ) {
 
     private val json = Json {
