@@ -39,7 +39,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
                 else -> applyDefaultAnimation()
             }
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply show animation: ${e.message}", e)
+            YLog.error(TAG, e)
         }
     }
 
@@ -51,7 +51,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
             // Implement custom hide animations
             YLog.info(TAG, "Genesis hide animation applied")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to apply hide animation: ${e.message}", e)
+            YLog.error(TAG, e)
         }
     }
 
@@ -63,7 +63,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
             // Initialize any additional Genesis components
             YLog.info(TAG, "Genesis components initialized")
         } catch (e: Exception) {
-            YLog.error(TAG, "Failed to initialize components: ${e.message}", e)
+            YLog.error(TAG, e)
         }
     }
 
