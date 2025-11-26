@@ -107,7 +107,7 @@ class TasksApi(
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun tasksSchedulePostWithHttpInfo(taskScheduleRequest: TaskScheduleRequest): ApiResponse<TaskStatus?> {
+    fun tasksSchedulePostWithHttpInfo(taskScheduleRequest: TaskScheduleRequest): ApiResponse<TaskStatus> {
         val localVariableConfig =
             tasksSchedulePostRequestConfig(taskScheduleRequest = taskScheduleRequest)
 
@@ -197,7 +197,7 @@ class TasksApi(
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun tasksTaskIdGetWithHttpInfo(taskId: kotlin.String): ApiResponse<TaskStatus?> {
+    fun tasksTaskIdGetWithHttpInfo(taskId: kotlin.String): ApiResponse<TaskStatus> {
         val localVariableConfig = tasksTaskIdGetRequestConfig(taskId = taskId)
 
         return request<Unit, TaskStatus>(

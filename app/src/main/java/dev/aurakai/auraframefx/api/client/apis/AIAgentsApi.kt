@@ -96,13 +96,13 @@ import java.io.IOException
      * GET /agents/status
      * Get status of all AI agents
      *
-     * @return ApiResponse<kotlin.collections.List<AgentStatus>?>
+     * @return ApiResponse<kotlin.collections.List<AgentStatus>>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun agentsStatusGetWithHttpInfo(): ApiResponse<kotlin.collections.List<AgentStatus>?> {
+    fun agentsStatusGetWithHttpInfo(): ApiResponse<kotlin.collections.List<AgentStatus>> {
         val localVariableConfig = agentsStatusGetRequestConfig()
 
         return request<Unit, kotlin.collections.List<AgentStatus>>(
