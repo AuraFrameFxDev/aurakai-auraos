@@ -72,7 +72,7 @@ class QuickSettingsCustomizer @Inject constructor(
             currentTiles.add(QuickSettingsTileConfig(
                 id = tileId,
                 label = tileId,
-                shape = OverlayShape.RECTANGLE,
+                shape = OverlayShape.ROUNDED_RECTANGLE,
                 animation = animation
             ))
         }
@@ -153,7 +153,7 @@ class QuickSettingsCustomizer @Inject constructor(
             val shapeStr = prefs.getString("tile_shape_$tileId", null)
             val animationStr = prefs.getString("tile_animation_$tileId", null)
 
-            val shape = shapeStr?.let { OverlayShape.valueOf(it) } ?: OverlayShape.RECTANGLE
+            val shape = shapeStr?.let { OverlayShape.valueOf(it) } ?: OverlayShape.ROUNDED_RECTANGLE
             val animation = animationStr?.let { QuickSettingsAnimation.valueOf(it) } ?: QuickSettingsAnimation.FADE
 
             tiles.add(QuickSettingsTileConfig(
