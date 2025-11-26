@@ -5,7 +5,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.kai.system.UnifiedLoggingSystem
+import dev.aurakai.auraframefx.utils.logging.UnifiedLoggingSystem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
