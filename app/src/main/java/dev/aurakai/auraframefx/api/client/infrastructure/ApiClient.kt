@@ -20,9 +20,9 @@ import kotlin.reflect.typeOf
 import kotlin.reflect.javaType
 
 open class ApiClient(
-    internal var baseUrl: String = defaultBasePath,
+    var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
-    internal val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
+    val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
     private val callAdapterFactories: List<CallAdapter.Factory> = listOf(),
     private val converterFactories: List<Converter.Factory> = listOf(
@@ -48,7 +48,7 @@ open class ApiClient(
             }
     }
 
-    internal val clientBuilder: OkHttpClient.Builder by lazy {
+    val clientBuilder: OkHttpClient.Builder by lazy {
         okHttpClientBuilder ?: defaultClientBuilder
     }
 
