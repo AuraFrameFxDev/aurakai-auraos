@@ -251,13 +251,11 @@ class AIPipelineProcessor @Inject constructor(
     }
 
     /**
-     * Selects a set of AI agent types to process a task based on its content and calculated priority.
+     * Chooses AI capability categories to involve for a given task based on its content, complexity, and priority.
      *
-     * Agents are chosen by analyzing task keywords, complexity, and priority to ensure relevant expertise and redundancy for critical or complex tasks.
-     *
-     * @param task The task description used to determine agent selection.
-     * @param priority The priority score of the task, which increases agent redundancy for high values.
-     * @return A set of agent types assigned to handle the task.
+     * @param task The task description used to evaluate keywords and complexity.
+     * @param priority A priority score (typically 0.0–1.0) that increases redundancy for higher values.
+     * @return A set of selected AgentCapabilityCategory values to assign to the task.
      */
     private fun selectAgents(task: String, priority: Float): Set<AgentCapabilityCategory> {
         // Intelligent agent selection based on task characteristics and priority
@@ -300,12 +298,12 @@ class AIPipelineProcessor @Inject constructor(
     }
 
     /**
-     * Aggregates and formats messages from multiple AI agents into a comprehensive final response.
+     * Synthesize and format messages from multiple agent capabilities into a single human-readable response.
      *
-     * The output includes a primary analysis from the Genesis agent if available, supplementary inputs from other agents with corresponding icons, and an overall average confidence score. Returns a default message if no responses are provided.
+     * Includes the primary COORDINATION response when present, sections for other capability inputs with corresponding icons, and an overall average confidence percentage.
      *
-     * @param responses The list of agent messages to aggregate.
-     * @return A formatted string representing the synthesized AI response, or a default message if no responses are available.
+     * @param responses The list of agent messages to aggregate and present.
+     * @return The assembled response string; if no responses are provided, returns "[System] No agent responses available."
      */
     private fun generateFinalResponse(responses: List<AgentMessage>): String {
         // Sophisticated response synthesis from multiple agents
@@ -425,4 +423,3 @@ class AIPipelineProcessor @Inject constructor(
         }
     }
 }
-

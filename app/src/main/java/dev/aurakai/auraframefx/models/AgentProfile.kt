@@ -261,7 +261,10 @@ object AgentProfiles {
     )
 
     /**
-     * Get profile by agent type
+     * Retrieve the predefined agent profile corresponding to the given capability category.
+     *
+     * @param agentType The capability category used to select a predefined profile.
+     * @return The matching predefined `AgentProfile`, or `null` if no profile exists for the category.
      */
     fun getProfile(agentType: AgentCapabilityCategory): AgentProfile? {
         return when (agentType) {

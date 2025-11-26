@@ -319,7 +319,15 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === COMPLEX OBJECT OPERATIONS ===
+    /**
+     * Persists a generic object by serializing it to JSON and storing it under the provided key.
+     *
+     * Serializes `obj` using the configured Kotlinx `Json` instance and saves the resulting JSON string
+     * in the preferences datastore accessible by `key`. Existing value for the key will be overwritten.
+     *
+     * @param key The preference key under which the serialized object will be stored.
+     * @param obj The object to serialize and persist.
+     */
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
@@ -331,6 +339,13 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves the JSON-serialized value stored under the given key and deserializes it to `T`.
+     *
+     * @param key The preference key storing the JSON string.
+     * @param defaultValue Value returned when the stored string is missing, empty, or cannot be parsed.
+     * @return The deserialized `T` from storage, or `defaultValue` if absent or on error.
+     */
     suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
@@ -345,6 +360,15 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Observes a JSON-serialized object stored under the given key and emits deserialized instances.
+     *
+     * Emits `defaultValue` when the stored string is empty or when JSON parsing fails.
+     *
+     * @param key The preferences key under which the JSON string is stored.
+     * @param defaultValue Value to emit when there is no stored JSON or when deserialization fails.
+     * @return A Flow that emits the deserialized `T` for each update of the stored JSON string.
+     */
     inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
@@ -581,6 +605,13 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Computes the character length of the JSON-encoded export of all stored settings.
+     *
+     * Serializes all settings returned by exportAllSettings() to JSON and returns the length of the resulting string as a Long. If serialization or retrieval fails, returns 0.
+     *
+     * @return The number of characters in the JSON representation of all settings as a `Long`; `0` if an error occurs.
+     */
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
