@@ -132,8 +132,8 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             ).map { cascadeResponse ->
                 AgentResponse(
-                    content = cascadeResponse.content, // Assuming AgentResponse has content
-                    confidence = cascadeResponse.confidence
+                    content = cascadeResponse.response,
+                    confidence = cascadeResponse.confidence ?: 0.0f
                 )
             }
 
