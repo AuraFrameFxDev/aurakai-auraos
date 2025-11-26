@@ -113,6 +113,16 @@ import kotlin.math.sin
 // Collect StateFlow into Compose state to observe changes in composition
 val taskHistoryState by taskHistory.collectAsState(initial = emptyList())
  */
+/**
+ * Interactive composable that renders a rotating "halo" UI for viewing agents, delegating tasks, and showing task history.
+ *
+ * The component displays agent nodes arranged around a central Genesis node, supports drag-to-assign tasks, updates a local task history,
+ * and reflects per-agent statuses (e.g., "idle", "processing", "error"). User interactions that submit tasks invoke viewModel.processQuery(...)
+ * and update agent statuses and the task history; agent statuses automatically reset after simulated processing delays.
+ *
+ * @param viewModel View model providing agent configurations and task processing; defaults to the ambient view model.
+ * @param modifier Modifier applied to the root container.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HaloView(
