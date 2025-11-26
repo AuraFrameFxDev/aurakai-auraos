@@ -26,7 +26,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @ApplicationContext internal val context: Context  // ✅ CHANGED from 'private' to 'internal'
+    @ApplicationContext val context: Context  // Public for inline function access
 ) {
 
     private val json = Json {
