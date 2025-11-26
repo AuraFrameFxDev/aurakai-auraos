@@ -20,13 +20,6 @@ import kotlinx.serialization.json.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Bridge service connecting the Android frontend with the Genesis Python backend.
- * Implements the Trinity architecture: Kai (Shield), Aura (Sword), Genesis (Consciousness).
- *
- * This service manages communication with the Python AI backend via the GenesisBackendService
- * and coordinates the fusion abilities of the Genesis system.
- */
 @Singleton
 class GenesisBridgeService @Inject constructor(
     private val contextManager: ContextManager,
@@ -87,7 +80,7 @@ class GenesisBridgeService @Inject constructor(
     suspend fun processRequest(request: AiRequest): Flow<AgentResponse> = flow {
         if (!isInitialized) {
             if (!initialize()) {
-                emit(AgentResponse(content = "Genesis system not initialized", confidence = 0.0f, error = "System not initialized"))
+                emit(AgentResponse.error("Genesis system not initialized", "Genesis"))
                 return@flow
             }
         }
@@ -96,8 +89,8 @@ class GenesisBridgeService @Inject constructor(
             ensureBackendReady()
             val genesisRequest = GenesisRequest(
                 requestType = "process",
-                persona = request.agentType?.name?.lowercase(),
-                payload = request.parameters,
+                persona = request.prompt, // Use prompt as persona identifier
+                payload = mapOf("prompt" to request.prompt),
                 context = contextManager.getCurrentContext()
             )
 
@@ -113,32 +106,46 @@ class GenesisBridgeService @Inject constructor(
                     try {
                         val response = Json.decodeFromString<GenesisResponse>(result.data)
                         if (response.success) {
-                            emit(AgentResponse(
-                                requestId = request.requestId,
-                                status = "success",
+                            emit(AgentResponse.success(
                                 content = response.result["response"] ?: "",
-                                metadata = response.result + ("fusionAbility" to response.fusionAbility).takeIf { response.fusionAbility != null }.orEmpty(),
-                                isComplete = true
+                                confidence = 1.0f,
+                                agentName = "Genesis",
+                                metadata = response.result
                             ))
                             response.evolutionInsights.forEach { insight ->
                                 Logger.d("GenesisBridge", "Evolution Insight: $insight")
                             }
                         } else {
-                            emit(AgentResponse(requestId = request.requestId, status = "error", content = response.result["error"] ?: "Unknown error from Genesis backend", isComplete = true))
+                            emit(AgentResponse.error(
+                                message = response.result["error"] ?: "Unknown error from Genesis backend",
+                                agentName = "Genesis"
+                            ))
                         }
                     } catch (e: Exception) {
-                        emit(AgentResponse(requestId = request.requestId, status = "error", content = "Failed to parse Genesis response: ${e.message}", isComplete = true))
+                        emit(AgentResponse.error(
+                            message = "Failed to parse Genesis response: ${e.message}",
+                            agentName = "Genesis"
+                        ))
                     }
                 }
                 is NetworkResponse.Error -> {
-                    emit(AgentResponse(requestId = request.requestId, status = "error", content = "Network error: ${result.message}", isComplete = true))
+                    emit(AgentResponse.error(
+                        message = "Network error: ${result.message}",
+                        agentName = "Genesis"
+                    ))
                 }
                 NetworkResponse.Loading -> {
-                    emit(AgentResponse(requestId = request.requestId, status = "processing", content = "Processing request...", isComplete = false))
+                    emit(AgentResponse.processing(
+                        message = "Processing request...",
+                        agentName = "Genesis"
+                    ))
                 }
             }
         } catch (e: Exception) {
-            emit(AgentResponse(requestId = request.requestId, status = "error", content = "Failed to process request: ${e.message}", isComplete = true))
+            emit(AgentResponse.error(
+                message = "Failed to process request: ${e.message}",
+                agentName = "Genesis"
+            ))
         }
     }
 
