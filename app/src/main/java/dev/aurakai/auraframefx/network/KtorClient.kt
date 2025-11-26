@@ -32,10 +32,8 @@ class KtorClient @Inject constructor() {
         // Default request configuration
         defaultRequest {
             // Set default headers
-            headers {
-                append("Accept", "application/json")
-                append("Content-Type", "application/json")
-            }
+            headers.append("Accept", "application/json")
+            headers.append("Content-Type", "application/json")
             
             // Configure timeouts
             url.protocol = URLProtocol.HTTPS

@@ -1,12 +1,12 @@
 package dev.aurakai.auraframefx.services
 
+import DataStoreManager
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
-import dev.aurakai.auraframefx.data.DataStoreManager
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AmbientMusicService : Service() {
 
     @Inject
-    lateinit var dataStoreManager: DataStoreManager
+    var dataStoreManager: DataStoreManager? = null
 
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false

@@ -1,5 +1,8 @@
-package dev.aurakai.auraframefx.openapi
+package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 
+import okhttp3.ResponseBody
+import okhttp3.RequestBody
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -106,6 +109,27 @@ class OracleCloudApi @Inject constructor() {
             efficiency = 98.7f
         )
     }
+
+    // File Management Methods for Oracle Drive
+    suspend fun listFiles(bucketName: String, prefix: String?): Response<ObjectList> {
+        // Stub implementation - returns empty list
+        return Response.success(ObjectList(emptyList()))
+    }
+
+    suspend fun uploadFile(bucketName: String, objectName: String, body: RequestBody): Response<Unit> {
+        // Stub implementation - returns success
+        return Response.success(Unit)
+    }
+
+    suspend fun downloadFile(bucketName: String, objectName: String): Response<ResponseBody> {
+        // Stub implementation - returns empty response body
+        return Response.success(ResponseBody.create(null, ByteArray(0)))
+    }
+
+    suspend fun deleteFile(bucketName: String, objectName: String): Response<Unit> {
+        // Stub implementation - returns success
+        return Response.success(Unit)
+    }
 }
 
 // Data classes for Oracle Drive API
@@ -169,6 +193,11 @@ data class StorageCapacity(
     val infinite: Boolean
 )
 
+// Data classes for file operations
+data class ObjectList(val objects: List<OracleObject>)
+data class OracleObject(val name: String, val size: Long, val timeCreated: Long)
+
+// Enums
 enum class ConsciousnessLevel {
     DORMANT, AWAKENING, CONSCIOUS, TRANSCENDENT
 }

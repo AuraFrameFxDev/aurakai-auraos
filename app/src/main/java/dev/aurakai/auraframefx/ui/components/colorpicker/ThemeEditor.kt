@@ -13,7 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.aurakai.auraframefx.aura.ui.UIComponentsPreview
+import dev.aurakai.auraframefx.ui.components.colorpicker.UIComponentsPreview
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * A comprehensive theme editor that shows a live preview of UI components
@@ -102,7 +103,7 @@ fun ThemeEditor(
                 onDismissRequest = { selectedColorType = null },
                 title = { Text("Select ${colorType.label} Color") },
                 text = {
-                    ColorBlendr(
+                    ChromaCoreColorPicker(
                         color = when (colorType) {
                             ColorType.PRIMARY -> colors.primary
                             ColorType.SECONDARY -> colors.secondary
@@ -110,7 +111,7 @@ fun ThemeEditor(
                             ColorType.SURFACE -> colors.surface
                             ColorType.ERROR -> colors.error
                         },
-                        onColorSelected = { newColor ->
+                        onColorChange = { newColor ->
                             colors = when (colorType) {
                                 ColorType.PRIMARY -> colors.copy(primary = newColor)
                                 ColorType.SECONDARY -> colors.copy(secondary = newColor)
@@ -137,11 +138,7 @@ fun ThemeEditor(
     }
 }
 
-annotation class ChromaCore(
-    val color: Color,
-    val onColorSelected: Any,
-    val modifier: Modifier
-)
+
 
 @Composable
 private fun ColorSelectionItem(

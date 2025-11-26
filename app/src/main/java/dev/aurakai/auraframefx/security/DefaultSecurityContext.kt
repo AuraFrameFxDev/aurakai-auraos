@@ -5,7 +5,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.utils.UnifiedLoggingSystem
+import dev.aurakai.auraframefx.utils.logging.UnifiedLoggingSystem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class DefaultSecurityContext @Inject constructor(
 
     // Backing mutable flows – private to this class
     private val _securityState = MutableStateFlow(SecurityState())
-    private val _encryptionStatus = MutableStateFlow(EncryptionStatus.UNKNOWN)
+    private val _encryptionStatus = MutableStateFlow(EncryptionStatus.NOT_INITIALIZED)
     private val _permissionsState = MutableStateFlow(emptyMap<String, Boolean>())
     private val _threatDetectionActive = MutableStateFlow(false)
 

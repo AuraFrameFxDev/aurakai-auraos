@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
+import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.kai.KaiAIService
@@ -67,6 +68,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     is ConversationState.Responding -> {
                         _messages.update { current ->
                             current + AgentMessage(
+                                from = AgentType.NEURAL_WHISPER.name,
                                 content = state.responseText ?: "...",
                                 sender = AgentType.NEURAL_WHISPER, // Or AURA/GENESIS depending on final source
                                 timestamp = System.currentTimeMillis(),
@@ -85,6 +87,7 @@ class ConferenceRoomViewModel @Inject constructor(
                         Log.e(TAG, "NeuralWhisper error: ${state.errorMessage}")
                         _messages.update { current ->
                             current + AgentMessage(
+                                from = AgentType.NEURAL_WHISPER.name,
                                 content = "Error: ${state.errorMessage}",
                                 sender = AgentType.NEURAL_WHISPER, // Or a system error agent
                                 timestamp = System.currentTimeMillis(),
@@ -123,15 +126,14 @@ class ConferenceRoomViewModel @Inject constructor(
             )
 
             AgentType.CASCADE -> cascadeService.processRequest(
-                AiRequest(
-                    query = message,
-                    type = "context",
-                    context = mapOf("userContext" to context)
+                AgentInvokeRequest(
+                    message = message,
+                    context = context
                 )
             ).map { cascadeResponse ->
                 AgentResponse(
-                    content = cascadeResponse.content, // Assuming AgentResponse has content
-                    confidence = cascadeResponse.confidence
+                    content = cascadeResponse.response,
+                    confidence = cascadeResponse.confidence ?: 0.0f
                 )
             }
 
@@ -170,6 +172,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     val responseMessage = flow.first()
                     _messages.update { current ->
                         current + AgentMessage(
+                            from = sender.name,
                             content = responseMessage.content,
                             sender = sender,
                             timestamp = System.currentTimeMillis(),
@@ -180,6 +183,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     Log.e(TAG, "Error processing AI response from $sender: ${e.message}", e)
                     _messages.update { current ->
                         current + AgentMessage(
+                            from = AgentType.GENESIS.name,
                             content = "Error from ${sender.name}: ${e.message}",
                             sender = AgentType.GENESIS,
                             timestamp = System.currentTimeMillis(),

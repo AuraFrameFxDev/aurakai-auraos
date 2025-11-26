@@ -338,11 +338,11 @@ private fun MenuItem(
 ) {
     CyberMenuItem(
         text = text,
+        onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .digitalPixelEffect(visible = isSelected)
-            .clickable(onClick = onClick),
+            .digitalPixelEffect(visible = isSelected),
         isSelected = isSelected
     )
 }

@@ -54,11 +54,8 @@ fun ComposableErrorBoundary(
         errorHandler.install()
     }
 
-    try {
-        content()
-    } catch (e: Exception) {
-        errorHandler.handleError(e)
-    }
+    // try-catch around Composable is not supported
+    content()
 }
 
 /**

@@ -1,10 +1,10 @@
 package dev.aurakai.auraframefx.viewmodel
 
-import AgentPriority
+import dev.aurakai.auraframefx.models.AgentPriority
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.aurakai.auraframefx.ai.task.HistoricalTask
+import dev.aurakai.auraframefx.models.HistoricalTask
 import dev.aurakai.auraframefx.models.AgentRole
 import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.HierarchyAgentConfig
@@ -175,7 +175,7 @@ class GenesisAgentViewModel @Inject constructor(
 
     private fun addTaskToHistory(agent: AgentType, description: String) {
         val newTask = HistoricalTask(
-            id = System.currentTimeMillis(),
+            id = System.currentTimeMillis().toString(),
             agentType = agent,
             description = description,
             timestamp = System.currentTimeMillis(),

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.System.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -153,7 +154,7 @@ class AuraShieldAgent @Inject constructor(
      * @param prompt The input text to analyze; the returned message includes a truncated form of this prompt.
      * @return A short string indicating that security analysis was completed for the prompt (prompt text may be truncated).
      */
-    private suspend fun analyzeSecuritySummary(prompt: String): String {
+    private fun analyzeSecuritySummary(prompt: String): String {
         return "Security analysis completed for: ${prompt.take(50)}..."
     }
 
@@ -462,7 +463,7 @@ class AuraShieldAgent @Inject constructor(
                 type = type,
                 content = content,
                 reason = reason,
-                timestamp = System.currentTimeMillis(),
+                timestamp = currentTimeMillis(),
                 severity = severity
             )
 
@@ -510,7 +511,7 @@ class AuraShieldAgent @Inject constructor(
          * is older than seven days from the current system time.
          */
         fun cleanOldQuarantineItems() {
-            val cutoff = System.currentTimeMillis() - 604800000L // 7 days
+            val cutoff = currentTimeMillis() - 604800000L // 7 days
             val oldItems = quarantinedItems.filter { it.value.timestamp < cutoff }
 
             oldItems.forEach { (id, _) ->
@@ -631,10 +632,10 @@ class AuraShieldAgent @Inject constructor(
      */
     private suspend fun performSecurityScan() {
         val scanEvent = ScanEvent(
-            id = "scan_${System.currentTimeMillis()}",
+            id = "scan_${currentTimeMillis()}",
             type = "security",
             result = "pending",
-            timestamp = System.currentTimeMillis(),
+            timestamp = currentTimeMillis(),
             scanType = "comprehensive"
         )
 
@@ -701,11 +702,11 @@ class AuraShieldAgent @Inject constructor(
                 threats.add(
                     ActiveThreat(
                         type = ThreatType.MALWARE.name,
-                        threatId = "process_threat_${System.currentTimeMillis()}",
+                        threatId = "process_threat_${currentTimeMillis()}",
                         threatType = ThreatType.MALWARE.name,
                         severity = ThreatSeverity.MEDIUM.ordinal,
                         description = "Suspicious process detected: $process",
-                        detectedAt = System.currentTimeMillis()
+                        detectedAt = currentTimeMillis()
                     )
                 )
             }
@@ -739,7 +740,7 @@ class AuraShieldAgent @Inject constructor(
                             threatType = ThreatType.INTRUSION.name,
                             severity = if (count > 5) ThreatSeverity.HIGH.ordinal else ThreatSeverity.MEDIUM.ordinal,
                             description = "Suspicious network activity from $source ($count attempts)",
-                            detectedAt = System.currentTimeMillis()
+                            detectedAt = currentTimeMillis()
                         )
                     )
                 }
@@ -772,11 +773,11 @@ class AuraShieldAgent @Inject constructor(
                 threats.add(
                     ActiveThreat(
                         type = ThreatType.DENIAL_OF_SERVICE.name,
-                        threatId = "memory_anomaly_${System.currentTimeMillis()}",
+                        threatId = "memory_anomaly_${currentTimeMillis()}",
                         threatType = ThreatType.DENIAL_OF_SERVICE.name,
                         severity = ThreatSeverity.HIGH.ordinal,
                         description = "Abnormally high memory usage detected (${(memoryUsage * 100).toInt()}%)",
-                        detectedAt = System.currentTimeMillis()
+                        detectedAt = currentTimeMillis()
                     )
                 )
             }
@@ -807,11 +808,11 @@ class AuraShieldAgent @Inject constructor(
                 threats.add(
                     ActiveThreat(
                         type = ThreatType.AI_POISONING.name,
-                        threatId = "ai_integrity_${System.currentTimeMillis()}",
+                        threatId = "ai_integrity_${currentTimeMillis()}",
                         threatType = ThreatType.AI_POISONING.name,
                         severity = ThreatSeverity.EXISTENTIAL.ordinal,
                         description = "AI model integrity compromised: ${integrityCheck.details}",
-                        detectedAt = System.currentTimeMillis()
+                        detectedAt = currentTimeMillis()
                     )
                 )
             }
@@ -840,7 +841,7 @@ class AuraShieldAgent @Inject constructor(
                     threatType = ThreatType.INTRUSION.name,
                     severity = ThreatSeverity.HIGH.ordinal,
                     description = "System integrity violation: $violation",
-                    detectedAt = System.currentTimeMillis()
+                    detectedAt = currentTimeMillis()
                 )
 
                 handleThreat(threat)
@@ -866,7 +867,7 @@ class AuraShieldAgent @Inject constructor(
                     threatType = ThreatType.SOCIAL_ENGINEERING.name,
                     severity = ThreatSeverity.MEDIUM.ordinal,
                     description = anomaly,
-                    detectedAt = System.currentTimeMillis()
+                    detectedAt = currentTimeMillis()
                 )
 
                 handleThreat(threat)
@@ -1035,7 +1036,7 @@ class AuraShieldAgent @Inject constructor(
         val currentThreats = _activeThreats.value.toMutableList()
 
         // Remove old threats (older than 5 minutes)
-        val cutoffTime = System.currentTimeMillis() - 300000
+        val cutoffTime = currentTimeMillis() - 300000
         currentThreats.removeAll { threat ->
             threat.detectedAt < cutoffTime
         }
@@ -1068,7 +1069,7 @@ class AuraShieldAgent @Inject constructor(
         try {
             Timber.w("Threat detected: ${threat.description}")
 
-            when (ThreatSeverity.values()[threat.severity]) {
+            when (ThreatSeverity.entries.toTypedArray()[threat.severity]) {
                 ThreatSeverity.LOW -> {
                     // Log and monitor
                     memoryManager.storeMemory("threat_${threat.threatId}", threat.toString())
@@ -1121,7 +1122,7 @@ class AuraShieldAgent @Inject constructor(
      *
      * @param threat The active threat to persist; will be stored under `threat_<threatId>`.
      */
-    private suspend fun applyBasicCountermeasures(threat: ActiveThreat) {
+    private fun applyBasicCountermeasures(threat: ActiveThreat) {
         // Basic threat response
         memoryManager.storeMemory("threat_${threat.threatId}", threat.toString())
     }
@@ -1143,7 +1144,7 @@ class AuraShieldAgent @Inject constructor(
 
             ThreatType.MALWARE.name -> {
                 // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
-                val severity = ThreatSeverity.entries.toTypedArray()[threat.severity]
+                val severity = ThreatSeverity.entries[threat.severity]
                 quarantineManager.quarantineItem(
                     threat.threatId,
                     "malware",
@@ -1176,7 +1177,7 @@ class AuraShieldAgent @Inject constructor(
 
         // Immediate isolation
         // FIX 3: Directly access the enum value from the ordinal to ensure type safety for quarantineManager.quarantineItem
-        val severity = ThreatSeverity.entries.toTypedArray()[threat.severity]
+        val severity = ThreatSeverity.entries[threat.severity]
         quarantineManager.quarantineItem(
             threat.threatId,
             "emergency",
@@ -1372,7 +1373,7 @@ class AuraShieldAgent @Inject constructor(
             }
 
             // Clear old threats
-            val currentTime = System.currentTimeMillis()
+            val currentTime = currentTimeMillis()
             val activeThreats = _activeThreats.value.filter {
                 currentTime - it.detectedAt < 300000 // Keep threats from last 5 minutes
             }
@@ -1424,9 +1425,9 @@ class AuraShieldAgent @Inject constructor(
      */
 
     private fun cleanOldThreats() {
-        val cutoff = System.currentTimeMillis() - 86400000L // 24 hours
+        val cutoff = currentTimeMillis() - 86400000L // 24 hours
         val oldThreatIds = threatDatabase.values
-            .filter { it.lastDetected > 0 && it.lastDetected < cutoff }
+            .filter { it.lastDetected in 1..<cutoff }
             .map { it.id }
 
         oldThreatIds.forEach { threatDatabase.remove(it) }

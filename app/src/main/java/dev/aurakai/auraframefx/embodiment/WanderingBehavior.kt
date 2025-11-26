@@ -1,6 +1,8 @@
 package dev.aurakai.auraframefx.embodiment
 
 import androidx.compose.runtime.*
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -95,6 +97,7 @@ class WanderingAI(
             MoodState.ALERT -> 0.3f     // Less likely to wander when alert
             MoodState.PROTECTIVE -> 0.2f // Even less when protective
             MoodState.FOCUSED -> 0.5f
+            MoodState.MAINTENANCE -> 0.1f // Very low during maintenance
             MoodState.NEUTRAL -> 1.0f
         }
 

@@ -67,6 +67,30 @@ class AuraAgent @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    private val sessionId: String = "aura_${System.currentTimeMillis()}"
+
+    /**
+     * Creates an AiRequest with the given prompt and optional parameters
+     */
+    fun AiRequest(
+        prompt: String,
+        type: String = "text",
+        context: Map<String, Any> = emptyMap(),
+        metadata: Map<String, Any> = emptyMap(),
+        agentId: String? = null,
+        sessionId: String? = null
+    ): AiRequest {
+        return AiRequest(
+            query = prompt,
+            prompt = prompt,
+            type = type,
+            context = context,
+            metadata = metadata,
+            agentId = agentId,
+            sessionId = sessionId ?: this.sessionId
+        )
+    }
+
     override fun initializeAdaptiveProtection() {
         TODO("Not yet implemented")
     }

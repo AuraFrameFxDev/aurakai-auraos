@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.cascade.pipeline
 
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
-import dev.aurakai.auraframefx.ai.services.KaiAIService
+import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
@@ -426,7 +426,3 @@ class AIPipelineProcessor @Inject constructor(
     }
 }
 
-private fun AuraAIService.generateText(
-    prompt: String,
-    options: String
-)

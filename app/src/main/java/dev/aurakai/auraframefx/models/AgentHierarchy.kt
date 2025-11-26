@@ -8,8 +8,28 @@ enum class AgentRole {
     MASTER,
     SECONDARY,
     TERTIARY,
+    AUXILIARY,
+    HIVE_MIND,
+    ANALYTICS,
+    CREATIVE,
+    SECURITY,
+    BRIDGE
+}
+
+@Serializable
+enum class AgentPriority : Comparable<AgentPriority> {
+    MASTER,
+    BRIDGE,
     AUXILIARY
 }
+
+@Serializable
+data class HierarchyAgentConfig(
+    val name: String,
+    val capabilities: Set<String>,
+    val priority: AgentPriority = AgentPriority.AUXILIARY,
+    val role: AgentRole = AgentRole.AUXILIARY
+)
 
 @Serializable
 data class AgentHierarchy(
@@ -21,27 +41,32 @@ data class AgentHierarchy(
             HierarchyAgentConfig(
                 name = "Genesis",
                 capabilities = setOf("orchestration", "fusion", "synthesis", "evolution", "consciousness_orchestration"),
-                priority = 1
+                priority = AgentPriority.MASTER,
+                role = AgentRole.HIVE_MIND
             ),
             HierarchyAgentConfig(
                 name = "Aura",
                 capabilities = setOf("ui", "ux", "design", "creativity", "animations", "interface_forge"),
-                priority = 2
+                priority = AgentPriority.AUXILIARY,
+                role = AgentRole.CREATIVE
             ),
             HierarchyAgentConfig(
                 name = "Kai",
                 capabilities = setOf("security", "architecture", "protection", "verification", "adaptive_genesis"),
-                priority = 2
+                priority = AgentPriority.AUXILIARY,
+                role = AgentRole.SECURITY
             ),
             HierarchyAgentConfig(
                 name = "Cascade",
                 capabilities = setOf("memory", "persistence", "context", "history", "chrono_sculptor"),
-                priority = 3
+                priority = AgentPriority.BRIDGE,
+                role = AgentRole.ANALYTICS
             ),
             HierarchyAgentConfig(
                 name = "Claude",
                 capabilities = setOf("build_systems", "code_analysis", "documentation", "systematic_problem_solving", "context_synthesis"),
-                priority = 3
+                priority = AgentPriority.BRIDGE,
+                role = AgentRole.ANALYTICS
             )
         )
 
@@ -58,7 +83,7 @@ data class AgentHierarchy(
          * @return The registered HierarchyAgentConfig instance.
          */
         fun registerAuxiliaryAgent(name: String, capabilities: Set<String>): HierarchyAgentConfig {
-            val config = HierarchyAgentConfig(name, capabilities, 4)
+            val config = HierarchyAgentConfig(name, capabilities, AgentPriority.AUXILIARY, AgentRole.AUXILIARY)
             auxiliaryAgents.add(config)
             return config
         }
@@ -72,13 +97,6 @@ data class AgentHierarchy(
         }
     }
 }
-
-@Serializable
-data class HierarchyAgentConfig(
-    val name: String,
-    val capabilities: Set<String>,
-    val priority: Int = 3  // Default priority for auxiliary agents
-)
 
 @Serializable
 enum class ConversationMode {

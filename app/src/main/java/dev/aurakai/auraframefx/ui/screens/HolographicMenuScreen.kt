@@ -206,7 +206,7 @@ fun ParticleField() {
             Triple(
                 (0..100).random() / 100f, // x position
                 (0..100).random() / 100f, // y position
-                (0.5f..1f).random()       // alpha
+                (kotlin.random.Random.nextFloat() * 0.5f) + 0.5f       // alpha
             )
         }
     }
@@ -263,7 +263,7 @@ fun HolographicPlatform(modifier: Modifier = Modifier) {
     ) {
         // Rotating rings
         repeat(3) { index ->
-            val size = 150.dp + (index * 80.dp)
+            val size = 150.dp + (80.dp * index)
             val color = if (index % 2 == 0) Color(0xFF00FFFF) else Color(0xFFFF00FF)
 
             Box(

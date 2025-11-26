@@ -7,22 +7,23 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+
 /**
  * A serializer for Map<String, Any?> that can handle various value types.
  * This is needed because kotlinx.serialization doesn't support Map with Any? values by default.
  */
 object MapStringAnySerializer : KSerializer<Map<String, Any?>> {
     override val descriptor: SerialDescriptor = 
-        buildClassSerialDescriptor("MapStringAny") {
-            // Define the structure of the map
-            element<Map<String, JsonElement>>("map")
-        }
+        MapSerializer(String.serializer(), JsonElement.serializer()).descriptor
 
     override fun serialize(encoder: Encoder, value: Map<String, Any?>) {
+        require(encoder is JsonEncoder)
         val jsonObject = buildJsonObject {
             value.forEach { (key, value) ->
                 when (val v = value) {
-                    null -> putNull(key)
+                    null -> put(key, JsonNull)
                     is String -> put(key, v)
                     is Number -> put(key, v)
                     is Boolean -> put(key, v)
@@ -36,6 +37,7 @@ object MapStringAnySerializer : KSerializer<Map<String, Any?>> {
     }
 
     override fun deserialize(decoder: Decoder): Map<String, Any?> {
+        require(decoder is JsonDecoder)
         val json = decoder.decodeJsonElement() as? JsonObject ?: return emptyMap()
         return json.mapValues { (_, value) ->
             when (value) {

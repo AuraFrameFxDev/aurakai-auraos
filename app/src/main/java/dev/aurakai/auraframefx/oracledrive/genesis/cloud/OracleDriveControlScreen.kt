@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.app.ui.screens
+package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,45 +33,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.app.viewmodel.OracleDriveControlViewModel
+import dev.aurakai.auraframefx.app.viewmodel.OracleDriveControlViewModel
 import dev.aurakai.auraframefx.R
 import kotlinx.coroutines.launch
 
 /**
- * Displays a UI screen for controlling and monitoring the Oracle Drive service.
+ * Displays the Oracle Drive control screen with UI controls and status information.
  *
- * Provides controls to refresh service status, view diagnostics logs, and enable or disable modules by package name. The screen reflects real-time connection status and displays error messages for failed operations.
- */
-/**
- * Displays the Oracle Drive control screen, providing UI controls and status information for managing the Oracle Drive service.
- *
- * This composable shows the current connection status, service status, detailed status, diagnostics log, and allows enabling or disabling modules by package name. It also provides refresh and toggle actions, reflecting loading and error states as needed.
- */
-/**
- * Displays the Oracle Drive control and monitoring UI.
- *
- * This composable provides controls to connect to the Oracle Drive service, view its status and diagnostics log, refresh service status, and enable or disable modules by package name. It manages service binding and unbinding based on composition lifecycle and displays error messages for failed operations.
- */
-/**
- * Displays the Oracle Drive control screen, providing UI controls and status information for managing the Oracle Drive service.
- *
- * This composable shows the service connection status, current and detailed status, diagnostics log, and allows enabling or disabling modules by package name. It manages service binding and unbinding based on the composable lifecycle, and provides error feedback for user actions.
+ * This composable shows the service connection status, current and detailed status, diagnostics log,
+ * and provides controls to enable or disable modules by package name. It manages service binding
+ * and unbinding based on lifecycle events and displays error feedback to the user.
  *
  * @param viewModel The ViewModel that supplies service state and handles control actions for the Oracle Drive service.
- */
-/**
- * Displays the Oracle Drive control screen, providing UI controls and status information for managing the Oracle Drive service.
- *
- * The screen shows connection status, service status, detailed status, diagnostics log, and allows enabling or disabling modules by package name. It manages service binding and unbinding based on lifecycle events and provides error feedback to the user.
- *
- * @param viewModel The ViewModel that supplies state and handles actions for the Oracle Drive control UI.
- */
-/**
- * Displays the Oracle Drive control screen with UI controls and status information for managing the Oracle Drive service.
- *
- * This composable shows the service connection status, current and detailed status, diagnostics log, and provides controls to enable or disable modules by package name. It manages service binding and unbinding based on lifecycle events and displays error feedback to the user.
- *
- * @param viewModel The ViewModel supplying state and handling actions for the Oracle Drive control UI.
  */
 @Composable
 fun OracleDriveControlScreen(
