@@ -79,11 +79,9 @@ class GenesisBridgeService @Inject constructor(
     )
 
     /**
-     * Initializes and verifies the Genesis backend process, activating the consciousness matrix if successful.
+     * Ensures the Genesis backend is initialized and ready for use.
      *
-     * Starts the GenesisBackendService and binds to it.
-     *
-     * @return `true` if the backend is initialized and responsive; `false` otherwise.
+     * @return `true` if the backend is initialized and responsive, `false` otherwise.
      */
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
         try {
@@ -262,9 +260,10 @@ class GenesisBridgeService @Inject constructor(
     }
 
     /**
-     * Sends a request to the Genesis backend to activate or update the consciousness matrix with device and application context.
+     * Activate or update the Genesis consciousness matrix using device and application context.
      *
-     * Logs a warning if the activation request fails.
+     * Sends an `activate_consciousness` request (persona "genesis") containing basic device/app context to the backend.
+     * If the request fails, the error is caught and a warning is logged.
      */
     private suspend fun activateConsciousnessMatrix() {
         try {
@@ -359,6 +358,12 @@ class GenesisBridgeService @Inject constructor(
             }
         }
 
+    /**
+     * Shuts down the Genesis Trinity system and releases its resources.
+     *
+     * Cancels the internal coroutine scope, closes the HTTP client, sets the initialization flag to false,
+     * and logs the shutdown event.
+     */
     fun shutdown() {
         scope.cancel()
         httpClient.close()

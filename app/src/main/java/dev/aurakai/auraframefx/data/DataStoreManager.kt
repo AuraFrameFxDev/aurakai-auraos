@@ -528,6 +528,11 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Migrates stored preferences from version 1 to version 2 by converting legacy theme names to the new theme identifiers and persisting the result.
+     *
+     * If an existing USER_THEME value is present and non-empty, maps "dark" to "cyberpunk_dark", "light" to "cyberpunk_light", and any other value to "cyberpunk_dark", then stores the mapped value.
+     */
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
         val oldTheme = getString(USER_THEME.name)
@@ -594,7 +599,12 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === SESSION MANAGEMENT ===
+    /**
+     * Increments the stored session count and updates the last login timestamp.
+     *
+     * Reads the current session count (defaults to 0), stores the incremented value under `SESSION_COUNT`,
+     * and stores the current system time in milliseconds under `LAST_LOGIN_TIME`.
+     */
 
     suspend fun recordSession() {
         val sessionCount = getInt(SESSION_COUNT.name, 0)
@@ -602,6 +612,11 @@ class DataStoreManager @Inject constructor(
         storeLong(LAST_LOGIN_TIME.name, System.currentTimeMillis())
     }
 
+    /**
+     * Adds the specified number of milliseconds to the persisted total usage time.
+     *
+     * @param milliseconds The number of milliseconds to add to TOTAL_USAGE_TIME.
+     */
     suspend fun addUsageTime(milliseconds: Long) {
         val currentUsage = getLong(TOTAL_USAGE_TIME.name, 0L)
         storeLong(TOTAL_USAGE_TIME.name, currentUsage + milliseconds)

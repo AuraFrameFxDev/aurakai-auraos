@@ -21,7 +21,13 @@ object SecurityModule {
     fun provideKeystoreManager(@ApplicationContext context: Context): KeystoreManager =
         KeystoreManager(context)
 
-    @Provides
+    /**
+         * Creates a SecurityContext initialized with the application context.
+         *
+         * @param context The application Context used to initialize the SecurityContext.
+         * @return A SecurityContext backed by a DefaultSecurityContext initialized with the provided context.
+         */
+        @Provides
     @Singleton
     fun provideSecurityContext(@ApplicationContext context: Context): SecurityContext =
         DefaultSecurityContext(context)
