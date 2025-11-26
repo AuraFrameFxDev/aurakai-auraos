@@ -3,18 +3,6 @@ package dev.aurakai.auraframefx.oracledrive.genesis.ai
 import android.content.Context
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.network.KtorClient
-import dev.aurakai.auraframefx.network.NetworkResponse
-import dev.aurakai.auraframefx.network.safeApiCall
-import dev.aurakai.auraframefx.security.SecurityContext
-import dev.aurakai.auraframefx.utils.Logger
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import javax.inject.Inject
 import javax.inject.Singleton
 

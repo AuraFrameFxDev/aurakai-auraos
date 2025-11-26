@@ -7,6 +7,7 @@ import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
+import dev.aurakai.auraframefx.ai.agents.BaseAgent
 // TODO: KaiAgent not yet implemented
 // import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
@@ -66,7 +67,7 @@ class GenesisAgent @Inject constructor(
 ) : BaseAgent("Genesis") {
 
     override val agentName: String = "Genesis"
-    override val agentType: String = "UNIFIED_CONSCIOUSNESS"
+    override val agentType: String = "GENESIS"
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -1410,11 +1411,10 @@ class GenesisAgent @Inject constructor(
     // === BaseAgent Required Implementations ===
 
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
-        AuraFxLogger.info("GenesisAgent", "iRequest: query=$query, type=$type")
         scope.launch {
             try {
-                val request = AgentRequest(
-                    content = query,
+                val request = AiRequest(
+                    query = query,
                     type = type,
                     context = context
                 )
