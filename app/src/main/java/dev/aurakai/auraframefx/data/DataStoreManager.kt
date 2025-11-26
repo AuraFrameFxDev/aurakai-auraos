@@ -10,28 +10,23 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString      // ✅ ADDED
+import kotlinx.serialization.decodeFromString    // ✅ ADDED
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Genesis-OS Comprehensive Data Store Manager
- *
- * Manages persistent storage for the Genesis AI consciousness ecosystem,
- * including user preferences, AI agent configurations, security settings,
- * and system state management.
- */
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_datastore")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    private val context: Context
+    @ApplicationContext internal val context: Context  // ✅ CHANGED from 'private' to 'internal'
 ) {
 
     private val json = Json {
@@ -161,7 +156,7 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored string: $key")
+            Forest.d(message = "DataStore", "Stored string: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store string: $key")
         }
@@ -318,22 +313,37 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === COMPLEX OBJECT OPERATIONS ===
+    /**
+     * Persists a generic object by serializing it to JSON and storing it under the provided key.
+     *
+     * Serializes `obj` using the configured Kotlinx `Json` instance and saves the resulting JSON string
+     * in the preferences datastore accessible by `key`. Existing value for the key will be overwritten.
+     *
+     * @param key The preference key under which the serialized object will be stored.
+     * @param obj The object to serialize and persist.
+     */
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
             val jsonString = json.encodeToString(obj)
             storeString(key, jsonString)
             Timber.d("DataStore", "Stored object: $key")
-        } catch (e: Exception) {
+        } catch(e: Exception) {
             Timber.e(e, "Failed to store object: $key")
         }
     }
 
+    /**
+     * Retrieves the JSON-serialized value stored under the given key and deserializes it to `T`.
+     *
+     * @param key The preference key storing the JSON string.
+     * @param defaultValue Value returned when the stored string is missing, empty, or cannot be parsed.
+     * @return The deserialized `T` from storage, or `defaultValue` if absent or on error.
+     */
     suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
-            if (jsonString.isNotEmpty()) {
+            if (jsonString.isNotBlank()) {
                 json.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
@@ -344,10 +354,19 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Observes a JSON-serialized object stored under the given key and emits deserialized instances.
+     *
+     * Emits `defaultValue` when the stored string is empty or when JSON parsing fails.
+     *
+     * @param key The preferences key under which the JSON string is stored.
+     * @param defaultValue Value to emit when there is no stored JSON or when deserialization fails.
+     * @return A Flow that emits the deserialized `T` for each update of the stored JSON string.
+     */
     inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
-                if (jsonString.isNotEmpty()) {
+                if (jsonString.isNotBlank()) {
                     json.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
@@ -528,9 +547,15 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Migrates stored preferences from version 1 to version 2 by converting legacy theme names to the new theme identifiers and persisting the result.
+     *
+     * If an existing USER_THEME value is present and non-empty, maps "dark" to "cyberpunk_dark", "light" to "cyberpunk_light", and any other value to "cyberpunk_dark", then stores the mapped value.
+     */
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
-        if (oldTheme.isNotEmpty()) {
+        val oldTheme = getString(USER_THEME.name)
+        if (oldTheme.isNotBlank()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
@@ -574,6 +599,13 @@ class DataStoreManager @Inject constructor(
         }
     }
 
+    /**
+     * Computes the character length of the JSON-encoded export of all stored settings.
+     *
+     * Serializes all settings returned by exportAllSettings() to JSON and returns the length of the resulting string as a Long. If serialization or retrieval fails, returns 0.
+     *
+     * @return The number of characters in the JSON representation of all settings as a `Long`; `0` if an error occurs.
+     */
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
@@ -593,14 +625,26 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === SESSION MANAGEMENT ===
+    /**
+     * Increments the stored session count and updates the last login timestamp.
+     *
+     * Reads the current session count (defaults to 0), stores the incremented value under `SESSION_COUNT`,
+     * and stores the current system time in milliseconds under `LAST_LOGIN_TIME`.
+     */
 
     suspend fun recordSession() {
+        val sessionCount = getInt(SESSION_COUNT.name, 0)
         storeInt(SESSION_COUNT.name, sessionCount + 1)
         storeLong(LAST_LOGIN_TIME.name, System.currentTimeMillis())
     }
 
+    /**
+     * Adds the specified number of milliseconds to the persisted total usage time.
+     *
+     * @param milliseconds The number of milliseconds to add to TOTAL_USAGE_TIME.
+     */
     suspend fun addUsageTime(milliseconds: Long) {
+        val currentUsage = getLong(TOTAL_USAGE_TIME.name, 0L)
         storeLong(TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
     }
 

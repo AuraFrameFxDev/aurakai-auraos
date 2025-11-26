@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class HistoricalTask(
     val id: String,
     val description: String,
-    val agentType: AgentType,
+    val agentType: AgentCapabilityCategory,
     val timestamp: Long = System.currentTimeMillis(),
     val status: String = "completed",
     val result: String = "",

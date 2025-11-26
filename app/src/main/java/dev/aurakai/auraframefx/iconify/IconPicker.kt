@@ -156,6 +156,7 @@ fun IconPicker(
                             isLoading = isLoading,
                             imageLoader = imageLoader,
                             iconifyService = iconifyService,
+                            selectedIcon = selectedIcon,
                             onIconSelected = onIconSelected
                         )
                     }
@@ -471,6 +472,7 @@ fun IconSearchResults(
     isLoading: Boolean,
     imageLoader: ImageLoader,
     iconifyService: IconifyService,
+    selectedIcon: String?,
     onIconSelected: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {

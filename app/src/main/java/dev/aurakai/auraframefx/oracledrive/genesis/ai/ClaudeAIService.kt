@@ -63,7 +63,7 @@ class ClaudeAIService @Inject constructor(
         private const val CACHE_MAX_SIZE = 100 // Store up to 100 responses
         private const val CACHE_INITIAL_CAPACITY = 16
         private const val CACHE_LOAD_FACTOR = 0.75f
-        private const val CACHE_TTL_MS = 3600_000L // 1 hour TTL
+        internal const val CACHE_TTL_MS = 3600_000L // 1 hour TTL
     }
 
     /**

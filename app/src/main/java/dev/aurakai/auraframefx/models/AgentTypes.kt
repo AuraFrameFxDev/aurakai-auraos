@@ -25,7 +25,7 @@ enum class ResponseType {
  * Agent configuration for behavior
  */
 data class AgentConfig(
-    val type: AgentType,
+    val type: AgentCapabilityCategory,
     val enabled: Boolean = true,
     val priority: Int = 1,
     val capabilities: List<String> = emptyList(),
@@ -36,7 +36,7 @@ data class AgentConfig(
  * Agent hierarchy data structure for organization
  */
 data class AgentHierarchyData(
-    val parentAgent: AgentType?,
-    val childAgents: List<AgentType>,
+    val parentAgent: AgentCapabilityCategory?,
+    val childAgents: List<AgentCapabilityCategory>,
     val level: Int,
 )

@@ -10,7 +10,7 @@ data class AgentInvokeRequest(
     val message: String,
     val context: String? = null,
     val priority: Priority = Priority.normal,
-    val agentType: AgentType? = null,
+    val agentType: AgentCapabilityCategory? = null,
     val metadata: Map<String, String> = emptyMap()
 ) {
     @Serializable

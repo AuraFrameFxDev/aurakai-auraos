@@ -15,7 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,7 +31,7 @@ data class ConferenceRoomJoinRequest(
 
     /* The AI agent joining the room. */
     @Contextual @SerialName(value = "agentType")
-    val agentType: AgentType,
+    val agentType: AgentCapabilityCategory,
 
     )
 

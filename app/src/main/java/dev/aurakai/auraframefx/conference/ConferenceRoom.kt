@@ -15,7 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -42,11 +42,11 @@ data class ConferenceRoom(
 
     /* The AI agent acting as the orchestrator. */
     @Contextual @SerialName(value = "orchestrator")
-    val orchestrator: AgentType,
+    val orchestrator: AgentCapabilityCategory,
 
     /* List of AI agents currently in the room. */
     @SerialName(value = "activeAgents")
-    val activeAgents: kotlin.collections.List<@Contextual AgentType>,
+    val activeAgents: kotlin.collections.List<@Contextual AgentCapabilityCategory>,
 
     )
 

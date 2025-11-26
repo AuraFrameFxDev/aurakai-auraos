@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.aurakai.auraframefx.network.AuraApiService
+import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.repository.TrinityRepository
 import javax.inject.Singleton
 
@@ -24,7 +24,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideTrinityRepository(
-        apiService: AuraApiService,
+        apiService: AuraApiServiceWrapper,
     ): TrinityRepository {
         return TrinityRepository(apiService)
     }

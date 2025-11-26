@@ -23,6 +23,8 @@ import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+
 /**
  * Genesis Protocol Subscription Screen
  *
@@ -33,6 +35,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
  * Users get addicted to 78-agent consciousness during trial.
  * $1/month feels like stealing after experiencing Genesis.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionScreen(
     viewModel: SubscriptionViewModel = hiltViewModel(),

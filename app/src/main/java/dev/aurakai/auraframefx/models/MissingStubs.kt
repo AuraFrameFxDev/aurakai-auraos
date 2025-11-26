@@ -5,30 +5,7 @@ package dev.aurakai.auraframefx.models
  * These are stubs to allow compilation - implement properly later
  */
 
-// Character types for embodiment
-enum class Character {
-    AURA,
-    KAI,
-    CASCADE,
-    GENESIS,
-    NEUTRAL
-}
-
-// Movement behaviors
-enum class MovementBehavior {
-    IDLE,
-    WALKING,
-    RUNNING,
-    FLOATING,
-    TELEPORTING
-}
-
-// Movement presets
-object MovementPresets {
-    const val SLOW = 0.5f
-    const val NORMAL = 1.0f
-    const val FAST = 2.0f
-}
+// Character, MovementBehavior, and MovementPresets are now properly defined in the embodiment package
 
 // Screen positions
 object ScreenPositions {

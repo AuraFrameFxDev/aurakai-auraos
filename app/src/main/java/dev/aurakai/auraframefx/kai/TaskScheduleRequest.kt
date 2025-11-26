@@ -15,6 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.models
 
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -37,7 +38,7 @@ data class TaskScheduleRequest(
 
     /* The AI agent responsible for the task. */
     @Contextual @SerialName(value = "agentType")
-    val agentType: AgentType,
+    val agentType: AgentCapabilityCategory,
 
     /* Specific parameters for the task, varying by taskType. */
     @SerialName(value = "details")

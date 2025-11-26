@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.pipeline
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 
 data class AIPipelineConfig(
     val maxRetries: Int = 3,
@@ -11,11 +11,11 @@ data class AIPipelineConfig(
     val urgencyWeight: Float = 0.4f,
     val importanceWeight: Float = 0.2f,
     val maxActiveTasks: Int = 10,
-    val agentPriorities: Map<AgentType, Float> = mapOf(
-        AgentType.GENESIS to 1.0f,
-        AgentType.KAI to 0.9f,
-        AgentType.AURA to 0.8f,
-        AgentType.CASCADE to 0.7f
+    val agentPriorities: Map<AgentCapabilityCategory, Float> = mapOf(
+        AgentCapabilityCategory.COORDINATION to 1.0f,
+        AgentCapabilityCategory.ANALYSIS to 0.9f,
+        AgentCapabilityCategory.CREATIVE to 0.8f,
+        AgentCapabilityCategory.SPECIALIZED to 0.7f
     ),
     val memoryRetrievalConfig: MemoryRetrievalConfig = MemoryRetrievalConfig(),
     val contextChainingConfig: ContextChainingConfig = ContextChainingConfig(),

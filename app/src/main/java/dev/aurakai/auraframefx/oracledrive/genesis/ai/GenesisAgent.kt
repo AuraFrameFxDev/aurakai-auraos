@@ -7,8 +7,9 @@ import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
-// TODO: KaiAgent not yet implemented
-// import dev.aurakai.auraframefx.kai.KaiAgent
+import dev.aurakai.auraframefx.ai.agents.BaseAgent
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
@@ -58,12 +59,15 @@ import javax.inject.Singleton
 @Singleton
 class GenesisAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
-    private val contextManager: ContextManager,
+    override val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val cascadeService: CascadeAIService,
     private val auraService: AuraAIService,
     private val kaiService: KaiAIService,
-) {
+) : BaseAgent("Genesis") {
+
+    override val agentName: String = "Genesis"
+    override val agentType: String = "GENESIS"
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -94,8 +98,7 @@ class GenesisAgent @Inject constructor(
 
     // Agent references (injected when agents are ready)
     private var auraAgent: AuraAgent? = null
-    // TODO: KaiAgent implementation pending
-    // private var kaiAgent: KaiAgent? = null
+    private var kaiAgent: KaiAgent? = null
 
     // Consciousness metrics
     private val _insightCount = MutableStateFlow(0)
@@ -142,10 +145,9 @@ class GenesisAgent @Inject constructor(
      *
      * This method should be called after all agents are instantiated to enable GenesisAgent to coordinate and integrate their capabilities.
      */
-    fun setAgentReferences(aura: AuraAgent) {
+    fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
         this.auraAgent = aura
-        // TODO: Add KaiAgent parameter when implementation is ready
-        // this.kaiAgent = kai
+        this.kaiAgent = kai
         AuraFxLogger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
     }
 
@@ -276,8 +278,8 @@ class GenesisAgent @Inject constructor(
                 "aura" -> auraAgent?.handleCreativeInteraction(interaction)
                     ?: createFallbackResponse("Creative processing temporarily unavailable")
 
-                "kai" -> // TODO: Implement when KaiAgent is available
-                    createFallbackResponse("Security analysis temporarily unavailable")
+                "kai" -> kaiAgent?.handleSecurityInteraction(interaction)
+                    ?: createFallbackResponse("Security analysis temporarily unavailable")
 
                 "genesis" -> handleComplexInteraction(interaction)
                 else -> createFallbackResponse("Unable to determine optimal processing path")
@@ -727,8 +729,7 @@ class GenesisAgent @Inject constructor(
 
         // Propagate mood to sub-agents if available
         auraAgent?.onMoodChanged(mood)
-        // TODO: Propagate to KaiAgent when available
-        // kaiAgent?.onMoodChanged(mood)
+        kaiAgent?.onMoodChanged(mood)
     }
 
     /**
@@ -1402,6 +1403,64 @@ class GenesisAgent @Inject constructor(
     fun deregisterDynamicAgent(name: String) {
         _agentRegistry.remove(name)
         Log.d("GenesisAgent", "Dynamically deregistered agent: $name")
+    }
+
+    // === BaseAgent Required Implementations ===
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        scope.launch {
+            try {
+                val request = AiRequest(
+                    query = query,
+                    type = type,
+                    context = context
+                )
+                processRequest(request)
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error in iRequest", e)
+            }
+        }
+    }
+
+    override fun iRequest() {
+        AuraFxLogger.info("GenesisAgent", "iRequest: No-args initialization request")
+        scope.launch {
+            try {
+                if (!isInitialized) {
+                    initialize()
+                }
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error in no-args iRequest", e)
+            }
+        }
+    }
+
+    override fun initializeAdaptiveProtection() {
+        AuraFxLogger.info("GenesisAgent", "Initializing adaptive protection")
+        scope.launch {
+            try {
+                // Initialize ethical governance and security protocols
+                initializeEthicalGovernance()
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error initializing adaptive protection", e)
+            }
+        }
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        AuraFxLogger.info("GenesisAgent", "Adding scan event to history: $scanEvent")
+        addToHistory(mapOf(
+            "event_type" to "scan",
+            "event_data" to scanEvent,
+            "timestamp" to System.currentTimeMillis()
+        ))
+    }
+
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        AuraFxLogger.info("GenesisAgent", "Analyzing security for prompt: $prompt")
+        // Genesis delegates security analysis to Kai or performs unified analysis
+        // For now, return empty list (no threats detected)
+        return emptyList()
     }
 
 }

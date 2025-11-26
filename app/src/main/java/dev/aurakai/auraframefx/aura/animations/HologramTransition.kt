@@ -1,3 +1,5 @@
+package dev.aurakai.auraframefx.aura.animations
+
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box

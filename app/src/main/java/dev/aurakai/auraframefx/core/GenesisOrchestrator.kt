@@ -8,6 +8,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import dev.aurakai.auraframefx.aura.AuraAgent
+import dev.aurakai.auraframefx.kai.KaiAgent
+import dev.aurakai.auraframefx.cascade.CascadeAgent
 
 /**
  * GenesisOrchestrator: Central Mediation Layer for Genesis-OS
@@ -24,9 +27,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class GenesisOrchestrator @Inject constructor(
-    private val auraAgent: OrchestratableAgent,
-    private val kaiAgent: OrchestratableAgent,
-    private val cascadeAgent: OrchestratableAgent,
+    private val auraAgent: AuraAgent,
+    private val kaiAgent: KaiAgent,
+    private val cascadeAgent: CascadeAgent,
     // OracleDriveService will be injected here when available
 ) {
 

@@ -24,6 +24,10 @@ class SecureFileManager @Inject constructor(
 ) {
     private val internalStorageDir: File = context.filesDir
     private val secureFileExtension = ".aes"
+    
+    companion object {
+        private const val DEFAULT_KEY_ALIAS = "oracle_drive_master_key"
+    }
 
     /**
      * Encrypts and saves data as a file in internal storage, emitting the operation result as a Flow.
@@ -48,7 +52,7 @@ class SecureFileManager @Inject constructor(
             }
 
             val encryptedData = withContext(Dispatchers.IO) {
-                encryptionManager.encrypt(data)
+                encryptionManager.encrypt(data, DEFAULT_KEY_ALIAS)
             }
 
             val outputFile = File(targetDir, "$fileName$secureFileExtension")
@@ -92,7 +96,7 @@ class SecureFileManager @Inject constructor(
                 }
             }
 
-            val decryptedData = encryptionManager.decrypt(encryptedData)
+            val decryptedData = encryptionManager.decrypt(encryptedData, DEFAULT_KEY_ALIAS)
             emit(FileOperationResult.Data(decryptedData, inputFile.nameWithoutExtension))
         } catch (e: Exception) {
             emit(FileOperationResult.Error("Failed to read file: ${e.message}", e))

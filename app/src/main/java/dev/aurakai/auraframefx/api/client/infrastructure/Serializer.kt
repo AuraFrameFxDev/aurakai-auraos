@@ -6,8 +6,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
-import org.openapitools.client.infrastructure.ByteArrayAdapter
-import org.openapitools.client.infrastructure.UUIDAdapter
+import dev.aurakai.auraframefx.api.client.infrastructure.ByteArrayAdapter
+import dev.aurakai.auraframefx.ui.adapters.UUIDAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 object Serializer {
     @Deprecated(
@@ -88,4 +89,4 @@ object Serializer {
     }
 }
 
-annotation class KotlinJsonAdapterFactory
+

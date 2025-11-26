@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.Circle
@@ -126,7 +127,7 @@ fun CanvasScreen(
     }
 
     val backgroundColor = MaterialTheme.colorScheme.background
-    
+
     Box(modifier = modifier.fillMaxSize()) {
         // --- Drawing elements are now placed in Composable scopes (Canvas) ---
 
@@ -136,11 +137,11 @@ fun CanvasScreen(
                 when (operation) {
                     is DrawingOperation.PathOp -> {
                         drawPath(
-                            path = operation.path, 
-                            color = if (operation.tool == DrawingTool.ERASER) backgroundColor else operation.color, 
+                            path = operation.path,
+                            color = if (operation.tool == DrawingTool.ERASER) backgroundColor else operation.color,
                             style = Stroke(
-                                width = operation.strokeWidth.toPx(), 
-                                cap = StrokeCap.Round, 
+                                width = operation.strokeWidth.toPx(),
+                                cap = StrokeCap.Round,
                                 join = StrokeJoin.Round
                             )
                         )
@@ -293,7 +294,7 @@ fun CanvasScreen(
                     },
                     enabled = undonePaths.isNotEmpty()
                 ) {
-                    Icon(Icons.Default.Redo, "Redo")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo")
                 }
 
                 // Clear canvas

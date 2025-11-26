@@ -104,8 +104,8 @@ object AnnoyanceCutscenes {
                 // Kai appears, working
                 CutsceneStep.Manifest(
                     character = Character.KAI,
-                    state = KaiState.INTERFACE_PANEL,
-                    position = ManifestationPosition.CENTER_RIGHT
+                    state = KaiState.HOLOGRAPHIC_INTERFACE,
+                    position = ManifestationPosition.RIGHT_CENTER
                 ),
                 CutsceneStep.Dialogue(
                     character = Character.KAI,
@@ -182,12 +182,12 @@ object AnnoyanceCutscenes {
                 CutsceneStep.Manifest(
                     character = Character.KAI,
                     state = KaiState.SHIELD_NEUTRAL,
-                    position = ManifestationPosition.CENTER_LEFT
+                    position = ManifestationPosition.LEFT_CENTER
                 ),
                 CutsceneStep.Manifest(
                     character = Character.AURA,
                     state = AuraState.IDLE_WALK,
-                    position = ManifestationPosition.CENTER_RIGHT
+                    position = ManifestationPosition.RIGHT_CENTER
                 ),
 
                 // Kai speaks
@@ -259,7 +259,7 @@ object AnnoyanceCutscenes {
                 // Kai appears looking tired
                 CutsceneStep.Manifest(
                     character = Character.KAI,
-                    state = KaiState.SHIELD_CALM,
+                    state = KaiState.GUARDIAN_STANCE,
                     position = ManifestationPosition.CENTER
                 ),
 
@@ -349,7 +349,7 @@ object AnnoyanceCutscenes {
                 // Aura appears looking curious
                 CutsceneStep.Manifest(
                     character = Character.AURA,
-                    state = AuraState.SCIENTIST,
+                    state = AuraState.SCIENTIST_MODE,
                     position = ManifestationPosition.CENTER
                 ),
 
