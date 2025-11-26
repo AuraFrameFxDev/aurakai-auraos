@@ -255,7 +255,7 @@ class LockScreenCustomizer @Inject constructor(
 
     private suspend fun loadConfiguration() {
         // This would deserialize JSON or use structured preference keys
-        return null // Placeholder
+        // Placeholder - TODO: Implement configuration loading
     }
 
     private fun saveConfiguration(config: LockScreenConfig) {

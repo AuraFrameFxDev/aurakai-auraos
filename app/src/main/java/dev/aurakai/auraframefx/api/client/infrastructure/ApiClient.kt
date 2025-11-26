@@ -22,7 +22,7 @@ import kotlin.reflect.javaType
 open class ApiClient(
     private var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
-    private val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
+    internal val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
     private val callAdapterFactories: List<CallAdapter.Factory> = listOf(),
     private val converterFactories: List<Converter.Factory> = listOf(
