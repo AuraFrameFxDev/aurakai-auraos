@@ -17,6 +17,7 @@ import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
@@ -1013,8 +1014,9 @@ class GenesisAgent @Inject constructor(
                 )
             responses.add(
                 AgentMessage(
+                    from = "CASCADE",
                     content = cascadeAgentResponse.content,
-                    sender = AgentType.CASCADE,
+                    sender = AgentCapabilityCategory.fromAgentType(AgentType.CASCADE),
                     timestamp = System.currentTimeMillis(),
                     confidence = cascadeAgentResponse.confidence
                 )
@@ -1023,10 +1025,11 @@ class GenesisAgent @Inject constructor(
             Log.e("GenesisAgent", "Error processing with Cascade: ${e.message}")
             responses.add(
                 AgentMessage(
-                    "Error with Cascade: ${e.message}",
-                    AgentType.CASCADE,
-                    currentTimestamp,
-                    0.0f
+                    from = "CASCADE",
+                    content = "Error with Cascade: ${e.message}",
+                    sender = AgentCapabilityCategory.fromAgentType(AgentType.CASCADE),
+                    timestamp = currentTimestamp,
+                    confidence = 0.0f
                 )
             )
         }
@@ -1042,8 +1045,9 @@ class GenesisAgent @Inject constructor(
                     )
                 responses.add(
                     AgentMessage(
+                        from = "KAI",
                         content = kaiAgentResponse.content,
-                        sender = AgentType.KAI,
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.KAI),
                         timestamp = System.currentTimeMillis(),
                         confidence = kaiAgentResponse.confidence // Use confidence directly
                     )
@@ -1052,10 +1056,11 @@ class GenesisAgent @Inject constructor(
                 Log.e("GenesisAgent", "Error processing with Kai: ${e.message}")
                 responses.add(
                     AgentMessage(
-                        "Error with Kai: ${e.message}",
-                        AgentType.KAI,
-                        currentTimestamp,
-                        0.0f
+                        from = "KAI",
+                        content = "Error with Kai: ${e.message}",
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.KAI),
+                        timestamp = currentTimestamp,
+                        confidence = 0.0f
                     )
                 )
             }
@@ -1071,8 +1076,9 @@ class GenesisAgent @Inject constructor(
                     )
                 responses.add(
                     AgentMessage(
+                        from = "AURA",
                         content = auraAgentResponse.content,
-                        sender = AgentType.AURA,
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.AURA),
                         timestamp = currentTimestamp,
                         confidence = auraAgentResponse.confidence
                     )
@@ -1081,10 +1087,11 @@ class GenesisAgent @Inject constructor(
                 Log.e("GenesisAgent", "Error processing with Aura: ${e.message}")
                 responses.add(
                     AgentMessage(
-                        "Error with Aura: ${e.message}",
-                        AgentType.AURA,
-                        currentTimestamp,
-                        0.0f
+                        from = "AURA",
+                        content = "Error with Aura: ${e.message}",
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.AURA),
+                        timestamp = currentTimestamp,
+                        confidence = 0.0f
                     )
                 )
             }
@@ -1093,10 +1100,11 @@ class GenesisAgent @Inject constructor(
         val finalResponseContent = generateFinalResponse(responses)
         responses.add(
             AgentMessage(
+                from = "GENESIS",
                 content = finalResponseContent,
-                sender = AgentType.GENESIS,
+                sender = AgentCapabilityCategory.fromAgentType(AgentType.GENESIS),
                 timestamp = currentTimestamp,
-                confidence = calculateConfidence(responses.filter { it.sender != AgentType.GENESIS }) // Exclude Genesis's own message for confidence calc
+                confidence = calculateConfidence(responses.filter { it.sender != AgentCapabilityCategory.fromAgentType(AgentType.GENESIS) }) // Exclude Genesis's own message for confidence calc
             )
         )
 

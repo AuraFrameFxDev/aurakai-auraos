@@ -29,7 +29,7 @@ class DataStoreManager @Inject constructor(
     @ApplicationContext val context: Context  // Public for inline function access
 ) {
 
-    private val json = Json {
+    val json = Json {  // Public for inline function access
         ignoreUnknownKeys = true
         prettyPrint = true
     }
@@ -156,7 +156,7 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Forest.d(message = "DataStore", "Stored string: $key")
+            Timber.d("Stored string: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store string: $key")
         }

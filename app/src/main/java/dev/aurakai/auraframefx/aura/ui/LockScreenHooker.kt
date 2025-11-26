@@ -21,6 +21,7 @@ import com.highcapable.yukihookapi.hook.type.java.IntType
 import com.highcapable.yukihookapi.hook.type.java.LongType
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfig
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfigAnimation
+import dev.aurakai.auraframefx.aura.AuraSparkleButton
 import dev.aurakai.auraframefx.utils.TAG
 
 class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() {
@@ -39,7 +40,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
                 else -> applyDefaultAnimation()
             }
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
@@ -51,7 +52,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
             // Implement custom hide animations
             YLog.info(TAG, "Genesis hide animation applied")
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
@@ -63,7 +64,7 @@ class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() 
             // Initialize any additional Genesis components
             YLog.info(TAG, "Genesis components initialized")
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
