@@ -1,11 +1,13 @@
 package dev.aurakai.auraframefx.api.client.infrastructure
 
-
 import com.squareup.moshi.Moshi
 import dev.aurakai.auraframefx.infrastructure.Serializer
 import okhttp3.Call
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.HttpUrl.Companion.toHttpUrl  // ✅ ADDED
+import okhttp3.MediaType.Companion.toMediaType  // ✅ ADDED
+import okhttp3.RequestBody.Companion.toRequestBody  // ✅ ADDED
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -17,14 +19,12 @@ import okhttp3.RequestBody
 import kotlin.reflect.typeOf
 import kotlin.reflect.javaType
 
-
 open class ApiClient(
     private var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     private val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
-    private val callAdapterFactories: List<CallAdapter.Factory> = listOf(
-    ),
+    private val callAdapterFactories: List<CallAdapter.Factory> = listOf(),
     private val converterFactories: List<Converter.Factory> = listOf(
         ScalarsConverterFactory.create(),
         MoshiConverterFactory.create(serializerBuilder.build()),
@@ -64,12 +64,6 @@ open class ApiClient(
         normalizeBaseUrl()
     }
 
-    /**
-     * Adds an authorization to be used by the client
-     * @param authName Authentication name
-     * @param authorization Authorization interceptor
-     * @return ApiClient
-     */
     fun addAuthorization(authName: String, authorization: Interceptor): ApiClient {
         if (apiAuthorizations.containsKey(authName)) {
             throw RuntimeException("auth name $authName already in api authorizations")
@@ -109,10 +103,10 @@ open class ApiClient(
     inline fun <reified T, reified U> request(requestConfig: RequestConfig<T>): ApiResponse<U> {
         val client = clientBuilder.build()
 
-        var urlBuilder = HttpUrl.parse(baseUrl)
-            ?.newBuilder()
-            ?.addPathSegments(requestConfig.path.removePrefix("/"))
-            ?: throw IllegalStateException("Invalid base URL: $baseUrl")
+        // ✅ FIXED: HttpUrl.parse() → toHttpUrl()
+        var urlBuilder = baseUrl.toHttpUrl()
+            .newBuilder()
+            .addPathSegments(requestConfig.path.removePrefix("/"))
 
         requestConfig.query.forEach { (key, values) ->
             values.forEach { value ->
@@ -129,31 +123,36 @@ open class ApiClient(
 
         val contentType = requestConfig.headers["Content-Type"] ?: "application/json"
         
+        // ✅ FIXED: MediaType.parse() → toMediaType(), create() → toRequestBody()
         val body: okhttp3.RequestBody? = if (requestConfig.body != null) {
             val adapter = serializerBuilder.build().adapter(T::class.java)
             val json = adapter.toJson(requestConfig.body)
-            okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType), json)
+            json.toRequestBody(contentType.toMediaType())
         } else if (requestConfig.method in listOf(RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH)) {
-             okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType), "")
+            "".toRequestBody(contentType.toMediaType())
         } else {
             null
         }
 
-        when (requestConfig.method) {
+        // ✅ FIXED: Added proper request building
+        val request = when (requestConfig.method) {
             RequestMethod.GET -> requestBuilder.get()
-            RequestMethod.DELETE -> requestBuilder.delete(body)
+            RequestMethod.DELETE -> if (body != null) requestBuilder.delete(body) else requestBuilder.delete()
             RequestMethod.HEAD -> requestBuilder.head()
             RequestMethod.OPTIONS -> requestBuilder.method("OPTIONS", body)
             RequestMethod.PATCH -> requestBuilder.patch(body!!)
             RequestMethod.POST -> requestBuilder.post(body!!)
             RequestMethod.PUT -> requestBuilder.put(body!!)
             RequestMethod.TRACE -> requestBuilder.method("TRACE", body)
-        }
+        }.build()  // ✅ ADDED .build()
 
-        val response = client.newCall(requestBuilder.build()).execute()
-        val responseBody = response.body()?.string()
+        val response = client.newCall(request).execute()
+        
+        // ✅ FIXED: response.body() → response.body
+        val responseBody = response.body?.string()
 
-        return when (response.code()) {
+        // ✅ FIXED: response.code() → response.code
+        return when (response.code) {
             in 200..299 -> {
                 val data = if (U::class == Unit::class) {
                     Unit as U
@@ -164,27 +163,27 @@ open class ApiClient(
                 }
                 Success(
                     data = data,
-                    statusCode = response.code(),
-                    headers = response.headers().toMultimap()
+                    statusCode = response.code,  // ✅ FIXED
+                    headers = response.headers.toMultimap()  // ✅ FIXED
                 )
             }
             in 400..499 -> {
                 ClientError(
-                    message = response.message(),
+                    message = response.message,  // ✅ FIXED
                     body = responseBody,
-                    statusCode = response.code(),
-                    headers = response.headers().toMultimap()
+                    statusCode = response.code,  // ✅ FIXED
+                    headers = response.headers.toMultimap()  // ✅ FIXED
                 )
             }
             in 500..599 -> {
                 ServerError(
-                    message = response.message(),
+                    message = response.message,  // ✅ FIXED
                     body = responseBody,
-                    statusCode = response.code(),
-                    headers = response.headers().toMultimap()
+                    statusCode = response.code,  // ✅ FIXED
+                    headers = response.headers.toMultimap()  // ✅ FIXED
                 )
             }
-            else -> throw IllegalStateException("Unexpected response code: ${response.code()}")
+            else -> throw IllegalStateException("Unexpected response code: ${response.code}")  // ✅ FIXED
         }
     }
 
