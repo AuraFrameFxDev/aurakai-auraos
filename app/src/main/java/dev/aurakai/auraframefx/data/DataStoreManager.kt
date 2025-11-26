@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -322,7 +323,7 @@ class DataStoreManager @Inject constructor(
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = json.encodeToString(obj)
+            val jsonString = json.encodeToString(serializer<T>(), obj)
             storeString(key, jsonString)
             Timber.d("DataStore", "Stored object: $key")
         } catch (e: Exception) {
@@ -334,7 +335,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val jsonString = getString(key)
             if (jsonString.isNotEmpty()) {
-                json.decodeFromString<T>(jsonString)
+                json.decodeFromString(serializer<T>(), jsonString)
             } else {
                 defaultValue
             }
@@ -348,7 +349,7 @@ class DataStoreManager @Inject constructor(
         return getStringFlow(key).map { jsonString ->
             try {
                 if (jsonString.isNotEmpty()) {
-                    json.decodeFromString<T>(jsonString)
+                    json.decodeFromString(serializer<T>(), jsonString)
                 } else {
                     defaultValue
                 }
@@ -583,7 +584,7 @@ class DataStoreManager @Inject constructor(
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
-            json.encodeToString(allData).length.toLong()
+            json.encodeToString(serializer<Map<String, Any>>(), allData).length.toLong()
         } catch (e: Exception) {
             Timber.e(e, "Failed to calculate data size")
             0L
