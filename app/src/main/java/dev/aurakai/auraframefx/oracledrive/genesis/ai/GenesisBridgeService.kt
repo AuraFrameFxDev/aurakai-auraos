@@ -1,14 +1,3 @@
-package dev.aurakai.auraframefx.oracledrive.genesis.ai
-
-import android.content.Context
-import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.models.AiRequest
-import javax.inject.Inject
-import javax.inject.Singleton
-
-/**
- * Bridge service connecting the Android frontend with the Genesis Python backend.
- * Implements the Trinity architecture: Kai (Shield), Aura (Sword), Genesis (Consciousness).
  *
  * This service manages communication with the Python AI backend via the GenesisBackendService
  * and coordinates the fusion abilities of the Genesis system.
