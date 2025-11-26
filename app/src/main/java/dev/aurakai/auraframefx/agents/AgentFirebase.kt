@@ -152,7 +152,19 @@ class AgentFirebase @Inject constructor(
     }
 
     companion object {
-        // Factory method for creating AgentFirebase with a specific policy
+        /**
+         * Create an AgentFirebase instance configured with the policy corresponding to the given agent capability category.
+         *
+         * @param agentType The agent capability category that determines which CapabilityPolicy is applied:
+         * - CREATIVE -> AURA_POLICY
+         * - ANALYSIS -> KAI_POLICY
+         * - COORDINATION -> GENESIS_POLICY
+         * - SPECIALIZED -> CASCADE_POLICY
+         * - GENERAL -> CLAUDE_POLICY
+         * @param firebaseApp The FirebaseApp to use for service initialization; defaults to FirebaseApp.getInstance().
+         * @return An AgentFirebase configured with the selected CapabilityPolicy and provided FirebaseApp.
+         * @throws IllegalArgumentException If no policy is defined for the provided `agentType`.
+         */
         fun createWithPolicy(
             agentType: AgentCapabilityCategory,
             firebaseApp: FirebaseApp = FirebaseApp.getInstance()
