@@ -13,7 +13,7 @@ import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.AgentInvokeRequest
 import dev.aurakai.auraframefx.models.ConversationState
@@ -49,11 +49,11 @@ class ConferenceRoomViewModel @Inject constructor(
     private val _messages = MutableStateFlow<List<AgentMessage>>(emptyList())
     val messages: StateFlow<List<AgentMessage>> = _messages
 
-    private val _activeAgents = MutableStateFlow(setOf<AgentType>())
-    val activeAgents: StateFlow<Set<AgentType>> = _activeAgents
+    private val _activeAgents = MutableStateFlow(setOf<AgentCapabilityCategory>())
+    val activeAgents: StateFlow<Set<AgentCapabilityCategory>> = _activeAgents
 
-    private val _selectedAgent = MutableStateFlow<AgentType>(AgentType.AURA) // Default to AURA
-    val selectedAgent: StateFlow<AgentType> = _selectedAgent
+    private val _selectedAgent = MutableStateFlow<AgentCapabilityCategory>(AgentCapabilityCategory.CREATIVE) // Default to AURA (CREATIVE)
+    val selectedAgent: StateFlow<AgentCapabilityCategory> = _selectedAgent
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording
@@ -68,9 +68,9 @@ class ConferenceRoomViewModel @Inject constructor(
                     is ConversationState.Responding -> {
                         _messages.update { current ->
                             current + AgentMessage(
-                                from = AgentType.NEURAL_WHISPER.name,
+                                from = "NEURAL_WHISPER",
                                 content = state.responseText ?: "...",
-                                sender = AgentType.NEURAL_WHISPER, // Or AURA/GENESIS depending on final source
+                                sender = AgentCapabilityCategory.SPECIALIZED, // NeuralWhisper mapped to SPECIALIZED
                                 timestamp = System.currentTimeMillis(),
                                 confidence = 1.0f // Placeholder confidence
                             )
@@ -87,9 +87,9 @@ class ConferenceRoomViewModel @Inject constructor(
                         Log.e(TAG, "NeuralWhisper error: ${state.errorMessage}")
                         _messages.update { current ->
                             current + AgentMessage(
-                                from = AgentType.NEURAL_WHISPER.name,
+                                from = "NEURAL_WHISPER",
                                 content = "Error: ${state.errorMessage}",
-                                sender = AgentType.NEURAL_WHISPER, // Or a system error agent
+                                sender = AgentCapabilityCategory.SPECIALIZED, // NeuralWhisper mapped to SPECIALIZED
                                 timestamp = System.currentTimeMillis(),
                                 confidence = 0.0f
                             )
@@ -107,9 +107,9 @@ class ConferenceRoomViewModel @Inject constructor(
     // ═══════════════════════════════════════════════════════════════════════════
     // Conference Room Message Routing - ALL 5 MASTER AGENTS
     // ═══════════════════════════════════════════════════════════════════════════
-    /*override*/ suspend fun sendMessage(message: String, sender: AgentType, context: String) {
+    /*override*/ suspend fun sendMessage(message: String, sender: AgentCapabilityCategory, context: String) {
         val responseFlow: Flow<AgentResponse>? = when (sender) {
-            AgentType.AURA -> auraService.processRequestFlow(
+            AgentCapabilityCategory.CREATIVE -> auraService.processRequestFlow(
                 AiRequest(
                     query = message,
                     type = "text",
@@ -117,7 +117,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             )
 
-            AgentType.KAI -> kaiService.processRequestFlow(
+            AgentCapabilityCategory.SECURITY, AgentCapabilityCategory.ANALYSIS -> kaiService.processRequestFlow(
                 AiRequest(
                     query = message,
                     type = "text",
@@ -125,7 +125,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             )
 
-            AgentType.CASCADE -> cascadeService.processRequest(
+            AgentCapabilityCategory.SPECIALIZED -> cascadeService.processRequest(
                 AgentInvokeRequest(
                     message = message,
                     context = context
@@ -137,7 +137,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             }
 
-            AgentType.CLAUDE -> claudeService.processRequestFlow(
+            AgentCapabilityCategory.GENERAL -> claudeService.processRequestFlow(
                 AiRequest(
                     query = message,
                     type = "build_analysis",
@@ -145,7 +145,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             )
 
-            AgentType.GENESIS -> {
+            AgentCapabilityCategory.COORDINATION -> {
                 // Genesis uses GenesisBridgeService for orchestration
                 // Convert to flow by wrapping the suspend function
                 kotlinx.coroutines.flow.flow {
@@ -183,9 +183,9 @@ class ConferenceRoomViewModel @Inject constructor(
                     Log.e(TAG, "Error processing AI response from $sender: ${e.message}", e)
                     _messages.update { current ->
                         current + AgentMessage(
-                            from = AgentType.GENESIS.name,
+                            from = "GENESIS",
                             content = "Error from ${sender.name}: ${e.message}",
-                            sender = AgentType.GENESIS,
+                            sender = AgentCapabilityCategory.COORDINATION,
                             timestamp = System.currentTimeMillis(),
                             confidence = 0.0f
                         )
@@ -196,7 +196,7 @@ class ConferenceRoomViewModel @Inject constructor(
     }
 
     // This `toggleAgent` was marked with `override` in user's snippet.
-    /*override*/ fun toggleAgent(agent: AgentType) {
+    /*override*/ fun toggleAgent(agent: AgentCapabilityCategory) {
         _activeAgents.update { current ->
             if (current.contains(agent)) {
                 current - agent
@@ -206,7 +206,7 @@ class ConferenceRoomViewModel @Inject constructor(
         }
     }
 
-    fun selectAgent(agent: AgentType) {
+    fun selectAgent(agent: AgentCapabilityCategory) {
         _selectedAgent.value = agent
     }
 
