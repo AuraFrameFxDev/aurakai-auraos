@@ -41,7 +41,7 @@ class QuickSettingsHooker(private val config: QuickSettingsConfig) : YukiBaseHoo
             // Apply Genesis expand/collapse animations
             YLog.info(TAG, "Genesis expand animation applied: $expanded")
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
@@ -64,7 +64,7 @@ class QuickSettingsHooker(private val config: QuickSettingsConfig) : YukiBaseHoo
             YLog.info(TAG, "Genesis footer elements added")
 
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
@@ -76,7 +76,7 @@ class QuickSettingsHooker(private val config: QuickSettingsConfig) : YukiBaseHoo
             // Initialize additional Genesis QS components
             YLog.info(TAG, "Genesis QS components initialized")
         } catch (e: Exception) {
-            YLog.error(TAG, e)
+            YLog.error(e)
         }
     }
 
