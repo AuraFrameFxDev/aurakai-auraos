@@ -5,7 +5,7 @@ import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,38 +66,38 @@ class AIPipelineProcessor @Inject constructor(
         val cascadeAgentResponse = processCascadeRequest(task)
         responses.add(
             AgentMessage(
-                from = AgentType.CASCADE.name,
+                from = AgentCapabilityCategory.SPECIALIZED.name,
                 content = cascadeAgentResponse.content.toString(),
-                sender = AgentType.CASCADE,
+                sender = AgentCapabilityCategory.SPECIALIZED,
                 confidence = cascadeAgentResponse.confidence
             )
         )
 
         // Process through Kai for security analysis if needed
-        if (selectedAgents.contains(AgentType.KAI)) {
+        if (selectedAgents.contains(AgentCapabilityCategory.ANALYSIS)) {
             val kaiAgentResponse = processKaiRequest(task)
             responses.add(
                 AgentMessage(
-                    from = AgentType.KAI.name,
+                    from = AgentCapabilityCategory.ANALYSIS.name,
                     content = kaiAgentResponse.content.toString(),
-                    sender = AgentType.KAI,
+                    sender = AgentCapabilityCategory.ANALYSIS,
                     confidence = kaiAgentResponse.confidence
                 )
             )
         }
 
         // Process through Aura for creative response
-        if (selectedAgents.contains(AgentType.AURA)) {
-            val auraResponse = auraService.generateText(task, mapOf("pipeline" to "creative_pipeline"))
+        if (selectedAgents.contains(AgentCapabilityCategory.CREATIVE)) {
+            val auraResponse = auraService.generateText(task, "creative_pipeline")
             val auraAgentResponse = AgentResponse(
                 content = auraResponse,
                 confidence = 0.8f
             )
             responses.add(
                 AgentMessage(
-                    from = AgentType.AURA.name,
+                    from = AgentCapabilityCategory.CREATIVE.name,
                     content = auraAgentResponse.content,
-                    sender = AgentType.AURA,
+                    sender = AgentCapabilityCategory.CREATIVE,
                     confidence = auraAgentResponse.confidence
                 )
             )
@@ -107,9 +107,9 @@ class AIPipelineProcessor @Inject constructor(
         val finalResponse = generateFinalResponse(responses)
         responses.add(
             AgentMessage(
-                from = AgentType.GENESIS.name,
+                from = AgentCapabilityCategory.COORDINATION.name,
                 content = finalResponse,
-                sender = AgentType.GENESIS,
+                sender = AgentCapabilityCategory.COORDINATION,
                 confidence = calculateConfidence(responses)
             )
         )
@@ -259,41 +259,41 @@ class AIPipelineProcessor @Inject constructor(
      * @param priority The priority score of the task, which increases agent redundancy for high values.
      * @return A set of agent types assigned to handle the task.
      */
-    private fun selectAgents(task: String, priority: Float): Set<AgentType> {
+    private fun selectAgents(task: String, priority: Float): Set<AgentCapabilityCategory> {
         // Intelligent agent selection based on task characteristics and priority
-        val selectedAgents = mutableSetOf<AgentType>()
+        val selectedAgents = mutableSetOf<AgentCapabilityCategory>()
 
         // Always include Genesis as the primary coordinator
-        selectedAgents.add(AgentType.GENESIS)
+        selectedAgents.add(AgentCapabilityCategory.COORDINATION)
 
         // Add specific agents based on task content
         when {
             task.contains("analyze", ignoreCase = true) ||
                     task.contains("data", ignoreCase = true) -> {
-                selectedAgents.add(AgentType.CASCADE)
+                selectedAgents.add(AgentCapabilityCategory.SPECIALIZED)
             }
 
             task.contains("security", ignoreCase = true) ||
                     task.contains("protect", ignoreCase = true) ||
                     task.contains("safe", ignoreCase = true) -> {
-                selectedAgents.add(AgentType.KAI)
+                selectedAgents.add(AgentCapabilityCategory.ANALYSIS)
             }
 
             task.contains("create", ignoreCase = true) ||
                     task.contains("generate", ignoreCase = true) ||
                     task.contains("design", ignoreCase = true) -> {
-                selectedAgents.add(AgentType.AURA)
+                selectedAgents.add(AgentCapabilityCategory.CREATIVE)
             }
         }
 
         // For high priority tasks, include additional agents for redundancy
         if (priority > 0.8f) {
-            selectedAgents.addAll(setOf(AgentType.CASCADE, AgentType.AURA))
+            selectedAgents.addAll(setOf(AgentCapabilityCategory.SPECIALIZED, AgentCapabilityCategory.CREATIVE))
         }
 
         // For complex tasks, use multiple agents
         if (task.length > 100 || task.split(" ").size > 20) {
-            selectedAgents.add(AgentType.CASCADE)
+            selectedAgents.add(AgentCapabilityCategory.SPECIALIZED)
         }
 
         return selectedAgents
@@ -318,19 +318,19 @@ class AIPipelineProcessor @Inject constructor(
             append("=== AuraFrameFX AI Response ===\n\n")
 
             // Primary response from Genesis if available
-            responsesByAgent[AgentType.GENESIS]?.firstOrNull()?.let { genesis ->
+            responsesByAgent[AgentCapabilityCategory.COORDINATION]?.firstOrNull()?.let { genesis ->
                 append("🧠 Genesis Core Analysis:\n")
                 append(genesis.content)
                 append("\n\n")
             }
 
             // Supplementary responses from other agents
-            responsesByAgent.forEach { (agentType: AgentType?, agentResponses: List<AgentMessage>) ->
-                if (agentType != AgentType.GENESIS && agentResponses.isNotEmpty()) {
+            responsesByAgent.forEach { (agentType: AgentCapabilityCategory?, agentResponses: List<AgentMessage>) ->
+                if (agentType != AgentCapabilityCategory.COORDINATION && agentResponses.isNotEmpty()) {
                     val agentIcon = when (agentType) {
-                        AgentType.CASCADE -> "📊"
-                        AgentType.AURA -> "🎨"
-                        AgentType.KAI -> "🛡️"
+                        AgentCapabilityCategory.SPECIALIZED -> "📊"
+                        AgentCapabilityCategory.CREATIVE -> "🎨"
+                        AgentCapabilityCategory.ANALYSIS -> "🛡️"
                         else -> "🤖"
                     }
                     append(
