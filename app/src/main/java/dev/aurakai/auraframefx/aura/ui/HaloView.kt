@@ -105,7 +105,15 @@ fun HaloView(
 ) {
     var isRotating by remember { mutableStateOf(true) }
     var rotationAngle by remember { mutableFloatStateOf(0f) }
-    val agents = remember { viewModel.getAgentsByPriority() }
+    val agents = remember {
+        viewModel.getAgentsByPriority().mapNotNull { config ->
+            try {
+                AgentType.valueOf(config.name.uppercase(Locale.ROOT))
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
