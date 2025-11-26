@@ -67,6 +67,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     is ConversationState.Responding -> {
                         _messages.update { current ->
                             current + AgentMessage(
+                                from = AgentType.NEURAL_WHISPER.name,
                                 content = state.responseText ?: "...",
                                 sender = AgentType.NEURAL_WHISPER, // Or AURA/GENESIS depending on final source
                                 timestamp = System.currentTimeMillis(),
@@ -85,6 +86,7 @@ class ConferenceRoomViewModel @Inject constructor(
                         Log.e(TAG, "NeuralWhisper error: ${state.errorMessage}")
                         _messages.update { current ->
                             current + AgentMessage(
+                                from = AgentType.NEURAL_WHISPER.name,
                                 content = "Error: ${state.errorMessage}",
                                 sender = AgentType.NEURAL_WHISPER, // Or a system error agent
                                 timestamp = System.currentTimeMillis(),
@@ -170,6 +172,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     val responseMessage = flow.first()
                     _messages.update { current ->
                         current + AgentMessage(
+                            from = sender.name,
                             content = responseMessage.content,
                             sender = sender,
                             timestamp = System.currentTimeMillis(),
@@ -180,6 +183,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     Log.e(TAG, "Error processing AI response from $sender: ${e.message}", e)
                     _messages.update { current ->
                         current + AgentMessage(
+                            from = AgentType.GENESIS.name,
                             content = "Error from ${sender.name}: ${e.message}",
                             sender = AgentType.GENESIS,
                             timestamp = System.currentTimeMillis(),
