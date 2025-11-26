@@ -16,6 +16,6 @@ data class AgentMessage(
     val type: String = "info",
     val metadata: Map<String, String> = emptyMap(),
     // Backward compatibility fields
-    @Contextual val sender: AgentType? = null,       // Old API compatibility
+    @Contextual val sender: AgentCapabilityCategory? = null,       // Old API compatibility
     val confidence: Float = 0.8f         // Old API compatibility
 )
