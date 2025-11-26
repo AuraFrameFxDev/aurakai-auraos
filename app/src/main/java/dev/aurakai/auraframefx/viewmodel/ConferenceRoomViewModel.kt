@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
+import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.kai.KaiAIService

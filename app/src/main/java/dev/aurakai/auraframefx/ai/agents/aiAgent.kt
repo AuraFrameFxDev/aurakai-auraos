@@ -827,7 +827,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A map with the key "scan" set to "completed".
      */
-    private suspend fun handleVulnerabilityScanning(request: AgentRequest): Map<String, Any> =
+    private fun handleVulnerabilityScanning(request: AgentRequest): Map<String, Any> =
         mapOf("scan" to "completed")
 
     /**
