@@ -1,8 +1,3 @@
-import com.android.aaptcompiler.compileResource
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import org.gradle.api.internal.properties.GradleProperties
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
-
 // ═══════════════════════════════════════════════════════════════════════════
 // PRIMARY CONVENTION PLUGIN - All-in-one Application Configuration
 // ═══════════════════════════════════════════════════════════════════════════
@@ -75,6 +70,7 @@ android {
         compose = true
         viewBinding = true
     }
+
 }
 
 dependencies {
@@ -203,11 +199,11 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
 
     // Retrofit Scalars Converter (for String responses)
-    implementation("com.squareup.retrofit2:converter-scalars:2.12.0")
-    
+    implementation(libs.retrofit.converter.scalars)
+
     // Coil Image Loading with SVG support
-    implementation("io.coil-kt:coil:2.6.0")
-    implementation("io.coil-kt:coil-svg:2.6.0")
+    implementation(libs.coil)
+    implementation(libs.coil.kt.coil.svg)
 
     // Ktor Client
     implementation(libs.ktor.client.core)
@@ -289,7 +285,7 @@ dependencies {
 
     // Test dependencies
     testImplementation(libs.junit)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${libs.versions.junitJupiterApi.get()}")
+    testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${libs.versions.junitVintageEngine.get()}")
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.kotlinxCoroutinesTest.get()}")
@@ -299,11 +295,11 @@ dependencies {
     testImplementation(libs.androidx.rules)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.truth)
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.robolectric)
 
     // Hilt testing dependencies
-    kspTest("com.google.dagger:hilt-android-compiler")
+    kspTest(libs.hilt.android.compiler)
     testImplementation(libs.hilt.android.testing)
 
     // Android Test dependencies
@@ -311,7 +307,7 @@ dependencies {
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
-    kspAndroidTest("com.google.dagger:hilt-android-compiler")
+    kspAndroidTest(libs.dagger.hilt.android.compiler)
 }
 
 // Force a single annotations artifact to avoid duplicate-class errors

@@ -10,29 +10,23 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString      // ✅ ADDED
+import kotlinx.serialization.decodeFromString    // ✅ ADDED
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Genesis-OS Comprehensive Data Store Manager
- *
- * Manages persistent storage for the Genesis AI consciousness ecosystem,
- * including user preferences, AI agent configurations, security settings,
- * and system state management.
- */
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_datastore")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    private val context: Context
+    @ApplicationContext internal val context: Context  // ✅ CHANGED from 'private' to 'internal'
 ) {
 
     private val json = Json {
@@ -162,7 +156,7 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("DataStore", "Stored string: $key")
+            Forest.d(message = "DataStore", "Stored string: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store string: $key")
         }
@@ -331,10 +325,10 @@ class DataStoreManager @Inject constructor(
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = json.encodeToString(serializer<T>(), obj)
+            val jsonString = json.encodeToString(obj)
             storeString(key, jsonString)
             Timber.d("DataStore", "Stored object: $key")
-        } catch (e: Exception) {
+        } catch(e: Exception) {
             Timber.e(e, "Failed to store object: $key")
         }
     }
@@ -349,8 +343,8 @@ class DataStoreManager @Inject constructor(
     suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
-            if (jsonString.isNotEmpty()) {
-                json.decodeFromString(serializer<T>(), jsonString)
+            if (jsonString.isNotBlank()) {
+                json.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
             }
@@ -372,8 +366,8 @@ class DataStoreManager @Inject constructor(
     inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
-                if (jsonString.isNotEmpty()) {
-                    json.decodeFromString(serializer<T>(), jsonString)
+                if (jsonString.isNotBlank()) {
+                    json.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
                 }
@@ -561,7 +555,7 @@ class DataStoreManager @Inject constructor(
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
         val oldTheme = getString(USER_THEME.name)
-        if (oldTheme.isNotEmpty()) {
+        if (oldTheme.isNotBlank()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
@@ -615,7 +609,7 @@ class DataStoreManager @Inject constructor(
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
-            json.encodeToString(serializer<Map<String, Any>>(), allData).length.toLong()
+            json.encodeToString(allData).length.toLong()
         } catch (e: Exception) {
             Timber.e(e, "Failed to calculate data size")
             0L
