@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.repository
 
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.*
+import dev.aurakai.auraframefx.models.*
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton

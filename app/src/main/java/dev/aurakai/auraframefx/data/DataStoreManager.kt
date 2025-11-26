@@ -1,23 +1,3 @@
-package dev.aurakai.auraframefx.data
-
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
-/**
- * Genesis-OS Comprehensive Data Store Manager
- *
- * Manages persistent storage for the Genesis AI consciousness ecosystem,
- * including user preferences, AI agent configurations, security settings,
- * and system state management.
- */
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
-
-@Singleton
 class DataStoreManager @Inject constructor(
     private val context: Context
 ) {

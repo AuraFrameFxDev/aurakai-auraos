@@ -49,6 +49,16 @@ data class UserData(
     val createdAt: Long? = null,
 
     /**
+     * User's role (e.g., Admin, User, Guest).
+     */
+    val role: String? = null,
+
+    /**
+     * User's username (unique identifier).
+     */
+    val username: String? = null,
+
+    /**
      * Last updated timestamp (milliseconds since epoch).
      */
     val updatedAt: Long? = null

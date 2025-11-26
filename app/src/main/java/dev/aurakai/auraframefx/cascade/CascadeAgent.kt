@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.cascade
 
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
-import dev.aurakai.auraframefx.ai.agents.KaiAgent
+import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
 import dev.aurakai.auraframefx.aura.AuraAgent

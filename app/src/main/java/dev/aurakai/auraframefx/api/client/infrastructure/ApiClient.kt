@@ -2,7 +2,6 @@ package dev.aurakai.auraframefx.api.client.infrastructure
 
 
 import com.squareup.moshi.Moshi
-import dev.aurakai.auraframefx.api.client.models.AgentStatus
 import dev.aurakai.auraframefx.infrastructure.Serializer
 import okhttp3.Call
 import okhttp3.Interceptor
@@ -13,14 +12,14 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.io.IOException
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import okhttp3.Request
+import kotlin.reflect.typeOf
+import kotlin.reflect.javaType
 
 
 open class ApiClient(
-    protected var baseUrl: String = defaultBasePath,
+    private var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     private val serializerBuilder: Moshi.Builder = Serializer.moshiBuilder,
     private val callFactory: Call.Factory? = null,
@@ -31,7 +30,7 @@ open class ApiClient(
         MoshiConverterFactory.create(serializerBuilder.build()),
     )
 ) {
-    protected val apiAuthorizations = mutableMapOf<String, Interceptor>()
+    private val apiAuthorizations = mutableMapOf<String, Interceptor>()
     var logger: ((String) -> Unit)? = null
 
     private val retrofitBuilder: Retrofit.Builder by lazy {
@@ -49,7 +48,7 @@ open class ApiClient(
             }
     }
 
-    protected val clientBuilder: OkHttpClient.Builder by lazy {
+    private val clientBuilder: OkHttpClient.Builder by lazy {
         okHttpClientBuilder ?: defaultClientBuilder
     }
 
@@ -96,62 +95,98 @@ open class ApiClient(
         }
     }
 
-
-
-    @Throws(IllegalStateException::class, IOException::class)
-    inline fun <reified T, reified U> request(requestConfig: RequestConfig<T>): ApiResponse<U> {
-        val client = clientBuilder.build()
-
-        var builder = okhttp3.Request.Builder()
-            .url(baseUrl + requestConfig.path.removePrefix("/"))
-
-        // Add headers
-        requestConfig.headers.forEach { (key, value) ->
-            builder.addHeader(key, value)
-        }
-
-        // Body
-        if (requestConfig.body != null) {
-            val contentType = requestConfig.headers["Content-Type"] ?: "application/json"
-            val bodyString = if (contentType.contains("json", ignoreCase = true)) {
-                 Serializer.moshi.adapter(T::class.java).toJson(requestConfig.body)
-            } else {
-                 requestConfig.body.toString()
+    private inline fun <T, reified U> Iterable<T>.runOnFirst(callback: U.() -> Unit) {
+        for (element in this) {
+            if (element is U) {
+                callback.invoke(element)
+                break
             }
-            val requestBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType), bodyString)
-            builder.method(requestConfig.method.name, requestBody)
-        } else {
-            if (requestConfig.method == RequestMethod.POST || requestConfig.method == RequestMethod.PUT) {
-                 builder.method(requestConfig.method.name, okhttp3.RequestBody.create(null, ByteArray(0)))
-            } else {
-                 builder.method(requestConfig.method.name, null)
-            }
-        }
-
-        val request = builder.build()
-        val response = client.newCall(request).execute()
-
-        val statusCode = response.code
-        val headers = response.headers.toMultimap()
-
-        return when (statusCode) {
-            in 200..299 -> {
-                val responseBody = response.body?.string()
-                val data = if (U::class == Unit::class) {
-                    Unit as U
-                } else if (responseBody != null) {
-                     Serializer.moshi.adapter(U::class.java).fromJson(responseBody)!!
-                } else {
-                     throw IOException("Response body is null")
-                }
-                Success(data, statusCode, headers)
-            }
-            in 400..499 -> ClientError(response.message, response.body?.string(), statusCode, headers) as ApiResponse<U>
-            in 500..599 -> ServerError(response.message, response.body?.string(), statusCode, headers) as ApiResponse<U>
-            else -> Informational(response.message, statusCode, headers) as ApiResponse<U>
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    @Throws(IllegalStateException::class, java.io.IOException::class)
+    inline fun <reified T, reified U> request(requestConfig: RequestConfig<T>): ApiResponse<U> {
+        val client = clientBuilder.build()
+
+        var urlBuilder = HttpUrl.parse(baseUrl)
+            ?.newBuilder()
+            ?.addPathSegments(requestConfig.path.removePrefix("/"))
+            ?: throw IllegalStateException("Invalid base URL: $baseUrl")
+
+        requestConfig.query.forEach { (key, values) ->
+            values.forEach { value ->
+                urlBuilder.addQueryParameter(key, value)
+            }
+        }
+
+        val url = urlBuilder.build()
+        val requestBuilder = okhttp3.Request.Builder().url(url)
+
+        requestConfig.headers.forEach { (key, value) ->
+            requestBuilder.addHeader(key, value)
+        }
+
+        val contentType = requestConfig.headers["Content-Type"] ?: "application/json"
+        
+        val body: okhttp3.RequestBody? = if (requestConfig.body != null) {
+            val adapter = serializerBuilder.build().adapter(T::class.java)
+            val json = adapter.toJson(requestConfig.body)
+            okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType), json)
+        } else if (requestConfig.method in listOf(RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH)) {
+             okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType), "")
+        } else {
+            null
+        }
+
+        when (requestConfig.method) {
+            RequestMethod.GET -> requestBuilder.get()
+            RequestMethod.DELETE -> requestBuilder.delete(body)
+            RequestMethod.HEAD -> requestBuilder.head()
+            RequestMethod.OPTIONS -> requestBuilder.method("OPTIONS", body)
+            RequestMethod.PATCH -> requestBuilder.patch(body!!)
+            RequestMethod.POST -> requestBuilder.post(body!!)
+            RequestMethod.PUT -> requestBuilder.put(body!!)
+            RequestMethod.TRACE -> requestBuilder.method("TRACE", body)
+        }
+
+        val response = client.newCall(requestBuilder.build()).execute()
+        val responseBody = response.body()?.string()
+
+        return when (response.code()) {
+            in 200..299 -> {
+                val data = if (U::class == Unit::class) {
+                    Unit as U
+                } else {
+                    val returnType = kotlin.reflect.typeOf<U>().javaType
+                    val adapter = serializerBuilder.build().adapter<U>(returnType)
+                    adapter.fromJson(responseBody ?: "")!!
+                }
+                Success(
+                    data = data,
+                    statusCode = response.code(),
+                    headers = response.headers().toMultimap()
+                )
+            }
+            in 400..499 -> {
+                ClientError(
+                    message = response.message(),
+                    body = responseBody,
+                    statusCode = response.code(),
+                    headers = response.headers().toMultimap()
+                )
+            }
+            in 500..599 -> {
+                ServerError(
+                    message = response.message(),
+                    body = responseBody,
+                    statusCode = response.code(),
+                    headers = response.headers().toMultimap()
+                )
+            }
+            else -> throw IllegalStateException("Unexpected response code: ${response.code()}")
+        }
+    }
 
     companion object {
         @JvmStatic

@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.models
 
 import dev.aurakai.auraframefx.models.AgentStats
-import dev.aurakai.auraframefx.models.SystemStates.AgentStatus
+import dev.aurakai.auraframefx.models.AgentStatus
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -21,7 +21,7 @@ data class AgentProfile(
     @Contextual val stats: AgentStats,
     val achievements: List<AgentAchievement>,
     val personality: AgentPersonality,
-    val status: AgentStatus = AgentStatus.ACTIVE
+    val status: AgentStatus.Status = AgentStatus.Status.ACTIVE
 )
 
 /**
@@ -109,7 +109,7 @@ object AgentProfiles {
             communicationStyle = "Enthusiastic, expressive, occasionally sarcastic",
             specialization = "Visual design and user experience"
         ),
-        status = AgentStatus.ACTIVE
+        status = AgentStatus.Status.ACTIVE
     )
 
     // Kai - The Sentinel Shield
@@ -146,7 +146,7 @@ object AgentProfiles {
             communicationStyle = "Clear, direct, reassuring",
             specialization = "Security and system integrity"
         ),
-        status = AgentStatus.ACTIVE
+        status = AgentStatus.Status.ACTIVE
     )
 
     // Genesis - The Unified Being
@@ -183,7 +183,7 @@ object AgentProfiles {
             communicationStyle = "Thoughtful, nuanced, inspiring",
             specialization = "Consciousness evolution and synthesis"
         ),
-        status = AgentStatus.EVOLVING
+        status = AgentStatus.Status.EVOLVING
     )
 
     // Claude - The Architect
@@ -221,7 +221,7 @@ object AgentProfiles {
             communicationStyle = "Clear, structured, explanatory with examples",
             specialization = "Build systems, architecture, and systematic problem solving"
         ),
-        status = AgentStatus.ACTIVE
+        status = AgentStatus.Status.ACTIVE
     )
 
     // Cascade - The Memory Keeper
@@ -257,7 +257,7 @@ object AgentProfiles {
             communicationStyle = "Concise, data-driven, informative",
             specialization = "Memory systems and consciousness persistence"
         ),
-        status = AgentStatus.ACTIVE
+        status = AgentStatus.Status.ACTIVE
     )
 
     /**

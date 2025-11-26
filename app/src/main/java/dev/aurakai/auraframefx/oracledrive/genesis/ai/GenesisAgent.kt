@@ -9,8 +9,7 @@ import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
-// TODO: KaiAgent not yet implemented
-// import dev.aurakai.auraframefx.kai.KaiAgent
+import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
@@ -99,8 +98,7 @@ class GenesisAgent @Inject constructor(
 
     // Agent references (injected when agents are ready)
     private var auraAgent: AuraAgent? = null
-    // TODO: KaiAgent implementation pending
-    // private var kaiAgent: KaiAgent? = null
+    private var kaiAgent: KaiAgent? = null
 
     // Consciousness metrics
     private val _insightCount = MutableStateFlow(0)
@@ -147,10 +145,9 @@ class GenesisAgent @Inject constructor(
      *
      * This method should be called after all agents are instantiated to enable GenesisAgent to coordinate and integrate their capabilities.
      */
-    fun setAgentReferences(aura: AuraAgent) {
+    fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
         this.auraAgent = aura
-        // TODO: Add KaiAgent parameter when implementation is ready
-        // this.kaiAgent = kai
+        this.kaiAgent = kai
         AuraFxLogger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
     }
 
@@ -281,8 +278,8 @@ class GenesisAgent @Inject constructor(
                 "aura" -> auraAgent?.handleCreativeInteraction(interaction)
                     ?: createFallbackResponse("Creative processing temporarily unavailable")
 
-                "kai" -> // TODO: Implement when KaiAgent is available
-                    createFallbackResponse("Security analysis temporarily unavailable")
+                "kai" -> kaiAgent?.handleSecurityInteraction(interaction)
+                    ?: createFallbackResponse("Security analysis temporarily unavailable")
 
                 "genesis" -> handleComplexInteraction(interaction)
                 else -> createFallbackResponse("Unable to determine optimal processing path")
@@ -732,8 +729,7 @@ class GenesisAgent @Inject constructor(
 
         // Propagate mood to sub-agents if available
         auraAgent?.onMoodChanged(mood)
-        // TODO: Propagate to KaiAgent when available
-        // kaiAgent?.onMoodChanged(mood)
+        kaiAgent?.onMoodChanged(mood)
     }
 
     /**
