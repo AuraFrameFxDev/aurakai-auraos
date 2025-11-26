@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentType.*
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.ConferenceRoomViewModel
@@ -149,7 +150,7 @@ fun ConferenceRoomScreen(
                     if (messageText.isNotBlank()) {
                         // Launch a coroutine for the suspend function
                         scope.launch {
-                            viewModel.sendMessage(messageText, AgentType.USER, "user_conversation")
+                            viewModel.sendMessage(messageText, USER, "user_conversation")
                             messageText = ""
                         }
                     }
@@ -163,4 +164,11 @@ fun ConferenceRoomScreen(
             }
         }
     }
+}
+
+private fun ConferenceRoomViewModel.sendMessage(
+    message: String,
+    sender: AgentType,
+    context: String
+) {
 }
