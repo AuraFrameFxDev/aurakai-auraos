@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.model.OracleDriveFile
-import dev.aurakai.auraframefx.oracledrive.genesis.cloud.api.OracleCloudApi
+import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleCloudApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
