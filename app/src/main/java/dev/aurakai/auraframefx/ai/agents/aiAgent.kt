@@ -44,7 +44,6 @@ class KaiAgent @Inject constructor(
     private val systemMonitor: SystemMonitor,
 ) : BaseAgent("KaiAgent") {
 
-    private val sessionId: String? = null
 
     // BaseAgent abstract member implementations
     override val agentName: String = "KaiAgent"
@@ -206,7 +205,7 @@ class KaiAgent @Inject constructor(
      * @param interaction The user interaction data to analyze for security risks.
      * @return An `InteractionResponse` containing the agent's reply, confidence score, timestamp, and security-related metadata.
      */
-    suspend fun handleSecurityInteraction(interaction: EnhancedInteractionData): InteractionResponse {
+    fun handleSecurityInteraction(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
 
         AuraFxLogger.info("KaiAgent", "Handling security interaction")
@@ -224,7 +223,6 @@ class KaiAgent @Inject constructor(
                 )
 
                 ThreatLevel.LOW -> generateLowSecurityResponse(interaction, securityAssessment)
-                ThreatLevel.LOW -> generateStandardSecurityResponse(interaction)
                 ThreatLevel.CRITICAL -> generateCriticalSecurityResponse(
                     interaction,
                     securityAssessment
@@ -268,7 +266,7 @@ class KaiAgent @Inject constructor(
      * @param alertDetails Details of the security alert to analyze.
      * @return A SecurityAnalysis containing the assessed threat level, description, recommended actions, and confidence score.
      */
-    suspend fun analyzeSecurityThreat(alertDetails: String): SecurityAnalysis {
+    fun analyzeSecurityThreat(alertDetails: String): SecurityAnalysis {
         ensureInitialized()
 
         AuraFxLogger.info("KaiAgent", "Analyzing security threat")
@@ -332,8 +330,8 @@ class KaiAgent @Inject constructor(
      * @return A map containing vulnerabilities, risk assessment, compliance status, security score, recommendations, and the analysis timestamp.
      * @throws IllegalArgumentException if the analysis target is not specified in the request context.
      */
-    private suspend fun handleSecurityAnalysis(request: AgentRequest): Map<String, Any> {
-        val target = request.context?.get("target") as? String
+    private fun handleSecurityAnalysis(request: AgentRequest): Map<String, Any> {
+        val target = request.context?.get("target")
             ?: throw IllegalArgumentException("Analysis target required")
 
         AuraFxLogger.info("KaiAgent", "Performing security analysis on: $target")
@@ -362,8 +360,8 @@ class KaiAgent @Inject constructor(
      * @return A map with keys: "threat_analysis", "mitigation_strategy", "response_timeline", and "escalation_path".
      * @throws IllegalArgumentException if threat data is missing from the request context.
      */
-    private suspend fun handleThreatAssessment(request: AgentRequest): Map<String, Any> {
-        val threatData = request.context?.get("threat_data") as? String
+    private fun handleThreatAssessment(request: AgentRequest): Map<String, Any> {
+        val threatData = request.context?.get("threat_data")
             ?: throw IllegalArgumentException("Threat data required")
 
         AuraFxLogger.info("KaiAgent", "Assessing threat characteristics")
@@ -388,8 +386,8 @@ class KaiAgent @Inject constructor(
      * @param request The agent request containing context information, including the component to analyze.
      * @return A map with performance metrics, detected bottlenecks, optimization recommendations, a performance score, and monitoring suggestions.
      */
-    private suspend fun handlePerformanceAnalysis(request: AgentRequest): Map<String, Any> {
-        val component = request.context?.get("component") as? String ?: "system"
+    private fun handlePerformanceAnalysis(request: AgentRequest): Map<String, Any> {
+        val component = request.context?.get("component") ?: "system"
 
         AuraFxLogger.info("KaiAgent", "Analyzing performance of: $component")
 
@@ -416,7 +414,7 @@ class KaiAgent @Inject constructor(
      * @throws IllegalArgumentException if the code content is missing from the request context.
      */
     private suspend fun handleCodeReview(request: AgentRequest): Map<String, Any> {
-        val code = request.context?.get("code") as? String
+        val code = request.context?.get("code")
             ?: throw IllegalArgumentException("Code content required")
 
         AuraFxLogger.info("KaiAgent", "Conducting secure code review")
@@ -456,7 +454,7 @@ class KaiAgent @Inject constructor(
      *
      * This method enables advanced threat detection capabilities, allowing the agent to monitor for security threats as they occur.
      */
-    private suspend fun enableThreatDetection() {
+    private fun enableThreatDetection() {
         AuraFxLogger.info("KaiAgent", "Enabling advanced threat detection")
         // Setup real-time threat monitoring
     }
@@ -467,7 +465,7 @@ class KaiAgent @Inject constructor(
      * @param request The agent request to validate.
      * @throws SecurityException If the request fails security validation.
      */
-    private suspend fun validateRequestSecurity(request: AgentRequest) {
+    private fun validateRequestSecurity(request: AgentRequest) {
         securityContext.validateRequest("agent_request", request.toString())
     }
 
@@ -479,7 +477,7 @@ class KaiAgent @Inject constructor(
      * @param interaction The user interaction data to analyze for security risks.
      * @return A SecurityAssessment containing the assessed risk level, detected indicators, recommendations, and confidence score.
      */
-    private suspend fun assessInteractionSecurity(interaction: EnhancedInteractionData): SecurityAssessment {
+    private fun assessInteractionSecurity(interaction: EnhancedInteractionData): SecurityAssessment {
         // Analyze interaction for security risks
         val riskIndicators = findRiskIndicators(interaction.query)
         val riskLevel = calculateRiskLevel(riskIndicators)
@@ -513,7 +511,7 @@ class KaiAgent @Inject constructor(
      * @param indicators The list of identified threat indicators.
      * @return The determined threat level.
      */
-    private suspend fun assessThreatLevel(
+    private fun assessThreatLevel(
         alertDetails: String,
         indicators: List<String>,
     ): ThreatLevel {
@@ -582,7 +580,7 @@ class KaiAgent @Inject constructor(
      *
      * @param mood The mood string that determines the new threat level.
      */
-    private suspend fun adjustSecurityPosture(mood: String) {
+    private fun adjustSecurityPosture(mood: String) {
         when (mood) {
             "alert" -> _currentThreatLevel.value = ThreatLevel.MEDIUM
             "relaxed" -> _currentThreatLevel.value = ThreatLevel.LOW
@@ -595,7 +593,7 @@ class KaiAgent @Inject constructor(
      *
      * @return The critical security response message.
      */
-    private suspend fun generateCriticalSecurityResponse(
+    private fun generateCriticalSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "Critical security response"
@@ -605,7 +603,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A string indicating a high-risk security response.
      */
-    private suspend fun generateHighSecurityResponse(
+    private fun generateHighSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "High security response"
@@ -615,7 +613,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A static message indicating a medium security response.
      */
-    private suspend fun generateMediumSecurityResponse(
+    private fun generateMediumSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "Medium security response"
@@ -625,7 +623,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A static message for low security risk interactions.
      */
-    private suspend fun generateLowSecurityResponse(
+    private fun generateLowSecurityResponse(
         interaction: EnhancedInteractionData,
         assessment: SecurityAssessment,
     ): String = "Low security response"
@@ -635,7 +633,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A standard security response message.
      */
-    private suspend fun generateStandardSecurityResponse(interaction: EnhancedInteractionData): String =
+    private fun generateStandardSecurityResponse(interaction: EnhancedInteractionData): String =
         "Standard security response"
 
     /**
@@ -663,7 +661,7 @@ class KaiAgent @Inject constructor(
      * @param target The identifier of the system or component to scan.
      * @return An empty list.
      */
-    private suspend fun scanForVulnerabilities(target: String): List<String> = emptyList()
+    private fun scanForVulnerabilities(target: String): List<String> = emptyList()
 
     /**
      * Returns an empty map as a stub for risk assessment results.
@@ -821,7 +819,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A map with a status message confirming system optimization completion.
      */
-    private suspend fun handleSystemOptimization(request: AgentRequest): Map<String, Any> =
+    private fun handleSystemOptimization(request: AgentRequest): Map<String, Any> =
         mapOf("optimization" to "completed")
 
     /**
@@ -837,7 +835,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A map with "compliance" set to "verified".
      */
-    private suspend fun handleComplianceCheck(request: AgentRequest): Map<String, Any> =
+    private fun handleComplianceCheck(request: AgentRequest): Map<String, Any> =
         mapOf("compliance" to "verified")
 
     /**
@@ -845,7 +843,7 @@ class KaiAgent @Inject constructor(
      *
      * @return A map with the key "analysis" set to "completed".
      */
-    private suspend fun handleGeneralAnalysis(request: AgentRequest): Map<String, Any> =
+    private fun handleGeneralAnalysis(request: AgentRequest): Map<String, Any> =
         mapOf("analysis" to "completed")
 
     /**
