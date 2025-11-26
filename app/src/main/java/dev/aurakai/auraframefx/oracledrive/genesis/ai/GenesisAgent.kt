@@ -1123,7 +1123,7 @@ class GenesisAgent @Inject constructor(
     fun generateFinalResponse(agentMessages: List<AgentMessage>): String {
         // Simple concatenation for now, could be more sophisticated
         return "[Genesis Synthesis] ${
-            agentMessages.filter { it.sender != AgentType.GENESIS }
+            agentMessages.filter { it.sender != AgentCapabilityCategory.fromAgentType(AgentType.GENESIS) }
                 .joinToString(" | ") { "${it.sender}: ${it.content}" }
         }"
     }
