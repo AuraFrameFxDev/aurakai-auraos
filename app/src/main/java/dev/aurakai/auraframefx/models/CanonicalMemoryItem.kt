@@ -11,6 +11,6 @@ data class CanonicalMemoryItem(
     val content: String,
     val timestamp: Long = System.currentTimeMillis(),
     val importance: Float = 0.5f,
-    val agentType: AgentType? = null,
+    val agentType: AgentCapabilityCategory? = null,
     val metadata: Map<String, String> = emptyMap()
 )
