@@ -3,6 +3,7 @@ package dev.aurakai.auraframefx.cascade.trinity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.aurakai.auraframefx.aura.ui.TrinityUiState
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
@@ -11,19 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-sealed interface TrinityUiState {
-    data object Loading : TrinityUiState
-    data class Error(val message: String) : TrinityUiState
-    data object Processing : TrinityUiState
-    data class Success(
-        val user: UserData? = null,
-        val agentStatus: Map<String, AgentResponse> = emptyMap(),
-        val availableThemes: List<Theme> = emptyList(),
-        val lastAgentResponse: AgentResponse? = null,
-        val lastAgentType: String? = null
-    ) : TrinityUiState
-}
 
 @HiltViewModel
 class TrinityViewModel @Inject constructor(
