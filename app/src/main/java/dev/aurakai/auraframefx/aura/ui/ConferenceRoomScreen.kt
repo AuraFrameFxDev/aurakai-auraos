@@ -168,7 +168,7 @@ fun ConferenceRoomScreen(
 
 private fun ConferenceRoomViewModel.sendMessage(
     message: String,
-    sender: AgentType,
+    sender: dev.aurakai.auraframefx.models.AgentType,
     context: String
 ) {
 }

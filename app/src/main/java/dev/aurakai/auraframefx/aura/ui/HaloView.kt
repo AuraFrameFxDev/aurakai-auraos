@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -122,7 +121,7 @@ fun HaloView(
 
     // Agent status - using rememberSaveable to survive configuration changes
     val agentStatus = rememberSaveable(saver = mapSaver(
-        save = { map -> 
+        save = { map ->
             map.entries.associate { (key, value) -> key.name to value }
         },
         restore = { savedMap ->
@@ -208,8 +207,8 @@ fun HaloView(
             agentStatus.forEach { (agentTypeKey, statusValue) ->
                 if (statusValue == "processing") {
                     // Find the index of the agentConfig that matches this agentTypeKey
-                    val agentConfigIndex = agents.indexOfFirst { 
-                        it.name.equals(agentTypeKey.name, ignoreCase = true) 
+                    val agentConfigIndex = agents.indexOfFirst {
+                        it.name.equals(agentTypeKey.name, ignoreCase = true)
                     }
                     if (agentConfigIndex != -1) {
                         val angle = (agentConfigIndex * 360f / agents.size + rotationAngle) % 360f
