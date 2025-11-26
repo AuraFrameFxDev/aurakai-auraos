@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -368,8 +369,8 @@ class WorkBehaviorExecutor(
         kaiSequence: WorkSequence
     ) {
         kotlinx.coroutines.coroutineScope {
-            kotlinx.coroutines.launch { executeSequence(auraSequence) }
-            kotlinx.coroutines.launch { executeSequence(kaiSequence) }
+            launch { executeSequence(auraSequence) }
+            launch { executeSequence(kaiSequence) }
         }
     }
 }

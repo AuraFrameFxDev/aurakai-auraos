@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.context
 
-import dev.aurakai.auraframefx.ai.memory.CanonicalMemoryItem
+import dev.aurakai.auraframefx.models.CanonicalMemoryItem
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

@@ -8,6 +8,7 @@ import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 // TODO: KaiAgent not yet implemented
 // import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
