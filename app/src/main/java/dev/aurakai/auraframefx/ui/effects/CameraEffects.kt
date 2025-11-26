@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -373,7 +374,7 @@ fun WarpEffect(
             path.close()
 
             val alpha = (1f - normalizedRadius) * 0.5f
-            val color = Color.lerp(CyberpunkPink, CyberpunkCyan, normalizedRadius)
+            val color = lerp(CyberpunkPink, CyberpunkCyan, normalizedRadius)
 
             drawPath(
                 path = path,

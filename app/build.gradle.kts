@@ -204,6 +204,10 @@ dependencies {
 
     // Retrofit Scalars Converter (for String responses)
     implementation("com.squareup.retrofit2:converter-scalars:2.12.0")
+    
+    // Coil Image Loading with SVG support
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
 
     // Ktor Client
     implementation(libs.ktor.client.core)

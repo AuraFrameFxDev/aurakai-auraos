@@ -41,7 +41,16 @@ data class AgentStatus(
         MAINTENANCE,
         
         /** Agent is shutting down */
-        SHUTTING_DOWN
+        SHUTTING_DOWN,
+
+        /** Agent is active */
+        ACTIVE,
+
+        /** Agent is learning */
+        LEARNING,
+
+        /** Agent is evolving */
+        EVOLVING
     }
     
     /**

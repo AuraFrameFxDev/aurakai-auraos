@@ -33,7 +33,8 @@ import okhttp3.Call.Factory
 import okhttp3.HttpUrl
 import java.io.IOException
 
-class AIAgentsApi(
+
+    class AIAgentsApi(
     basePath: kotlin.String = defaultBasePath,
     client: Factory = ApiClient.defaultClient,
 ) : ApiClient(baseUrl = basePath, callFactory = client) {

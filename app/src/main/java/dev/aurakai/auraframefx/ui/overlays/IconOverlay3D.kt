@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -30,10 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
-import coil3.decode.SvgDecoder
+import coil3.svg.SvgDecoder
 import coil3.request.ImageRequest
-import dev.aurakai.auraframefx.ui.theme.CyberpunkPink
+import coil3.request.crossfade
 import dev.aurakai.auraframefx.ui.theme.CyberpunkCyan
+import dev.aurakai.auraframefx.ui.theme.CyberpunkPink
 import dev.aurakai.auraframefx.ui.theme.CyberpunkPurple
 import kotlin.math.cos
 import kotlin.math.roundToInt

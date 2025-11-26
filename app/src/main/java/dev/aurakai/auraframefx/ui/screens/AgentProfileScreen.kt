@@ -200,9 +200,9 @@ private fun ProfileHeader(profile: AgentProfile) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = when (profile.status) {
-                        AgentStatus.ACTIVE -> Color(0xFF4CAF50)
-                        AgentStatus.LEARNING -> Color(0xFFFF9800)
-                        AgentStatus.EVOLVING -> Color(0xFF9C27B0)
+                        AgentStatus.Status.ACTIVE -> Color(0xFF4CAF50)
+                        AgentStatus.Status.LEARNING -> Color(0xFFFF9800)
+                        AgentStatus.Status.EVOLVING -> Color(0xFF9C27B0)
                         else -> Color.Gray
                     }
                 ) {

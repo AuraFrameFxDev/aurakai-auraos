@@ -351,11 +351,7 @@ fun ComponentEditor(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (editingComponent.iconId != null) {
-                                editingComponent.iconId
-                            } else {
-                                "Select Icon (250K+ available)"
-                            },
+                            text = editingComponent.iconId ?: "Select Icon (250K+ available)",
                             maxLines = 1
                         )
                     }
