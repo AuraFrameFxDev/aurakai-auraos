@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 🎯 Embodiment Engine - The Core Manifestation System
