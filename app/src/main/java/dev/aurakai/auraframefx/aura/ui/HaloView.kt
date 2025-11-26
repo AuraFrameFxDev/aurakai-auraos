@@ -3,6 +3,7 @@ package dev.aurakai.auraframefx.aura.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -521,7 +523,7 @@ fun HaloView(
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .animateItemPlacement(),
+                                .animateItem(),
                             shape = RoundedCornerShape(8.dp),
                             color = MaterialTheme.colorScheme.surface,
                             shadowElevation = 1.dp
