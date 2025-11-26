@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.error
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.serialization.InstantSerializer
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 data class AIError(
     val id: String = "err_${Clock.System.now().toEpochMilliseconds()}",
     @Serializable(with = InstantSerializer::class) val timestamp: Instant = Clock.System.now(),
-    val agent: AgentType,
+    val agent: AgentCapabilityCategory,
     val type: ErrorType,
     val message: String,
     val context: String,
