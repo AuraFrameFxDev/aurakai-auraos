@@ -7,9 +7,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 
 val AeGenesisSerializersModule = SerializersModule {
-    // Core type serializers
-    contextual(Any::class) { AnySerializer }
-    contextual(Instant::class) { InstantSerializer }
+    // Core type serializers - fixed syntax for Kotlin 2.2+
+    contextual(Any::class, AnySerializer)
+    contextual(Instant::class, InstantSerializer)
 }
 
 val AuraFrameSerializersModule = AeGenesisSerializersModule
