@@ -181,7 +181,7 @@ class DataStoreManager @Inject constructor(
 
     internal suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = json.encodeToString(obj)
+            val jsonString = json.encodeToString<T>(obj)
             storeString(key, jsonString)
         } catch (e: Exception) {
             Timber.e(e, "Failed to store object: $key")
