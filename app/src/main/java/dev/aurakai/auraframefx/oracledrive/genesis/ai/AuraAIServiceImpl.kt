@@ -56,7 +56,7 @@ class AuraAIServiceImpl @Inject constructor(
      *
      * @return The string "Generated text placeholder".
      */
-    override suspend fun generateText(prompt: String, options: Map<String, Any>?): String {
+    override suspend fun generateText(prompt: String, options: String): String {
         return "Generated text placeholder"
     }
 
