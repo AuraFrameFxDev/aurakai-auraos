@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.models
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,7 +10,9 @@ data class AgentResponse(
     val error: String? = null, // Kept error for now
     val agentName: String? = null,
     val metadata: Map<String, String> = emptyMap(),
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    @Contextual val lastActivity: Any? = null,
+    @Contextual val agentType: Any? = null
 ) {
     companion object {
         fun success(
@@ -52,8 +55,6 @@ data class AgentResponse(
         }
     }
 
-    val lastActivity: Any
-    val agentType: Any
     val isSuccess: Boolean
         get() = error == null
 
