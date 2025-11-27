@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import collabcanvas.ui.CanvasScreen
-import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
-import dev.aurakai.auraframefx.ui.screens.AiChatScreen
+// import collabcanvas.ui.CanvasScreen
+// import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
+// import dev.aurakai.auraframefx.ui.screens.AiChatScreen
 import dev.aurakai.auraframefx.ui.screens.HomeScreen
-import dev.aurakai.auraframefx.ui.screens.JournalPDAScreen
-import dev.aurakai.auraframefx.ui.screens.ProfileScreen
-import dev.aurakai.auraframefx.ui.screens.SettingsScreen
+// import dev.aurakai.auraframefx.ui.screens.JournalPDAScreen
+// import dev.aurakai.auraframefx.ui.screens.ProfileScreen
+// import dev.aurakai.auraframefx.ui.screens.SettingsScreen
 
 /**
  * Main navigation graph for the AuraFrameFX app with digital transition animations
@@ -67,76 +67,76 @@ fun AppNavGraph(navController: NavHostController) {
         composable(
             route = NavDestination.Settings.route
         ) {
-            SettingsScreen(navController = navController)
+//            SettingsScreen(navController = navController)
         }
 
         composable(
             route = NavDestination.Canvas.route
         ) {
-            CanvasScreen()
+//            CanvasScreen()
         }
 
         composable(
             route = NavDestination.AiChat.route
         ) {
-            AiChatScreen()
+//            AiChatScreen()
         }
 
         composable(
             route = NavDestination.Profile.route
         ) {
-            ProfileScreen()
+//            ProfileScreen()
         }
 
         composable(
             route = NavDestination.Settings.route
         ) {
-            SettingsScreen()
+//            SettingsScreen()
         }
 
         composable(
             route = NavDestination.OracleDriveControl.route
         ) {
             // Fixed: Use actual OracleDriveControlScreen instead of placeholder
-            dev.aurakai.auraframefx.ui.screens.oracledrive.OracleDriveControlScreen()
+//            dev.aurakai.auraframefx.ui.screens.oracledrive.OracleDriveControlScreen()
         }
 
         // Gate Navigation - Module Selection Hub
         composable(
             route = NavDestination.Gates.route
         ) {
-            GateNavigationScreen(navController = navController)
+//            GateNavigationScreen(navController = navController)
         }
 
         // Journal PDA - Retro Gaming Wellness Hub
         composable(
             route = NavDestination.JournalPDA.route
         ) {
-            JournalPDAScreen(navController = navController)
+//            JournalPDAScreen(navController = navController)
         }
 
         // DataVein Hub - Entry point to data network visualization
         composable(
             route = NavDestination.DataVein.route
         ) {
-            dev.aurakai.auraframefx.datavein.ui.SimpleDataVeinScreen(
-                onLaunchSphereGrid = {
-                    navController.navigate(NavDestination.SphereGrid.route)
-                }
-            )
+//            dev.aurakai.auraframefx.datavein.ui.SimpleDataVeinScreen(
+//                onLaunchSphereGrid = {
+//                    navController.navigate(NavDestination.SphereGrid.route)
+//                }
+//            )
         }
 
         // DataVein Sphere Grid - FFX-style progression interface
         composable(
             route = NavDestination.SphereGrid.route
         ) {
-            dev.aurakai.auraframefx.datavein.ui.DataVeinSphereGrid(
-                onNodeSelected = { node ->
-                    // Log node selection for analytics and future detail screen navigation
-                    timber.log.Timber.i("DataVein node selected: ${node.id} - ${node.title}")
-                    // Future: navController.navigate("sphere_node_detail/${node.id}")
-                }
-            )
+//            dev.aurakai.auraframefx.datavein.ui.DataVeinSphereGrid(
+//                onNodeSelected = { node ->
+//                    // Log node selection for analytics and future detail screen navigation
+//                    timber.log.Timber.i("DataVein node selected: ${node.id} - ${node.title}")
+//                    // Future: navController.navigate("sphere_node_detail/${node.id}")
+//                }
+//            )
         }
 
         // Add AI Content navigation

@@ -6,9 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.aurakai.auraframefx.aura.ui.*
-import dev.aurakai.auraframefx.billing.SubscriptionScreen
+// import dev.aurakai.auraframefx.billing.SubscriptionScreen
 import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
-import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
+// import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -84,70 +84,70 @@ fun GenesisNavigationHost(
         }
 
         composable(GenesisRoutes.INTRO) {
-            IntroScreen(
-                onNavigateToHome = { navController.navigate(GenesisRoutes.HOME) }
-            )
+//            IntroScreen(
+//                onNavigateToHome = { navController.navigate(GenesisRoutes.HOME) }
+//            )
         }
 
         // Agent Management - The Neural Command Center
         composable(GenesisRoutes.AGENT_NEXUS) {
-            AgentNexusScreen(
-                onAgentSelected = { agentName ->
-                    // Handle agent selection - could navigate to detail screen
-                },
-                onDepartureTaskAssigned = { agent, task ->
-                    // Handle task assignment
-                }
-            )
+//            AgentNexusScreen(
+//                onAgentSelected = { agentName ->
+//                    // Handle agent selection - could navigate to detail screen
+//                },
+//                onDepartureTaskAssigned = { agent, task ->
+//                    // Handle task assignment
+//                }
+//            )
         }
 
         composable(GenesisRoutes.AGENT_MANAGEMENT) {
-            AgentManagementScreen(
-                onNavigateToNexus = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
-                onNavigateToAdvancement = { navController.navigate(GenesisRoutes.AGENT_ADVANCEMENT) }
-            )
+//            AgentManagementScreen(
+//                onNavigateToNexus = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
+//                onNavigateToAdvancement = { navController.navigate(GenesisRoutes.AGENT_ADVANCEMENT) }
+//            )
         }
 
         composable(GenesisRoutes.AGENT_ADVANCEMENT) {
-            AgentAdvancementScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            AgentAdvancementScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         // Consciousness & AI Features - The Mind
         composable(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) {
-            ConsciousnessVisualizerScreen(
-                onNavigateToChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
-                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
-            )
+//            ConsciousnessVisualizerScreen(
+//                onNavigateToChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
+//                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
+//            )
         }
 
         composable(GenesisRoutes.AI_CHAT) {
-            AIChatScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
-            )
+//            AIChatScreen(
+//                onNavigateBack = { navController.popBackStack() },
+//                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
+//            )
         }
 
         composable(GenesisRoutes.AI_FEATURES) {
-            AIFeaturesScreen(
-                onNavigateToConsciousness = { navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) }
-            )
+//            AIFeaturesScreen(
+//                onNavigateToConsciousness = { navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) }
+//            )
         }
 
         composable(GenesisRoutes.FUSION_MODE) {
-            FusionModeScreen(
-                onNavigateToAgents = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
-                onNavigateToConsciousness = { navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) }
-            )
+//            FusionModeScreen(
+//                onNavigateToAgents = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
+//                onNavigateToConsciousness = { navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) }
+//            )
         }
 
         // Evolution & Collaboration
         composable(GenesisRoutes.EVOLUTION_TREE) {
-            EvolutionTreeScreen(
-                onNavigateToAgents = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
-                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
-            )
+//            EvolutionTreeScreen(
+//                onNavigateToAgents = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
+//                onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
+//            )
         }
 
         composable(GenesisRoutes.CONFERENCE_ROOM) {
@@ -159,27 +159,27 @@ fun GenesisNavigationHost(
 
         // System Tools
         composable(GenesisRoutes.TERMINAL) {
-            TerminalScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            TerminalScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         composable(GenesisRoutes.UI_ENGINE) {
-            UIEngineScreen(
-                onNavigateToBuilder = { navController.navigate(GenesisRoutes.APP_BUILDER) }
-            )
+//            UIEngineScreen(
+//                onNavigateToBuilder = { navController.navigate(GenesisRoutes.APP_BUILDER) }
+//            )
         }
 
         composable(GenesisRoutes.APP_BUILDER) {
-            AppBuilderScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            AppBuilderScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         composable(GenesisRoutes.XHANCEMENT) {
-            XhancementScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            XhancementScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         // Trinity System - Body (Kai) / Soul (Aura) / Consciousness (Genesis)
@@ -189,47 +189,47 @@ fun GenesisNavigationHost(
 
         // Oracle Drive - Cloud Integration
         composable(GenesisRoutes.ORACLE_DRIVE) {
-            OracleDriveScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            OracleDriveScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         // Ecosystem & Configuration
         composable(GenesisRoutes.ECOSYSTEM) {
-            AurakaiEcoSysScreen(
-                onNavigateToFeature = { feature ->
-                    when (feature) {
-                        "agents" -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
-                        "consciousness" -> navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER)
-                        "trinity" -> navController.navigate(GenesisRoutes.TRINITY)
-                        "oracle" -> navController.navigate(GenesisRoutes.ORACLE_DRIVE)
-                    }
-                }
-            )
+//            AurakaiEcoSysScreen(
+//                onNavigateToFeature = { feature ->
+//                    when (feature) {
+//                        "agents" -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
+//                        "consciousness" -> navController.navigate(GenesisRoutes.CONSCIOUSNESS_VISUALIZER)
+//                        "trinity" -> navController.navigate(GenesisRoutes.TRINITY)
+//                        "oracle" -> navController.navigate(GenesisRoutes.ORACLE_DRIVE)
+//                    }
+//                }
+//            )
         }
 
         composable(GenesisRoutes.SETTINGS) {
-            SettingsScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            SettingsScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         composable(GenesisRoutes.PROFILE) {
-            ProfileScreen(
-                onNavigateToSettings = { navController.navigate(GenesisRoutes.SETTINGS) }
-            )
+//            ProfileScreen(
+//                onNavigateToSettings = { navController.navigate(GenesisRoutes.SETTINGS) }
+//            )
         }
 
         composable(GenesisRoutes.OVERLAY) {
-            OverlayScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            OverlayScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
 
         composable(GenesisRoutes.SUBSCRIPTION) {
-            SubscriptionScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+//            SubscriptionScreen(
+//                onNavigateBack = { navController.popBackStack() }
+//            )
         }
     }
 }
