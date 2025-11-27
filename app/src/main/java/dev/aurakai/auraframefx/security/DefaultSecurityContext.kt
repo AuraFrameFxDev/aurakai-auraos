@@ -60,6 +60,14 @@ class DefaultSecurityContext @Inject constructor(
         _threatDetectionActive.value = active
     }
 
+    override fun startThreatDetection() {
+        setThreatDetectionActive(true)
+    }
+
+    override fun stopThreatDetection() {
+        setThreatDetectionActive(false)
+    }
+
     override suspend fun verifyApplicationIntegrity(): ApplicationIntegrity {
         // Check if the app has been tampered with
         // This is a basic implementation - in production, you should implement proper integrity checks

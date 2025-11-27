@@ -33,6 +33,12 @@ interface SecurityContext {
     /** Logs a security event */
     suspend fun logSecurityEvent(event: SecurityEvent)
 
+    /** Starts threat detection monitoring */
+    fun startThreatDetection()
+
+    /** Stops threat detection monitoring */
+    fun stopThreatDetection()
+
     /** Returns the base URL for API calls */
     fun getApiBaseUrl(): String = "https://api.aurakai.dev"
 }

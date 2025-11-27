@@ -62,7 +62,6 @@ class BillingManager @Inject constructor(
     private fun setupBillingClient() {
         BillingClient.newBuilder(context)
             .setListener(this)
-            .enablePendingPurchases()
             .build().also { this.billingClient = it }
 
         connectToBillingService()
@@ -307,4 +306,11 @@ suspend fun BillingClient.queryProductDetails(params: QueryProductDetailsParams)
             continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
         }
     }
+}
+
+fun ProductDetailsResult(
+    billingResult: BillingResult,
+    productDetailsList: QueryProductDetailsResult
+): ProductDetailsResult {
+    TODO("Not yet implemented")
 }

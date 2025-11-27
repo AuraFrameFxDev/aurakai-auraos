@@ -32,7 +32,7 @@ class AuraDriveService : Service() {
     @Inject
     lateinit var secureFileManager: SecureFileManager
 
-    private val binder: IAuraDriveService.Stub = object : IAuraDriveService.Stub() {
+    private val binder: IAuraDriveService.Companion.Stub = object : IAuraDriveService.Companion.Stub() {
         override fun getServiceVersion(): String {
             return "1.0.0"
         }
@@ -55,7 +55,6 @@ class AuraDriveService : Service() {
             // This would interact with LSPosed framework - requires root/system privileges
             return "toggled" // Placeholder
         }
-
         /**
          * Return the current Oracle Drive status string including the caller UID.
          *
@@ -70,32 +69,7 @@ class AuraDriveService : Service() {
             return "Oracle Drive Active - R.G.S.F. Nominal (UID: ${Process.myUid()}) "
         }
 
-        override fun getDetailedInternalStatus(): String {
-            return "Oracle Drive Status: Active\nR.G.S.F. Redundancy: 3-way\nMemory Integrity: Verified"
-        }
-
-        override fun getInternalDiagnosticsLog(): String {
-            return "R.G.S.F. Log:\nAll systems operational.\nMemory matrix stable."
-        }
-
-        override fun getSystemInfo(): String {
-            return "Oracle Drive System\nVersion: 1.0.0\nR.G.S.F. Active"
-        }
-
-        override fun updateConfiguration(config: android.os.Bundle): Boolean {
-            Timber.tag(TAG).d("Updating configuration")
-            return true
-        }
-
-        override fun subscribeToEvents(eventTypes: Int) {
-            Timber.tag(TAG).d("Subscribing to events: $eventTypes")
-        }
-
-        override fun unsubscribeFromEvents(eventTypes: Int) {
-            Timber.tag(TAG).d("Unsubscribing from events: $eventTypes")
-        }
-
-        override fun importFile(uri: Uri): String {
+        fun importFile(uri: Uri): String {
             Timber.tag(TAG).d("Importing file: $uri")
             // Implement secure file import with R.G.S.F. layering
             return "file_id_dummy"
@@ -111,6 +85,20 @@ class AuraDriveService : Service() {
             Timber.tag(TAG).d("Verifying integrity for file: $fileId")
             // Implement R.G.S.F. checksum and redundancy checks
             return true
+        }
+
+        fun getInternalDiagnosticsLog(): String {
+            return "R.G.S.F. Log:\nAll systems operational.\nMemory matrix stable."
+        }
+
+        fun getDetailedInternalStatus(): String {
+            return "Oracle Drive Status: Active\nR.G.S.F. Redundancy: 3-way\nMemory Integrity: Verified"
+        }
+
+        fun toggleLSPosedModule(packageName: String, enable: Boolean): Boolean {
+            Timber.d("Toggling LSPosed module: $packageName, Enable: $enable")
+            // This would interact with LSPosed framework - requires root/system privileges
+            return false // Placeholder
         }
     }
 
