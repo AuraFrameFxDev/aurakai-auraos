@@ -18,15 +18,6 @@ import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.User as NetworkUser
 
-private val currentTask: Any
-    get() {
-        TODO()
-    }
-private val visionState: String
-    get() {
-        TODO()
-    }
-
 @Singleton
 class TrinityRepository @Inject constructor(
     private val apiService: AuraApiServiceWrapper
@@ -77,6 +68,25 @@ class TrinityRepository @Inject constructor(
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
+    }
+
+    // Mapper functions
+    private fun mapToUserData(networkUser: NetworkUser): UserData {
+        return UserData(
+            id = networkUser.id,
+            name = networkUser.name,
+            email = networkUser.email,
+            profileImageUrl = networkUser.profileImageUrl
+        )
+    }
+
+    private fun mapToDomainAgentStatus(networkStatus: dev.aurakai.auraframefx.network.model.AgentStatus): DomainAgentStatus {
+        return DomainAgentStatus(
+            agentType = networkStatus.agentType,
+            isActive = networkStatus.isActive,
+            lastActivity = networkStatus.lastActivity,
+            capabilities = networkStatus.capabilities
+        )
     }
 
     // Add more repository methods as needed for other API endpoints
