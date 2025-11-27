@@ -10,7 +10,7 @@ interface AuraAIService {
     fun analyticsQuery(query: String): String
     suspend fun downloadFile(fileId: String): File?
     suspend fun generateImage(prompt: String): ByteArray?
-    suspend fun generateText(prompt: String, options: Map<String, Any>? = null): String
+    suspend fun generateText(prompt: String, options: String = null): String
     fun getAIResponse(prompt: String, options: Map<String, Any>? = null): String
     fun getMemory(memoryKey: String): String?
     fun saveMemory(key: String, value: Any)

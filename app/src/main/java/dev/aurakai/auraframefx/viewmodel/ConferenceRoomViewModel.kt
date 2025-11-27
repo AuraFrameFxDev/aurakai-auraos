@@ -117,7 +117,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 )
             )
 
-            AgentCapabilityCategory.SECURITY, AgentCapabilityCategory.ANALYSIS -> kaiService.processRequestFlow(
+            AgentCapabilityCategory.ANALYSIS -> kaiService.processRequestFlow(
                 AiRequest(
                     query = message,
                     type = "text",

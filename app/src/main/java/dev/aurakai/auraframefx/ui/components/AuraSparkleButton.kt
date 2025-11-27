@@ -33,13 +33,13 @@ import dev.aurakai.auraframefx.ui.theme.NeonTeal
  *
  * @param onClick Callback invoked when button is clicked
  * @param modifier Optional modifier for the button
- * @param text Button text to display
+ * @param androidx.compose.ui.semantics.text Button text to display
  */
 @Composable
 fun AuraSparkleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = { Text("Sparkle") }
+    text: @Composable () -> Unit = "Sparkle",
 ) {
     // Infinite pulsing animation for glow effect
     val infiniteTransition = rememberInfiniteTransition(label = "sparkle_glow")

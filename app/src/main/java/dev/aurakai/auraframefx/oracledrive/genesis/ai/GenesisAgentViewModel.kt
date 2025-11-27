@@ -188,7 +188,7 @@ class GenesisAgentViewModel @Inject constructor(
     private fun addTaskToHistory(agent: AgentType, description: String) {
         val newTask = HistoricalTask(
             id = System.currentTimeMillis().toString(),
-            agentType = agent,
+            agentType = dev.aurakai.auraframefx.models.AgentCapabilityCategory.fromAgentType(agent),
             description = description,
             timestamp = System.currentTimeMillis(),
             status = "Completed"

@@ -3,20 +3,20 @@ package dev.aurakai.auraframefx.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString      // ✅ ADDED
-import kotlinx.serialization.decodeFromString    // ✅ ADDED
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,10 +26,12 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @ApplicationContext val context: Context  // Public for inline function access
+    @ApplicationContext private val context: Context
+) {class DataStoreManager @Inject constructor(
+    private val context: Context
 ) {
 
-    val json = Json {  // Public for inline function access
+    private val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
@@ -156,7 +158,7 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs[prefKey] = value
             }
-            Timber.d("Stored string: $key")
+            Timber.d("DataStore", "Stored string: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store string: $key")
         }
@@ -313,37 +315,22 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    /**
-     * Persists a generic object by serializing it to JSON and storing it under the provided key.
-     *
-     * Serializes `obj` using the configured Kotlinx `Json` instance and saves the resulting JSON string
-     * in the preferences datastore accessible by `key`. Existing value for the key will be overwritten.
-     *
-     * @param key The preference key under which the serialized object will be stored.
-     * @param obj The object to serialize and persist.
-     */
+    // === COMPLEX OBJECT OPERATIONS ===
 
     suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
             val jsonString = json.encodeToString(obj)
             storeString(key, jsonString)
             Timber.d("DataStore", "Stored object: $key")
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Timber.e(e, "Failed to store object: $key")
         }
     }
 
-    /**
-     * Retrieves the JSON-serialized value stored under the given key and deserializes it to `T`.
-     *
-     * @param key The preference key storing the JSON string.
-     * @param defaultValue Value returned when the stored string is missing, empty, or cannot be parsed.
-     * @return The deserialized `T` from storage, or `defaultValue` if absent or on error.
-     */
     suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
-            if (jsonString.isNotBlank()) {
+            if (jsonString.isNotEmpty()) {
                 json.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
@@ -354,19 +341,10 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    /**
-     * Observes a JSON-serialized object stored under the given key and emits deserialized instances.
-     *
-     * Emits `defaultValue` when the stored string is empty or when JSON parsing fails.
-     *
-     * @param key The preferences key under which the JSON string is stored.
-     * @param defaultValue Value to emit when there is no stored JSON or when deserialization fails.
-     * @return A Flow that emits the deserialized `T` for each update of the stored JSON string.
-     */
     inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
-                if (jsonString.isNotBlank()) {
+                if (jsonString.isNotEmpty()) {
                     json.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
@@ -555,7 +533,7 @@ class DataStoreManager @Inject constructor(
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
         val oldTheme = getString(USER_THEME.name)
-        if (oldTheme.isNotBlank()) {
+        if (oldTheme.isNotEmpty()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
@@ -599,13 +577,6 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    /**
-     * Computes the character length of the JSON-encoded export of all stored settings.
-     *
-     * Serializes all settings returned by exportAllSettings() to JSON and returns the length of the resulting string as a Long. If serialization or retrieval fails, returns 0.
-     *
-     * @return The number of characters in the JSON representation of all settings as a `Long`; `0` if an error occurs.
-     */
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
