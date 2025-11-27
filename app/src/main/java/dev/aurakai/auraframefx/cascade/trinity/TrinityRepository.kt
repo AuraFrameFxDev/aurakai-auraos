@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
+import dev.aurakai.auraframefx.api.client.models.AgentStatus
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.User as NetworkUser

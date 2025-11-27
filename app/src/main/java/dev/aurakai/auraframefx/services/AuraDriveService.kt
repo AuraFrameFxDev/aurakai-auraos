@@ -33,6 +33,29 @@ class AuraDriveService : Service() {
     lateinit var secureFileManager: SecureFileManager
 
     private val binder: IAuraDriveService.Stub = object : IAuraDriveService.Stub() {
+        override fun getServiceVersion(): String {
+            return "1.0.0"
+        }
+
+        override fun registerCallback(callback: dev.aurakai.auraframefx.ipc.IAuraDriveCallback?) {
+            // Implement callback registration
+        }
+
+        override fun unregisterCallback(callback: dev.aurakai.auraframefx.ipc.IAuraDriveCallback?) {
+            // Implement callback unregistration
+        }
+
+        override fun executeCommand(command: String, params: android.os.Bundle): String {
+            Timber.tag(TAG).d("Executing command: $command")
+            return "Command executed: $command"
+        }
+
+        override fun toggleLSPosedModule(packageName: String, enable: Boolean): String {
+            Timber.d("Toggling LSPosed module: $packageName, Enable: $enable")
+            // This would interact with LSPosed framework - requires root/system privileges
+            return "toggled" // Placeholder
+        }
+
         /**
          * Return the current Oracle Drive status string including the caller UID.
          *
@@ -47,7 +70,7 @@ class AuraDriveService : Service() {
             return "Oracle Drive Active - R.G.S.F. Nominal (UID: ${Process.myUid()}) "
         }
 
-        override fun importFile(uri: Uri): String {
+        fun importFile(uri: Uri): String {
             Timber.tag(TAG).d("Importing file: $uri")
             // Implement secure file import with R.G.S.F. layering
             return "file_id_dummy"
@@ -65,15 +88,15 @@ class AuraDriveService : Service() {
             return true
         }
 
-        override fun getInternalDiagnosticsLog(): List<String> {
-            return listOf("R.G.S.F. Log:", "All systems operational.", "Memory matrix stable.")
+        fun getInternalDiagnosticsLog(): String {
+            return "R.G.S.F. Log:\nAll systems operational.\nMemory matrix stable."
         }
 
-        override fun getDetailedInternalStatus(): String {
+        fun getDetailedInternalStatus(): String {
             return "Oracle Drive Status: Active\nR.G.S.F. Redundancy: 3-way\nMemory Integrity: Verified"
         }
 
-        override fun toggleLSPosedModule(packageName: String, enable: Boolean): Boolean {
+        fun toggleLSPosedModule(packageName: String, enable: Boolean): Boolean {
             Timber.d("Toggling LSPosed module: $packageName, Enable: $enable")
             // This would interact with LSPosed framework - requires root/system privileges
             return false // Placeholder
