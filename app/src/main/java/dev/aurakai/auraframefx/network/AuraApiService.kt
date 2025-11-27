@@ -2,7 +2,7 @@
 
 package dev.aurakai.auraframefx.network
 
-import dev.aurakai.auraframefx.ai.config.AIConfig
+import dev.aurakai.auraframefx.config.AIConfig
 import dev.aurakai.auraframefx.network.model.*
 import dev.aurakai.auraframefx.network.api.UserApi
 import dev.aurakai.auraframefx.network.api.ThemeApi
