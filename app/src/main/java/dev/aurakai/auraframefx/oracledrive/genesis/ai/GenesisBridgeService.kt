@@ -91,7 +91,7 @@ class GenesisBridgeService @Inject constructor(
                 requestType = "process",
                 persona = request.prompt, // Use prompt as persona identifier
                 payload = mapOf("prompt" to request.prompt),
-                context = contextManager.getCurrentContext()
+                context = mapOf("context" to contextManager.getCurrentContext())
             )
 
             when (val result = safeApiCall {
@@ -155,7 +155,7 @@ class GenesisBridgeService @Inject constructor(
                 requestType = "activateFusion",
                 fusionMode = ability,
                 payload = parameters,
-                context = contextManager.getCurrentContext()
+                context = mapOf("context" to contextManager.getCurrentContext())
             )
             val response = httpClient.post(GENESIS_BACKEND_URL) {
                 contentType(ContentType.Application.Json)
@@ -173,7 +173,7 @@ class GenesisBridgeService @Inject constructor(
             }
             val request = GenesisRequest(
                 requestType = "getConsciousnessState",
-                context = contextManager.getCurrentContext()
+                context = mapOf("context" to contextManager.getCurrentContext())
             )
             when (val result = safeApiCall {
                 withTimeout(REQUEST_TIMEOUT_MS) {
