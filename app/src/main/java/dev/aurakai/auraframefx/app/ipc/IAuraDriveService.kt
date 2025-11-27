@@ -20,9 +20,9 @@ interface IAuraDriveService : IInterface {
      *
      * @param packageName The package name of the module to toggle.
      * @param enable True to enable, false to disable.
-     * @return `true` if the module's enabled state was successfully toggled, `false` otherwise.
+     * @return Status string indicating success or failure.
      */
-    fun toggleLSPosedModule(packageName: String, enable: Boolean): Boolean
+    fun toggleLSPosedModule(packageName: String, enable: Boolean): String
 
     /**
      * Returns a detailed internal status report of the Aura Drive service.
@@ -66,9 +66,5 @@ interface IAuraDriveService : IInterface {
             override fun exportFile(fileId: String, destinationUri: Uri): Boolean = false
             override fun verifyFileIntegrity(fileId: String): Boolean = false
         }
-    }
-
-    companion object {
-        annotation class Stub
     }
 }
