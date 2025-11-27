@@ -20,7 +20,7 @@ interface AIAgentApi {
     @GET("agent/{agentType}/status")
     suspend fun getAgentStatus(
         @Path("agentType") agentType: String,
-    ): AgentResponse
+    ): dev.aurakai.auraframefx.models.AgentStatus
 
     /**
      * Send a request to an AI agent for processing.

@@ -18,20 +18,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
-
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_datastore")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {class DataStoreManager @Inject constructor(
-    private val context: Context
+    @ApplicationContext internal val context: Context
 ) {
 
-    private val json = Json {
+    val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
@@ -279,23 +273,6 @@ class DataStoreManager @Inject constructor(
         val prefKey = longPreferencesKey(key)
         return context.dataStore.data.map { prefs ->
             prefs[prefKey] ?: defaultValue
-        }
-    }
-
-    // === FLOAT DATA OPERATIONS ===
-
-    suspend fun storeFloat(key: String, value: Float) {
-        try {
-            val prefKey = floatPreferencesKey(key)
-            context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
-            }
-            Timber.d("DataStore", "Stored float: $key = $value")
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to store float: $key")
-        }
-    }
-
     suspend fun getFloat(key: String, defaultValue: Float = 0f): Float {
         return try {
             val prefKey = floatPreferencesKey(key)
