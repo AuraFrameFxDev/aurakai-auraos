@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.repository
+package dev.aurakai.auraframefx.cascade.trinity
 
 import dev.aurakai.auraframefx.api.client.models.AgentStatus
 import dev.aurakai.auraframefx.models.AgentRequest
