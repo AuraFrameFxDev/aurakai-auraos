@@ -253,12 +253,20 @@ class AmbientMusicService : Service() {
      * Requests audio focus for music playback.
      * @return true if audio focus was granted, false otherwise
      */
+    private var audioFocusRequest: AudioFocusRequest? = null
+
     private fun requestAudioFocus(): Boolean {
-        val result = audioManager.requestAudioFocus(
-            audioFocusChangeListener,
-            AudioManager.STREAM_MUSIC,
-            AudioManager.AUDIOFOCUS_GAIN
-        )
+        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(
+                android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            .setOnAudioFocusChangeListener(audioFocusChangeListener)
+            .build()
+
+        val result = audioManager.requestAudioFocus(audioFocusRequest!!)
         hasAudioFocus = (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
         return hasAudioFocus
     }
