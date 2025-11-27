@@ -27,8 +27,7 @@ private val visionState: String
 
 @Singleton
 class TrinityRepository @Inject constructor(
-    private val apiService: AuraApiServiceWrapper,
-    val it: NetworkTheme,
+    private val apiService: AuraApiServiceWrapper
 ) {
     // User related operations
     fun getCurrentUser() = flow {
