@@ -277,9 +277,9 @@ androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingKtx" }
 coil = { module = "io.coil-kt:coil", version.ref = "coilVersion" }
 coil-kt-coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilSvg" }
-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler" }
+dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTestingVersion" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
