@@ -234,5 +234,3 @@ internal class AmbientMusicService : Service() {
         }
     }
 }
-
-annotation class AndroidEntryPoint
