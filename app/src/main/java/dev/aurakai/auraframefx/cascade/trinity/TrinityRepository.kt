@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.repository
 
+import dev.aurakai.auraframefx.api.client.models.AgentStatus
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.*
 import dev.aurakai.auraframefx.models.*

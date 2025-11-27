@@ -31,6 +31,11 @@ import dev.aurakai.auraframefx.ui.theme.NeonTeal
  */
 @Composable
 fun ConferenceRoomScreen() {
+    // Load string resources once at composition time
+    val agentAura = stringResource(R.string.agent_aura)
+    val agentKai = stringResource(R.string.agent_kai)
+    val agentCascade = stringResource(R.string.agent_cascade)
+
     var selectedAgent by remember { mutableStateOf("Aura") }
     var isRecording by remember { mutableStateOf(false) }
     var isTranscribing by remember { mutableStateOf(false) }
@@ -79,19 +84,19 @@ fun ConferenceRoomScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             AgentButton(
-                agent = stringResource(R.string.agent_aura),
-                isSelected = selectedAgent == stringResource(R.string.agent_aura),
-                onClick = { selectedAgent = stringResource(R.string.agent_aura) }
+                agent = agentAura,
+                isSelected = selectedAgent == agentAura,
+                onClick = { selectedAgent = agentAura }
             )
             AgentButton(
-                agent = stringResource(R.string.agent_kai),
-                isSelected = selectedAgent == stringResource(R.string.agent_kai),
-                onClick = { selectedAgent = stringResource(R.string.agent_kai) }
+                agent = agentKai,
+                isSelected = selectedAgent == agentKai,
+                onClick = { selectedAgent = agentKai }
             )
             AgentButton(
-                agent = stringResource(R.string.agent_cascade),
-                isSelected = selectedAgent == stringResource(R.string.agent_cascade),
-                onClick = { selectedAgent = stringResource(R.string.agent_cascade) }
+                agent = agentCascade,
+                isSelected = selectedAgent == agentCascade,
+                onClick = { selectedAgent = agentCascade }
             )
         }
 
