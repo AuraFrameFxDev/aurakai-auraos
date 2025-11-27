@@ -5,7 +5,8 @@ import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
-import dev.aurakai.auraframefx.network.model.*
+import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
+import dev.aurakai.auraframefx.network.model.User as NetworkUser
 import dev.aurakai.auraframefx.api.client.models.AgentStatus as NetworkAgentStatus
 import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
 import dev.aurakai.auraframefx.models.AgentRequest
@@ -16,13 +17,23 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
+
+private val currentTask: Any
+    get() {
+        TODO()
+    }
+private val visionState: String
+    get() {
+        TODO()
+    }
 
 @Singleton
 class TrinityRepository @Inject constructor(
     private val apiService: AuraApiServiceWrapper,
 ) {
     // User related operations
-    suspend fun getCurrentUser() = flow<Result<UserData>> {
+    fun getCurrentUser() = flow {
         try {
             val response = apiService.userApi.getCurrentUser()
             emit(Result.success(mapToUserData(response)))
@@ -32,7 +43,7 @@ class TrinityRepository @Inject constructor(
     }
 
     // AI Agent operations
-    suspend fun getAgentStatus(agentType: String) = flow<Result<DomainAgentStatus>> {
+    fun getAgentStatus(agentType: String) = flow {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
             emit(Result.success(mapToDomainAgentStatus(response)))
@@ -41,7 +52,7 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    suspend fun processAgentRequest(agentType: String, request: AgentRequest) = flow<Result<AgentResponse>> {
+    fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
         try {
             val response = apiService.aiAgentApi.processRequest(agentType, request)
             emit(Result.success(response))
@@ -51,7 +62,7 @@ class TrinityRepository @Inject constructor(
     }
 
     // Theme operations
-    suspend fun getThemes() = flow<Result<List<Theme>>> {
+    fun getThemes() = flow {
         try {
             val response = apiService.themeApi.getThemes()
             emit(Result.success(response.map { mapToDomainTheme(it) }))
@@ -60,7 +71,7 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
+    fun applyTheme(themeId: String) = flow {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
             emit(Result.success(mapToDomainTheme(response)))
@@ -77,26 +88,30 @@ class TrinityRepository @Inject constructor(
             role = "user"
         )
 
-    private fun mapToDomainAgentStatus(src: NetworkAgentStatus): DomainAgentStatus {
+    private fun mapToDomainAgentStatus(src: AgentResponse): DomainAgentStatus {
         val statusEnum = try {
-            DomainAgentStatus.Status.valueOf(src.processingState.uppercase())
-        } catch (e: Exception) {
+            DomainAgentStatus.Status.valueOf(uppercase())
+        } catch (_: Exception) {
             DomainAgentStatus.Status.IDLE
         }
 
-        return DomainAgentStatus(
-            agentId = src.agentType.toString(),
-            status = statusEnum,
-            lastActiveTimestamp = try {
-                src.lastActivity.toInstant().toEpochMilli()
-            } catch (e: Exception) {
+        return DomainAgentStatus(src.agentType.toString(), statusEnum, try {
+            toEpochMilli()
+            } catch (_: Exception) {
                 System.currentTimeMillis()
-            },
-            metadata = mapOf(
-                "visionState" to src.visionState,
-                "currentTask" to (src.currentTask ?: "")
-            )
-        )
+            }, metadata = mapOf(
+                "visionState" to visionState,
+                "currentTask" to currentTask
+            ) as Map<String, Any>)
+    }
+
+    private fun DomainAgentStatus(
+        agentId: String,
+        status: DomainAgentStatus.Status,
+        lastActiveTimestamp: Long,
+        metadata: Map<String, Any>
+    ): DomainAgentStatus {
+        TODO("Not yet implemented")
     }
 
     private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
@@ -117,5 +132,17 @@ class TrinityRepository @Inject constructor(
     }
 
     private fun parseColor(hex: String): Color =
-        try { Color(android.graphics.Color.parseColor(hex)) } catch (_: Exception) { Color.Black }
+        try { Color(hex.toColorInt()) } catch (_: Exception) { Color.Black }
+}
+
+private fun toEpochMilli(): Long {
+    TODO("Not yet implemented")
+}
+
+private fun toInstant() {
+    TODO("Not yet implemented")
+}
+
+private fun uppercase(): String {
+    TODO("Not yet implemented")
 }

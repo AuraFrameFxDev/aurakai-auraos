@@ -2,7 +2,6 @@ package dev.aurakai.auraframefx.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -187,18 +186,16 @@ fun ConferenceRoomScreen() {
 fun RowScope.AgentButton(
     agent: String,
     isSelected: Boolean,
-    onClick: () -> Unit,
+    onClick: @Composable () -> Unit,
 ) {
     val backgroundColor = if (isSelected) NeonTeal else Color.Black
     val contentColor = if (isSelected) Color.White else NeonTeal
 
     Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
+        onClick = onClick, ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor
-        ),
-        modifier = Modifier
+        ), Modifier
             .weight(1f)
             .padding(horizontal = 8.dp)
     ) {
@@ -207,6 +204,15 @@ fun RowScope.AgentButton(
             style = MaterialTheme.typography.labelLarge
         )
     }
+}
+
+private fun RowScope.Button(
+    onClick: @Composable (() -> Unit),
+    colors: ButtonColors,
+    modifier: Modifier,
+    content: @Composable (RowScope) -> Unit
+) {
+    TODO("Not yet implemented")
 }
 
 /**

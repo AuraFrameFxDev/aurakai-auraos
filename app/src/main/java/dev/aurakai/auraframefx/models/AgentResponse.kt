@@ -52,6 +52,8 @@ data class AgentResponse(
         }
     }
 
+    val lastActivity: Any
+    val agentType: Any
     val isSuccess: Boolean
         get() = error == null
 
