@@ -1,10 +1,9 @@
-package dev.aurakai.auraframefx.navigation
+package dev.aurakai.auraframefx.cascade.trinity
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.aurakai.auraframefx.ui.trinity.TrinityScreen
 
 /**
  * Navigation graph for the Trinity system.

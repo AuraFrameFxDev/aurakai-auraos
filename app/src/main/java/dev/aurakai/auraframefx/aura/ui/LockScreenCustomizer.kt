@@ -253,11 +253,24 @@ class LockScreenCustomizer @Inject constructor(
         }
     }
 
+    /**
+     * Populate the manager's current configuration from persistent storage.
+     *
+     * If no persisted configuration is available, sets the current configuration to the default.
+     */
     private suspend fun loadConfiguration() {
         // This would deserialize JSON or use structured preference keys
         // Placeholder - TODO: Implement configuration loading
     }
 
+    /**
+     * Persists the given lock screen configuration to SharedPreferences.
+     *
+     * Saves key configuration fields (visibility of Genesis elements, clock position,
+     * haptic feedback enabled state, and animation type) and logs any failure without throwing.
+     *
+     * @param config The LockScreenConfig to persist. Only selected fields are written to prefs.
+     */
     private fun saveConfiguration(config: LockScreenConfig) {
         try {
             // Save to SharedPreferences

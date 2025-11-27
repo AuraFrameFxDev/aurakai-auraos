@@ -21,7 +21,9 @@ enum class AgentCapabilityCategory {
     GENERAL;
 
     /**
-     * Maps category to corresponding primary AgentType
+     * Convert this capability category to its primary corresponding AgentType.
+     *
+     * @return The primary AgentType corresponding to this capability category.
      */
     fun toAgentType(): AgentType = when (this) {
         CREATIVE -> AgentType.AURA
@@ -33,7 +35,10 @@ enum class AgentCapabilityCategory {
 
     companion object {
         /**
-         * Maps AgentType to its capability category
+         * Map an AgentType to its primary capability category.
+         *
+         * @param agentType The AgentType to classify.
+         * @return The AgentCapabilityCategory corresponding to the provided `agentType`.
          */
         fun fromAgentType(agentType: AgentType): AgentCapabilityCategory = when (agentType) {
             AgentType.AURA -> CREATIVE

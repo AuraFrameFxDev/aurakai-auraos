@@ -3,19 +3,18 @@ package dev.aurakai.auraframefx.api.client.infrastructure
 import com.squareup.moshi.Moshi
 import dev.aurakai.auraframefx.infrastructure.Serializer
 import okhttp3.Call
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.HttpUrl.Companion.toHttpUrl  // ✅ ADDED
-import okhttp3.MediaType.Companion.toMediaType  // ✅ ADDED
-import okhttp3.RequestBody.Companion.toRequestBody  // ✅ ADDED
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import kotlin.reflect.typeOf
 import kotlin.reflect.javaType
 
@@ -103,7 +102,6 @@ open class ApiClient(
     inline fun <reified T, reified U> request(requestConfig: RequestConfig<T>): ApiResponse<U> {
         val client = clientBuilder.build()
 
-        // ✅ FIXED: HttpUrl.parse() → toHttpUrl()
         var urlBuilder = baseUrl.toHttpUrl()
             .newBuilder()
             .addPathSegments(requestConfig.path.removePrefix("/"))
@@ -129,7 +127,7 @@ open class ApiClient(
             val json = adapter.toJson(requestConfig.body)
             json.toRequestBody(contentType.toMediaType())
         } else if (requestConfig.method in listOf(RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH)) {
-            "".toRequestBody(contentType.toMediaType())
+             "".toRequestBody(contentType.toMediaType())
         } else {
             null
         }

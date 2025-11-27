@@ -1,28 +1,19 @@
 package dev.aurakai.auraframefx.xposed.hooks
 
 import android.app.Activity
-import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
-import com.highcapable.yukihookapi.hook.type.java.LongType
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfig
 import dev.aurakai.auraframefx.api.client.models.LockScreenConfigAnimation
 import dev.aurakai.auraframefx.ui.components.AuraSparkleButton
-import dev.aurakai.auraframefx.utils.TAG
 
 class LockScreenHooker(private val config: LockScreenConfig) : YukiBaseHooker() {
 
