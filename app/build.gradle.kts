@@ -97,6 +97,9 @@ android {
 
             // Opt-in annotations
             optIn.add("kotlin.RequiresOptIn")
+
+            // Context parameters (Kotlin 2.2+ experimental feature)
+            freeCompilerArgs.add("-Xcontext-parameters")
         }
     }
 
