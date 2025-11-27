@@ -63,4 +63,10 @@ dependencies {
 
     // Core Library Desugaring (Java 24 APIs)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Testing dependencies
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.kotlin.test)
 }
