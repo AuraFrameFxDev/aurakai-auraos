@@ -88,14 +88,14 @@ class GenesisBridgeService @Inject constructor(
         try {
             ensureBackendReady()
             val genesisRequest = GenesisRequest(
-                // Use prompt as persona identifier
-                "process", request.prompt, payload = mapOf("prompt" to request.prompt),
-                context = mapOf<String, String>("context" to contextManager.getCurrentContext())
+                requestType = "process",
+                persona = request.prompt, // Use prompt as persona identifier
+                payload = mapOf("prompt" to request.prompt),
+                context = mapOf("context" to contextManager.getCurrentContext())
             )
 
             when (val result = safeApiCall {
-                withTimeout(REQUEST_TIMEOUT_MS) {
-                    httpClient.post(GENESIS_BACKEND_URL) {
+                withTimeout(REQUEST_TIMEOUT_MS) { httpClient.post(GENESIS_BACKEND_URL) {
                         contentType(ContentType.Application.Json)
                         setBody(genesisRequest)
                     }.bodyAsText()
