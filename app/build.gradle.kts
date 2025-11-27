@@ -59,6 +59,13 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs += listOf(
+            "-Xcontext-parameters"
+        )
+    }
+
     lint {
         baseline = file("lint-baseline.xml")
         abortOnError = false
