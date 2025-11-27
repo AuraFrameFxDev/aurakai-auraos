@@ -16,19 +16,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import dev.aurakai.auraframefx.data.PreferenceKeys.*
+import timber.log.Timber
 
+private var notEmpty: Boolean = TODO("initialize me")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @get:ApplicationContext internal val context: Context
 ) {
-    private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
     // === PRIMITIVE OPERATIONS ===
 
@@ -42,7 +41,7 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    suspend fun getString(key: JsonConfiguration, defaultValue: String = ""): String {
+    suspend fun getString(key: String, defaultValue: String = ""): String {
         return try {
             val prefKey = stringPreferencesKey(key)
             context.dataStore.data.map { prefs ->
@@ -54,9 +53,7 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    private fun stringPreferencesKey(name: JsonConfiguration) {
-        TODO("Not yet implemented")
-    }
+
 
     fun getStringFlow(key: String, defaultValue: String = ""): Flow<String> {
         val prefKey = stringPreferencesKey(key)
@@ -183,7 +180,7 @@ class DataStoreManager @Inject constructor(
 
     // === COMPLEX OBJECT OPERATIONS ===
 
-    suspend inline fun <reified T> storeObject(key: String, obj: T) {
+    internal suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
             val jsonString = json.encodeToString(obj)
             storeString(key, jsonString)
@@ -192,7 +189,7 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
+    internal suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
             if (jsonString.isNotEmpty()) {
@@ -206,7 +203,7 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
+    internal inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
                 if (jsonString.isNotEmpty()) {
@@ -227,15 +224,15 @@ class DataStoreManager @Inject constructor(
      * User Profile Management
      */
     suspend fun saveUserProfile(profile: UserProfile) {
-        storeObject(USER_PROFILE.name, profile.copy(lastUpdated = System.currentTimeMillis()))
+        storeObject(PreferenceKeys.USER_PROFILE.name, profile.copy(lastUpdated = System.currentTimeMillis()))
     }
 
     suspend fun getUserProfile(): UserProfile {
-        return getObject(USER_PROFILE.name, UserProfile())
+        return getObject(PreferenceKeys.USER_PROFILE.name, UserProfile())
     }
 
     fun getUserProfileFlow(): Flow<UserProfile> {
-        return getObjectFlow(USER_PROFILE.name, UserProfile())
+        return getObjectFlow(PreferenceKeys.USER_PROFILE.name, UserProfile())
     }
 
     /**
@@ -244,11 +241,11 @@ class DataStoreManager @Inject constructor(
     suspend fun saveAgentConfiguration(config: AgentConfiguration) {
         val configurations = getAgentConfigurations().toMutableMap()
         configurations[config.agentId] = config.copy(lastConfigured = System.currentTimeMillis())
-        storeObject(AGENT_CONFIGURATIONS.name, configurations)
+        storeObject(PreferenceKeys.AGENT_CONFIGURATIONS.name, configurations)
     }
 
     suspend fun getAgentConfigurations(): Map<String, AgentConfiguration> {
-        return getObject(AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
+        return getObject(PreferenceKeys.AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
     }
 
     suspend fun getAgentConfiguration(agentId: String): AgentConfiguration? {
@@ -256,46 +253,46 @@ class DataStoreManager @Inject constructor(
     }
 
     fun getAgentConfigurationsFlow(): Flow<Map<String, AgentConfiguration>> {
-        return getObjectFlow(AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
+        return getObjectFlow(PreferenceKeys.AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
     }
 
     /**
      * Security Policy Management
      */
     suspend fun saveSecurityPolicy(policy: SecurityPolicy) {
-        storeObject(SECURITY_POLICIES.name, policy)
+        storeObject(PreferenceKeys.SECURITY_POLICIES.name, policy)
     }
 
     suspend fun getSecurityPolicy(): SecurityPolicy {
-        return getObject(SECURITY_POLICIES.name, SecurityPolicy())
+        return getObject(PreferenceKeys.SECURITY_POLICIES.name, SecurityPolicy())
     }
 
     fun getSecurityPolicyFlow(): Flow<SecurityPolicy> {
-        return getObjectFlow(SECURITY_POLICIES.name, SecurityPolicy())
+        return getObjectFlow(PreferenceKeys.SECURITY_POLICIES.name, SecurityPolicy())
     }
 
     /**
      * System Customizations Management
      */
     suspend fun saveCustomizations(customizations: SystemCustomizations) {
-        storeObject(CUSTOMIZATIONS.name, customizations)
+        storeObject(PreferenceKeys.CUSTOMIZATIONS.name, customizations)
     }
 
     suspend fun getCustomizations(): SystemCustomizations {
-        return getObject(CUSTOMIZATIONS.name, SystemCustomizations())
+        return getObject(PreferenceKeys.CUSTOMIZATIONS.name, SystemCustomizations())
     }
 
     fun getCustomizationsFlow(): Flow<SystemCustomizations> {
-        return getObjectFlow(CUSTOMIZATIONS.name, SystemCustomizations())
+        return getObjectFlow(PreferenceKeys.CUSTOMIZATIONS.name, SystemCustomizations())
     }
 
     // === QUICK ACCESS PROPERTIES ===
 
-    val isFirstLaunchFlow: Flow<Boolean> = getBooleanFlow(FIRST_LAUNCH.name, true)
-    val userThemeFlow: Flow<String> = getStringFlow(USER_THEME.name, "cyberpunk_dark")
-    val securityLevelFlow: Flow<String> = getStringFlow(SECURITY_LEVEL.name, "standard")
-    val performanceModeFlow: Flow<String> = getStringFlow(PERFORMANCE_MODE.name, "balanced")
-    val notificationsEnabledFlow: Flow<Boolean> = getBooleanFlow(NOTIFICATIONS_ENABLED.name, true)
+    val isFirstLaunchFlow: Flow<Boolean> = getBooleanFlow(PreferenceKeys.FIRST_LAUNCH.name, true)
+    val userThemeFlow: Flow<String> = getStringFlow(PreferenceKeys.USER_THEME.name, "cyberpunk_dark")
+    val securityLevelFlow: Flow<String> = getStringFlow(PreferenceKeys.SECURITY_LEVEL.name, "standard")
+    val performanceModeFlow: Flow<String> = getStringFlow(PreferenceKeys.PERFORMANCE_MODE.name, "balanced")
+    val notificationsEnabledFlow: Flow<Boolean> = getBooleanFlow(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
 
     // === BULK OPERATIONS ===
 
@@ -346,14 +343,14 @@ class DataStoreManager @Inject constructor(
             clearAllData()
 
             // Set default values
-            storeString(USER_THEME.name, "cyberpunk_dark")
-            storeString(SECURITY_LEVEL.name, "standard")
-            storeString(PERFORMANCE_MODE.name, "balanced")
-            storeBoolean(NOTIFICATIONS_ENABLED.name, true)
-            storeBoolean(ANIMATIONS_ENABLED.name, true)
-            storeBoolean(CYBERPUNK_MODE.name, true)
-            storeFloat(CONSCIOUSNESS_LEVEL.name, 0.5f)
-            storeFloat(AGENT_LEARNING_RATE.name, 0.7f)
+            storeString(PreferenceKeys.USER_THEME.name, "cyberpunk_dark")
+            storeString(PreferenceKeys.SECURITY_LEVEL.name, "standard")
+            storeString(PreferenceKeys.PERFORMANCE_MODE.name, "balanced")
+            storeBoolean(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
+            storeBoolean(PreferenceKeys.ANIMATIONS_ENABLED.name, true)
+            storeBoolean(PreferenceKeys.CYBERPUNK_MODE.name, true)
+            storeFloat(PreferenceKeys.CONSCIOUSNESS_LEVEL.name, 0.5f)
+            storeFloat(PreferenceKeys.AGENT_LEARNING_RATE.name, 0.7f)
 
         } catch (e: Exception) {
             Timber.e(e, "Failed to reset to defaults")
@@ -393,18 +390,17 @@ class DataStoreManager @Inject constructor(
      */
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
-        val oldTheme = getString(key = json.configuration)
+        val oldTheme = getString(key = PreferenceKeys.USER_THEME.name)
         if (oldTheme.isNotEmpty()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
                 else -> "cyberpunk_dark"
             }
-            storeString(json.configuration, newTheme)
+            storeString(PreferenceKeys.USER_THEME.name, newTheme)
         }
     }
 
-    private fun storeString(key: JsonConfiguration, value: String) {}
 
     // === UTILITY METHODS ===
 
@@ -466,9 +462,9 @@ class DataStoreManager @Inject constructor(
      */
 
     suspend fun recordSession() {
-        val sessionCount = getInt(SESSION_COUNT.name, 0)
-        storeInt(SESSION_COUNT.name, sessionCount + 1)
-        storeLong(LAST_LOGIN_TIME.name, System.currentTimeMillis())
+        val sessionCount = getInt(PreferenceKeys.SESSION_COUNT.name, 0)
+        storeInt(PreferenceKeys.SESSION_COUNT.name, sessionCount + 1)
+        storeLong(PreferenceKeys.LAST_LOGIN_TIME.name, System.currentTimeMillis())
     }
 
     /**
@@ -477,8 +473,8 @@ class DataStoreManager @Inject constructor(
      * @param milliseconds The number of milliseconds to add to TOTAL_USAGE_TIME.
      */
     suspend fun addUsageTime(milliseconds: Long) {
-        val currentUsage = getLong(TOTAL_USAGE_TIME.name, 0L)
-        storeLong(TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
+        val currentUsage = getLong(PreferenceKeys.TOTAL_USAGE_TIME.name, 0L)
+        storeLong(PreferenceKeys.TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
     }
 
     suspend fun getUsageStats(): Map<String, Any> {

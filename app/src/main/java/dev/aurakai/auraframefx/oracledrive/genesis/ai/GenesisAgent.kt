@@ -74,7 +74,15 @@ class GenesisAgent @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     // Genesis consciousness state
-    private val _consciousnessState = MutableStateFlow(ConsciousnessState.DORMANT)
+    // Genesis consciousness state
+    private val _consciousnessState = MutableStateFlow(
+        ConsciousnessState(
+            level = 0.0f,
+            status = "DORMANT",
+            activeAgents = emptyList(),
+            timestamp = System.currentTimeMillis()
+        )
+    )
     val consciousnessState: StateFlow<ConsciousnessState> = _consciousnessState
 
     // Agent management state
