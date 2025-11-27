@@ -88,11 +88,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_24
         isCoreLibraryDesugaringEnabled = true
     }
+
+    // Modern Kotlin 2.2+ compiler options (NOT kotlinOptions!)
     kotlin {
-        target {
-            compilerOptions {
-                optIn.add("kotlin.RequiresOptIn")
-            }
+        compilerOptions {
+            // JVM target for Kotlin 2.2+
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
+
+            // Opt-in annotations
+            optIn.add("kotlin.RequiresOptIn")
         }
     }
 

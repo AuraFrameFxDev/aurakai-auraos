@@ -59,7 +59,7 @@ interface IAuraDriveService : IInterface {
         private class Proxy(private val mRemote: IBinder) : IAuraDriveService {
             override fun asBinder(): IBinder = mRemote
             override fun getOracleDriveStatus(): String = "Proxy: Not implemented"
-            override fun toggleLSPosedModule(packageName: String, enable: Boolean): Boolean = false
+            override fun toggleLSPosedModule(packageName: String, enable: Boolean): String = "Not implemented"
             override fun getDetailedInternalStatus(): String = "Proxy: Not implemented"
             override fun getInternalDiagnosticsLog(): List<String> = emptyList()
             override fun importFile(uri: Uri): String = "Proxy: Not implemented"
