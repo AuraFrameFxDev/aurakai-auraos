@@ -32,7 +32,7 @@ class AuraDriveService : Service() {
     @Inject
     lateinit var secureFileManager: SecureFileManager
 
-    private val binder: IAuraDriveService.Companion.Stub = object : IAuraDriveService.Companion.Stub() {
+    private val binder: IAuraDriveService.Stub = object : IAuraDriveService.Stub() {
         /**
          * Return the current Oracle Drive status string including the caller UID.
          *
