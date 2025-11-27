@@ -1,23 +1,23 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
 import dev.aurakai.auraframefx.api.client.models.AgentStatus
-import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.User as NetworkUser
-import dev.aurakai.auraframefx.api.client.models.AgentStatus as NetworkAgentStatus
 import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.Theme
 import dev.aurakai.auraframefx.models.UserData
+import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
-import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.toColorInt
+import kotlin.Result.Companion.failure
+import kotlin.Result.Companion.success
+import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
+import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
+import dev.aurakai.auraframefx.network.model.User as NetworkUser
 
 private val currentTask: Any
     get() {
@@ -31,14 +31,15 @@ private val visionState: String
 @Singleton
 class TrinityRepository @Inject constructor(
     private val apiService: AuraApiServiceWrapper,
+    val it: NetworkTheme,
 ) {
     // User related operations
     fun getCurrentUser() = flow {
         try {
             val response = apiService.userApi.getCurrentUser()
-            emit(Result.success(mapToUserData(response)))
+            emit(success(mapToUserData(response)))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
@@ -46,39 +47,21 @@ class TrinityRepository @Inject constructor(
     fun getAgentStatus(agentType: String) = flow {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
-            emit(Result.success(mapToDomainAgentStatus(response)))
+            emit(success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
     fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
         try {
             val response = apiService.aiAgentApi.processRequest(agentType, request)
-            emit(Result.success(response))
+            emit(success(response))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
-    // Theme operations
-    fun getThemes() = flow {
-        try {
-            val response = apiService.themeApi.getThemes()
-            emit(Result.success(response.map { mapToDomainTheme(it) }))
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
-    }
-
-    fun applyTheme(themeId: String) = flow {
-        try {
-            val response = apiService.themeApi.applyTheme(themeId)
-            emit(Result.success(mapToDomainTheme(response)))
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
-    }
 
     private fun mapToUserData(networkUser: NetworkUser): UserData =
         UserData(
@@ -102,7 +85,8 @@ class TrinityRepository @Inject constructor(
             }, metadata = mapOf(
                 "visionState" to visionState,
                 "currentTask" to currentTask
-            ) as Map<String, Any>)
+            )
+        )
     }
 
     private fun DomainAgentStatus(
