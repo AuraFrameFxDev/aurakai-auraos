@@ -28,14 +28,13 @@ class BuildScriptsFunctionalTest {
             if (File(dir, "settings.gradle.kts").exists()) return dir
             dir = dir.parentFile ?: return@repeat
         }
-        fail(
+        return fail(
             "Could not locate repository root containing settings.gradle.kts from: ${
                 System.getProperty(
                     "user.dir"
                 )
             }"
         )
-        throw IllegalStateException()
     }
 
     private fun appBuildFile(): File {
@@ -47,8 +46,11 @@ class BuildScriptsFunctionalTest {
         val candidate = root.toFile().walkTopDown()
             .filter { it.isFile && it.name == "build.gradle.kts" }
             .firstOrNull { it.readText().contains("namespace = \"dev.aurakai.auraframefx\"") }
-        return candidate
-            ?: fail("Could not find app/build.gradle.kts with expected namespace in repository.")
+        if (candidate != null) {
+            return candidate
+        } else {
+            return fail("Could not find app/build.gradle.kts with expected namespace in repository.")
+        }
     }
 
     private fun script(): String = appBuildFile().readText()
