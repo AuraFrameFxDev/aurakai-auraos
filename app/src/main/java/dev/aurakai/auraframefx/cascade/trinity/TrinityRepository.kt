@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.flow.FlowCollector
 
 @Singleton
 class TrinityRepository @Inject constructor(
@@ -31,11 +32,15 @@ class TrinityRepository @Inject constructor(
     // AI Agent operations
     suspend fun getAgentStatus(agentType: String) = flow<Result<DomainAgentStatus>> {
         try {
-            val response: NetworkAgentStatus = apiService.aiAgentApi.getAgentStatus(agentType)
+            val response: DomainAgentStatus = apiService.aiAgentApi.getAgentStatus(agentType)
             emit(Result.success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
+    }
+
+    private fun FlowCollector<Result<DomainAgentStatus>>.mapToDomainAgentStatus(src: DomainAgentStatus): DomainAgentStatus {
+        TODO("Not yet implemented")
     }
 
     suspend fun processAgentRequest(agentType: String, request: AgentRequest) = flow<Result<AgentResponse>> {

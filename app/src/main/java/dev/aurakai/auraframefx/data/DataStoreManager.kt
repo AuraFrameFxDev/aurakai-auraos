@@ -3,26 +3,23 @@ package dev.aurakai.auraframefx.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import timber.log.Timber
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
-import dev.aurakai.auraframefx.models.UserProfile
-import dev.aurakai.auraframefx.models.AgentConfiguration
-import dev.aurakai.auraframefx.models.SecurityPolicy
-import dev.aurakai.auraframefx.models.SystemCustomizations
 import dev.aurakai.auraframefx.data.PreferenceKeys.*
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
@@ -45,7 +42,7 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    suspend fun getString(key: String, defaultValue: String = ""): String {
+    suspend fun getString(key: JsonConfiguration, defaultValue: String = ""): String {
         return try {
             val prefKey = stringPreferencesKey(key)
             context.dataStore.data.map { prefs ->
@@ -55,6 +52,10 @@ class DataStoreManager @Inject constructor(
             Timber.e(e, "Failed to get string: $key")
             defaultValue
         }
+    }
+
+    private fun stringPreferencesKey(name: JsonConfiguration) {
+        TODO("Not yet implemented")
     }
 
     fun getStringFlow(key: String, defaultValue: String = ""): Flow<String> {
@@ -186,7 +187,6 @@ class DataStoreManager @Inject constructor(
         try {
             val jsonString = json.encodeToString(obj)
             storeString(key, jsonString)
-            Timber.d("DataStore", "Stored object: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store object: $key")
         }
@@ -326,7 +326,6 @@ class DataStoreManager @Inject constructor(
                     }
                 }
             }
-            Timber.i("DataStore", "Successfully imported ${settings.size} settings")
         } catch (e: Exception) {
             Timber.e(e, "Failed to import settings")
         }
@@ -337,7 +336,6 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs.clear()
             }
-            Timber.i("DataStore", "All data cleared")
         } catch (e: Exception) {
             Timber.e(e, "Failed to clear data")
         }
@@ -357,7 +355,6 @@ class DataStoreManager @Inject constructor(
             storeFloat(CONSCIOUSNESS_LEVEL.name, 0.5f)
             storeFloat(AGENT_LEARNING_RATE.name, 0.7f)
 
-            Timber.i("DataStore", "Reset to default settings")
         } catch (e: Exception) {
             Timber.e(e, "Failed to reset to defaults")
         }
@@ -378,7 +375,6 @@ class DataStoreManager @Inject constructor(
         val targetVersion = 2 // Update this when schema changes
 
         if (currentVersion < targetVersion) {
-            Timber.i("DataStore", "Migrating data from version $currentVersion to $targetVersion")
 
             // Perform migrations
             when (currentVersion) {
@@ -397,16 +393,18 @@ class DataStoreManager @Inject constructor(
      */
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
-        val oldTheme = getString(USER_THEME.name)
+        val oldTheme = getString(key = json.configuration)
         if (oldTheme.isNotEmpty()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
                 else -> "cyberpunk_dark"
             }
-            storeString(USER_THEME.name, newTheme)
+            storeString(json.configuration, newTheme)
         }
     }
+
+    private fun storeString(key: JsonConfiguration, value: String) {}
 
     // === UTILITY METHODS ===
 
@@ -436,7 +434,6 @@ class DataStoreManager @Inject constructor(
                 prefs.remove(longKey)
                 prefs.remove(floatKey)
             }
-            Timber.d("DataStore", "Removed key: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to remove key: $key")
         }

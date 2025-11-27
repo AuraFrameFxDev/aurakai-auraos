@@ -136,6 +136,7 @@ fun HologramTransition(
     // Edge glow animation
 
     // Draw the hologram effect
+    val density = LocalDensity.current.density
     Box(
         modifier = modifier
             .clip(RectangleShape)
@@ -151,7 +152,6 @@ fun HologramTransition(
         ) {
             val width = size.width
             val height = size.height
-            val density = LocalDensity.current.density
 
             // Draw edge glow
             val edgeGlowBrush = Brush.linearGradient(
@@ -215,8 +215,7 @@ fun HologramTransition(
                     scale(
                         scaleX = glitchOffset,
                         scaleY = glitchOffset,
-                        pivotX = width / 2f,
-                        pivotY = height / 2f
+                        pivot = Offset(width / 2f, height / 2f)
                     )
                 }
             ) {
