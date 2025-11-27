@@ -150,7 +150,7 @@ fun AuraLookingForKaiDemo() {
     }
 
     val pathGenerator = remember { WanderingPathGenerator(screenBounds) }
-    val searchingBehavior = remember { SearchingBehavior(pathGenerator) }
+    val searchingBehavior = remember { SearchingBehavior(pathGenerator, screenBounds) }
 
     LaunchedEffect(Unit) {
         // Generate search pattern
@@ -204,13 +204,13 @@ fun AnimatedSpriteWalkingDemo() {
         // Define walk cycle frame sequence
         val walkCycleStates = listOf(
             AuraState.IDLE_WALK,      // Frame 1: Contact/heel strike
-            AuraState.WALKING_AURA,   // Frame 2: Mid-stance
+            AuraState.WALKING,   // Frame 2: Mid-stance
             AuraState.IDLE_WALK,      // Frame 3: Toe-off
-            AuraState.WALKING_AURA,   // Frame 4: Swing phase
+            AuraState.WALKING,   // Frame 4: Swing phase
             AuraState.IDLE_WALK,      // Frame 5: Recovery
-            AuraState.WALKING_AURA,   // Frame 6: Contact preparation
+            AuraState.WALKING,   // Frame 6: Contact preparation
             AuraState.IDLE_WALK,      // Frame 7: Heel strike (opposite foot)
-            AuraState.WALKING_AURA    // Frame 8: Complete cycle
+            AuraState.WALKING    // Frame 8: Complete cycle
         )
 
         // Load each frame from the walk cycle
