@@ -20,7 +20,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import timber.log.Timber
 
-private var notEmpty: Boolean = TODO("initialize me")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
 
 @Singleton
@@ -292,7 +291,7 @@ class DataStoreManager @Inject constructor(
     val userThemeFlow: Flow<String> = getStringFlow(PreferenceKeys.USER_THEME.name, "cyberpunk_dark")
     val securityLevelFlow: Flow<String> = getStringFlow(PreferenceKeys.SECURITY_LEVEL.name, "standard")
     val performanceModeFlow: Flow<String> = getStringFlow(PreferenceKeys.PERFORMANCE_MODE.name, "balanced")
-    val notificationsEnabledFlow: Flow<Boolean> = getBooleanFlow(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
+    val notificationsEnabledFlow: Any = getBooleanFlow(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
 
     // === BULK OPERATIONS ===
 
