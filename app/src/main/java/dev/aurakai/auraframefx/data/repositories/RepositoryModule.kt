@@ -1,4 +1,0 @@
-    ): TrinityRepository {
-        return provideTrinityRepository(apiService)
-    }
-}
