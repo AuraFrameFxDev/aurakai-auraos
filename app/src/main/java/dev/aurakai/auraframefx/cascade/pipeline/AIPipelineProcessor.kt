@@ -412,7 +412,7 @@ class AIPipelineProcessor @Inject constructor(
                 current["agent_performance"] as? MutableMap<String, kotlin.collections.MutableList<Float>>
                     ?: mutableMapOf()
             responses.forEach { response ->
-                val agentName = response.sender?.name
+                val agentName = response.sender?.name ?: "UNKNOWN"
                 val performanceList = agentPerformance.getOrPut(agentName) { mutableListOf() }
                 performanceList.add(response.confidence)
                 if (performanceList.size > 20) performanceList.removeAt(0) // Keep last 20

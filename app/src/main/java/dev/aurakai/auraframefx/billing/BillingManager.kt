@@ -60,14 +60,10 @@ class BillingManager @Inject constructor(
     }
 
     private fun setupBillingClient() {
-        billingClient = BillingClient.newBuilder(context)
-            .setListener { billingResult, purchases ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
-                    handlePurchases(purchases)
-                }
-            }
+        BillingClient.newBuilder(context)
+            .setListener(this)
             .enablePendingPurchases()
-            .build()
+            .build().also { this.billingClient = it }
 
         connectToBillingService()
     }
@@ -293,14 +289,20 @@ suspend fun BillingClient.queryPurchasesAsync(params: QueryPurchasesParams): Pur
 
 data class PurchasesResult(val billingResult: BillingResult, val purchasesList: List<Purchase>)
 
-
-
 data class ProductDetailsResult(val billingResult: BillingResult, val productDetailsList: List<ProductDetails>?)
 
 suspend fun BillingClient.acknowledgePurchase(params: AcknowledgePurchaseParams): BillingResult {
     return suspendCoroutine { continuation ->
         acknowledgePurchase(params) { billingResult ->
             continuation.resume(billingResult)
+        }
+    }
+}
+
+suspend fun BillingClient.queryProductDetails(params: QueryProductDetailsParams): ProductDetailsResult {
+    return suspendCoroutine { continuation ->
+        queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
         }
     }
 }

@@ -77,13 +77,27 @@ class TrinityRepository @Inject constructor(
             role = "user"
         )
 
-    private fun mapToDomainAgentStatus(src: NetworkAgentStatus): DomainAgentStatus =
-        DomainAgentStatus(
-            status = src.status,
-            message = src.message ?: "",
-            timestamp = src.timestamp ?: System.currentTimeMillis(),
-            details = src.details ?: emptyMap()
+    private fun mapToDomainAgentStatus(src: NetworkAgentStatus): DomainAgentStatus {
+        val statusEnum = try {
+            DomainAgentStatus.Status.valueOf(src.processingState.uppercase())
+        } catch (e: Exception) {
+            DomainAgentStatus.Status.IDLE
+        }
+
+        return DomainAgentStatus(
+            agentId = src.agentType.toString(),
+            status = statusEnum,
+            lastActiveTimestamp = try {
+                src.lastActivity.toInstant().toEpochMilli()
+            } catch (e: Exception) {
+                System.currentTimeMillis()
+            },
+            metadata = mapOf(
+                "visionState" to src.visionState,
+                "currentTask" to (src.currentTask ?: "")
+            )
         )
+    }
 
     private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
         val colors = networkTheme.colors

@@ -1,13 +1,16 @@
 package dev.aurakai.auraframefx.services
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.work.Constraints
+import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -157,7 +160,6 @@ class BackupService : Service() {
  * like network availability and battery level.
  */
 // Note: This would typically be in a separate file, but included here for completeness
-/*
 class ConsciousnessBackupWorker(
     context: Context,
     params: WorkerParameters
@@ -180,4 +182,3 @@ class ConsciousnessBackupWorker(
         }
     }
 }
-*/
