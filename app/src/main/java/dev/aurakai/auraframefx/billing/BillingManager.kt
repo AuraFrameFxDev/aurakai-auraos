@@ -61,7 +61,11 @@ class BillingManager @Inject constructor(
 
     private fun setupBillingClient() {
         billingClient = BillingClient.newBuilder(context)
-            .setListener(this)
+            .setListener { billingResult, purchases ->
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+                    handlePurchases(purchases)
+                }
+            }
             .enablePendingPurchases()
             .build()
 
@@ -289,13 +293,7 @@ suspend fun BillingClient.queryPurchasesAsync(params: QueryPurchasesParams): Pur
 
 data class PurchasesResult(val billingResult: BillingResult, val purchasesList: List<Purchase>)
 
-suspend fun BillingClient.queryProductDetails(params: QueryProductDetailsParams): ProductDetailsResult {
-    return suspendCoroutine { continuation ->
-        queryProductDetails(params) { billingResult, productDetailsList ->
-            continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
-        }
-    }
-}
+
 
 data class ProductDetailsResult(val billingResult: BillingResult, val productDetailsList: List<ProductDetails>?)
 
