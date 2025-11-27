@@ -15,6 +15,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
+import dev.aurakai.auraframefx.data.DataStoreManager
 import timber.log.Timber
 import javax.inject.Inject
 
