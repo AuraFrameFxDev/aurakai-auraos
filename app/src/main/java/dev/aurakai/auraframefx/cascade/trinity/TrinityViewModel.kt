@@ -29,11 +29,11 @@ class TrinityViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = TrinityUiState.Loading
-            
+
             // Load data in parallel or sequentially
             // For simplicity, sequential here, but ideally combine flows.
             // Since repository returns Flow<Result<T>>, we collect them.
-            
+
             // This is a simplified implementation. Real world would use combine or zip.
             // I'll just trigger loads.
             loadUserData()
@@ -70,7 +70,7 @@ class TrinityViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getAgentStatus(agentType).collect { result ->
                 result.onSuccess { status ->
-                    updateState { 
+                    updateState {
                         val newMap = it.agentStatus.toMutableMap()
                         newMap[agentType] = status
                         it.copy(agentStatus = newMap)
@@ -96,7 +96,7 @@ class TrinityViewModel @Inject constructor(
     fun processAgentRequest(agentType: String, requestMap: Map<String, Any>) {
         viewModelScope.launch {
             _uiState.value = TrinityUiState.Processing
-            
+
             // Create AgentRequest from map
             // Assuming AgentRequest has a constructor that takes query and context
             // If not, we might need to adjust.
@@ -107,7 +107,7 @@ class TrinityViewModel @Inject constructor(
 
             repository.processAgentRequest(agentType, request).collect { result ->
                 result.onSuccess { response ->
-                    updateState { 
+                    updateState {
                         it.copy(
                             lastAgentResponse = response,
                             lastAgentType = agentType
