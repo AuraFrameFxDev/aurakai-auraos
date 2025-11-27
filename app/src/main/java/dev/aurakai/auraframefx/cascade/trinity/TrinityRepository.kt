@@ -1,9 +1,12 @@
 package dev.aurakai.auraframefx.repository
 
 import dev.aurakai.auraframefx.api.client.models.AgentStatus
+import dev.aurakai.auraframefx.models.AgentRequest
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
-import dev.aurakai.auraframefx.network.model.*
-import dev.aurakai.auraframefx.models.*
+import dev.aurakai.auraframefx.network.model.Theme
+import dev.aurakai.auraframefx.network.model.User
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
