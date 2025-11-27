@@ -18,7 +18,7 @@ import javax.inject.Inject
 internal class AmbientMusicService : Service() {
 
     @Inject
-    protected lateinit var dataStoreManager: DataStoreManager
+    lateinit var dataStoreManager: DataStoreManager
 
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
