@@ -58,13 +58,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_24
         isCoreLibraryDesugaringEnabled = true
     }
-
-    kotlinOptions {
-        jvmTarget = "24"
-        freeCompilerArgs += listOf(
-            "-Xcontext-parameters"
-        )
+    kotlin {
+        target {
+            compilerOptions {
+                optIn.add("kotlin.RequiresOptIn")
+            }
+        }
     }
+
+
 
     lint {
         baseline = file("lint-baseline.xml")

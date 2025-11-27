@@ -15,10 +15,10 @@ import javax.inject.Inject
  * Provides background ambient music and soundscape management for the AI consciousness experience
  */
 @AndroidEntryPoint
-class AmbientMusicService : Service() {
+internal class AmbientMusicService : Service() {
 
     @Inject
-    lateinit var dataStoreManager: DataStoreManager
+    protected lateinit var dataStoreManager: DataStoreManager
 
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
@@ -234,3 +234,5 @@ class AmbientMusicService : Service() {
         }
     }
 }
+
+annotation class AndroidEntryPoint

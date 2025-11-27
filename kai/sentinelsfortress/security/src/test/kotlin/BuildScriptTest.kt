@@ -53,9 +53,7 @@ class BuildScriptTest {
         @Test
         fun `uses Kotlin 2_2 for language and api versions`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("ksp {"), "ksp block missing") },
-            )
+            assertAll { assertTrue(txt.contains("ksp {"), "ksp block missing") }
         }
     }
 
@@ -65,25 +63,19 @@ class BuildScriptTest {
         @Test
         fun `has expected namespace and SDKs`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("android {"), "android block missing") },
-            )
+            assertAll { assertTrue(txt.contains("android {"), "android block missing") }
         }
 
         @Test
         fun `release build type uses minify and proguard files`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("buildTypes {"), "buildTypes block missing") },
-            )
+            assertAll { assertTrue(txt.contains("buildTypes {"), "buildTypes block missing") }
         }
 
         @Test
         fun `build features explicitly configured`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("buildFeatures {"), "buildFeatures block missing") },
-            )
+            assertAll { assertTrue(txt.contains("buildFeatures {"), "buildFeatures block missing") }
         }
 
         @Test
@@ -105,9 +97,7 @@ class BuildScriptTest {
         @Test
         fun `core project and Android libs present`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("dependencies {"), "dependencies block missing") },
-            )
+            assertAll { assertTrue(txt.contains("dependencies {"), "dependencies block missing") }
         }
 
         @Test
@@ -127,9 +117,7 @@ class BuildScriptTest {
         @Test
         fun `networking stack present`() {
             val txt = readBuildFile()
-            assertAll(
-                { assertTrue(txt.contains("implementation(libs.retrofit)"), "missing retrofit") },
-            )
+            assertAll { assertTrue(txt.contains("implementation(libs.retrofit)"), "missing retrofit") }
         }
 
         @Test
