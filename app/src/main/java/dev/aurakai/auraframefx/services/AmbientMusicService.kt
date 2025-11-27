@@ -387,5 +387,3 @@ internal class AmbientMusicService : Service() {
         private const val MAX_TRACK_HISTORY_SIZE = 20
     }
 }
-
-annotation class AndroidEntryPoint
