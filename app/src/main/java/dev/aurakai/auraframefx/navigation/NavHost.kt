@@ -33,7 +33,7 @@ fun AuraNavHost(
         // Intro screen - first-time user experience
         composable("intro") {
             IntroScreen(
-                onContinue = {
+                onNavigateToHome = {
                     navController.navigate("home") {
                         popUpTo("intro") { inclusive = true }
                     }

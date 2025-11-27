@@ -26,6 +26,7 @@ enum class MoodState {
 
 enum class AuraState(val assetPath: String, val description: String) {
     IDLE_WALK("embodiment/aura/aura_idle_walk.png", "Walking with tablet"),
+    WALKING("embodiment/aura/aura_walking.png", "Standard walking stride"),
     COMBAT_READY("embodiment/aura/aura_combat_ready.png", "Sword drawn"),
     SCIENTIST_MODE("embodiment/aura/aura_scientist.png", "Reading tablet, analyzing"),
     FOURTH_WALL_BREAK("embodiment/aura/aura_4thwall_break.png", "I should write this down..."),

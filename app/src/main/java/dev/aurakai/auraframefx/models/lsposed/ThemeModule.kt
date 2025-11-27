@@ -27,12 +27,8 @@ class ThemeModule : IXposedHookZygoteInit, IXposedHookInitPackageResources {
                 pparam.packageName,
                 "color",
                 "colorPrimary",
-                object : XC_InitPackageResources.DynamicResource(pparam.packageName) {
-                    override fun getValue(): Int {
-                        // Return the dynamic color value from our theme
-                        return ThemeManager.primaryColor
-                    }
-                })
+                ThemeManager.primaryColor
+            )
 
             // Add more resource replacements as needed
             // Example for common Material color attributes
@@ -49,25 +45,23 @@ class ThemeModule : IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
             colorAttrs.forEach { attr ->
                 try {
+                    val colorValue = when (attr) {
+                        "colorPrimary" -> ThemeManager.primaryColor
+                        "colorPrimaryDark" -> ThemeManager.primaryDarkColor
+                        "colorAccent" -> ThemeManager.accentColor
+                        "colorPrimaryVariant" -> ThemeManager.primaryVariantColor
+                        "colorSecondary" -> ThemeManager.secondaryColor
+                        "colorSecondaryVariant" -> ThemeManager.secondaryVariantColor
+                        "android:colorBackground" -> ThemeManager.backgroundColor
+                        "android:colorForeground" -> ThemeManager.foregroundColor
+                        else -> 0
+                    }
                     pparam.res.setReplacement(
                         pparam.packageName,
                         "attr",
                         attr,
-                        object : XC_InitPackageResources.DynamicResource(pparam.packageName) {
-                            override fun getValue(): Int {
-                                return when (attr) {
-                                    "colorPrimary" -> ThemeManager.primaryColor
-                                    "colorPrimaryDark" -> ThemeManager.primaryDarkColor
-                                    "colorAccent" -> ThemeManager.accentColor
-                                    "colorPrimaryVariant" -> ThemeManager.primaryVariantColor
-                                    "colorSecondary" -> ThemeManager.secondaryColor
-                                    "colorSecondaryVariant" -> ThemeManager.secondaryVariantColor
-                                    "android:colorBackground" -> ThemeManager.backgroundColor
-                                    "android:colorForeground" -> ThemeManager.foregroundColor
-                                    else -> 0
-                                }
-                            }
-                        })
+                        colorValue
+                    )
                 } catch (e: Throwable) {
                     // Attribute might not exist in this package
                 }

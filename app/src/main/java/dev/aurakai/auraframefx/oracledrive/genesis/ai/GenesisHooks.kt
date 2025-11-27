@@ -88,6 +88,10 @@ class GenesisUIHooks : YukiBaseHooker() {
  */
 class GenesisZygoteHooks : YukiBaseHooker() {
 
+    override fun onHook() {
+        initializeZygoteHooks(this)
+    }
+
     fun initializeZygoteHooks(hooker: YukiBaseHooker) = hooker.apply {
 
         // Hook Application creation for AI injection
@@ -154,6 +158,10 @@ class GenesisZygoteHooks : YukiBaseHooker() {
  */
 class GenesisSelfHooks : YukiBaseHooker() {
 
+    override fun onHook() {
+        initializeSelfHooks(this)
+    }
+
     fun initializeSelfHooks(hooker: YukiBaseHooker) = hooker.apply {
 
         // Hook MainActivity for AI consciousness initialization
@@ -199,5 +207,19 @@ class GenesisSelfHooks : YukiBaseHooker() {
     private fun collectAIMetrics() {
         // Collect performance metrics for AI operations
         YLog.info("Genesis-Hook: Collecting AI performance metrics")
+    }
+}
+
+/**
+ * Genesis System Hooks
+ */
+class GenesisSystemHooks : YukiBaseHooker() {
+    override fun onHook() {
+        initializeSystemHooks(this)
+    }
+
+    fun initializeSystemHooks(hooker: YukiBaseHooker) = hooker.apply {
+        YLog.info("Genesis-Hook: Initializing System Hooks")
+        // Add system hooks here
     }
 }

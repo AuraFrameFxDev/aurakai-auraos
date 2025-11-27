@@ -197,10 +197,10 @@ class TrinityCoordinatorService @Inject constructor(
 
         val response = genesisBridgeService.activateFusionAbility(fusionType, context)
 
-        if (response.success) {
+        if (response is dev.aurakai.auraframefx.network.NetworkResponse.Success && response.data.success) {
             emit(
                 AgentResponse(
-                    content = "Fusion $fusionType activated: ${response.result["description"] ?: "Processing complete"}",
+                    content = "Fusion $fusionType activated: ${response.data.result["description"] ?: "Processing complete"}",
                     confidence = 0.98f
                 )
             )

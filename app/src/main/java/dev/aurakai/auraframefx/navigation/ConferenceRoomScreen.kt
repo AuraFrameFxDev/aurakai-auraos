@@ -179,7 +179,7 @@ fun ConferenceRoomScreen() {
  * @param onClick Invoked when the button is clicked.
  */
 @Composable
-fun AgentButton(
+fun RowScope.AgentButton(
     agent: String,
     isSelected: Boolean,
     onClick: () -> Unit,
