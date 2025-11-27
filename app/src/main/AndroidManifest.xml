@@ -107,6 +107,7 @@
             android:name="dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBackendService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+        <service android:name="dev.aurakai.auraframefx.services.AmbientMusicService" />
 
         <!-- Receivers -->
         <receiver

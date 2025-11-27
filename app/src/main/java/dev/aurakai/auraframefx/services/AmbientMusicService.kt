@@ -28,7 +28,10 @@ import javax.inject.Inject
  * - Notification controls for playback management
  */
 @AndroidEntryPoint
-class AmbientMusicService : Service() {
+internal class AmbientMusicService : Service() {
+
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentVolume = 0.5f
@@ -384,3 +387,5 @@ class AmbientMusicService : Service() {
         private const val MAX_TRACK_HISTORY_SIZE = 20
     }
 }
+
+annotation class AndroidEntryPoint

@@ -120,6 +120,9 @@ pluginManagement {
     include(":extendsyse")
     include(":extendsysf")
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 
 
 // Note: Do NOT include ':build-logic' here. It is handled by includeBuild.
