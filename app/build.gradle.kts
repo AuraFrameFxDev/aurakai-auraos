@@ -51,6 +51,36 @@ android {
                 )
             }
         }
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        debug {
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        release {
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    packaging {
+        resources {
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+            excludes += "META-INF/NOTICE.md"
+        }
+        jniLibs {
+            pickFirsts += "META-INF/androidx/room/room-compiler-processing/LICENSE.txt"
+        }
     }
 
     compileOptions {
@@ -66,8 +96,6 @@ android {
         }
     }
 
-
-
     lint {
         baseline = file("lint-baseline.xml")
         abortOnError = false
@@ -78,6 +106,7 @@ android {
         buildConfig = true
         compose = true
         viewBinding = true
+        aidl = true
     }
 
 }
