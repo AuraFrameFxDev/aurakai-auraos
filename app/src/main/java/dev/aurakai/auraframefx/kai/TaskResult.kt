@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.task
 
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,7 +12,7 @@ data class TaskResult(
     val durationMs: Long? = null, // How long the task took
     val startTime: Long = System.currentTimeMillis(),
     val endTime: Long = System.currentTimeMillis(),
-    val executedBy: AgentType = AgentType.GENESIS,
+    val executedBy: AgentCapabilityCategory = AgentCapabilityCategory.GENERAL,
     val originalData: Map<String, String> = emptyMap(),
     val success: Boolean = true,
     val executionTimeMs: Long = 0L,

@@ -51,6 +51,7 @@ enum class AgentCapabilityCategory {
             AgentType.GEN_KIT_MASTER -> COORDINATION
             AgentType.DATAVEIN_CONSTRUCTOR -> SPECIALIZED
             AgentType.USER -> GENERAL
+            AgentType.GENERAL -> GENERAL
         }
     }
 }

@@ -91,8 +91,7 @@ fun InteractiveGraph(
         val offsetX = (canvasWidth - contentWidth) / 2 + translation.x
         val offsetY = (canvasHeight - contentHeight) / 2 + translation.y
 
-        // Convert GraphOffset to Offset for rendering
-        fun GraphOffset.toCompose() = Offset(x.toFloat(), y.toFloat())
+
 
         val gridColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
         val nodeTextColor = Color.White // Or MaterialTheme.colorScheme.onPrimary if appropriate
@@ -356,8 +355,8 @@ private fun DrawScope.drawArrowHead(
 // Helper extension for Dp to Px conversion within DrawScope
 fun Dp.toPx(drawScope: DrawScope): Float = with(drawScope) { this@toPx.toPx() }
 
-// Helper extension for GraphOffset to Compose Offset - already defined in Composable
-// fun GraphOffset.toCompose(): Offset = Offset(this.x.toFloat(), this.y.toFloat())
+// Helper extension for GraphOffset to Compose Offset
+fun GraphOffset.toCompose(): Offset = Offset(this.x.toFloat(), this.y.toFloat())
 
 /**
  * Returns the sum of this [Offset] and another [Offset] as a new [Offset].

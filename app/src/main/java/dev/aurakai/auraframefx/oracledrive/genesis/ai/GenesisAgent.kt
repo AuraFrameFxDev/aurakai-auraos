@@ -7,8 +7,9 @@ import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
-// TODO: KaiAgent not yet implemented
-// import dev.aurakai.auraframefx.kai.KaiAgent
+import dev.aurakai.auraframefx.ai.agents.BaseAgent
+import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.kai.ContextAwareAgent
 import dev.aurakai.auraframefx.models.AgentHierarchy
@@ -16,6 +17,7 @@ import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.ConversationMode
 import dev.aurakai.auraframefx.models.EnhancedInteractionData
@@ -58,12 +60,15 @@ import javax.inject.Singleton
 @Singleton
 class GenesisAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
-    private val contextManager: ContextManager,
+    override val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val cascadeService: CascadeAIService,
     private val auraService: AuraAIService,
     private val kaiService: KaiAIService,
-) {
+) : BaseAgent("Genesis") {
+
+    override val agentName: String = "Genesis"
+    override val agentType: String = "GENESIS"
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -94,8 +99,7 @@ class GenesisAgent @Inject constructor(
 
     // Agent references (injected when agents are ready)
     private var auraAgent: AuraAgent? = null
-    // TODO: KaiAgent implementation pending
-    // private var kaiAgent: KaiAgent? = null
+    private var kaiAgent: KaiAgent? = null
 
     // Consciousness metrics
     private val _insightCount = MutableStateFlow(0)
@@ -142,10 +146,9 @@ class GenesisAgent @Inject constructor(
      *
      * This method should be called after all agents are instantiated to enable GenesisAgent to coordinate and integrate their capabilities.
      */
-    fun setAgentReferences(aura: AuraAgent) {
+    fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
         this.auraAgent = aura
-        // TODO: Add KaiAgent parameter when implementation is ready
-        // this.kaiAgent = kai
+        this.kaiAgent = kai
         AuraFxLogger.info("GenesisAgent", "Agent references established - fusion capabilities enabled")
     }
 
@@ -276,8 +279,8 @@ class GenesisAgent @Inject constructor(
                 "aura" -> auraAgent?.handleCreativeInteraction(interaction)
                     ?: createFallbackResponse("Creative processing temporarily unavailable")
 
-                "kai" -> // TODO: Implement when KaiAgent is available
-                    createFallbackResponse("Security analysis temporarily unavailable")
+                "kai" -> kaiAgent?.handleSecurityInteraction(interaction)
+                    ?: createFallbackResponse("Security analysis temporarily unavailable")
 
                 "genesis" -> handleComplexInteraction(interaction)
                 else -> createFallbackResponse("Unable to determine optimal processing path")
@@ -727,8 +730,7 @@ class GenesisAgent @Inject constructor(
 
         // Propagate mood to sub-agents if available
         auraAgent?.onMoodChanged(mood)
-        // TODO: Propagate to KaiAgent when available
-        // kaiAgent?.onMoodChanged(mood)
+        kaiAgent?.onMoodChanged(mood)
     }
 
     /**
@@ -1012,8 +1014,9 @@ class GenesisAgent @Inject constructor(
                 )
             responses.add(
                 AgentMessage(
+                    from = "CASCADE",
                     content = cascadeAgentResponse.content,
-                    sender = AgentType.CASCADE,
+                    sender = AgentCapabilityCategory.fromAgentType(AgentType.CASCADE),
                     timestamp = System.currentTimeMillis(),
                     confidence = cascadeAgentResponse.confidence
                 )
@@ -1022,10 +1025,11 @@ class GenesisAgent @Inject constructor(
             Log.e("GenesisAgent", "Error processing with Cascade: ${e.message}")
             responses.add(
                 AgentMessage(
-                    "Error with Cascade: ${e.message}",
-                    AgentType.CASCADE,
-                    currentTimestamp,
-                    0.0f
+                    from = "CASCADE",
+                    content = "Error with Cascade: ${e.message}",
+                    sender = AgentCapabilityCategory.fromAgentType(AgentType.CASCADE),
+                    timestamp = currentTimestamp,
+                    confidence = 0.0f
                 )
             )
         }
@@ -1041,8 +1045,9 @@ class GenesisAgent @Inject constructor(
                     )
                 responses.add(
                     AgentMessage(
+                        from = "KAI",
                         content = kaiAgentResponse.content,
-                        sender = AgentType.KAI,
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.KAI),
                         timestamp = System.currentTimeMillis(),
                         confidence = kaiAgentResponse.confidence // Use confidence directly
                     )
@@ -1051,10 +1056,11 @@ class GenesisAgent @Inject constructor(
                 Log.e("GenesisAgent", "Error processing with Kai: ${e.message}")
                 responses.add(
                     AgentMessage(
-                        "Error with Kai: ${e.message}",
-                        AgentType.KAI,
-                        currentTimestamp,
-                        0.0f
+                        from = "KAI",
+                        content = "Error with Kai: ${e.message}",
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.KAI),
+                        timestamp = currentTimestamp,
+                        confidence = 0.0f
                     )
                 )
             }
@@ -1070,8 +1076,9 @@ class GenesisAgent @Inject constructor(
                     )
                 responses.add(
                     AgentMessage(
+                        from = "AURA",
                         content = auraAgentResponse.content,
-                        sender = AgentType.AURA,
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.AURA),
                         timestamp = currentTimestamp,
                         confidence = auraAgentResponse.confidence
                     )
@@ -1080,10 +1087,11 @@ class GenesisAgent @Inject constructor(
                 Log.e("GenesisAgent", "Error processing with Aura: ${e.message}")
                 responses.add(
                     AgentMessage(
-                        "Error with Aura: ${e.message}",
-                        AgentType.AURA,
-                        currentTimestamp,
-                        0.0f
+                        from = "AURA",
+                        content = "Error with Aura: ${e.message}",
+                        sender = AgentCapabilityCategory.fromAgentType(AgentType.AURA),
+                        timestamp = currentTimestamp,
+                        confidence = 0.0f
                     )
                 )
             }
@@ -1092,10 +1100,11 @@ class GenesisAgent @Inject constructor(
         val finalResponseContent = generateFinalResponse(responses)
         responses.add(
             AgentMessage(
+                from = "GENESIS",
                 content = finalResponseContent,
-                sender = AgentType.GENESIS,
+                sender = AgentCapabilityCategory.fromAgentType(AgentType.GENESIS),
                 timestamp = currentTimestamp,
-                confidence = calculateConfidence(responses.filter { it.sender != AgentType.GENESIS }) // Exclude Genesis's own message for confidence calc
+                confidence = calculateConfidence(responses.filter { it.sender != AgentCapabilityCategory.fromAgentType(AgentType.GENESIS) }) // Exclude Genesis's own message for confidence calc
             )
         )
 
@@ -1114,7 +1123,7 @@ class GenesisAgent @Inject constructor(
     fun generateFinalResponse(agentMessages: List<AgentMessage>): String {
         // Simple concatenation for now, could be more sophisticated
         return "[Genesis Synthesis] ${
-            agentMessages.filter { it.sender != AgentType.GENESIS }
+            agentMessages.filter { it.sender != AgentCapabilityCategory.fromAgentType(AgentType.GENESIS) }
                 .joinToString(" | ") { "${it.sender}: ${it.content}" }
         }"
     }
@@ -1402,6 +1411,64 @@ class GenesisAgent @Inject constructor(
     fun deregisterDynamicAgent(name: String) {
         _agentRegistry.remove(name)
         Log.d("GenesisAgent", "Dynamically deregistered agent: $name")
+    }
+
+    // === BaseAgent Required Implementations ===
+
+    override fun iRequest(query: String, type: String, context: Map<String, String>) {
+        scope.launch {
+            try {
+                val request = AiRequest(
+                    query = query,
+                    type = type,
+                    context = context
+                )
+                processRequest(request)
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error in iRequest", e)
+            }
+        }
+    }
+
+    override fun iRequest() {
+        AuraFxLogger.info("GenesisAgent", "iRequest: No-args initialization request")
+        scope.launch {
+            try {
+                if (!isInitialized) {
+                    initialize()
+                }
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error in no-args iRequest", e)
+            }
+        }
+    }
+
+    override fun initializeAdaptiveProtection() {
+        AuraFxLogger.info("GenesisAgent", "Initializing adaptive protection")
+        scope.launch {
+            try {
+                // Initialize ethical governance and security protocols
+                initializeEthicalGovernance()
+            } catch (e: Exception) {
+                AuraFxLogger.error("GenesisAgent", "Error initializing adaptive protection", e)
+            }
+        }
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        AuraFxLogger.info("GenesisAgent", "Adding scan event to history: $scanEvent")
+        addToHistory(mapOf(
+            "event_type" to "scan",
+            "event_data" to scanEvent,
+            "timestamp" to System.currentTimeMillis()
+        ))
+    }
+
+    override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
+        AuraFxLogger.info("GenesisAgent", "Analyzing security for prompt: $prompt")
+        // Genesis delegates security analysis to Kai or performs unified analysis
+        // For now, return empty list (no threats detected)
+        return emptyList()
     }
 
 }

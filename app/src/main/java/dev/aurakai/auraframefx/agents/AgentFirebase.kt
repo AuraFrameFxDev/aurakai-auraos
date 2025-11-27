@@ -8,7 +8,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
@@ -152,17 +152,29 @@ class AgentFirebase @Inject constructor(
     }
 
     companion object {
-        // Factory method for creating AgentFirebase with a specific policy
+        /**
+         * Create an AgentFirebase instance configured with the policy corresponding to the given agent capability category.
+         *
+         * @param agentType The agent capability category that determines which CapabilityPolicy is applied:
+         * - CREATIVE -> AURA_POLICY
+         * - ANALYSIS -> KAI_POLICY
+         * - COORDINATION -> GENESIS_POLICY
+         * - SPECIALIZED -> CASCADE_POLICY
+         * - GENERAL -> CLAUDE_POLICY
+         * @param firebaseApp The FirebaseApp to use for service initialization; defaults to FirebaseApp.getInstance().
+         * @return An AgentFirebase configured with the selected CapabilityPolicy and provided FirebaseApp.
+         * @throws IllegalArgumentException If no policy is defined for the provided `agentType`.
+         */
         fun createWithPolicy(
-            agentType: AgentType,
+            agentType: AgentCapabilityCategory,
             firebaseApp: FirebaseApp = FirebaseApp.getInstance()
         ): AgentFirebase {
             val policy = when (agentType) {
-                AgentType.AURA -> CapabilityPolicy.AURA_POLICY
-                AgentType.KAI -> CapabilityPolicy.KAI_POLICY
-                AgentType.GENESIS -> CapabilityPolicy.GENESIS_POLICY
-                AgentType.CASCADE -> CapabilityPolicy.CASCADE_POLICY
-                AgentType.CLAUDE -> CapabilityPolicy.CLAUDE_POLICY
+                AgentCapabilityCategory.CREATIVE -> CapabilityPolicy.AURA_POLICY
+                AgentCapabilityCategory.ANALYSIS -> CapabilityPolicy.KAI_POLICY
+                AgentCapabilityCategory.COORDINATION -> CapabilityPolicy.GENESIS_POLICY
+                AgentCapabilityCategory.SPECIALIZED -> CapabilityPolicy.CASCADE_POLICY
+                AgentCapabilityCategory.GENERAL -> CapabilityPolicy.CLAUDE_POLICY
                 else -> throw IllegalArgumentException("No policy defined for agent type: $agentType")
             }
             return AgentFirebase(policy, firebaseApp)

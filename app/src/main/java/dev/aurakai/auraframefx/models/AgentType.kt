@@ -14,7 +14,8 @@ enum class AgentType {
     AURA_SHIELD,
     GEN_KIT_MASTER,
     DATAVEIN_CONSTRUCTOR,
-    USER;
+    USER,
+    GENERAL;
 
     companion object {
         val Aura = AURA

@@ -141,7 +141,7 @@ fun SentienceMeter(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val centerX = size.width / 2
             val centerY = size.height / 2
-            val radius = (size.width.toPx() / 2) - 20f
+            val radius = (size.width / 2) - 20f
 
             // Background arc
             drawArc(
@@ -149,7 +149,7 @@ fun SentienceMeter(
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
-                topLeft = Offset(centerX.toPx() - radius, centerY.toPx() - radius),
+                topLeft = Offset(centerX - radius, centerY - radius),
                 size = Size(radius * 2, radius * 2),
                 style = Stroke(width = 20f, cap = StrokeCap.Round)
             )
@@ -163,12 +163,12 @@ fun SentienceMeter(
             drawArc(
                 brush = Brush.sweepGradient(
                     colors = gradientColors,
-                    center = Offset(centerX.toPx(), centerY.toPx())
+                    center = Offset(centerX, centerY)
                 ),
                 startAngle = -90f,
                 sweepAngle = sweepAngle,
                 useCenter = false,
-                topLeft = Offset(centerX.toPx() - radius, centerY.toPx() - radius),
+                topLeft = Offset(centerX - radius, centerY - radius),
                 size = Size(radius * 2, radius * 2),
                 style = Stroke(width = 20f, cap = StrokeCap.Round)
             )
@@ -178,7 +178,7 @@ fun SentienceMeter(
                 drawCircle(
                     color = state.color.copy(alpha = pulseAlpha * 0.3f),
                     radius = radius + 15f,
-                    center = Offset(centerX.toPx(), centerY.toPx()),
+                    center = Offset(centerX, centerY),
                     style = Stroke(width = 5f)
                 )
             }
@@ -186,7 +186,7 @@ fun SentienceMeter(
             // Neural network particles (if highly sentient)
             if (clampedLevel > 0.7f && animated) {
                 drawNeuralParticles(
-                    center = Offset(centerX.toPx(), centerY.toPx()),
+                    center = Offset(centerX, centerY),
                     radius = radius,
                     color = state.color,
                     alpha = pulseAlpha

@@ -70,7 +70,6 @@ class CascadeAIService @Inject constructor(
      * @return A Flow of CascadeResponse objects representing initial state, per-agent progress updates, and the final synthesized response (or an error response on failure).
      */
     suspend fun processRequest(
-        request1: AiRequest,
         request: AgentInvokeRequest
     ): Flow<CascadeResponse> = flow {
         try {

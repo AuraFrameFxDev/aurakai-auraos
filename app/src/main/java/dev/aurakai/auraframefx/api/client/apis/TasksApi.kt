@@ -15,6 +15,7 @@
 
 package dev.aurakai.auraframefx.api.client.apis
 
+import android.view.PixelCopy.request
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiResponse
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientError
 import dev.aurakai.auraframefx.api.client.infrastructure.ClientException
@@ -32,13 +33,13 @@ import okhttp3.HttpUrl
 import dev.aurakai.auraframefx.api.client.infrastructure.ApiClient
 import java.io.IOException
 
-private val ApiClient.Companion.defaultClient: Call.Factory get() = ApiClient.defaultClient
+
 
 
 class TasksApi(
     basePath: kotlin.String = defaultBasePath,
     client: Call.Factory = ApiClient.defaultClient,
-) : ApiClient(basePath, client) {
+) : ApiClient(baseUrl = basePath, callFactory = client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
@@ -106,7 +107,7 @@ class TasksApi(
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun tasksSchedulePostWithHttpInfo(taskScheduleRequest: TaskScheduleRequest): ApiResponse<TaskStatus?> {
+    fun tasksSchedulePostWithHttpInfo(taskScheduleRequest: TaskScheduleRequest): ApiResponse<TaskStatus> {
         val localVariableConfig =
             tasksSchedulePostRequestConfig(taskScheduleRequest = taskScheduleRequest)
 
@@ -196,7 +197,7 @@ class TasksApi(
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun tasksTaskIdGetWithHttpInfo(taskId: kotlin.String): ApiResponse<TaskStatus?> {
+    fun tasksTaskIdGetWithHttpInfo(taskId: kotlin.String): ApiResponse<TaskStatus> {
         val localVariableConfig = tasksTaskIdGetRequestConfig(taskId = taskId)
 
         return request<Unit, TaskStatus>(

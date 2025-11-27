@@ -1,4 +1,4 @@
-package org.openapitools.client.infrastructure
+package dev.aurakai.auraframefx.ui.adapters
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson

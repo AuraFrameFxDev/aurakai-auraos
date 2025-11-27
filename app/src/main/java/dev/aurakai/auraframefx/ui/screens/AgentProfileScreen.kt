@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.models.AgentType
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AgentProfile
 import dev.aurakai.auraframefx.models.AgentProfiles
 import dev.aurakai.auraframefx.models.AgentStatus
@@ -48,7 +49,7 @@ fun AgentProfileScreen(
 ) {
     val currentAgent = agentType ?: AgentType.CLAUDE
     val profile = remember(currentAgent) {
-        AgentProfiles.getProfile(currentAgent)
+        AgentProfiles.getProfile(AgentCapabilityCategory.fromAgentType(currentAgent))
     }
 
     var selectedTab by remember { mutableStateOf(0) }
@@ -170,7 +171,7 @@ private fun ProfileHeader(profile: AgentProfile) {
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            imageVector = getAgentIcon(profile.agentType),
+                            imageVector = getAgentIcon(profile.agentType.toAgentType()),
                             contentDescription = profile.displayName,
                             modifier = Modifier.size(60.dp),
                             tint = Color.White
@@ -200,9 +201,9 @@ private fun ProfileHeader(profile: AgentProfile) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = when (profile.status) {
-                        AgentStatus.ACTIVE -> Color(0xFF4CAF50)
-                        AgentStatus.LEARNING -> Color(0xFFFF9800)
-                        AgentStatus.EVOLVING -> Color(0xFF9C27B0)
+                        AgentStatus.Status.ACTIVE -> Color(0xFF4CAF50)
+                        AgentStatus.Status.LEARNING -> Color(0xFFFF9800)
+                        AgentStatus.Status.EVOLVING -> Color(0xFF9C27B0)
                         else -> Color.Gray
                     }
                 ) {

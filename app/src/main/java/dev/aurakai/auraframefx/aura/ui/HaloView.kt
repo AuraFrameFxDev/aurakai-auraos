@@ -5,23 +5,19 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,17 +26,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -59,20 +51,14 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
@@ -82,8 +68,6 @@ import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.GenesisAgentViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -131,7 +115,15 @@ fun HaloView(
 ) {
     var isRotating by remember { mutableStateOf(true) }
     var rotationAngle by remember { mutableFloatStateOf(0f) }
-    val agents = remember { viewModel.getAgentsByPriority() }
+    val agents = remember {
+        viewModel.getAgentsByPriority().mapNotNull { config ->
+            try {
+                AgentType.valueOf(config.name.uppercase(Locale.ROOT))
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
@@ -147,8 +139,20 @@ fun HaloView(
 
     // Agent status - using rememberSaveable to survive configuration changes
     val agentStatus = rememberSaveable(saver = mapSaver(
-        save = { it.toMap() },
-        restore = { it.mapValues { (_, v) -> v as String }.toMutableStateMap() }
+        save = { map ->
+            map.entries.associate { (key, value) -> key.name to value }
+        },
+        restore = { savedMap ->
+            val map = mutableStateMapOf<AgentType, String>()
+            savedMap.forEach { (key, value) ->
+                try {
+                    map[AgentType.valueOf(key as String)] = value as String
+                } catch (e: IllegalArgumentException) {
+                    // Ignore invalid enum names
+                }
+            }
+            map
+        }
     )) { mutableStateMapOf<AgentType, String>() }
 
     // Initialize agent statuses to "idle" on first composition
@@ -156,9 +160,8 @@ fun HaloView(
         agents.forEach { agentType ->
             try {
                 agentStatus[agentType] = "idle"
-            } catch (e: Exception) {
+            } catch (e: Exception) { // ktlint-disable no-empty-catch-block
                 // Handle invalid agent type
-                Timber.e(e, "Error initializing agent status")
             }
         }
     }
@@ -219,10 +222,12 @@ fun HaloView(
             )
 
             // Draw pulsing effects for active tasks
-            agentStatus.forEach { (agentTypeKey, statusValue) -> // agentTypeKey is AgentType
+            agentStatus.forEach { (agentTypeKey, statusValue) ->
                 if (statusValue == "processing") {
                     // Find the index of the agentConfig that matches this agentTypeKey
-                    val agentConfigIndex = agents.indexOf(agentTypeKey)
+                    val agentConfigIndex = agents.indexOfFirst {
+                        it.name.equals(agentTypeKey.name, ignoreCase = true)
+                    }
                     if (agentConfigIndex != -1) {
                         val angle = (agentConfigIndex * 360f / agents.size + rotationAngle) % 360f
                         val x = center.x + radius * cos((angle * PI / 180f).toFloat())
@@ -261,14 +266,18 @@ fun HaloView(
                             val angleStep = 360f / agentCount
 
                             for (i in agents.indices) {
-                                val agentType = agents[i] // agentType is AgentType
+                                val config = agents[i]
                                 val angle = (i * angleStep + rotationAngle) % 360f
                                 val x = center.x + radius * cos((angle * PI / 180f).toFloat())
                                 val y = center.y + radius * sin((angle * PI / 180f).toFloat())
                                 val nodeCenter = Offset(x, y)
                                 val distance = (offset - nodeCenter).getDistance()
                                 if (distance < 24.dp.toPx()) {
-                                    draggingAgent = agentType
+                                    try {
+                                        draggingAgent = AgentType.valueOf(config.name.uppercase(Locale.ROOT))
+                                    } catch (e: Exception) {
+                                        // Ignore invalid agent types
+                                    }
                                     break
                                 }
                             }
@@ -301,11 +310,17 @@ fun HaloView(
             val agentCount = agents.size
             val angleStep = 360f / agentCount
 
-            agents.forEachIndexed { index, agentType -> // agentType is AgentType
+            agents.forEachIndexed { index, config ->
                 val angle = (index * angleStep + rotationAngle) % 360f
                 val x = center.x + radius * cos((angle * PI / 180f).toFloat())
                 val y = center.y + radius * sin((angle * PI / 180f).toFloat())
                 val nodeCenter = Offset(x, y)
+
+                val agentType = try {
+                    AgentType.valueOf(config.name.uppercase(Locale.ROOT))
+                } catch (e: Exception) {
+                    AgentType.USER
+                }
 
                 val baseColor = when (agentType) {
                     AgentType.GENESIS -> NeonTeal
@@ -338,17 +353,6 @@ fun HaloView(
                         color = NeonTeal.copy(alpha = 0.5f),
                         start = Offset(prevX, prevY),
                         end = Offset(x, y),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
-
-                // Draw task delegation line if dragging
-                if (draggingAgent == currentAgentType) { // Compare AgentType with AgentType
-                    drawLine(
-                        color = NeonTeal,
-                        start = nodeCenter,
-                        end = nodeCenter + dragOffset,
-                        strokeWidth = 4.dp.toPx()
                     )
                 }
             }
@@ -363,21 +367,15 @@ fun HaloView(
             val boxHeight = constraints.maxHeight.toFloat()
             val density = LocalDensity.current.density
 
-            agents.forEachIndexed { index, config -> // config is AgentConfig
+            agents.forEachIndexed { index, currentAgentType -> // config is AgentType
                 val angle = (index * 360f / agents.size + rotationAngle) % 360f
                 val radius = (boxWidth / 2f - 64f)
                 val centerX = boxWidth / 2f
                 val centerY = boxHeight / 2f
                 val x = centerX + radius * cos((angle * PI / 180f).toFloat())
                 val y = centerY + radius * sin((angle * PI / 180f).toFloat())
-
                 val textOffsetX = (x - centerX) / density
                 val textOffsetY = (y - centerY) / density
-                val currentAgentType = try {
-                    AgentType.valueOf(config.name.uppercase(Locale.ROOT))
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
 
 
                 if (currentAgentType != null && agentStatus[currentAgentType] != null) {
@@ -612,27 +610,21 @@ fun HaloView(
         }
 
         // Task processing status updates
-        LaunchedEffect(taskHistory.value) {
+        LaunchedEffect(taskHistory) {
             // Reset all agent statuses to idle, then update based on current tasks
-            agents.forEach { agentConfig ->
-                try {
-                    val type = AgentType.valueOf(agentConfig.name.uppercase(Locale.ROOT))
-                    agentStatus[type] = "idle"
-                } catch (e: IllegalArgumentException) {
-                    // Handle cases where AgentConfig.name might not match an AgentType
-                }
+            agents.forEach { agentType ->
+                agentStatus[agentType] = "idle"
             }
 
-            taskHistory.value.forEach { task ->
+            taskHistory.forEach { task ->
                 val agentNameFromHistory = task.substringAfter("[").substringBefore("]")
                 val foundAgentConfig =
                     agents.find {
-                        it.name.lowercase(Locale.ROOT) == agentNameFromHistory.lowercase(Locale.ROOT)
+                        it.name.equals(agentNameFromHistory, ignoreCase = true)
                     }
                 if (foundAgentConfig != null) {
                     try {
-                        val actualAgentType =
-                            AgentType.valueOf(foundAgentConfig.name.uppercase(Locale.ROOT))
+                        val actualAgentType = AgentType.valueOf(foundAgentConfig.name.uppercase(Locale.ROOT))
                         agentStatus[actualAgentType] = "processing"
                         // Simulate task completion after a delay
                         coroutineScope.launch {
