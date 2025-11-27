@@ -88,10 +88,9 @@ class GenesisBridgeService @Inject constructor(
         try {
             ensureBackendReady()
             val genesisRequest = GenesisRequest(
-                requestType = "process",
-                persona = request.prompt, // Use prompt as persona identifier
-                payload = mapOf("prompt" to request.prompt),
-                context = mapOf("context" to contextManager.getCurrentContext())
+                // Use prompt as persona identifier
+                "process", request.prompt, payload = mapOf("prompt" to request.prompt),
+                context = mapOf<String, String>("context" to contextManager.getCurrentContext())
             )
 
             when (val result = safeApiCall {
