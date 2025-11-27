@@ -15,7 +15,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.aura.ui.TrinityUiState
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.AgentStatus
+import dev.aurakai.auraframefx.models.Theme
+import dev.aurakai.auraframefx.models.UserData
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,7 +158,7 @@ fun TrinityScreen(
 }
 
 @Composable
-private fun UserInfoSection(user: User?) {
+private fun UserInfoSection(user: UserData?) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -185,11 +193,11 @@ private fun UserInfoSection(user: User?) {
 }
 
 @Composable
-private fun AgentStatusCard(agentType: String, status: AgentResponse) {
-    val statusColor = when (status.status.lowercase()) {
-        "online" -> Color.Green
-        "offline" -> Color.Red
-        "busy" -> Color.Yellow
+private fun AgentStatusCard(agentType: String, status: AgentStatus) {
+    val statusColor = when (status.status) {
+        AgentStatus.Status.ACTIVE, AgentStatus.Status.IDLE -> Color.Green
+        AgentStatus.Status.ERROR -> Color.Red
+        AgentStatus.Status.PROCESSING -> Color.Yellow
         else -> Color.Gray
     }
 
@@ -217,16 +225,17 @@ private fun AgentStatusCard(agentType: String, status: AgentResponse) {
                 )
 
                 Text(
-                    text = status.status,
+                    text = status.status.name,
                     style = MaterialTheme.typography.bodyMedium,
                     color = statusColor
                 )
             }
 
-            if (status.message != null) {
+            if (status.error != null) {
                 Text(
-                    text = status.message,
-                    style = MaterialTheme.typography.bodySmall
+                    text = status.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -250,20 +259,11 @@ private fun ThemeItem(theme: Theme, onThemeSelected: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                if (theme.description != null) {
-                    Text(
-                        text = theme.description,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                // Removed description as it's not in DomainTheme
             }
 
-            if (theme.isActive == true) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Active Theme",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+            if (theme.isDark) { // Using isDark instead of isActive
+                 Text("Dark", style = MaterialTheme.typography.labelSmall)
             }
         }
     }
@@ -289,18 +289,18 @@ private fun LastAgentResponse(agentType: String, response: AgentResponse) {
             )
 
             Text(
-                text = response.message ?: "No message",
+                text = response.content, // Changed from message to content
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
 
-            if (response.timestamp != null) {
-                Text(
-                    text = response.timestamp,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-                )
-            }
+            val date = Date(response.timestamp)
+            val format = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            Text(
+                text = format.format(date),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+            )
         }
     }
 }

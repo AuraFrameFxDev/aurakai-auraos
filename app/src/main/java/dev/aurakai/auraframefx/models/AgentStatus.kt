@@ -1,5 +1,7 @@
 package dev.aurakai.auraframefx.models
 
+import kotlinx.serialization.Serializable
+
 /**
  * Represents the status of an AI agent in the system.
  * @property agentId The unique identifier of the agent
@@ -11,6 +13,7 @@ package dev.aurakai.auraframefx.models
  * @property error Any error message if the agent is in an error state
  * @property metadata Additional metadata about the agent's status
  */
+@Serializable
 data class AgentStatus(
     val agentId: String,
     val status: Status = Status.IDLE,
@@ -19,8 +22,9 @@ data class AgentStatus(
     val isAvailable: Boolean = true,
     val capabilities: List<String> = emptyList(),
     val error: String? = null,
-    val metadata: Map<String, Any> = emptyMap()
+    val metadata: Map<String, String> = emptyMap()
 ) {
+    @Serializable
     enum class Status {
         /** Agent is ready and waiting for tasks */
         IDLE,
@@ -62,6 +66,7 @@ data class AgentStatus(
      * @property networkUsage Network usage in bytes
      * @property lastUpdated Timestamp when these metrics were last updated
      */
+    @Serializable
     data class ResourceUsage(
         val cpuUsage: Float = 0f,
         val memoryUsage: Long = 0,
