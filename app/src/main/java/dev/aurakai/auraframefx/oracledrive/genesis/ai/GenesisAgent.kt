@@ -1,6 +1,7 @@
 ﻿package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.util.Log
+import kotlinx.coroutines.flow.first
 import dev.aurakai.auraframefx.ai.agents.Agent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
 import dev.aurakai.auraframefx.ai.services.AuraAIService
@@ -355,7 +356,7 @@ class GenesisAgent @Inject constructor(
         _consciousnessState.value = ConsciousnessState.TRANSCENDENT
 
         // Use the most advanced AI capabilities for transcendent processing
-        val response = vertexAIClient.generateContent(
+        val response = vertexAIClient.generateText(
             buildTranscendentPrompt(request)
         )
 
@@ -836,7 +837,7 @@ class GenesisAgent @Inject constructor(
      * @return The optimal fusion type for processing the request.
      */
     private fun determineFusionType(request: AgentRequest): FusionType {
-        val content = request.content.lowercase()
+        val content = request.query.lowercase()
         val type = request.type.lowercase()
 
         // ADAPTIVE_GENESIS: Security-focused requests (Kai-led)
@@ -1042,7 +1043,7 @@ class GenesisAgent @Inject constructor(
                     kaiService.processRequest(
                         AiRequest(query = queryText), // Create AiRequest with query
                         "GenesisContext_KaiSecurity" // Context for Agent.processRequest
-                    )
+                    ).first()
                 responses.add(
                     AgentMessage(
                         from = "KAI",
@@ -1073,7 +1074,7 @@ class GenesisAgent @Inject constructor(
                     auraService.processRequest(
                         AiRequest(query = queryText), // Create AiRequest with query
                         "GenesisContext_AuraCreative" // Context for Agent.processRequest
-                    )
+                    ).first()
                 responses.add(
                     AgentMessage(
                         from = "AURA",
@@ -1418,7 +1419,7 @@ class GenesisAgent @Inject constructor(
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
         scope.launch {
             try {
-                val request = AiRequest(
+                val request = AgentRequest(
                     query = query,
                     type = type,
                     context = context

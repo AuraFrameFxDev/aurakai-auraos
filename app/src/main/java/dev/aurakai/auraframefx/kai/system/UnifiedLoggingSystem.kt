@@ -80,7 +80,7 @@ class UnifiedLoggingSystem @Inject constructor(
         val throwable: Throwable? = null,
         val metadata: Map<String, Any> = emptyMap(),
         val threadName: String = Thread.currentThread().name,
-        val sessionId: String = getCurrentSessionId(),
+        val sessionId: String,
     )
 
     data class LogAnalytics(
@@ -151,7 +151,8 @@ class UnifiedLoggingSystem @Inject constructor(
             tag = tag,
             message = message,
             throwable = throwable,
-            metadata = metadata
+            metadata = metadata,
+            sessionId = currentSessionId
         )
 
         // Send to processing channel

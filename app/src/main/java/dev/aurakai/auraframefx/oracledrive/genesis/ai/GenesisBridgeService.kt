@@ -148,7 +148,7 @@ class GenesisBridgeService @Inject constructor(
         }
     }
 
-    suspend fun activateFusionAbility(ability: String, parameters: Map<String, String> = emptyMap()): NetworkResponse<Boolean> = safeApiCall {
+    suspend fun activateFusionAbility(ability: String, parameters: Map<String, String> = emptyMap()): NetworkResponse<GenesisResponse> = safeApiCall {
         withTimeout(REQUEST_TIMEOUT_MS) {
             val request = GenesisRequest(
                 requestType = "activateFusion",
@@ -160,8 +160,7 @@ class GenesisBridgeService @Inject constructor(
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.bodyAsText()
-            val genesisResponse = Json.decodeFromString<GenesisResponse>(response)
-            genesisResponse.success
+            Json.decodeFromString<GenesisResponse>(response)
         }
     }
 

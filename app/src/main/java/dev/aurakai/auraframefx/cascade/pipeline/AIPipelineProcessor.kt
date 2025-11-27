@@ -67,7 +67,7 @@ class AIPipelineProcessor @Inject constructor(
         responses.add(
             AgentMessage(
                 from = AgentCapabilityCategory.SPECIALIZED.name,
-                content = cascadeAgentResponse.content.toString(),
+                content = cascadeAgentResponse.content ?: "",
                 sender = AgentCapabilityCategory.SPECIALIZED,
                 confidence = cascadeAgentResponse.confidence
             )
@@ -79,7 +79,7 @@ class AIPipelineProcessor @Inject constructor(
             responses.add(
                 AgentMessage(
                     from = AgentCapabilityCategory.ANALYSIS.name,
-                    content = kaiAgentResponse.content.toString(),
+                    content = kaiAgentResponse.content ?: "",
                     sender = AgentCapabilityCategory.ANALYSIS,
                     confidence = kaiAgentResponse.confidence
                 )
@@ -96,7 +96,7 @@ class AIPipelineProcessor @Inject constructor(
             responses.add(
                 AgentMessage(
                     from = AgentCapabilityCategory.CREATIVE.name,
-                    content = auraAgentResponse.content,
+                    content = auraAgentResponse.content ?: "",
                     sender = AgentCapabilityCategory.CREATIVE,
                     confidence = auraAgentResponse.confidence
                 )

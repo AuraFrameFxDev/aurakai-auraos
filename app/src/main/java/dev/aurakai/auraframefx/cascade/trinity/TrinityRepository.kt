@@ -6,7 +6,12 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
 import dev.aurakai.auraframefx.network.model.*
-import dev.aurakai.auraframefx.models.*
+import dev.aurakai.auraframefx.api.client.models.AgentStatus as NetworkAgentStatus
+import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
+import dev.aurakai.auraframefx.models.AgentRequest
+import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.Theme
+import dev.aurakai.auraframefx.models.UserData
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 class TrinityRepository @Inject constructor(
     private val apiService: AuraApiServiceWrapper,
 ) {
-
     // User related operations
     suspend fun getCurrentUser() = flow<Result<UserData>> {
         try {
@@ -28,10 +32,10 @@ class TrinityRepository @Inject constructor(
     }
 
     // AI Agent operations
-    suspend fun getAgentStatus(agentType: String) = flow<Result<AgentStatus>> {
+    suspend fun getAgentStatus(agentType: String) = flow<Result<DomainAgentStatus>> {
         try {
-            val response = apiService.aiAgentApi.getAgentStatus(agentType)
-            emit(Result.success(response))
+            val response: NetworkAgentStatus = apiService.aiAgentApi.getAgentStatus(agentType)
+            emit(Result.success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -65,14 +69,21 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    private fun mapToUserData(networkUser: NetworkUser): UserData {
-        return UserData(
+    private fun mapToUserData(networkUser: NetworkUser): UserData =
+        UserData(
             id = networkUser.id,
             username = networkUser.username,
             email = networkUser.email,
-            role = "user" // Default role
+            role = "user"
         )
-    }
+
+    private fun mapToDomainAgentStatus(src: NetworkAgentStatus): DomainAgentStatus =
+        DomainAgentStatus(
+            status = src.status,
+            message = src.message ?: "",
+            timestamp = src.timestamp ?: System.currentTimeMillis(),
+            details = src.details ?: emptyMap()
+        )
 
     private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
         val colors = networkTheme.colors
@@ -87,15 +98,10 @@ class TrinityRepository @Inject constructor(
             onSecondaryColor = parseColor(colors?.onSecondary ?: "#FFFFFF"),
             onBackgroundColor = parseColor(colors?.onBackground ?: "#FFFFFF"),
             onSurfaceColor = parseColor(colors?.onSurface ?: "#FFFFFF"),
-            isDark = networkTheme.styles["mode"] == "dark"
+            isDark = (networkTheme.styles["mode"] == "dark")
         )
     }
 
-    private fun parseColor(hex: String): Color {
-        return try {
-            Color(android.graphics.Color.parseColor(hex))
-        } catch (e: Exception) {
-            Color.Black
-        }
-    }
+    private fun parseColor(hex: String): Color =
+        try { Color(android.graphics.Color.parseColor(hex)) } catch (_: Exception) { Color.Black }
 }
