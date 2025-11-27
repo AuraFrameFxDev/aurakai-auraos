@@ -266,6 +266,8 @@ class BillingManager @Inject constructor(
     }
 }
 
+
+
 /**
  * Subscription state for the Genesis Protocol
  */
