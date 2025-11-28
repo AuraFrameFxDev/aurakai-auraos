@@ -3,7 +3,6 @@ package dev.aurakai.auraframefx.ui.recovery
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import timber.log.Timber
 
@@ -29,7 +28,7 @@ import timber.log.Timber
 @Composable
 fun ComposableErrorBoundary(
     screenName: String,
-    recoveryManager: UIRecoveryManager = hiltViewModel(viewModelStoreOwner, key).let {
+    recoveryManager: UIRecoveryManager = hiltViewModel<UIRecoveryManager>().let {
         // This is a workaround to inject UIRecoveryManager
         // In real usage, you'd inject it properly
         throw NotImplementedError("Use proper DI - see MainActivity integration")
