@@ -130,13 +130,12 @@ class AuraEvolutionEngine {
 
     suspend fun evolveMultipleProfiles(profiles: List<AuraProfile>): List<AuraProfile> {
         return coroutineScope {
-            return@coroutineScope profiles.map { profile ->
+            profiles.map { profile ->
                 async {
-                    return@async with(this@coroutineScope) {
+                    with(this@coroutineScope) {
                         profile.enhanceConsciousness()
                     }
                 }
-            }
-        }.awaitAll()
+            }.awaitAll()
         }
     }

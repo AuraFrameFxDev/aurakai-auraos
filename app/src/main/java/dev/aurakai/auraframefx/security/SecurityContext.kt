@@ -62,7 +62,8 @@ enum class SecurityEventType {
     INTEGRITY_CHECK,
     PERMISSION_VIOLATION,
     ACCESS_DENIED,
-    GOVERNANCE_INIT
+    GOVERNANCE_INIT,
+    AI_ERROR
 }
 
 enum class EventSeverity {

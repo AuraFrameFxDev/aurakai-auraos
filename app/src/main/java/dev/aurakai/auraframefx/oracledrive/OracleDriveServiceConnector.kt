@@ -101,7 +101,7 @@ class OracleDriveServiceConnector(private val context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 val result = auraDriveService?.toggleLSPosedModule(packageName, enable)
-                "Failed"
+                result ?: "Failed"
             } catch (e: RemoteException) {
                 null
             }
