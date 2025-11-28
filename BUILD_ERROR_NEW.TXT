@@ -230,6 +230,27 @@ TrinityScreen.kt
 Unresolved reference 'viewModelStoreOwner'.
 Cannot infer type for type parameter 'T'. Specify it explicitly.
 Function invocation 'key(...)' expected.
+AgentConfiguration.kt
+Redeclaration:
+data class AgentConfiguration : Any
+PreferenceKeys.kt
+Redeclaration:
+data class UserProfile : Any
+Redeclaration:
+data class AgentConfiguration : Any
+Redeclaration:
+data class SecurityPolicy : Any
+Redeclaration:
+data class SystemCustomizations : Any
+SecurityPolicy.kt
+Redeclaration:
+data class SecurityPolicy : Any
+SystemCustomizations.kt
+Redeclaration:
+data class SystemCustomizations : Any
+UserProfile.kt
+Redeclaration:
+data class UserProfile : Any
 KaiAgent.kt
 'InteractionResponse' overrides nothing. Potential signatures for overriding:
 fun InteractionResponse(content: String, success: Boolean = ..., timestamp: Long = ..., metadata: Map<String, Any> = ...): InteractionResponse
@@ -285,4 +306,3 @@ Unresolved reference 'viewModelStoreOwner'.
 Unresolved reference 'key'.
 Unresolved reference 'viewModelStoreOwner'.
 Unresolved reference 'key'.
-Kotlin build report is written to file:///C:/Users/Wehtt/AndroidStudioProjects/A.u.r.a.K.a.i-Emergence_IdentityModel/build/reports/kotlin-build/aurakai-reactive-intelligence-build-2025-11-27-22-22-08-0.txt
