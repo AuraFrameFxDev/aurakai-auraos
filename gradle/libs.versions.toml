@@ -590,9 +590,16 @@ testing-unit = [
     "mockk",
 ]
 
-testing-instrumentation = [
-    "espresso-core",
-    "benchmark-junit4",
+testing = [
+    "junit",
+    "junit-jupiter-api",
+    "mockk",
+    "androidx-junit",
+    "androidx-core",
+    "androidx-runner",
+    "androidx-rules",
+    "truth",
+    "robolectric",
 ]
 
 system-root = [

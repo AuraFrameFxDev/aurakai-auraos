@@ -130,7 +130,7 @@ class DefaultSecurityContext @Inject constructor(
         }
     }
 
-    override suspend fun logSecurityEvent(event: String, string: String) {
+    override suspend fun logSecurityEvent(event: SecurityEvent) {
         UnifiedLoggingSystem.i("Security Event: ${event.type} - ${event.details}")
     }
 }
