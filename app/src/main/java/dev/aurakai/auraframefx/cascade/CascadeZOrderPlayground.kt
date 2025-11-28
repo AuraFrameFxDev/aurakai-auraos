@@ -43,7 +43,7 @@ class CascadeDebugViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CascadeZOrderPlayground(
-    viewModel: CascadeDebugViewModel = hiltViewModel(viewModelStoreOwner, key),
+    viewModel: CascadeDebugViewModel = hiltViewModel(),
 ) {
     var newVisionState by remember { mutableStateOf(VisionState()) }
     var newProcessingState by remember { mutableStateOf(ProcessingState()) }
