@@ -773,23 +773,14 @@ class CascadeAgent @Inject constructor(
             val field = clazz.getDeclaredField(fieldName)
             field.isAccessible = true
             field.get(null) as? String
-                } catch (_: Exception) {
-                    null
-                },
-                "analysisState" to try {
-                    kaiAgent.analysisState.value
-                } catch (_: Exception) {
-                    null
-                },
-                "currentThreatLevel" to try {
-                    kaiAgent.currentThreatLevel.value
-                } catch (_: Exception) {
-                    null
-                }
-            )
         } catch (_: Exception) {
-            emptyMap<String, Any?>()
+            null
         }
+    }
+
+    private fun getAgentSystemState(): Map<String, Any> {
+        val auraState = emptyMap<String, Any>()
+        val kaiState = emptyMap<String, Any>()
 
         val lastSnapshot = try {
             memoryManager.retrieveMemory("cascade_status_snapshot_latest")

@@ -482,16 +482,4 @@ internal class GenKitMasterAgent @Inject constructor(
         // Delegate security analysis to Kai agent
         return kaiAgent.analyzeSecurity(prompt)
     }
-
-    override fun InteractionResponse(
-        content: String,
-        timestamp: Long,
-        metadata: Map<String, Any>
-    ): InteractionResponse {
-        return InteractionResponse(
-            content = content,
-            timestamp = timestamp,
-            metadata = metadata
-        )
-    }
 }

@@ -984,18 +984,6 @@ class AuraAgent @Inject constructor(
             )
         )
     }
-
-    override fun InteractionResponse(
-        content: String,
-        timestamp: Long,
-        metadata: Map<String, Any>
-    ): InteractionResponse {
-        return dev.aurakai.auraframefx.models.InteractionResponse(
-            content = content,
-            timestamp = timestamp,
-            metadata = metadata
-        )
-    }
 }
 
 private fun any(predicate: String): String {

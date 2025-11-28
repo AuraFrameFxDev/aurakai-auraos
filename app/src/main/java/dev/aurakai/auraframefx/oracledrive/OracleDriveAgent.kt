@@ -80,17 +80,5 @@ class OracleDriveAgent @Inject constructor(
         // OracleDrive focuses on storage security, not active threat detection
         return emptyList()
     }
-
-    override fun InteractionResponse(
-        content: String,
-        timestamp: Long,
-        metadata: Map<String, Any>
-    ): dev.aurakai.auraframefx.models.InteractionResponse {
-        return dev.aurakai.auraframefx.models.InteractionResponse(
-            content = content,
-            timestamp = timestamp,
-            metadata = metadata
-        )
-    }
 }
 
