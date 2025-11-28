@@ -48,7 +48,7 @@ class OracleDriveRepositoryImpl @Inject constructor(
                     OracleDriveFile(
                         name = file.name,
                         size = file.size,
-                        timeCreated = file.timeCreated
+                        timeCreated = file.timeCreated.toString()
                     )
                 } ?: emptyList()
 

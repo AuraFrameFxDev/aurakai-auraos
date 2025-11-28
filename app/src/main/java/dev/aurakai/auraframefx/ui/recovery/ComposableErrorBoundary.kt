@@ -28,11 +28,7 @@ import timber.log.Timber
 @Composable
 fun ComposableErrorBoundary(
     screenName: String,
-    recoveryManager: UIRecoveryManager = hiltViewModel<UIRecoveryManager>().let {
-        // This is a workaround to inject UIRecoveryManager
-        // In real usage, you'd inject it properly
-        throw NotImplementedError("Use proper DI - see MainActivity integration")
-    },
+    recoveryManager: UIRecoveryManager? = null,
     onError: ((Throwable) -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -40,8 +36,8 @@ fun ComposableErrorBoundary(
         ErrorHandler { error ->
             Timber.e(error, "Error in $screenName")
             onError?.invoke(error) ?: run {
-                // Trigger recovery system
-                recoveryManager.triggerRecovery(
+                // Trigger recovery system if manager is available
+                recoveryManager?.triggerRecovery(
                     error = error,
                     context = "Screen: $screenName"
                 )

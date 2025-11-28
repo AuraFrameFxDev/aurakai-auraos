@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AgentType
-import dev.aurakai.auraframefx.models.AgentType.*
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.ConferenceRoomViewModel
@@ -155,25 +155,18 @@ fun ConferenceRoomScreen(
                     if (messageText.isNotBlank()) {
                         // Launch a coroutine for the suspend function
                         scope.launch {
-                            viewModel.sendMessage(messageText, USER, "user_conversation")
+                            viewModel.sendMessage(messageText, AgentCapabilityCategory.GENERAL, "user_conversation")
                             messageText = ""
                         }
                     }
                 }
             ) {
                 Icon(
-                    Icons.Filled.Send,
+                    Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send",
                     tint = NeonBlue
                 )
             }
         }
     }
-}
-
-private fun ConferenceRoomViewModel.sendMessage(
-    message: String,
-    sender: dev.aurakai.auraframefx.models.AgentType,
-    context: String
-) {
 }

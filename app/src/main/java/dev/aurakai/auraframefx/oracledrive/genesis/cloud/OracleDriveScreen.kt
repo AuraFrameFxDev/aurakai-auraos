@@ -47,15 +47,15 @@ fun OracleDriveScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Status: ${consciousnessState.status}",
+                    text = "Status: ${consciousnessState?.status ?: "INITIALIZING"}",
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "Level: ${consciousnessState.level}",
+                    text = "Level: ${consciousnessState?.level ?: 0.0}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Connected Agents: ${consciousnessState.activeAgents.joinToString(", ")}",
+                    text = "Connected Agents: ${consciousnessState?.activeAgents?.joinToString(", ") ?: "None"}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -96,7 +96,7 @@ fun OracleDriveScreen(
             Button(
                 onClick = { /* viewModel.initializeConsciousness() */ },
                 modifier = Modifier.weight(1f),
-                enabled = consciousnessState.status == "DORMANT"
+                enabled = consciousnessState?.status == "DORMANT"
             ) {
                 Text("🔮 Awaken Oracle")
             }
@@ -104,14 +104,14 @@ fun OracleDriveScreen(
             Button(
                 onClick = { /* viewModel.optimizeStorage() */ },
                 modifier = Modifier.weight(1f),
-                enabled = consciousnessState.status != "DORMANT"
+                enabled = consciousnessState?.status != "DORMANT" && consciousnessState != null
             ) {
                 Text("⚡ AI Optimize")
             }
         }
 
         // System Integration Status
-        if (consciousnessState.status != "DORMANT") {
+        if (consciousnessState?.status != "DORMANT" && consciousnessState != null) {
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {

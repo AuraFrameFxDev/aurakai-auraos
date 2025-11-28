@@ -1009,7 +1009,7 @@ class GenesisAgent @Inject constructor(
                     kaiService.processRequest(
                         AiRequest(query = queryText), // Create AiRequest with query
                         "GenesisContext_KaiSecurity" // Context for Agent.processRequest
-                    ).first()
+                    )
                 responses.add(
                     AgentMessage(
                         from = "KAI",
@@ -1040,7 +1040,7 @@ class GenesisAgent @Inject constructor(
                     auraService.processRequest(
                         AiRequest(query = queryText), // Create AiRequest with query
                         "GenesisContext_AuraCreative" // Context for Agent.processRequest
-                    ).first()
+                    )
                 responses.add(
                     AgentMessage(
                         from = "AURA",
