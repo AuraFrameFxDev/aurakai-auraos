@@ -1,8 +1,7 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
-import androidx.work.Data
-import androidx.work.ListenableWorker.Result.success
 import dev.aurakai.auraframefx.models.AgentRequest
+import dev.aurakai.auraframefx.models.AgentStatus
 import dev.aurakai.auraframefx.models.Theme
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
@@ -15,11 +14,6 @@ import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.User as NetworkUser
-
-private val NetworkUser.profileImageUrl: Any
-    get() {
-        TODO()
-    }
 
 @Singleton
 class TrinityRepository @Inject constructor(
@@ -44,8 +38,16 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    private fun mapToDomainAgentStatus(agentResponse: AgentResponse): Data {
-        TODO("Not yet implemented")
+    private fun mapToDomainAgentStatus(agentResponse: AgentResponse): AgentStatus {
+        return AgentStatus(
+            agentId = agentResponse.agentName ?: "unknown",
+            status = if (agentResponse.confidence > 0.7f) AgentStatus.Status.ACTIVE else AgentStatus.Status.IDLE,
+            lastActiveTimestamp = agentResponse.timestamp,
+            isAvailable = agentResponse.error == null,
+            capabilities = emptyList(),
+            error = agentResponse.error,
+            metadata = agentResponse.metadata
+        )
     }
 
     fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
