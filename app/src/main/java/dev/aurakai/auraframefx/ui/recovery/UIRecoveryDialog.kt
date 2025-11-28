@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
@@ -56,7 +55,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun UIRecoveryDialog(
-    viewModel: UIRecoveryViewModel = hiltViewModel(viewModelStoreOwner, key),
+    viewModel: UIRecoveryViewModel = hiltViewModel(),
     onNavigateToRoute: (String) -> Unit = {}
 ) {
     val recoveryState by viewModel.recoveryState.collectAsState()
@@ -206,7 +205,7 @@ fun UIRecoveryDialog(
  */
 @Composable
 fun RecoveryIndicator(
-    viewModel: UIRecoveryViewModel = hiltViewModel(viewModelStoreOwner, key)
+    viewModel: UIRecoveryViewModel = hiltViewModel()
 ) {
     val recoveryState by viewModel.recoveryState.collectAsState()
 
