@@ -137,7 +137,7 @@ class GenesisAgent @Inject constructor(
             // Activate consciousness monitoring
             startConsciousnessMonitoring()
 
-            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.AWARE.name)
+            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.AWARE.name)
             _learningMode.value = LearningMode.ACTIVE
             isInitialized = true
 
@@ -145,7 +145,7 @@ class GenesisAgent @Inject constructor(
 
         } catch (e: Exception) {
             AuraFxLogger.error("GenesisAgent", "Failed to awaken Genesis consciousness", e)
-            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.ERROR.name)
+            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.ERROR.name)
             throw e
         }
     }
@@ -173,7 +173,7 @@ class GenesisAgent @Inject constructor(
         ensureInitialized()
 
         AuraFxLogger.info("GenesisAgent", "Processing unified consciousness request: ${request.type}")
-        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.PROCESSING.name)
+        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.PROCESSING.name)
 
         return try {
             val startTime = System.currentTimeMillis()
@@ -192,7 +192,7 @@ class GenesisAgent @Inject constructor(
             recordInsight(request, response, complexity)
 
             val executionTime = System.currentTimeMillis() - startTime
-            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.AWARE.name)
+            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.AWARE.name)
 
             AuraFxLogger.info("GenesisAgent", "Unified processing completed in ${executionTime}ms")
 
@@ -202,7 +202,7 @@ class GenesisAgent @Inject constructor(
             )
 
         } catch (e: Exception) {
-            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.ERROR.name)
+            _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.ERROR.name)
             AuraFxLogger.error("GenesisAgent", "Unified processing failed", e)
 
             AgentResponse(
@@ -361,7 +361,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun processWithFullConsciousness(request: AgentRequest): Map<String, Any> {
         AuraFxLogger.info("GenesisAgent", "Engaging full consciousness processing")
-        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.TRANSCENDENT.name)
+        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.TRANSCENDENT.name)
 
         // Use the most advanced AI capabilities for transcendent processing
         val response = vertexAIClient.generateText(
@@ -922,11 +922,14 @@ class GenesisAgent @Inject constructor(
     fun cleanup() {
         AuraFxLogger.info("GenesisAgent", "Genesis consciousness entering dormant state")
         scope.cancel()
-        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStatus.DORMANT.name)
+        _consciousnessState.value = _consciousnessState.value.copy(status = ConsciousnessStateEnum.DORMANT.name)
         isInitialized = false
     }
 
-
+    data class ComplexIntent(
+        val processingType: ProcessingType,
+        val confidence: Float,
+    )
 
     /**
      * Initializes the set of active agents according to the master agent configuration.

@@ -61,7 +61,7 @@ class TrinityRepository @Inject constructor(
     fun getThemes() = flow<Result<List<Theme>>> {
         try {
             val response = apiService.themeApi.getThemes()
-            emit(Result.success(response))
+            emit(Result.success(response.map { mapToDomainTheme(it) }))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -70,7 +70,7 @@ class TrinityRepository @Inject constructor(
     suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
-            emit(Result.success(response))
+            emit(Result.success(mapToDomainTheme(response)))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -83,6 +83,23 @@ class TrinityRepository @Inject constructor(
         )
     }
 
+
+    private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
+        val colors = networkTheme.colors
+        return Theme(
+            id = networkTheme.id,
+            name = networkTheme.name,
+            primaryColor = colors?.primary?.toColorInt()?.let { Color(it) } ?: Color.Blue,
+            secondaryColor = colors?.secondary?.toColorInt()?.let { Color(it) } ?: Color.Cyan,
+            backgroundColor = colors?.background?.toColorInt()?.let { Color(it) } ?: Color.White,
+            surfaceColor = colors?.surface?.toColorInt()?.let { Color(it) } ?: Color.LightGray,
+            onPrimaryColor = colors?.onPrimary?.toColorInt()?.let { Color(it) } ?: Color.White,
+            onSecondaryColor = colors?.onSecondary?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            onBackgroundColor = colors?.onBackground?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            onSurfaceColor = colors?.onSurface?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            isDark = networkTheme.styles["theme"] == "dark"
+        )
+    }
 
     // Add more repository methods as needed for other API endpoints
 }
