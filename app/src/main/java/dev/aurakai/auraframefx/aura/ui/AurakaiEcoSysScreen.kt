@@ -15,8 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import dev.aurakai.auraframefx.ui.AuraMoodViewModel // Corrected import
+import androidx.hilt.navigation.compose.hiltViewModel // Only this import
+import dev.aurakai.auraframefx.ui.AuraMoodViewModel
 
 @JvmOverloads
 @Suppress("unused") // Reserved for navigation integration
@@ -54,12 +54,6 @@ fun AurakaiEcoSysScreen(viewModel: AuraMoodViewModel = hiltViewModel()) {
 @Composable
 fun AurakaiEcoSysScreenPreview() {
     MaterialTheme {
-        // In Previews, hiltViewModel() won't work directly without extra setup.
-        // For a simple preview, you might pass a mocked/stubbed ViewModel instance
-        // or use a simpler Composable that doesn't rely on the ViewModel for basic layout checks.
-        // AurakaiEcoSysScreen() // This will error in preview if hiltViewModel() is directly called
-
-        // Simple preview of the text part:
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Aurakai Ecosystem Screen (Placeholder)")
             Text(text = "Current Mood from ViewModel: NEUTRAL")

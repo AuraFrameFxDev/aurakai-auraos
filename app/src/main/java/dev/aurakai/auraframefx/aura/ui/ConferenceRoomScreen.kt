@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.autoMirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,10 +29,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
-import dev.aurakai.auraframefx.models.AgentType
-import dev.aurakai.auraframefx.models.AgentType.*
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory.*
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.ConferenceRoomViewModel
@@ -120,8 +121,9 @@ fun ConferenceRoomScreen(
                 .fillMaxWidth(),
             reverseLayout = true
         ) {
-            items(messages.reversed().size) { index ->
-                val message: AgentMessage = messages.reversed()[index]
+            val displayed = messages.reversed()
+            items(displayed.size) { index ->
+                val message: AgentMessage = displayed[index]
                 Text(
                     text = "[${message.sender}] ${message.content}",
                     color = NeonBlue, // Ensure only one NeonBlue import/definition
@@ -153,27 +155,28 @@ fun ConferenceRoomScreen(
             IconButton(
                 onClick = {
                     if (messageText.isNotBlank()) {
+                        // Determine the capability category for the selected agent name
+                        val sendCategory = when (selectedAgent) {
+                            agentAura -> CREATIVE
+                            agentKai -> ANALYSIS
+                            agentCascade -> SPECIALIZED
+                            else -> GENERAL
+                        }
+
                         // Launch a coroutine for the suspend function
                         scope.launch {
-                            viewModel.sendMessage(messageText, USER, "user_conversation")
+                            viewModel.sendMessage(messageText, sendCategory, "user_conversation")
                             messageText = ""
                         }
                     }
                 }
             ) {
                 Icon(
-                    Icons.Filled.Send,
+                    imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send",
                     tint = NeonBlue
                 )
             }
         }
     }
-}
-
-private fun ConferenceRoomViewModel.sendMessage(
-    message: String,
-    sender: dev.aurakai.auraframefx.models.AgentType,
-    context: String
-) {
 }
