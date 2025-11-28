@@ -12,6 +12,7 @@ import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -73,8 +74,8 @@ class CascadeAgent @Inject constructor(
             query = prompt,
             prompt = prompt,
             type = type,
-            context = context,
-            metadata = metadata,
+            context = context.toJsonObject(),
+            metadata = metadata.toJsonObject(),
             agentId = agentId,
             sessionId = sessionId ?: this.sessionId
         )
@@ -798,7 +799,7 @@ class CascadeAgent @Inject constructor(
         return dev.aurakai.auraframefx.models.InteractionResponse(
             content = content,
             timestamp = timestamp,
-            metadata = metadata
+            metadata = metadata.toJsonObject()
         )
     }
 }

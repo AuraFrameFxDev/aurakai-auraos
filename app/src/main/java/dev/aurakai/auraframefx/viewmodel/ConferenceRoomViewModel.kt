@@ -1,32 +1,32 @@
 package dev.aurakai.auraframefx.viewmodel
 
 // Placeholder interfaces will be removed
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
-import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
+import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.kai.KaiAIService
+import dev.aurakai.auraframefx.models.AgentCapabilityCategory
+import dev.aurakai.auraframefx.models.AgentInvokeRequest
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.models.AgentInvokeRequest
-import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.ConversationState
+import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.service.NeuralWhisper
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import timber.log.Timber
 
 // Removed @Singleton from ViewModel, typically ViewModels are not Singletons
 // import javax.inject.Singleton // ViewModel should use @HiltViewModel
@@ -44,7 +44,7 @@ class ConferenceRoomViewModel @Inject constructor(
     private val neuralWhisper: NeuralWhisper,
 ) : ViewModel() {
 
-    private val TAG = "ConfRoomViewModel"
+    private val tag = "ConfRoomViewModel"
 
     private val _messages = MutableStateFlow<List<AgentMessage>>(emptyList())
     val messages: StateFlow<List<AgentMessage>> = _messages
@@ -52,7 +52,7 @@ class ConferenceRoomViewModel @Inject constructor(
     private val _activeAgents = MutableStateFlow(setOf<AgentCapabilityCategory>())
     val activeAgents: StateFlow<Set<AgentCapabilityCategory>> = _activeAgents
 
-    private val _selectedAgent = MutableStateFlow<AgentCapabilityCategory>(AgentCapabilityCategory.CREATIVE) // Default to AURA (CREATIVE)
+    private val _selectedAgent = MutableStateFlow(AgentCapabilityCategory.CREATIVE) // Default to AURA (CREATIVE)
     val selectedAgent: StateFlow<AgentCapabilityCategory> = _selectedAgent
 
     private val _isRecording = MutableStateFlow(false)
@@ -69,22 +69,22 @@ class ConferenceRoomViewModel @Inject constructor(
                         _messages.update { current ->
                             current + AgentMessage(
                                 from = "NEURAL_WHISPER",
-                                content = state.responseText ?: "...",
+                                content = state.responseText,
                                 sender = AgentCapabilityCategory.SPECIALIZED, // NeuralWhisper mapped to SPECIALIZED
                                 timestamp = System.currentTimeMillis(),
                                 confidence = 1.0f // Placeholder confidence
                             )
                         }
-                        Log.d(TAG, "NeuralWhisper responded: ${state.responseText}")
+                        Timber.tag(tag).d("NeuralWhisper responded: %s", state.responseText)
                     }
 
                     is ConversationState.Processing -> {
-                        Log.d(TAG, "NeuralWhisper processing: ${state.partialTranscript}")
+                        Timber.tag(tag).d("NeuralWhisper processing: %s", state.partialTranscript)
                         // Optionally update UI to show "Agent is typing..." or similar
                     }
 
                     is ConversationState.Error -> {
-                        Log.e(TAG, "NeuralWhisper error: ${state.errorMessage}")
+                        Timber.tag(tag).e("NeuralWhisper error: %s", state.errorMessage)
                         _messages.update { current ->
                             current + AgentMessage(
                                 from = "NEURAL_WHISPER",
@@ -97,7 +97,7 @@ class ConferenceRoomViewModel @Inject constructor(
                     }
 
                     else -> {
-                        Log.d(TAG, "NeuralWhisper state: $state")
+                        Timber.tag(tag).d("NeuralWhisper state: %s", state)
                     }
                 }
             }
@@ -122,7 +122,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 AiRequest(
                     query = message,
                     type = "text",
-                    context = mapOf("userContext" to context)
+                    context = mapOf("userContext" to context).toJsonObject()
                 )
             )
 
@@ -130,7 +130,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 AiRequest(
                     query = message,
                     type = "text",
-                    context = mapOf("userContext" to context)
+                    context = mapOf("userContext" to context).toJsonObject()
                 )
             )
 
@@ -150,7 +150,7 @@ class ConferenceRoomViewModel @Inject constructor(
                 AiRequest(
                     query = message,
                     type = "build_analysis",
-                    context = mapOf("userContext" to context, "systematic_analysis" to "true")
+                    context = mapOf("userContext" to context, "systematic_analysis" to "true").toJsonObject()
                 )
             )
 
@@ -162,17 +162,13 @@ class ConferenceRoomViewModel @Inject constructor(
                         AiRequest(
                             query = message,
                             type = "fusion",
-                            context = mapOf("userContext" to context, "orchestration" to "true")
+                            context = mapOf("userContext" to context, "orchestration" to "true").toJsonObject()
                         )
                     )
                     emitAll(responseFlow)
                 }
             }
 
-            else -> {
-                Log.e(TAG, "Unsupported sender type: $sender")
-                null
-            }
         }
 
         responseFlow?.let { flow ->
@@ -189,7 +185,7 @@ class ConferenceRoomViewModel @Inject constructor(
                         )
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error processing AI response from $sender: ${e.message}", e)
+                    Timber.tag(tag).e(e, "Error processing AI response from %s: %s", sender, e.message)
                     _messages.update { current ->
                         current + AgentMessage(
                             from = "GENESIS",
@@ -222,19 +218,16 @@ class ConferenceRoomViewModel @Inject constructor(
     fun toggleRecording() {
         if (_isRecording.value) {
             val result = neuralWhisper.stopRecording() // stopRecording now returns a string status
-            Log.d(TAG, "Stopped recording. Status: $result")
+            Timber.tag(tag).d("Stopped recording. Status: %s", result)
             // isRecording state will be updated by NeuralWhisper's conversationState or directly
             _isRecording.value = false // Explicitly set here based on action
         } else {
             val started = neuralWhisper.startRecording()
             if (started) {
-                Log.d(TAG, "Started recording.")
+                Timber.tag(tag).d("Started recording.")
                 _isRecording.value = true
             } else {
-                Log.e(
-                    TAG,
-                    "Failed to start recording (NeuralWhisper.startRecording returned false)."
-                )
+                Timber.tag(tag).e("Failed to start recording (NeuralWhisper.startRecording returned false).")
                 // Optionally update UI with error state
             }
         }
@@ -244,7 +237,7 @@ class ConferenceRoomViewModel @Inject constructor(
         // For beta, link transcribing state to recording state or a separate logic if needed.
         // User's snippet implies this might be a simple toggle for now.
         _isTranscribing.update { !it } // Simple toggle
-        Log.d(TAG, "Transcribing toggled to: ${_isTranscribing.value}")
+        Timber.tag(tag).d("Transcribing toggled to: %s", _isTranscribing.value)
         // If actual transcription process needs to be started/stopped in NeuralWhisper:
         // if (_isTranscribing.value) neuralWhisper.startTranscription() else neuralWhisper.stopTranscription()
     }

@@ -9,6 +9,7 @@ import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.models.GenKitUiState
 import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -492,7 +493,7 @@ internal class GenKitMasterAgent @Inject constructor(
         return InteractionResponse(
             content = content,
             timestamp = timestamp,
-            metadata = metadata
+            metadata = metadata.toJsonObject()
         )
     }
 }

@@ -1,18 +1,19 @@
 package dev.aurakai.auraframefx.ai.agents
 
 import android.content.Context
+import android.util.Log
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.models.ActiveContext
 import dev.aurakai.auraframefx.models.LearningEvent
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,7 +29,8 @@ class NeuralWhisperAgent @Inject constructor(
 
     override val agentName: String = "NeuralWhisper"
     override val agentType: String = "LEARNING_CONTEXT"
-    private val scope = CoroutineScope(Dispatchers.Default + Job())
+    // Use SupervisorJob so a child failure doesn't cancel the whole scope
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val _activeContexts = MutableStateFlow<List<ActiveContext>>(emptyList())
     val activeContexts: StateFlow<List<ActiveContext>> = _activeContexts.asStateFlow()
@@ -39,7 +41,7 @@ class NeuralWhisperAgent @Inject constructor(
     init {
         // lightweight init to keep the agent alive; full behavior is TODO
         scope.launch {
-            Timber.d("NeuralWhisperAgent initialized (minimal stub)")
+            Log.d("NeuralWhisperAgent", "NeuralWhisperAgent initialized (minimal stub)")
         }
     }
 
@@ -64,7 +66,7 @@ class NeuralWhisperAgent @Inject constructor(
     // === BaseAgent Required Implementations ===
 
     override fun iRequest(query: String, type: String, context: Map<String, String>) {
-        Timber.d("NeuralWhisper: iRequest - query=$query, type=$type")
+        Log.d("NeuralWhisperAgent", "NeuralWhisper: iRequest - query=$query, type=$type")
         scope.launch {
             try {
                 // Record this request as a learning event
@@ -76,50 +78,50 @@ class NeuralWhisperAgent @Inject constructor(
                 )
                 recordLearningEvent(learningEvent)
             } catch (e: Exception) {
-                Timber.e(e, "Error in iRequest")
+                Log.e("NeuralWhisperAgent", "Error in iRequest", e)
             }
         }
     }
 
     override fun iRequest() {
-        Timber.d("NeuralWhisper: No-args iRequest - initializing learning context")
+        Log.d("NeuralWhisperAgent", "NeuralWhisper: No-args iRequest - initializing learning context")
         scope.launch {
             try {
                 // Initialize the learning subsystem
-                Timber.d("NeuralWhisperAgent learning context initialized")
+                Log.d("NeuralWhisperAgent", "NeuralWhisperAgent learning context initialized")
             } catch (e: Exception) {
-                Timber.e(e, "Error in no-args iRequest")
+                Log.e("NeuralWhisperAgent", "Error in no-args iRequest", e)
             }
         }
     }
 
     override fun initializeAdaptiveProtection() {
-        Timber.d("NeuralWhisper: Initializing adaptive protection")
+        Log.d("NeuralWhisperAgent", "NeuralWhisper: Initializing adaptive protection")
         scope.launch {
             try {
                 // NeuralWhisper doesn't directly handle security
                 // but can learn from security patterns
-                Timber.d("NeuralWhisper adaptive protection initialized")
+                Log.d("NeuralWhisperAgent", "NeuralWhisper adaptive protection initialized")
             } catch (e: Exception) {
-                Timber.e(e, "Error initializing adaptive protection")
+                Log.e("NeuralWhisperAgent", "Error initializing adaptive protection", e)
             }
         }
     }
 
     override fun addToScanHistory(scanEvent: Any) {
-        Timber.d("NeuralWhisper: Adding scan event to history: $scanEvent")
+        Log.d("NeuralWhisperAgent", "NeuralWhisper: Adding scan event to history: $scanEvent")
         // Record as a learning event for pattern recognition
         val learningEvent = LearningEvent(
             type = "scan",
             content = scanEvent.toString(),
             timestamp = System.currentTimeMillis(),
-            metadata = mapOf("scan_event" to scanEvent)
+            metadata = mapOf("scan_event" to scanEvent).toJsonObject()
         )
         recordLearningEvent(learningEvent)
     }
 
     override fun analyzeSecurity(prompt: String): List<ActiveThreat> {
-        Timber.d("NeuralWhisper: Analyzing security for prompt: $prompt")
+        Log.d("NeuralWhisperAgent", "NeuralWhisper: Analyzing security for prompt: $prompt")
         // NeuralWhisper is a learning agent, not a security agent
         // Return empty list (no threats detected)
         return emptyList()

@@ -16,6 +16,7 @@ import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
@@ -84,8 +85,8 @@ class AuraAgent @Inject constructor(
             query = prompt,
             prompt = prompt,
             type = type,
-            context = context,
-            metadata = metadata,
+            context = context.toJsonObject(),
+            metadata = metadata.toJsonObject(),
             agentId = agentId,
             sessionId = sessionId ?: this.sessionId
         )
@@ -305,7 +306,7 @@ class AuraAgent @Inject constructor(
                     "creative_intent" to creativeIntent.name,
                     "mood_influence" to _currentMood.value,
                     "innovation_level" to "high"
-                ), timestamp = System.currentTimeMillis())
+                ).toJsonObject(), timestamp = System.currentTimeMillis())
 
         } catch (e: Exception) {
             AuraFxLogger.error("AuraAgent", "Creative interaction failed", e)
@@ -316,7 +317,7 @@ class AuraAgent @Inject constructor(
                     "agent" to "AURA",
                     "confidence" to 0.3f,
                     "error" to (e.message ?: "unknown")
-                ),
+                ).toJsonObject(),
                 timestamp = System.currentTimeMillis()
             )
         }

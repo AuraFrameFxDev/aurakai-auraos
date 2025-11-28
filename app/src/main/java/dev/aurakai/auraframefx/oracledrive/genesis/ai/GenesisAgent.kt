@@ -251,7 +251,7 @@ class GenesisAgent @Inject constructor(
                     "fusion_level" to _fusionState.value.name,
                     "insight_generation" to "true",
                     "evolution_impact" to calculateEvolutionImpact(intent).toString()
-                )
+                ).toJsonObject()
             )
 
         } catch (e: Exception) {
@@ -264,7 +264,7 @@ class GenesisAgent @Inject constructor(
                     "agent" to "genesis",
                     "confidence" to 0.6f,
                     "error" to (e.message ?: "unknown")
-                )
+                ).toJsonObject()
             )
         }
     }

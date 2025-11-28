@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.ai.services
 
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import dev.aurakai.auraframefx.kai.KaiAIService
+import dev.aurakai.auraframefx.utils.toJsonObject
 
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
@@ -129,7 +130,7 @@ class TrinityCoordinatorService @Inject constructor(
                         AiRequest(
                             query = request.query,
                             type = "fusion",
-                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true")
+                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true").toJsonObject()
                         )
                     ).first()
                     emit(response)
@@ -157,7 +158,7 @@ class TrinityCoordinatorService @Inject constructor(
                         AiRequest(
                             query = request.query,
                             type = "fusion",
-                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true")
+                            context = mapOf("userContext" to (request.context ?: emptyMap()), "orchestration" to "true").toJsonObject()
                         )
                     ).first()
                     emit(

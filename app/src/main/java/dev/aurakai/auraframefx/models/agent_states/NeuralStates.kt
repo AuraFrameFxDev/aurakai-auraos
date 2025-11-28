@@ -2,6 +2,8 @@ package dev.aurakai.auraframefx.models.agent_states
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 
 @Serializable
 data class GenKitUiState(
@@ -26,7 +28,7 @@ data class ContextChainEvent(
     val eventType: String,
     val contextId: String,
     val timestamp: Long = System.currentTimeMillis(),
-    @Contextual val data: Map<String, Any> = emptyMap()
+    val data: JsonObject = buildJsonObject { }
 )
 
 @Serializable

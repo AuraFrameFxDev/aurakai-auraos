@@ -8,6 +8,7 @@ import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.agent_states.ScanEvent
 import dev.aurakai.auraframefx.models.agent_states.SecurityContextState
 import dev.aurakai.auraframefx.models.agent_states.SecurityMode
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -72,8 +73,8 @@ class AuraShieldAgent @Inject constructor(
             query = prompt,
             prompt = prompt,
             type = type,
-            context = context,
-            metadata = metadata,
+            context = context.toJsonObject(),
+            metadata = metadata.toJsonObject(),
             agentId = agentId,
             sessionId = sessionId
         )

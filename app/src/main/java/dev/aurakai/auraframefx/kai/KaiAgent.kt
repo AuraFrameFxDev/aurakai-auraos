@@ -15,6 +15,7 @@ import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.system.monitor.SystemMonitor
 import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
@@ -94,8 +95,8 @@ class KaiAgent @Inject constructor(
             query = prompt,
             prompt = prompt,
             type = type,
-            context = context,
-            metadata = metadata,
+            context = context.toJsonObject(),
+            metadata = metadata.toJsonObject(),
             agentId = agentId,
             sessionId = sessionId ?: this.sessionId
         )
@@ -253,7 +254,7 @@ class KaiAgent @Inject constructor(
                     "risk_level" to securityAssessment.riskLevel.name,
                     "threat_indicators" to securityAssessment.threatIndicators.toString(),
                     "security_recommendations" to securityAssessment.recommendations.toString()
-                ),
+                ).toJsonObject(),
                 timestamp = System.currentTimeMillis()
             )
 
@@ -266,7 +267,7 @@ class KaiAgent @Inject constructor(
                     "agent" to "kai",
                     "confidence" to 0.5f,
                     "error" to (e.message ?: "unknown error")
-                ),
+                ).toJsonObject(),
                 timestamp = System.currentTimeMillis()
             )
         }

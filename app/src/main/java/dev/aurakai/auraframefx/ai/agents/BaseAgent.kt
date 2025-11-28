@@ -5,6 +5,7 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.utils.toJsonObject
 import java.io.Serializable
 
 /**
@@ -112,7 +113,7 @@ abstract class BaseAgent(agentName: String) {
         return InteractionResponse(
             content = content,
             success = success,
-            metadata = metadata,
+            metadata = metadata.toJsonObject(),
             timestamp = timestamp
         )
     }

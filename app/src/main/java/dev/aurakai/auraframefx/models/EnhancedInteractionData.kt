@@ -1,12 +1,13 @@
 package dev.aurakai.auraframefx.models
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 
 @Serializable
 data class EnhancedInteractionData(
     val query: String = "",
-    @Contextual val context: Map<String, Any> = emptyMap(),
-    @Contextual val metadata: Map<String, Any> = emptyMap(),
+    val context: JsonObject = buildJsonObject { },
+    val metadata: JsonObject = buildJsonObject { },
     val timestamp: Long = System.currentTimeMillis()
 )
