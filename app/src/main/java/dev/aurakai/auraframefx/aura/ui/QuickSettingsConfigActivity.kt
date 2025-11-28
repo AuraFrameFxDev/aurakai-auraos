@@ -82,10 +82,6 @@ class QuickSettingsConfigActivity : AppCompatActivity() {
         binding.resetButton.setOnClickListener {
             showResetConfirmationDialog()
         }
-
-        binding.resetButton.setOnClickListener {
-            saveConfig()
-        }
     }
 
     private fun showTileConfigDialog(tile: QuickSettingsTileConfig) {

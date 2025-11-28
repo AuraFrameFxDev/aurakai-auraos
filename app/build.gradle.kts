@@ -126,7 +126,7 @@ android {
     buildFeatures {
         buildConfig = true
         compose = true
-        viewBinding = false
+        viewBinding = true
         aidl = true
     }
 }

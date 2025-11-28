@@ -69,6 +69,18 @@ fun Header(selectedAgent: String, onAgentSelected: (String) -> Unit) {
  * Navigation is handled via callbacks to decouple from NavController.
  */
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composable screen that provides a multi-agent conference room UI with agent selection, recording
+ * and transcription controls, and a chat interface.
+ *
+ * The UI shows a header for selecting active agent, buttons to start/stop recording and trigger
+ * transcription, a reversed chat list (newest messages first), and a message input area. Sending a
+ * message maps the currently selected agent to an AgentCapabilityCategory and invokes
+ * `viewModel.sendMessage(...)` from a coroutine, then clears the input.
+ *
+ * @param onNavigateToChat Callback invoked to navigate to the chat view.
+ * @param onNavigateToAgents Callback invoked to navigate to the agent management view.
+ */
 @Composable
 fun ConferenceRoomScreen(
     onNavigateToChat: () -> Unit = {},

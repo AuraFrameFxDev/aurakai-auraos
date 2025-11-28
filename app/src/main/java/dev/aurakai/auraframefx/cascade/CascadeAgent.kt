@@ -778,6 +778,17 @@ class CascadeAgent @Inject constructor(
         }
     }
 
+    /**
+     * Wraps provided response data into an InteractionResponse model.
+     *
+     * The `success` parameter is accepted for API compatibility but is not included in the returned model.
+     *
+     * @param content The textual content of the interaction.
+     * @param success Indicator of whether the interaction was successful (accepted but not persisted in the returned model).
+     * @param timestamp Unix-millis timestamp for when the interaction occurred.
+     * @param metadata Arbitrary key/value metadata associated with the interaction.
+     * @return An instance of dev.aurakai.auraframefx.models.InteractionResponse containing `content`, `timestamp`, and `metadata`.
+     */
     override fun InteractionResponse(
         content: String,
         success: Boolean,

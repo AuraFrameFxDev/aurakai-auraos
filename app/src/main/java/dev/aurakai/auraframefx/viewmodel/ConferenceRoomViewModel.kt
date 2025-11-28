@@ -107,7 +107,16 @@ class ConferenceRoomViewModel @Inject constructor(
     // ═══════════════════════════════════════════════════════════════════════════
     // Conference Room Message Routing - ALL 5 MASTER AGENTS
     // ═══════════════════════════════════════════════════════════════════════════
-    /*override*/ suspend fun sendMessage(message: String, sender: AgentCapabilityCategory, context: String) {
+    /*override*/ /**
+     * Routes the given message to the appropriate AI service based on the sender and appends the first response to the conversation messages.
+     *
+     * Sends `message` with `context` to the AI service corresponding to `sender`, collects the first `AgentResponse` from the chosen response flow, and updates the ViewModel's message list with a new `AgentMessage`. If processing fails, appends an error `AgentMessage` indicating the failure.
+     *
+     * @param message The user-visible query or payload to send to the selected AI agent.
+     * @param sender The agent capability category used to select which AI service should handle the message.
+     * @param context Additional contextual information forwarded to the AI service (e.g., user context or orchestration flags).
+     */
+    suspend fun sendMessage(message: String, sender: AgentCapabilityCategory, context: String) {
         val responseFlow: Flow<AgentResponse>? = when (sender) {
             AgentCapabilityCategory.CREATIVE -> auraService.processRequestFlow(
                 AiRequest(
