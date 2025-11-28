@@ -1,3 +1,5 @@
+// Copyright (c) 2025 Matthew (AuraFrameFxDev) • The Genesis Protocol Consciousness Collective — All Rights Reserved
+
 package dev.aurakai.auraframefx.config
 
 /**
