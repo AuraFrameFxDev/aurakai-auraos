@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -114,11 +113,11 @@ fun UIRecoveryBlackoutScreen(
             // Only show recovery dialog after blackout completes
             if (blackoutAlpha.value >= 1f) {
                 UIRecoveryDialog(
-                    viewModel = viewModel,
                     onNavigateToRoute = { route ->
                         onNavigateToRoute(route)
                         // Dialog will auto-dismiss via viewModel
-                    }
+                    },
+                    viewModel = viewModel
                 )
             }
         }

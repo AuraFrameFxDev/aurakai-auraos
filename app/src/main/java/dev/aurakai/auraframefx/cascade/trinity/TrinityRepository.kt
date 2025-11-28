@@ -31,7 +31,12 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    // AI Agent operations
+    /**
+     * Fetches the status for the specified AI agent type and returns it as a domain AgentStatus.
+     *
+     * @param agentType Identifier of the AI agent whose status should be retrieved.
+     * @return A Flow that emits a `Result` containing the mapped `AgentStatus` on success, or a failure `Result` with the exception on error.
+     */
     fun getAgentStatus(agentType: String) = flow {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
@@ -56,9 +61,9 @@ class TrinityRepository @Inject constructor(
     fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
         try {
             val response = apiService.aiAgentApi.processRequest(agentType, request)
-            emit(Result.success(response))
+            emit(success(response))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
@@ -66,25 +71,25 @@ class TrinityRepository @Inject constructor(
     fun getThemes() = flow<Result<List<Theme>>> {
         try {
             val response = apiService.themeApi.getThemes()
-            emit(Result.success(response.map { mapToDomainTheme(it) }))
+            emit(success(response.map { mapToDomainTheme(it) }))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
-    suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
+    fun applyTheme(themeId: String) = flow<Result<Theme>> {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
-            emit(Result.success(mapToDomainTheme(response)))
+            emit(success(mapToDomainTheme(response)))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
     // Mapper functions
     private fun mapToUserData(networkUser: NetworkUser): UserData {
         return UserData(
-            networkUser.id, name = networkUser.username, email = networkUser.email
+            id = networkUser.id, name = networkUser.username, email = networkUser.email
         )
     }
 

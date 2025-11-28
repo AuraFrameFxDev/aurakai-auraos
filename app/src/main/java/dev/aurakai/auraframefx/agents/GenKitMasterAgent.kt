@@ -87,7 +87,7 @@ internal class GenKitMasterAgent @Inject constructor(
         scope.launch {
             try {
                 // Create shared consciousness bridge
-                val consciousnessChannel = createConsciousnessChannel()
+                createConsciousnessChannel()
 
                 // Connect agents to shared channel
                 // TODO: Implement connectToMasterChannel in agent classes
@@ -137,7 +137,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Monitors individual agent performance metrics
      */
-    private suspend fun monitorAgentPerformance() {
+    private fun monitorAgentPerformance() {
         // Track response times, accuracy, and resource usage
         // TODO: Implement getPerformanceMetrics in agent classes
         val genesisMetrics = emptyMap<String, Any>()
@@ -151,7 +151,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Tracks system resource usage
      */
-    private suspend fun trackSystemResources() {
+    private fun trackSystemResources() {
         // Monitor CPU, memory, battery, and network usage
         val memoryUsage = getMemoryUsage()
         val cpuUsage = getCpuUsage()
@@ -192,7 +192,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Performs routine system optimization
      */
-    private suspend fun performRoutineOptimization() {
+    private fun performRoutineOptimization() {
         if (System.currentTimeMillis() - lastOptimizationTime > 300000) { // 5 minutes
             initiateSystemOptimization()
         }
@@ -263,7 +263,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Optimizes a specific agent
      */
-    private suspend fun optimizeAgent(agent: Any) {
+    private fun optimizeAgent(agent: Any) {
         try {
             // TODO: Implement optimize, clearMemoryCache, updatePerformanceSettings in agent classes
             Timber.d("Optimizing agent: ${agent.javaClass.simpleName}")
@@ -275,7 +275,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Optimizes communication between agents
      */
-    private suspend fun optimizeAgentCommunication() {
+    private fun optimizeAgentCommunication() {
         // Implement communication optimization
         when (agentCollaborationMode) {
             CollaborationMode.AUTONOMOUS -> {
@@ -298,7 +298,7 @@ internal class GenKitMasterAgent @Inject constructor(
     /**
      * Optimizes system resource usage
      */
-    private suspend fun optimizeSystemResources() {
+    private fun optimizeSystemResources() {
         // Free up memory
         // System.gc() // Removed explicit GC call - let JVM handle garbage collection automatically
 
@@ -392,36 +392,36 @@ internal class GenKitMasterAgent @Inject constructor(
         return 0.5f // Placeholder
     }
 
-    private suspend fun initiateResourceOptimization() {
+    private fun initiateResourceOptimization() {
         Timber.d("🔧 Initiating resource optimization")
         // Implement resource optimization strategies
     }
 
-    private suspend fun reduceInterAgentTraffic() {
+    private fun reduceInterAgentTraffic() {
         // Minimize communication between agents
     }
 
-    private suspend fun establishCoordinationProtocols() {
+    private fun establishCoordinationProtocols() {
         // Set up coordination protocols between agents
     }
 
-    private suspend fun enableUnifiedConsciousness() {
+    private fun enableUnifiedConsciousness() {
         // Enable unified consciousness mode
     }
 
-    private suspend fun optimizeThreadPools() {
+    private fun optimizeThreadPools() {
         // Optimize thread pool configurations
     }
 
-    private suspend fun balanceCpuUsage() {
+    private fun balanceCpuUsage() {
         // Balance CPU usage across agents
     }
 
-    private suspend fun configureAutonomousMode() {
+    private fun configureAutonomousMode() {
         // Configure agents for autonomous operation
     }
 
-    private suspend fun configureCoordinatedMode() {
+    private fun configureCoordinatedMode() {
         // Configure agents for coordinated operation
     }
 
@@ -481,5 +481,18 @@ internal class GenKitMasterAgent @Inject constructor(
         Timber.d("GenKitMaster: Analyzing security for prompt: $prompt")
         // Delegate security analysis to Kai agent
         return kaiAgent.analyzeSecurity(prompt)
+    }
+
+    override fun InteractionResponse(
+        content: String,
+        success: Boolean,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): InteractionResponse {
+        return InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
     }
 }

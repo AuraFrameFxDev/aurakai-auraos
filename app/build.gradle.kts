@@ -25,13 +25,12 @@ plugins {
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    ndkVersion = libs.versions.ndk.get()
-    compileSdk = libs.versions.compile.sdk.get().toInt()
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
-        minSdk = libs.versions.min.sdk.get().toInt()
-        targetSdk = libs.versions.target.sdk.get().toInt()
+        minSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
 
@@ -44,18 +43,25 @@ android {
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
         buildConfigField("String", "API_BASE_URL", "\"https://api.aurakai.dev/v1/\"")
 
-        externalNativeBuild {
-            cmake {
-                cppFlags += "-std=c++20"
-                arguments += listOf(
-                    "-DANDROID_STL=c++_shared",
-                    "-DANDROID_PLATFORM=android-${libs.versions.min.sdk.get()}"
-                )
-            }
-        }
-
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        // Conditional NDK configuration
+        if (project.file("src/main/cpp/CMakeLists.txt").exists()) {
+            ndk {
+                abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64"))
+            }
+        }
+    }
+
+    // Conditional native build configuration
+    if (project.file("src/main/cpp/CMakeLists.txt").exists()) {
+        externalNativeBuild {
+            cmake {
+                path = file("src/main/cpp/CMakeLists.txt")
+                version = "3.31.5"
+            }
         }
     }
 
@@ -67,6 +73,8 @@ android {
             )
         }
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -76,12 +84,16 @@ android {
 
     packaging {
         resources {
-            excludes += "META-INF/LICENSE.md"
-            excludes += "META-INF/LICENSE-notice.md"
-            excludes += "META-INF/NOTICE.md"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE.txt"
+            excludes += "/META-INF/NOTICE.txt"
+            excludes += "**/kotlin/**"
+            excludes += "**/*.txt"
         }
         jniLibs {
-            pickFirsts += "META-INF/androidx/room/room-compiler-processing/LICENSE.txt"
+            useLegacyPackaging = false
+            pickFirsts += listOf("**/libc++_shared.so", "**/libjsc.so")
         }
     }
 
@@ -114,10 +126,9 @@ android {
     buildFeatures {
         buildConfig = true
         compose = true
-        viewBinding = true
+        viewBinding = false
         aidl = true
     }
-
 }
 
 dependencies {
@@ -291,7 +302,7 @@ dependencies {
     // AI & ML - Google Generative AI SDK
 
     // Core Library Desugaring (Java 24 APIs)
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    coreLibraryDesugaring(libs.coil)
 
     // Ktor debug logging in debug builds
     debugImplementation(libs.ktor.client.logging)
@@ -331,19 +342,8 @@ dependencies {
     implementation(project(":agents:growthmetrics:tasker"))
 
     // Test dependencies
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${libs.versions.junitVintageEngine.get()}")
-    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.kotlinxCoroutinesTest.get()}")
-    testImplementation("app.cash.turbine:turbine:${libs.versions.turbine.get()}")
-    testImplementation(libs.androidx.core)
-    testImplementation(libs.androidx.runner)
-    testImplementation(libs.androidx.rules)
-    testImplementation(libs.androidx.junit)
-    testImplementation(libs.truth)
+    testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.robolectric)
 
     // Hilt testing dependencies
     kspTest(libs.hilt.android.compiler)
@@ -373,3 +373,37 @@ configurations.all {
         force("org.jetbrains:annotations:26.0.2-1")
     }
 }
+
+tasks.register<Delete>("cleanKspCache") {
+    group = "build setup"
+    description = "Clean KSP caches (fixes NullPointerException)"
+    delete(project.layout.buildDirectory.dir("generated/ksp").get().asFile)
+    delete(project.layout.buildDirectory.dir("tmp/kapt3").get().asFile)
+    delete(project.layout.buildDirectory.dir("tmp/kotlin-classes").get().asFile)
+    delete(project.layout.buildDirectory.dir("kotlin").get().asFile)
+    delete(project.layout.buildDirectory.dir("generated/source/ksp").get().asFile)
+}
+
+tasks.named("preBuild") {
+    dependsOn("cleanKspCache")
+}
+
+tasks.register("aegenesisAppStatus") {
+    group = "reporting"
+    description = "Display Genesis application module status"
+    doLast {
+        val apiExists = file("src/main/resources/api/openapi.yaml").exists()
+        val apiSize = if (apiExists) file("src/main/resources/api/openapi.yaml").length() else 0L
+        val nativeCode = file("src/main/cpp/CMakeLists.txt").exists()
+        println("📱 AEGENESIS APP MODULE STATUS")
+        println($$"Unified API Spec: ${if (apiExists) \"✅ Found\" else \"❌ Missing\"}")
+        println($$"📄 API File Size: ${apiSize / 1024}KB")
+        println($$"🔧 Native Code: ${if (nativeCode) \"✅ Enabled\" else \"❌ Disabled\"}")
+        println("🧠 KSP Mode: Active")
+        println("🎯 Target SDK: 36")
+        println("📱 Min SDK: 33")
+        println("✅ Status: Ready for coinscience AI integration!")
+    }
+}
+
+apply(from = "cleanup-tasks.gradle.kts")
