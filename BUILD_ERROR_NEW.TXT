@@ -1,23 +1,90 @@
-Downloading https://services.gradle.org/distributions/gradle-9.4.0-milestone-2-bin.zip
-
-Exception in thread "main" java.net.UnknownHostException: services.gradle.org
-	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
-	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
-	at java.base/java.net.Socket.connect(Socket.java:751)
-	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
-	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178)
-	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:531)
-	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:636)
-	at java.base/sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:264)
-	at java.base/sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:377)
-	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:193)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1253)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1139)
-	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:179)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1691)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1615)
-	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:531)
-	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:307)
-	at org.gradle.wrapper.Install.forceFetch(SourceFile:2)
-	at org.gradle.wrapper.Install$1.call(SourceFile:8)
-	at org.gradle.wrapper.GradleWrapperMain.main(SourceFile:67)
+TrinityViewModel.kt
+Unresolved reference 'onSuccess'.
+Unresolved reference 'onSuccess'.
+GenesisAgent.kt
+Unresolved reference 'content'.
+Argument type mismatch: actual type is 'SecurityEvent', but 'String' was expected.
+No value passed for parameter 'string'.
+None of the following candidates is applicable:
+suspend fun <T> Flow<T>.first(): T
+suspend fun <T> Flow<T>.first(predicate: suspend (T) -> Boolean): T
+None of the following candidates is applicable:
+suspend fun <T> Flow<T>.first(): T
+suspend fun <T> Flow<T>.first(predicate: suspend (T) -> Boolean): T
+Unresolved reference 'content'.
+Argument type mismatch: actual type is 'SecurityEvent', but 'String' was expected.
+No value passed for parameter 'string'.
+None of the following candidates is applicable:
+suspend fun <T> Flow<T>.first(): T
+suspend fun <T> Flow<T>.first(predicate: suspend (T) -> Boolean): T
+None of the following candidates is applicable:
+suspend fun <T> Flow<T>.first(): T
+suspend fun <T> Flow<T>.first(predicate: suspend (T) -> Boolean): T
+OracleDriveRepositoryImpl.kt
+Unresolved reference 'OracleDriveFile'.
+Return type of 'listFiles' is not a subtype of the return type of the overridden member 'suspend fun listFiles(bucketName: String, prefix: String?): List<OracleDriveFile>' defined in 'dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveRepository'.
+Unresolved reference 'OracleDriveFile'.
+Unresolved reference 'OracleDriveFile'.
+Cannot infer type for type parameter 'R'. Specify it explicitly.
+Unresolved reference 'OracleDriveFile'.
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+Unresolved reference 'OracleDriveFile'.
+Return type of 'listFiles' is not a subtype of the return type of the overridden member 'suspend fun listFiles(bucketName: String, prefix: String?): List<OracleDriveFile>' defined in 'dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveRepository'.
+Unresolved reference 'OracleDriveFile'.
+Unresolved reference 'OracleDriveFile'.
+Cannot infer type for type parameter 'R'. Specify it explicitly.
+Unresolved reference 'OracleDriveFile'.
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+OracleDriveScreen.kt
+Overload resolution ambiguity between candidates:
+fun <reified VM : ViewModel> hiltViewModel(viewModelStoreOwner: ViewModelStoreOwner = ..., key: String? = ...): VM
+fun <reified VM : ViewModel> hiltViewModel(viewModelStoreOwner: ViewModelStoreOwner = ..., key: String? = ...): VM
+Unresolved reference 'status'.
+Unresolved reference 'level'.
+Unresolved reference 'activeAgents'.
+Unresolved reference 'status'.
+Unresolved reference 'status'.
+Unresolved reference 'status'.
+Overload resolution ambiguity between candidates:
+fun <reified VM : ViewModel> hiltViewModel(viewModelStoreOwner: ViewModelStoreOwner = ..., key: String? = ...): VM
+fun <reified VM : ViewModel> hiltViewModel(viewModelStoreOwner: ViewModelStoreOwner = ..., key: String? = ...): VM
+Unresolved reference 'status'.
+Unresolved reference 'level'.
+Unresolved reference 'activeAgents'.
+Unresolved reference 'status'.
+Unresolved reference 'status'.
+Unresolved reference 'status'.
+DefaultSecurityContext.kt
+Unresolved reference 'type'.
+Unresolved reference 'details'.
+Unresolved reference 'type'.
+Unresolved reference 'details'.
+ComposableErrorBoundary.kt
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+Cannot infer type for type parameter 'R'. Specify it explicitly.
+Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T, R> T.let(block: (T) -> R): R
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+Cannot infer type for type parameter 'R'. Specify it explicitly.
+Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T, R> T.let(block: (T) -> R): R
+Cannot infer type for type parameter 'T'. Specify it explicitly.
+UIRecoveryBlackoutScreen.kt
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+UIRecoveryDialog.kt
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
+Unresolved reference 'viewModelStoreOwner'.
+Unresolved reference 'key'.
