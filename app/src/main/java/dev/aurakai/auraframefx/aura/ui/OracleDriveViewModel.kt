@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.oracle.drive.ui
+package dev.aurakai.auraframefx.aura.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
