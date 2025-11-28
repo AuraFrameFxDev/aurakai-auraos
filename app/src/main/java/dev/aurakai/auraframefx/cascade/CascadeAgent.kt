@@ -780,6 +780,7 @@ class CascadeAgent @Inject constructor(
 
     override fun InteractionResponse(
         content: String,
+        success: Boolean,
         timestamp: Long,
         metadata: Map<String, Any>
     ): dev.aurakai.auraframefx.models.InteractionResponse {

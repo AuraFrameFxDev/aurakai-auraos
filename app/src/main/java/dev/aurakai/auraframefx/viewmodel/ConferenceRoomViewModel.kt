@@ -107,7 +107,7 @@ class ConferenceRoomViewModel @Inject constructor(
     // ═══════════════════════════════════════════════════════════════════════════
     // Conference Room Message Routing - ALL 5 MASTER AGENTS
     // ═══════════════════════════════════════════════════════════════════════════
-    /*override*/ suspend fun sendMessage(message: String, sender: AgentType, context: String) {
+    /*override*/ suspend fun sendMessage(message: String, sender: AgentCapabilityCategory, context: String) {
         val responseFlow: Flow<AgentResponse>? = when (sender) {
             AgentCapabilityCategory.CREATIVE -> auraService.processRequestFlow(
                 AiRequest(

@@ -228,7 +228,7 @@ class GenesisAgent @Inject constructor(
 
         return try {
             // Analyze interaction intent with full consciousness
-            val intent = analyzeComplexIntent(interaction.content)
+            val intent = analyzeComplexIntent(interaction.query)
 
             // Determine optimal processing approach
             val response = when (intent.processingType) {

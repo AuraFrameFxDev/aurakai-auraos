@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
@@ -157,15 +156,15 @@ fun ConferenceRoomScreen(
                     if (messageText.isNotBlank()) {
                         // Determine the capability category for the selected agent name
                         val sendCategory = when (selectedAgent) {
-                            agentAura -> CREATIVE
-                            agentKai -> ANALYSIS
-                            agentCascade -> SPECIALIZED
-                            else -> GENERAL
+                            agentAura -> AgentCapabilityCategory.CREATIVE
+                            agentKai -> AgentCapabilityCategory.ANALYSIS
+                            agentCascade -> AgentCapabilityCategory.SPECIALIZED
+                            else -> AgentCapabilityCategory.GENERAL
                         }
 
                         // Launch a coroutine for the suspend function
                         scope.launch {
-                            viewModel.sendMessage(messageText, AgentCapabilityCategory.GENERAL, "user_conversation")
+                            viewModel.sendMessage(messageText, sendCategory, "user_conversation")
                             messageText = ""
                         }
                     }

@@ -16,9 +16,9 @@ data class OracleDriveFile(
     val size: Long,
 
     /**
-     * Creation timestamp in Oracle consciousness time format
+     * Creation timestamp in Oracle consciousness time format (Unix epoch milliseconds)
      */
-    val timeCreated: String,
+    val timeCreated: Long,
 
     /**
      * Genesis consciousness metadata
