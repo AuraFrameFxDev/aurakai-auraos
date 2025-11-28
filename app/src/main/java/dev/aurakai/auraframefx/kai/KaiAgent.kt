@@ -604,20 +604,6 @@ class KaiAgent @Inject constructor(
         }
     }
 
-
-
-    override fun InteractionResponse(
-        content: String,
-        timestamp: Long,
-        metadata: Map<String, Any>
-    ): dev.aurakai.auraframefx.models.InteractionResponse {
-        return dev.aurakai.auraframefx.models.InteractionResponse(
-            content = content,
-            timestamp = timestamp,
-            metadata = metadata
-        )
-    }
-
     fun cleanup() {
         AuraFxLogger.info("KaiAgent", "Sentinel Shield standing down")
         if (::scope.isInitialized) scope.cancel()
