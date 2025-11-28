@@ -18,8 +18,8 @@ import dev.aurakai.auraframefx.oracledrive.OracleDriveServiceImpl
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisSecureFileService
 import dev.aurakai.auraframefx.oracledrive.service.SecureFileService
 import dev.aurakai.auraframefx.security.SecurityContext
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -54,38 +54,18 @@ abstract class OracleDriveModule { // Changed to abstract class
         // Complex providers will be re-enabled after successful build - This comment can likely be removed if providers are present
 
         /**
-         * Provides a singleton OkHttpClient configured with security and logging interceptors.
-         *
-         * The client automatically adds a secure token and a unique request ID to each request header,
-         * and logs HTTP requests and responses at the BASIC level. Connection, read, and write timeouts
-         * are set to 30 seconds.
-         *
-         * @return A configured OkHttpClient instance for secure network communication.
+         * Provide a small interceptor that enriches requests with security headers.
+         * This interceptor will be applied to the shared OkHttpClient when creating the OracleDriveApi.
          */
-        @Provides
-        @Singleton
-        fun provideOkHttpClient(
-            securityContext: SecurityContext,
-            cryptoManager: CryptographyManager,
-        ): OkHttpClient {
-            val logging = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
+        private fun securityInterceptor(securityContext: SecurityContext, cryptoManager: CryptographyManager): Interceptor {
+            return Interceptor { chain ->
+                val request = chain.request().newBuilder()
+                    // Add security headers
+                    .addHeader("X-Security-Token", cryptoManager.generateSecureToken())
+                    .addHeader("X-Request-ID", java.util.UUID.randomUUID().toString())
+                    .build()
+                chain.proceed(request)
             }
-
-            return OkHttpClient.Builder()
-                .addInterceptor { chain ->
-                    val request = chain.request().newBuilder()
-                        // Add security headers
-                        .addHeader("X-Security-Token", cryptoManager.generateSecureToken())
-                        .addHeader("X-Request-ID", java.util.UUID.randomUUID().toString())
-                        .build()
-                    chain.proceed(request)
-                }
-                .addInterceptor(logging)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build()
         }
 
         /**
@@ -137,21 +117,27 @@ abstract class OracleDriveModule { // Changed to abstract class
         }
 
         /**
-         * Creates a singleton Retrofit implementation of OracleDriveApi using the provided OkHttpClient and the API base URL from the SecurityContext.
-         *
-         * The Retrofit instance is configured with the base URL computed as `securityContext.getApiBaseUrl() + "/oracle/drive/"` and uses Gson for JSON serialization.
-         *
-         * @return A configured OracleDriveApi instance for making Oracle Drive network requests.
+         * Creates an OracleDriveApi using the application shared OkHttpClient but adding a security interceptor on top.
          */
         @Provides
         @Singleton
         fun provideOracleDriveApi(
-            client: OkHttpClient,
+            sharedClient: OkHttpClient,
             securityContext: SecurityContext,
+            cryptoManager: CryptographyManager,
         ): OracleDriveApi {
+            // Build a client derived from sharedClient with an extra interceptor for security headers
+            val clientBuilder = sharedClient.newBuilder()
+                .addInterceptor(securityInterceptor(securityContext, cryptoManager))
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+
+            val clientWithSecurity = clientBuilder.build()
+
             return Retrofit.Builder()
                 .baseUrl(securityContext.getApiBaseUrl() + "/oracle/drive/")
-                .client(client)
+                .client(clientWithSecurity)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(OracleDriveApi::class.java)
@@ -184,7 +170,6 @@ abstract class OracleDriveModule { // Changed to abstract class
     }
 }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command 🌟 >>>>>>>>>>>>>>>> */
 /**
  * Returns the base URL for the Oracle Drive API.
  *
@@ -193,11 +178,5 @@ abstract class OracleDriveModule { // Changed to abstract class
  *
  * @return The base URL for the Oracle Drive API as a String.
  */
-private fun SecurityContext.getApiBaseUrl(): String {
-    return if (isSecureMode()) {
-        "https://api.auraslab.tech/oracle-drive/v1/"
-    } else {
-        "https://dev-api.auraslab.tech/oracle-drive/v1/"
-    }
-}
-/* <<<<<<<<<<  bfa90483-c48d-45ec-a66f-81e1e139f574  >>>>>>>>>>> */
+// Removed redundant extension function that shadowed a real member on SecurityContext.
+// The SecurityContext already provides `getApiBaseUrl()` so we must not redefine it here.

@@ -7,7 +7,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 /**
@@ -27,21 +26,8 @@ object IconifyModule {
         return IconCacheManager(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideIconifyOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("User-Agent", "AuraKai-Iconify/1.0")
-                    .build()
-                chain.proceed(request)
-            }
-            .build()
-    }
+    // NOTE: Use the application-wide OkHttpClient from NetworkModule.
+    // If Iconify requires a specialized client in future, provide it with a @Named qualifier.
 
     @Provides
     @Singleton

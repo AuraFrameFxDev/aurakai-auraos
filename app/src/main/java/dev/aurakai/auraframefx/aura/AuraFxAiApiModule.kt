@@ -8,7 +8,6 @@ import dev.aurakai.auraframefx.api.client.apis.AIContentApi
 import dev.aurakai.auraframefx.network.AuraFxContentApiClient
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
 
 /**
@@ -17,23 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuraFxAiApiModule {
-
-    /**
-     * Supplies a singleton OkHttpClient instance configured to log complete HTTP request and response bodies.
-     *
-     * @return An OkHttpClient with comprehensive logging enabled for network debugging.
-     */
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .build()
-    }
 
     /**
      * Supplies a singleton Json serializer configured for flexible and robust API data processing.
@@ -53,6 +35,7 @@ object AuraFxAiApiModule {
 
     /**
      * Supplies a singleton AIContentApi instance configured for communication with the AuraFrameFx AI API.
+     * Uses the shared OkHttpClient from NetworkModule to avoid duplicate bindings.
      *
      * @param okHttpClient The HTTP client used for network requests to the AuraFrameFx API.
      * @return An AIContentApi instance initialized with the AuraFrameFx API base URL and the provided HTTP client.
