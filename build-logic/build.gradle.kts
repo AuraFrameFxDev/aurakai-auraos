@@ -49,9 +49,9 @@ tasks.withType<JavaCompile>().configureEach {
     targetCompatibility = "24"
 }
 
-// Skip test compilation - tests are disabled globally
+// Tests enabled to validate build script configuration
 tasks.matching { it.name.contains("Test") }.configureEach {
-    enabled = false
+    enabled = true
 }
 
 gradlePlugin {

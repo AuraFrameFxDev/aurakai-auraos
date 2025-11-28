@@ -508,7 +508,6 @@ fun IconSearchResults(
                             iconifyService = iconifyService,
                             selected = selectedIcon == iconId,
                             onIconSelected = {
-                                selectedIcon = it
                                 onIconSelected(it)
                             }
                         )

@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.screens
+package dev.aurakai.auraframefx.aura.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.ui.AuraMoodViewModel // Corrected import
 
+@JvmOverloads
 @Suppress("unused") // Reserved for navigation integration
 @Composable
-fun AurakaiEcoSysScreen(
-    // viewModel: AuraMoodViewModel = hiltViewModel() // Alternative injection for previews if needed
-) {
-    val viewModel: AuraMoodViewModel = hiltViewModel()
+fun AurakaiEcoSysScreen(viewModel: AuraMoodViewModel = hiltViewModel()) {
     val currentMood by viewModel.moodState.collectAsState()
 
     Box(

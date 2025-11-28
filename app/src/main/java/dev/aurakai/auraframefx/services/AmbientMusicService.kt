@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Binder
@@ -15,6 +16,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
+import dev.aurakai.auraframefx.data.DataStoreManager
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,7 +30,10 @@ import javax.inject.Inject
  * - Notification controls for playback management
  */
 @AndroidEntryPoint
-class AmbientMusicService : Service() {
+open class AmbientMusicService : Service() {
+
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentVolume = 0.5f

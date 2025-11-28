@@ -35,6 +35,8 @@ android {
         versionCode = 1
         versionName = "0.1.0"
 
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         // Genesis Protocol: Gemini 2.0 Flash API Key
         // Add to local.properties: GEMINI_API_KEY=your_key_here
         // Get key from: https://aistudio.google.com/app/apikey
@@ -51,6 +53,36 @@ android {
                 )
             }
         }
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        debug {
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        release {
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    packaging {
+        resources {
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+            excludes += "META-INF/NOTICE.md"
+        }
+        jniLibs {
+            pickFirsts += "META-INF/androidx/room/room-compiler-processing/LICENSE.txt"
+        }
     }
 
     compileOptions {
@@ -59,11 +91,18 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = "24"
-        freeCompilerArgs += listOf(
-            "-Xcontext-parameters"
-        )
+    // Modern Kotlin 2.2+ compiler options (NOT kotlinOptions!)
+    kotlin {
+        compilerOptions {
+            // JVM target for Kotlin 2.2+
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
+
+            // Opt-in annotations
+            optIn.add("kotlin.RequiresOptIn")
+
+            // Context parameters (Kotlin 2.2+ experimental feature)
+            freeCompilerArgs.add("-Xcontext-parameters")
+        }
     }
 
     lint {
@@ -76,6 +115,7 @@ android {
         buildConfig = true
         compose = true
         viewBinding = true
+        aidl = true
     }
 
 }

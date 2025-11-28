@@ -36,7 +36,7 @@ sealed interface TrinityUiState {
      */
     data class Success(
         val user: UserData? = null,
-        val agentStatus: Map<String, AgentResponse> = emptyMap(),
+        val agentStatus: Map<String, dev.aurakai.auraframefx.models.AgentStatus> = emptyMap(),
         val availableThemes: List<Theme> = emptyList(),
         val lastAgentResponse: AgentResponse? = null,
         val lastAgentType: String? = null,

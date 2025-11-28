@@ -39,7 +39,7 @@ class VertexCloudService : Service() {
     data class CloudResponse(
         val requestId: String,
         val success: Boolean,
-        val data: Map<String, Any>,
+        val data: Map<String, String>,
         val error: String? = null,
         val timestamp: Long = System.currentTimeMillis()
     )
@@ -62,14 +62,14 @@ class VertexCloudService : Service() {
             AuraFxLogger.info(tag, "Establishing secure connection to Vertex AI")
 
             // Validate security context before connecting
-            if (!securityContext.isSecure()) {
+            if (!securityContext.isSecureMode()) {
                 AuraFxLogger.warn(tag, "Security context not secure - delaying cloud connection")
                 delay(5000)
                 return
             }
 
-            // Initialize Vertex AI client
-            vertexAIClient.initialize()
+            // Initialize Vertex AI client (No explicit init needed for current client)
+            // vertexAIClient.initialize()
 
             // Test connection
             val connectionTest = testCloudConnection()
@@ -126,7 +126,7 @@ class VertexCloudService : Service() {
                         data = mapOf(
                             "status" to "healthy",
                             "service" to "vertex_ai_cloud",
-                            "timestamp" to System.currentTimeMillis()
+                            "timestamp" to System.currentTimeMillis().toString()
                         )
                     )
                 }
@@ -137,7 +137,7 @@ class VertexCloudService : Service() {
                         prompt = prompt,
                         maxTokens = 1024,
                         temperature = 0.7f
-                    )
+                    ) ?: ""
 
                     CloudResponse(
                         requestId = request.requestId,
@@ -150,20 +150,12 @@ class VertexCloudService : Service() {
                 }
 
                 "image_analysis" -> {
-                    val imageData = request.payload["image_data"] ?: ""
-                    val description = request.payload["description"] ?: "Analyze this image"
-
-                    // Convert base64 to bytes (simplified)
-                    val imageBytes = imageData.toByteArray()
-                    val analysis = vertexAIClient.analyzeImage(imageBytes, description)
-
-                    CloudResponse(
+                    // Image analysis not supported in current client
+                     CloudResponse(
                         requestId = request.requestId,
-                        success = true,
-                        data = mapOf(
-                            "analysis_result" to analysis,
-                            "confidence" to 0.9
-                        )
+                        success = false,
+                        data = emptyMap(),
+                        error = "Image analysis not supported"
                     )
                 }
 
@@ -294,11 +286,7 @@ class VertexCloudService : Service() {
         isConnected = false
 
         // Cleanup Vertex AI client
-        try {
-            vertexAIClient.cleanup()
-        } catch (e: Exception) {
-            AuraFxLogger.warn(tag, "Error during VertexAI cleanup: ${e.message}")
-        }
+        // vertexAIClient.cleanup() // Not needed for current client
 
         AuraFxLogger.info(tag, "VertexCloudService cleanup completed")
     }

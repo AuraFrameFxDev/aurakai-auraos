@@ -178,7 +178,8 @@ class WanderingAI(
  * Special behavior where Aura searches for Kai
  */
 class SearchingBehavior(
-    private val pathGenerator: WanderingPathGenerator
+    private val pathGenerator: WanderingPathGenerator,
+    private val screenBounds: ScreenBounds
 ) {
     /**
      * Generate a searching pattern path
@@ -190,8 +191,8 @@ class SearchingBehavior(
         points.add(PathPoint(startPosition))
 
         // Zigzag across screen
-        val screenWidth = pathGenerator.bounds.width
-        val screenHeight = pathGenerator.bounds.height
+        val screenWidth = screenBounds.width
+        val screenHeight = screenBounds.height
 
         for (i in 0..3) {
             val x = if (i % 2 == 0) screenWidth * 0.8f else screenWidth * 0.2f

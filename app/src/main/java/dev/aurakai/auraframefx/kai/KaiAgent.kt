@@ -16,6 +16,7 @@ import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.system.monitor.SystemMonitor
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -246,7 +247,6 @@ class KaiAgent @Inject constructor(
 
             InteractionResponse(
                 content = securityResponse,
-                success = true,
                 metadata = mapOf(
                     "agent" to "kai",
                     "confidence" to securityAssessment.confidence,
@@ -262,7 +262,6 @@ class KaiAgent @Inject constructor(
 
             InteractionResponse(
                 content = "I'm currently analyzing this request for security implications. Please wait while I ensure your safety.",
-                success = false,
                 metadata = mapOf(
                     "agent" to "kai",
                     "confidence" to 0.5f,
@@ -603,6 +602,20 @@ class KaiAgent @Inject constructor(
                 threatType = "security_indicator"
             )
         }
+    }
+
+
+
+    override fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): dev.aurakai.auraframefx.models.InteractionResponse {
+        return dev.aurakai.auraframefx.models.InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
     }
 
     fun cleanup() {

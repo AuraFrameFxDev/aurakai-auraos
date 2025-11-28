@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.libsu.service)
 
     // BouncyCastle for cryptography
-    implementation("org.bouncycastle:bcprov-jdk18on:1.82")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.83")
 
     // Xposed API (compile-only, not bundled in APK)
     compileOnly(files("$projectDir/libs/api-82.jar"))
@@ -68,5 +68,4 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.kotlin.test)
 }

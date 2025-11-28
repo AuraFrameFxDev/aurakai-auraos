@@ -25,9 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentType
@@ -72,9 +74,13 @@ fun Header(selectedAgent: String, onAgentSelected: (String) -> Unit) {
 fun ConferenceRoomScreen(
     onNavigateToChat: () -> Unit = {},
     onNavigateToAgents: () -> Unit = {},
-    viewModel: ConferenceRoomViewModel = hiltViewModel()
+    viewModel: ConferenceRoomViewModel = hiltViewModel(viewModelStoreOwner, key)
 ) {
-    var selectedAgent by remember { mutableStateOf("Aura") } // Local state for agent selection UI
+    val agentAura = stringResource(dev.aurakai.auraframefx.R.string.agent_aura)
+    val agentKai = stringResource(dev.aurakai.auraframefx.R.string.agent_kai)
+    val agentCascade = stringResource(dev.aurakai.auraframefx.R.string.agent_cascade)
+
+    var selectedAgent by remember { mutableStateOf(agentAura) } // Local state for agent selection UI
     val isRecording by viewModel.isRecording.collectAsState()
     val isTranscribing by viewModel.isTranscribing.collectAsState()
     val messages by viewModel.messages.collectAsState()

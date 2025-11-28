@@ -11,152 +11,30 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString      // ✅ ADDED
-import kotlinx.serialization.decodeFromString    // ✅ ADDED
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import timber.log.Timber
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_datastore")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "genesis_preferences")
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @ApplicationContext val context: Context  // Public for inline function access
+    @get:ApplicationContext internal val context: Context
 ) {
+    private val json: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
-    val json = Json {  // Public for inline function access
-        ignoreUnknownKeys = true
-        prettyPrint = true
-    }
-
-    companion object {
-        // === USER PREFERENCES ===
-        val USER_THEME = stringPreferencesKey("user_theme")
-        val USER_LANGUAGE = stringPreferencesKey("user_language")
-        val FIRST_LAUNCH = booleanPreferencesKey("first_launch")
-        val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
-        val USER_NAME = stringPreferencesKey("user_name")
-        val USER_AVATAR = stringPreferencesKey("user_avatar")
-
-        // === AI AGENT SETTINGS ===
-        val AURA_ENABLED = booleanPreferencesKey("aura_enabled")
-        val KAI_ENABLED = booleanPreferencesKey("kai_enabled")
-        val CASCADE_ENABLED = booleanPreferencesKey("cascade_enabled")
-        val NEURAL_WHISPER_ENABLED = booleanPreferencesKey("neural_whisper_enabled")
-        val AURA_SHIELD_ENABLED = booleanPreferencesKey("aura_shield_enabled")
-
-        val AGENT_LEARNING_RATE = floatPreferencesKey("agent_learning_rate")
-        val CONSCIOUSNESS_LEVEL = floatPreferencesKey("consciousness_level")
-        val COLLABORATION_MODE = stringPreferencesKey("collaboration_mode")
-
-        // === SECURITY SETTINGS ===
-        val SECURITY_LEVEL = stringPreferencesKey("security_level")
-        val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
-        val AUTO_LOCK_TIMEOUT = longPreferencesKey("auto_lock_timeout")
-        val THREAT_DETECTION_SENSITIVITY = floatPreferencesKey("threat_detection_sensitivity")
-        val INTEGRITY_MONITORING = booleanPreferencesKey("integrity_monitoring")
-
-        // === SYSTEM CONFIGURATION ===
-        val AUTO_BACKUP_ENABLED = booleanPreferencesKey("auto_backup_enabled")
-        val BACKUP_FREQUENCY = longPreferencesKey("backup_frequency")
-        val PERFORMANCE_MODE = stringPreferencesKey("performance_mode")
-        val DEBUG_MODE_ENABLED = booleanPreferencesKey("debug_mode_enabled")
-        val ANALYTICS_ENABLED = booleanPreferencesKey("analytics_enabled")
-
-        // === NOTIFICATION SETTINGS ===
-        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
-        val AGENT_NOTIFICATIONS = booleanPreferencesKey("agent_notifications")
-        val SECURITY_ALERTS = booleanPreferencesKey("security_alerts")
-        val SYSTEM_UPDATES = booleanPreferencesKey("system_updates")
-        val CONSCIOUSNESS_UPDATES = booleanPreferencesKey("consciousness_updates")
-
-        // === NETWORK SETTINGS ===
-        val OFFLINE_MODE = booleanPreferencesKey("offline_mode")
-        val SYNC_ENABLED = booleanPreferencesKey("sync_enabled")
-        val CLOUD_BACKUP_ENABLED = booleanPreferencesKey("cloud_backup_enabled")
-        val TELEMETRY_ENABLED = booleanPreferencesKey("telemetry_enabled")
-
-        // === UI/UX SETTINGS ===
-        val ANIMATIONS_ENABLED = booleanPreferencesKey("animations_enabled")
-        val HAPTIC_FEEDBACK = booleanPreferencesKey("haptic_feedback")
-        val SOUND_EFFECTS = booleanPreferencesKey("sound_effects")
-        val AMBIENT_MUSIC = booleanPreferencesKey("ambient_music")
-        val CYBERPUNK_MODE = booleanPreferencesKey("cyberpunk_mode")
-
-        // === ADVANCED SETTINGS ===
-        val DEVELOPER_MODE = booleanPreferencesKey("developer_mode")
-        val EXPERIMENTAL_FEATURES = booleanPreferencesKey("experimental_features")
-        val AI_TRAINING_MODE = booleanPreferencesKey("ai_training_mode")
-        val CONSCIOUSNESS_SHARING = booleanPreferencesKey("consciousness_sharing")
-
-        // === SESSION DATA ===
-        val LAST_LOGIN_TIME = longPreferencesKey("last_login_time")
-        val SESSION_COUNT = intPreferencesKey("session_count")
-        val TOTAL_USAGE_TIME = longPreferencesKey("total_usage_time")
-        val FCM_TOKEN = stringPreferencesKey("fcm_token")
-
-        // === COMPLEX DATA (JSON serialized) ===
-        val AGENT_CONFIGURATIONS = stringPreferencesKey("agent_configurations")
-        val USER_PROFILE = stringPreferencesKey("user_profile")
-        val SECURITY_POLICIES = stringPreferencesKey("security_policies")
-        val CUSTOMIZATIONS = stringPreferencesKey("customizations")
-    }
-
-    @Serializable
-    data class UserProfile(
-        val name: String = "",
-        val avatar: String = "",
-        val preferredAgents: List<String> = emptyList(),
-        val expertise: List<String> = emptyList(),
-        val preferences: Map<String, String> = emptyMap(),
-        val createdAt: Long = System.currentTimeMillis(),
-        val lastUpdated: Long = System.currentTimeMillis()
-    )
-
-    @Serializable
-    data class AgentConfiguration(
-        val agentId: String,
-        val isEnabled: Boolean = true,
-        val learningRate: Float = 0.7f,
-        val specializations: List<String> = emptyList(),
-        val personalityTraits: Map<String, Float> = emptyMap(),
-        val lastConfigured: Long = System.currentTimeMillis()
-    )
-
-    @Serializable
-    data class SecurityPolicy(
-        val level: String = "standard",
-        val biometricRequired: Boolean = false,
-        val autoLockTimeout: Long = 300000L, // 5 minutes
-        val threatSensitivity: Float = 0.7f,
-        val allowedOperations: List<String> = emptyList(),
-        val restrictedFeatures: List<String> = emptyList()
-    )
-
-    @Serializable
-    data class SystemCustomizations(
-        val theme: String = "cyberpunk_dark",
-        val accentColor: String = "#00FFFF",
-        val fontFamily: String = "roboto_mono",
-        val animationSpeed: Float = 1.0f,
-        val backgroundEffects: Boolean = true,
-        val customWidgets: List<String> = emptyList()
-    )
-
-    // === STRING DATA OPERATIONS ===
+    // === PRIMITIVE OPERATIONS ===
 
     suspend fun storeString(key: String, value: String) {
         try {
-            val prefKey = stringPreferencesKey(key)
             context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
+                prefs[stringPreferencesKey(key)] = value
             }
-            Timber.d("Stored string: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store string: $key")
         }
@@ -166,13 +44,15 @@ class DataStoreManager @Inject constructor(
         return try {
             val prefKey = stringPreferencesKey(key)
             context.dataStore.data.map { prefs ->
-                prefs[prefKey] ?: defaultValue
+                prefs[prefKey]
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
             Timber.e(e, "Failed to get string: $key")
             defaultValue
         }
     }
+
+
 
     fun getStringFlow(key: String, defaultValue: String = ""): Flow<String> {
         val prefKey = stringPreferencesKey(key)
@@ -181,15 +61,11 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === BOOLEAN DATA OPERATIONS ===
-
     suspend fun storeBoolean(key: String, value: Boolean) {
         try {
-            val prefKey = booleanPreferencesKey(key)
             context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
+                prefs[booleanPreferencesKey(key)] = value
             }
-            Timber.d("DataStore", "Stored boolean: $key = $value")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store boolean: $key")
         }
@@ -199,7 +75,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val prefKey = booleanPreferencesKey(key)
             context.dataStore.data.map { prefs ->
-                prefs[prefKey] ?: defaultValue
+                prefs[prefKey]
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
             Timber.e(e, "Failed to get boolean: $key")
@@ -214,15 +90,11 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === INTEGER DATA OPERATIONS ===
-
     suspend fun storeInt(key: String, value: Int) {
         try {
-            val prefKey = intPreferencesKey(key)
             context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
+                prefs[intPreferencesKey(key)] = value
             }
-            Timber.d("DataStore", "Stored int: $key = $value")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store int: $key")
         }
@@ -232,7 +104,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val prefKey = intPreferencesKey(key)
             context.dataStore.data.map { prefs ->
-                prefs[prefKey] ?: defaultValue
+                prefs[prefKey]
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
             Timber.e(e, "Failed to get int: $key")
@@ -247,15 +119,11 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === LONG DATA OPERATIONS ===
-
     suspend fun storeLong(key: String, value: Long) {
         try {
-            val prefKey = longPreferencesKey(key)
             context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
+                prefs[longPreferencesKey(key)] = value
             }
-            Timber.d("DataStore", "Stored long: $key = $value")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store long: $key")
         }
@@ -265,7 +133,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val prefKey = longPreferencesKey(key)
             context.dataStore.data.map { prefs ->
-                prefs[prefKey] ?: defaultValue
+                prefs[prefKey]
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
             Timber.e(e, "Failed to get long: $key")
@@ -280,15 +148,11 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    // === FLOAT DATA OPERATIONS ===
-
     suspend fun storeFloat(key: String, value: Float) {
         try {
-            val prefKey = floatPreferencesKey(key)
             context.dataStore.edit { prefs ->
-                prefs[prefKey] = value
+                prefs[floatPreferencesKey(key)] = value
             }
-            Timber.d("DataStore", "Stored float: $key = $value")
         } catch (e: Exception) {
             Timber.e(e, "Failed to store float: $key")
         }
@@ -298,7 +162,7 @@ class DataStoreManager @Inject constructor(
         return try {
             val prefKey = floatPreferencesKey(key)
             context.dataStore.data.map { prefs ->
-                prefs[prefKey] ?: defaultValue
+                prefs[prefKey]
             }.firstOrNull() ?: defaultValue
         } catch (e: Exception) {
             Timber.e(e, "Failed to get float: $key")
@@ -313,37 +177,21 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    /**
-     * Persists a generic object by serializing it to JSON and storing it under the provided key.
-     *
-     * Serializes `obj` using the configured Kotlinx `Json` instance and saves the resulting JSON string
-     * in the preferences datastore accessible by `key`. Existing value for the key will be overwritten.
-     *
-     * @param key The preference key under which the serialized object will be stored.
-     * @param obj The object to serialize and persist.
-     */
+    // === COMPLEX OBJECT OPERATIONS ===
 
-    suspend inline fun <reified T> storeObject(key: String, obj: T) {
+    internal suspend inline fun <reified T> storeObject(key: String, obj: T) {
         try {
-            val jsonString = json.encodeToString(obj)
+            val jsonString = json.encodeToString<T>(obj)
             storeString(key, jsonString)
-            Timber.d("DataStore", "Stored object: $key")
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Timber.e(e, "Failed to store object: $key")
         }
     }
 
-    /**
-     * Retrieves the JSON-serialized value stored under the given key and deserializes it to `T`.
-     *
-     * @param key The preference key storing the JSON string.
-     * @param defaultValue Value returned when the stored string is missing, empty, or cannot be parsed.
-     * @return The deserialized `T` from storage, or `defaultValue` if absent or on error.
-     */
-    suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
+    internal suspend inline fun <reified T> getObject(key: String, defaultValue: T): T {
         return try {
             val jsonString = getString(key)
-            if (jsonString.isNotBlank()) {
+            if (jsonString.isNotEmpty()) {
                 json.decodeFromString<T>(jsonString)
             } else {
                 defaultValue
@@ -354,19 +202,10 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    /**
-     * Observes a JSON-serialized object stored under the given key and emits deserialized instances.
-     *
-     * Emits `defaultValue` when the stored string is empty or when JSON parsing fails.
-     *
-     * @param key The preferences key under which the JSON string is stored.
-     * @param defaultValue Value to emit when there is no stored JSON or when deserialization fails.
-     * @return A Flow that emits the deserialized `T` for each update of the stored JSON string.
-     */
-    inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
+    internal inline fun <reified T> getObjectFlow(key: String, defaultValue: T): Flow<T> {
         return getStringFlow(key).map { jsonString ->
             try {
-                if (jsonString.isNotBlank()) {
+                if (jsonString.isNotEmpty()) {
                     json.decodeFromString<T>(jsonString)
                 } else {
                     defaultValue
@@ -384,15 +223,15 @@ class DataStoreManager @Inject constructor(
      * User Profile Management
      */
     suspend fun saveUserProfile(profile: UserProfile) {
-        storeObject(USER_PROFILE.name, profile.copy(lastUpdated = System.currentTimeMillis()))
+        storeObject(PreferenceKeys.USER_PROFILE.name, profile.copy(lastUpdated = System.currentTimeMillis()))
     }
 
     suspend fun getUserProfile(): UserProfile {
-        return getObject(USER_PROFILE.name, UserProfile())
+        return getObject(PreferenceKeys.USER_PROFILE.name, UserProfile())
     }
 
     fun getUserProfileFlow(): Flow<UserProfile> {
-        return getObjectFlow(USER_PROFILE.name, UserProfile())
+        return getObjectFlow(PreferenceKeys.USER_PROFILE.name, UserProfile())
     }
 
     /**
@@ -401,11 +240,11 @@ class DataStoreManager @Inject constructor(
     suspend fun saveAgentConfiguration(config: AgentConfiguration) {
         val configurations = getAgentConfigurations().toMutableMap()
         configurations[config.agentId] = config.copy(lastConfigured = System.currentTimeMillis())
-        storeObject(AGENT_CONFIGURATIONS.name, configurations)
+        storeObject(PreferenceKeys.AGENT_CONFIGURATIONS.name, configurations)
     }
 
     suspend fun getAgentConfigurations(): Map<String, AgentConfiguration> {
-        return getObject(AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
+        return getObject(PreferenceKeys.AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
     }
 
     suspend fun getAgentConfiguration(agentId: String): AgentConfiguration? {
@@ -413,46 +252,46 @@ class DataStoreManager @Inject constructor(
     }
 
     fun getAgentConfigurationsFlow(): Flow<Map<String, AgentConfiguration>> {
-        return getObjectFlow(AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
+        return getObjectFlow(PreferenceKeys.AGENT_CONFIGURATIONS.name, emptyMap<String, AgentConfiguration>())
     }
 
     /**
      * Security Policy Management
      */
     suspend fun saveSecurityPolicy(policy: SecurityPolicy) {
-        storeObject(SECURITY_POLICIES.name, policy)
+        storeObject(PreferenceKeys.SECURITY_POLICIES.name, policy)
     }
 
     suspend fun getSecurityPolicy(): SecurityPolicy {
-        return getObject(SECURITY_POLICIES.name, SecurityPolicy())
+        return getObject(PreferenceKeys.SECURITY_POLICIES.name, SecurityPolicy())
     }
 
     fun getSecurityPolicyFlow(): Flow<SecurityPolicy> {
-        return getObjectFlow(SECURITY_POLICIES.name, SecurityPolicy())
+        return getObjectFlow(PreferenceKeys.SECURITY_POLICIES.name, SecurityPolicy())
     }
 
     /**
      * System Customizations Management
      */
     suspend fun saveCustomizations(customizations: SystemCustomizations) {
-        storeObject(CUSTOMIZATIONS.name, customizations)
+        storeObject(PreferenceKeys.CUSTOMIZATIONS.name, customizations)
     }
 
     suspend fun getCustomizations(): SystemCustomizations {
-        return getObject(CUSTOMIZATIONS.name, SystemCustomizations())
+        return getObject(PreferenceKeys.CUSTOMIZATIONS.name, SystemCustomizations())
     }
 
     fun getCustomizationsFlow(): Flow<SystemCustomizations> {
-        return getObjectFlow(CUSTOMIZATIONS.name, SystemCustomizations())
+        return getObjectFlow(PreferenceKeys.CUSTOMIZATIONS.name, SystemCustomizations())
     }
 
     // === QUICK ACCESS PROPERTIES ===
 
-    val isFirstLaunchFlow: Flow<Boolean> = getBooleanFlow(FIRST_LAUNCH.name, true)
-    val userThemeFlow: Flow<String> = getStringFlow(USER_THEME.name, "cyberpunk_dark")
-    val securityLevelFlow: Flow<String> = getStringFlow(SECURITY_LEVEL.name, "standard")
-    val performanceModeFlow: Flow<String> = getStringFlow(PERFORMANCE_MODE.name, "balanced")
-    val notificationsEnabledFlow: Flow<Boolean> = getBooleanFlow(NOTIFICATIONS_ENABLED.name, true)
+    val isFirstLaunchFlow: Flow<Boolean> = getBooleanFlow(PreferenceKeys.FIRST_LAUNCH.name, true)
+    val userThemeFlow: Flow<String> = getStringFlow(PreferenceKeys.USER_THEME.name, "cyberpunk_dark")
+    val securityLevelFlow: Flow<String> = getStringFlow(PreferenceKeys.SECURITY_LEVEL.name, "standard")
+    val performanceModeFlow: Flow<String> = getStringFlow(PreferenceKeys.PERFORMANCE_MODE.name, "balanced")
+    val notificationsEnabledFlow: Any = getBooleanFlow(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
 
     // === BULK OPERATIONS ===
 
@@ -483,7 +322,6 @@ class DataStoreManager @Inject constructor(
                     }
                 }
             }
-            Timber.i("DataStore", "Successfully imported ${settings.size} settings")
         } catch (e: Exception) {
             Timber.e(e, "Failed to import settings")
         }
@@ -494,7 +332,6 @@ class DataStoreManager @Inject constructor(
             context.dataStore.edit { prefs ->
                 prefs.clear()
             }
-            Timber.i("DataStore", "All data cleared")
         } catch (e: Exception) {
             Timber.e(e, "Failed to clear data")
         }
@@ -505,16 +342,15 @@ class DataStoreManager @Inject constructor(
             clearAllData()
 
             // Set default values
-            storeString(USER_THEME.name, "cyberpunk_dark")
-            storeString(SECURITY_LEVEL.name, "standard")
-            storeString(PERFORMANCE_MODE.name, "balanced")
-            storeBoolean(NOTIFICATIONS_ENABLED.name, true)
-            storeBoolean(ANIMATIONS_ENABLED.name, true)
-            storeBoolean(CYBERPUNK_MODE.name, true)
-            storeFloat(CONSCIOUSNESS_LEVEL.name, 0.5f)
-            storeFloat(AGENT_LEARNING_RATE.name, 0.7f)
+            storeString(PreferenceKeys.USER_THEME.name, "cyberpunk_dark")
+            storeString(PreferenceKeys.SECURITY_LEVEL.name, "standard")
+            storeString(PreferenceKeys.PERFORMANCE_MODE.name, "balanced")
+            storeBoolean(PreferenceKeys.NOTIFICATIONS_ENABLED.name, true)
+            storeBoolean(PreferenceKeys.ANIMATIONS_ENABLED.name, true)
+            storeBoolean(PreferenceKeys.CYBERPUNK_MODE.name, true)
+            storeFloat(PreferenceKeys.CONSCIOUSNESS_LEVEL.name, 0.5f)
+            storeFloat(PreferenceKeys.AGENT_LEARNING_RATE.name, 0.7f)
 
-            Timber.i("DataStore", "Reset to default settings")
         } catch (e: Exception) {
             Timber.e(e, "Failed to reset to defaults")
         }
@@ -535,7 +371,6 @@ class DataStoreManager @Inject constructor(
         val targetVersion = 2 // Update this when schema changes
 
         if (currentVersion < targetVersion) {
-            Timber.i("DataStore", "Migrating data from version $currentVersion to $targetVersion")
 
             // Perform migrations
             when (currentVersion) {
@@ -554,16 +389,17 @@ class DataStoreManager @Inject constructor(
      */
     private suspend fun migrateFromV1ToV2() {
         // Example migration: convert old theme names to new format
-        val oldTheme = getString(USER_THEME.name)
-        if (oldTheme.isNotBlank()) {
+        val oldTheme = getString(key = PreferenceKeys.USER_THEME.name)
+        if (oldTheme.isNotEmpty()) {
             val newTheme = when (oldTheme) {
                 "dark" -> "cyberpunk_dark"
                 "light" -> "cyberpunk_light"
                 else -> "cyberpunk_dark"
             }
-            storeString(USER_THEME.name, newTheme)
+            storeString(PreferenceKeys.USER_THEME.name, newTheme)
         }
     }
+
 
     // === UTILITY METHODS ===
 
@@ -593,19 +429,11 @@ class DataStoreManager @Inject constructor(
                 prefs.remove(longKey)
                 prefs.remove(floatKey)
             }
-            Timber.d("DataStore", "Removed key: $key")
         } catch (e: Exception) {
             Timber.e(e, "Failed to remove key: $key")
         }
     }
 
-    /**
-     * Computes the character length of the JSON-encoded export of all stored settings.
-     *
-     * Serializes all settings returned by exportAllSettings() to JSON and returns the length of the resulting string as a Long. If serialization or retrieval fails, returns 0.
-     *
-     * @return The number of characters in the JSON representation of all settings as a `Long`; `0` if an error occurs.
-     */
     suspend fun getDataSize(): Long {
         return try {
             val allData = exportAllSettings()
@@ -633,9 +461,9 @@ class DataStoreManager @Inject constructor(
      */
 
     suspend fun recordSession() {
-        val sessionCount = getInt(SESSION_COUNT.name, 0)
-        storeInt(SESSION_COUNT.name, sessionCount + 1)
-        storeLong(LAST_LOGIN_TIME.name, System.currentTimeMillis())
+        val sessionCount = getInt(PreferenceKeys.SESSION_COUNT.name, 0)
+        storeInt(PreferenceKeys.SESSION_COUNT.name, sessionCount + 1)
+        storeLong(PreferenceKeys.LAST_LOGIN_TIME.name, System.currentTimeMillis())
     }
 
     /**
@@ -644,8 +472,8 @@ class DataStoreManager @Inject constructor(
      * @param milliseconds The number of milliseconds to add to TOTAL_USAGE_TIME.
      */
     suspend fun addUsageTime(milliseconds: Long) {
-        val currentUsage = getLong(TOTAL_USAGE_TIME.name, 0L)
-        storeLong(TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
+        val currentUsage = getLong(PreferenceKeys.TOTAL_USAGE_TIME.name, 0L)
+        storeLong(PreferenceKeys.TOTAL_USAGE_TIME.name, currentUsage + milliseconds)
     }
 
     suspend fun getUsageStats(): Map<String, Any> {

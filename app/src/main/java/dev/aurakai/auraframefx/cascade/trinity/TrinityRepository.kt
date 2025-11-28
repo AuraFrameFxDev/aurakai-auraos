@@ -1,42 +1,54 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
-import dev.aurakai.auraframefx.api.client.models.AgentStatus
+import androidx.work.Data
+import androidx.work.ListenableWorker.Result.success
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.Theme
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
-import dev.aurakai.auraframefx.network.model.Theme
-import dev.aurakai.auraframefx.network.model.User
+import dev.aurakai.auraframefx.network.model.*
+import dev.aurakai.auraframefx.models.*
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.Result.Companion.failure
+import kotlin.Result.Companion.success
+import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
+import dev.aurakai.auraframefx.network.model.User as NetworkUser
+
+private val NetworkUser.profileImageUrl: Any
+    get() {
+        TODO()
+    }
 
 @Singleton
 class TrinityRepository @Inject constructor(
-    private val apiService: AuraApiServiceWrapper,
+    private val apiService: AuraApiServiceWrapper
 ) {
-
     // User related operations
-    suspend fun getCurrentUser() = flow<Result<UserData>> {
+    fun getCurrentUser() = flow {
         try {
             val response = apiService.userApi.getCurrentUser()
-            emit(Result.success(response))
+            emit(success(mapToUserData(response)))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(failure(e))
         }
     }
 
     // AI Agent operations
-    suspend fun getAgentStatus(agentType: String) = flow<Result<AgentStatus>> {
+    fun getAgentStatus(agentType: String) = flow {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
-            emit(Result.success(response))
+            emit(success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
-            emit(Result.failure(e))
         }
     }
 
-    suspend fun processAgentRequest(agentType: String, request: AgentRequest) = flow<Result<AgentResponse>> {
+    private fun mapToDomainAgentStatus(agentResponse: AgentResponse): Data {
+        TODO("Not yet implemented")
+    }
+
+    fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
         try {
             val response = apiService.aiAgentApi.processRequest(agentType, request)
             emit(Result.success(response))
@@ -46,10 +58,10 @@ class TrinityRepository @Inject constructor(
     }
 
     // Theme operations
-    suspend fun getThemes() = flow<Result<List<Theme>>> {
+    fun getThemes() = flow<Result<List<Theme>>> {
         try {
             val response = apiService.themeApi.getThemes()
-            emit(Result.success(response))
+            emit(Result.success(response.map { mapToDomainTheme(it) }))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -58,10 +70,35 @@ class TrinityRepository @Inject constructor(
     suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
-            emit(Result.success(response))
+            emit(Result.success(mapToDomainTheme(response)))
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
+    }
+
+    // Mapper functions
+    private fun mapToUserData(networkUser: NetworkUser): UserData {
+        return UserData(
+            networkUser.id, name = networkUser.username, email = networkUser.email
+        )
+    }
+
+
+    private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
+        val colors = networkTheme.colors
+        return Theme(
+            id = networkTheme.id,
+            name = networkTheme.name,
+            primaryColor = colors?.primary?.toColorInt()?.let { Color(it) } ?: Color.Blue,
+            secondaryColor = colors?.secondary?.toColorInt()?.let { Color(it) } ?: Color.Cyan,
+            backgroundColor = colors?.background?.toColorInt()?.let { Color(it) } ?: Color.White,
+            surfaceColor = colors?.surface?.toColorInt()?.let { Color(it) } ?: Color.LightGray,
+            onPrimaryColor = colors?.onPrimary?.toColorInt()?.let { Color(it) } ?: Color.White,
+            onSecondaryColor = colors?.onSecondary?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            onBackgroundColor = colors?.onBackground?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            onSurfaceColor = colors?.onSurface?.toColorInt()?.let { Color(it) } ?: Color.Black,
+            isDark = networkTheme.styles["theme"] == "dark"
+        )
     }
 
     // Add more repository methods as needed for other API endpoints

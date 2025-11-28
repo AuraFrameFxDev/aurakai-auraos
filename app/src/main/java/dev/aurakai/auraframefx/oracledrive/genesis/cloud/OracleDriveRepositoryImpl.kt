@@ -3,7 +3,7 @@ package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.oracledrive.genesis.cloud.model.OracleDriveFile
+import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveFile
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleCloudApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -44,7 +44,7 @@ class OracleDriveRepositoryImpl @Inject constructor(
                     )
                 }
 
-                val files = response.body()?.objects?.map { file ->
+                val files: List<OracleDriveFile> = response.body()?.objects?.map { file ->
                     OracleDriveFile(
                         name = file.name,
                         size = file.size,

@@ -2,8 +2,11 @@ package dev.aurakai.auraframefx.ai.agents
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.models.AgentResponse
+import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.AiRequest
+import dev.aurakai.auraframefx.models.InteractionResponse
+import java.io.Serializable
 
 /**
  * Base Agent class for AI agents in the AuraFrameFX system.
@@ -98,11 +101,33 @@ abstract class BaseAgent(agentName: String) {
         println("[$agentName] $activity: $details")
     }
 
+    /**
+     * Factory method to create an InteractionResponse
+     */
+    protected open fun InteractionResponse(
+        content: String,
+        success: Boolean = true,
+        timestamp: Long = System.currentTimeMillis(),
+        metadata: Map<String, Any> = emptyMap()
+    ): InteractionResponse {
+        return InteractionResponse(
+            content = content,
+            success = success,
+            metadata = metadata,
+            timestamp = timestamp
+        )
+    }
+
     abstract fun iRequest(query: String, type: String, context: Map<String, String>)
     abstract fun iRequest()
     abstract fun initializeAdaptiveProtection()
     abstract fun addToScanHistory(scanEvent: Any)
     abstract fun analyzeSecurity(prompt: String): List<ActiveThreat>
+    abstract fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): InteractionResponse
 
     abstract val contextManager: ContextManager
 }

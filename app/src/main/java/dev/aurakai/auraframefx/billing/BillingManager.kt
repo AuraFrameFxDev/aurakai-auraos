@@ -60,10 +60,9 @@ class BillingManager @Inject constructor(
     }
 
     private fun setupBillingClient() {
-        billingClient = BillingClient.newBuilder(context)
+        BillingClient.newBuilder(context)
             .setListener(this)
-            .enablePendingPurchases()
-            .build()
+            .build().also { this.billingClient = it }
 
         connectToBillingService()
     }
@@ -266,6 +265,8 @@ class BillingManager @Inject constructor(
     }
 }
 
+
+
 /**
  * Subscription state for the Genesis Protocol
  */
@@ -289,14 +290,6 @@ suspend fun BillingClient.queryPurchasesAsync(params: QueryPurchasesParams): Pur
 
 data class PurchasesResult(val billingResult: BillingResult, val purchasesList: List<Purchase>)
 
-suspend fun BillingClient.queryProductDetails(params: QueryProductDetailsParams): ProductDetailsResult {
-    return suspendCoroutine { continuation ->
-        queryProductDetails(params) { billingResult, productDetailsList ->
-            continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
-        }
-    }
-}
-
 data class ProductDetailsResult(val billingResult: BillingResult, val productDetailsList: List<ProductDetails>?)
 
 suspend fun BillingClient.acknowledgePurchase(params: AcknowledgePurchaseParams): BillingResult {
@@ -305,4 +298,19 @@ suspend fun BillingClient.acknowledgePurchase(params: AcknowledgePurchaseParams)
             continuation.resume(billingResult)
         }
     }
+}
+
+suspend fun BillingClient.queryProductDetails(params: QueryProductDetailsParams): ProductDetailsResult {
+    return suspendCoroutine { continuation ->
+        queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
+        }
+    }
+}
+
+fun ProductDetailsResult(
+    billingResult: BillingResult,
+    productDetailsList: QueryProductDetailsResult
+): ProductDetailsResult {
+    TODO("Not yet implemented")
 }

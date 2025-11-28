@@ -4,7 +4,7 @@
 # ============================================================================
 # Google Gson - Latest: 2.11.0
 billingKtx = "8.1.0"
-coilSvg = "2.6.0"
+coilSvg = "2.7.0"
 coilVersion = "2.7.0"
 core = "1.7.0"
 gson = "2.13.2"
@@ -361,13 +361,13 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 # Firebase (via BOM - KTX merged into main modules)
 # ============================================================================
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-firebase-auth = { module = "com.google.firebase:firebase-auth" }
-firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
-firebase-storage = { module = "com.google.firebase:firebase-storage" }
-firebase-config = { module = "com.google.firebase:firebase-config" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version = "23.0.0" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.0.3" }
+firebase-auth = { module = "com.google.firebase:firebase-auth", version = "24.0.1" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore", version = "26.0.2" }
+firebase-storage = { module = "com.google.firebase:firebase-storage", version = "22.0.1" }
+firebase-config = { module = "com.google.firebase:firebase-config", version = "23.0.1" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version = "25.0.1" }
 
 # ============================================================================
 # Google AI & ML
@@ -420,8 +420,8 @@ kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "ko
 coil-bom = { group = "io.coil-kt.coil3", name = "coil-bom", version.ref = "coil-bom" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose" }
 coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg" }
-coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif" }
-coil-video = { group = "io.coil-kt.coil3", name = "coil-video" }
+coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version = "3.3.0" }
+coil-video = { group = "io.coil-kt.coil3", name = "coil-video", version = "3.3.0" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp" }
 
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }

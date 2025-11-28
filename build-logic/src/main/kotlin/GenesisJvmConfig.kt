@@ -64,6 +64,7 @@ object GenesisJvmConfig {
                     // Note: jvmTarget is automatically set by jvmToolchain() above
                     // Manual jvmTarget.set(JvmTarget.JVM_24) is redundant
                     freeCompilerArgs.addAll(
+                        "-Xcontext-parameters",  // Enable Kotlin 2.2 context parameters (preview)
                         "-opt-in=kotlin.RequiresOptIn",
                         "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                         "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"

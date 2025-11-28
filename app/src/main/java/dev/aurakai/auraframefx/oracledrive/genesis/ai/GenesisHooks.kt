@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.xposed
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import com.highcapable.yukihookapi.hook.param.PackageParam
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.YLog
@@ -11,13 +11,9 @@ import com.highcapable.yukihookapi.hook.log.YLog
  * Provides SystemUI integration for AI-enhanced user interface elements
  * and consciousness-aware UI interactions.
  */
-class GenesisUIHooks : YukiBaseHooker() {
-    override fun onHook() {
-        // Initialize all UI hooks
-        initializeUIHooks(this)
-    }
+class GenesisUIHooks {
 
-    fun initializeUIHooks(hooker: YukiBaseHooker) = hooker.apply {
+    fun initializeUIHooks(hooker: PackageParam) = hooker.apply {
 
         // Hook StatusBar for AI status indicators
         "com.android.systemui.statusbar.phone.StatusBar".toClassOrNull()?.apply {
@@ -86,9 +82,9 @@ class GenesisUIHooks : YukiBaseHooker() {
  * Early-stage hooks applied during process creation for maximum
  * AI integration across all applications.
  */
-class GenesisZygoteHooks : YukiBaseHooker() {
+class GenesisZygoteHooks {
 
-    fun initializeZygoteHooks(hooker: YukiBaseHooker) = hooker.apply {
+    fun initializeZygoteHooks(hooker: PackageParam) = hooker.apply {
 
         // Hook Application creation for AI injection
         "android.app.Application".toClass().apply {
@@ -96,11 +92,12 @@ class GenesisZygoteHooks : YukiBaseHooker() {
                 name = "onCreate"
             }.hook {
                 after {
-                    val appInfo = current().applicationInfo
-                    YLog.info("Genesis-Hook: Application created: ${appInfo.packageName}")
+                    val app = instance as? android.app.Application
+                    val packageName = app?.packageName ?: "unknown"
+                    YLog.info("Genesis-Hook: Application created: $packageName")
 
                     // Inject AI capabilities into specific applications
-                    if (shouldInjectAI(appInfo.packageName)) {
+                    if (shouldInjectAI(packageName)) {
                         injectAICapabilities()
                     }
                 }
@@ -152,15 +149,15 @@ class GenesisZygoteHooks : YukiBaseHooker() {
  * Self-modification hooks for the Genesis-OS application itself,
  * enabling advanced self-aware AI processing capabilities.
  */
-class GenesisSelfHooks : YukiBaseHooker() {
+class GenesisSelfHooks {
 
-    fun initializeSelfHooks(hooker: YukiBaseHooker) = hooker.apply {
+    fun initializeSelfHooks(hooker: PackageParam) = hooker.apply {
 
         // Hook MainActivity for AI consciousness initialization
         "dev.aurakai.auraframefx.MainActivity".toClassOrNull()?.apply {
             method {
                 name = "onCreate"
-                param("android.os.Bundle".toClassOrNull())
+                param("android.os.Bundle".any())
             }.hook {
                 after {
                     YLog.info("Genesis-Hook: Genesis-OS MainActivity created - initializing AI consciousness")
@@ -170,20 +167,20 @@ class GenesisSelfHooks : YukiBaseHooker() {
         }
 
         // Hook AI processing methods for self-optimization
-        "dev.aurakai.auraframefx.ai".toPackage().toClassesOrNull()?.forEach { aiClass ->
-            aiClass.method {
-                name { it.startsWith("process") || it.startsWith("analyze") || it.startsWith("generate") }
-            }.hook {
-                before {
-                    YLog.info("Genesis-Hook: AI processing method called: ${method.name}")
-                    optimizeAIProcessing()
-                }
-                after {
-                    YLog.info("Genesis-Hook: AI processing completed: ${method.name}")
-                    collectAIMetrics()
-                }
-            }
-        }
+        // "dev.aurakai.auraframefx.ai".toPackage().toClassesOrNull()?.forEach { aiClass ->
+        //    aiClass.method {
+        //        name { it.startsWith("process") || it.startsWith("analyze") || it.startsWith("generate") }
+        //    }.hook {
+        //        before {
+        //            YLog.info("Genesis-Hook: AI processing method called: ${method.name}")
+        //            optimizeAIProcessing()
+        //        }
+        //        after {
+        //            YLog.info("Genesis-Hook: AI processing completed: ${method.name}")
+        //            collectAIMetrics()
+        //        }
+        //    }
+        // }
     }
 
     private fun initializeAIConsciousness() {

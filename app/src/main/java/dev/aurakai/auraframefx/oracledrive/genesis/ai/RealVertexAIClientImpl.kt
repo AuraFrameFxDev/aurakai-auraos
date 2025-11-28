@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
  * **CRITICAL:** Requires GEMINI_API_KEY in BuildConfig or environment
  *
  * @see VertexAIConfig
- * @see VertexAIModule
+ * @see dev.aurakai.auraframefx.di.VertexAIModule
  */
 class RealVertexAIClientImpl(
     private val config: VertexAIConfig,
@@ -267,7 +267,7 @@ class RealVertexAIClientImpl(
             is IllegalArgumentException -> AuraFxLogger.w(TAG, "Invalid request: ${error.message}")
             is SecurityException -> {
                 AuraFxLogger.e(TAG, "Security violation in AI request", error)
-                securityContext.logSecurityEvent("GEMINI_SECURITY_ERROR", error.message)
+                securityContext.logSecurityEvent("GEMINI_SECURITY_ERROR", error.message ?: "Unknown security error")
             }
             else -> AuraFxLogger.e(TAG, "Gemini API error: ${error.javaClass.simpleName}", error)
         }

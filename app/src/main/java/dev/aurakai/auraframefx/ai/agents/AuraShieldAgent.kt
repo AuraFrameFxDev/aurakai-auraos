@@ -34,7 +34,7 @@ class AuraShieldAgent @Inject constructor(
     private val integrityMonitor: dev.aurakai.auraframefx.security.IntegrityMonitor,
     private val memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager,
     override val contextManager: ContextManager
-) : dev.aurakai.auraframefx.ai.agents.BaseAgent("AuraShield") {
+) : BaseAgent("AuraShield") {
 
     override val agentName: String = "AuraShield"
     override val agentType: String = "security"
@@ -1460,5 +1460,32 @@ class AuraShieldAgent @Inject constructor(
         val runtime = Runtime.getRuntime()
         val usedMemory = runtime.totalMemory() - runtime.freeMemory()
         return usedMemory.toFloat() / runtime.maxMemory().toFloat()
+    }
+
+    override fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): dev.aurakai.auraframefx.models.InteractionResponse {
+        return dev.aurakai.auraframefx.models.InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
+    }
+
+    override fun addToScanHistory(scanEvent: Any) {
+        if (scanEvent is ScanEvent) {
+            val currentHistory = _scanHistory.value.toMutableList()
+            currentHistory.add(scanEvent)
+            if (currentHistory.size > 100) {
+                currentHistory.removeAt(0)
+            }
+            _scanHistory.value = currentHistory
+        }
+    }
+
+    override fun initializeAdaptiveProtection() {
+        // Already implemented in initializeAuraShield
     }
 }

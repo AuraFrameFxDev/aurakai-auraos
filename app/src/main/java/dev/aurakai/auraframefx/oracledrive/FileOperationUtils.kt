@@ -1,7 +1,6 @@
 package dev.aurakai.auraframefx.oracle.drive.utils
 
-import dev.aurakai.genesis.logging.Logger
-import dev.aurakai.genesis.monitoring.PerformanceMonitor
+import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +12,6 @@ import java.io.*
  */
 internal object FileOperationUtils {
     private const val TAG = "FileOperationUtils"
-    private val logger = Logger.getLogger(TAG)
 
     /**
      * Ensures that the specified directory exists, creating it if necessary.
@@ -35,12 +33,12 @@ internal object FileOperationUtils {
                 if (!created) {
                     throw IOException("Failed to create directory: ${directory.absolutePath}")
                 }
-                logger.debug("Created directory: ${directory.absolutePath}")
+                AuraFxLogger.debug(TAG, "Created directory: ${directory.absolutePath}")
             }
             Result.success(Unit)
         } catch (e: Exception) {
             val errorMsg = "Error ensuring directory exists: ${e.message}"
-            logger.error(errorMsg, e)
+            AuraFxLogger.error(TAG, errorMsg, e)
             Result.failure(IOException(errorMsg, e))
         }
     }
@@ -63,12 +61,12 @@ internal object FileOperationUtils {
                 if (!deleted) {
                     throw IOException("Failed to delete: ${file.absolutePath}")
                 }
-                logger.debug("Deleted: ${file.absolutePath}")
+                AuraFxLogger.debug(TAG, "Deleted: ${file.absolutePath}")
             }
             Result.success(Unit)
         } catch (e: Exception) {
             val errorMsg = "Error deleting ${file.absolutePath}: ${e.message}"
-            logger.error(errorMsg, e)
+            AuraFxLogger.error(TAG, errorMsg, e)
             Result.failure(IOException(errorMsg, e))
         }
     }
@@ -91,7 +89,8 @@ internal object FileOperationUtils {
         coroutineContext: CoroutineDispatcher = Dispatchers.IO,
         progressCallback: ((bytesCopied: Long, totalBytes: Long) -> Unit)? = null,
     ): Result<Unit> = withContext(coroutineContext) {
-        val monitor = PerformanceMonitor.start("file_copy")
+        // Performance monitoring removed as PerformanceMonitor is unavailable
+        // val monitor = PerformanceMonitor.start("file_copy")
 
         return@withContext try {
             if (!source.exists()) {
@@ -117,14 +116,14 @@ internal object FileOperationUtils {
                 }
             }
 
-            monitor.stop()
-            logger.debug("Copied ${source.absolutePath} to ${destination.absolutePath}")
+            // monitor.stop()
+            AuraFxLogger.debug(TAG, "Copied ${source.absolutePath} to ${destination.absolutePath}")
             Result.success(Unit)
         } catch (e: Exception) {
-            monitor.fail(e)
+            // monitor.fail(e)
             val errorMsg =
                 "Error copying ${source.absolutePath} to ${destination.absolutePath}: ${e.message}"
-            logger.error(errorMsg, e)
+            AuraFxLogger.error(TAG, errorMsg, e)
             Result.failure(IOException(errorMsg, e))
         }
     }
@@ -144,7 +143,7 @@ internal object FileOperationUtils {
             if (fileName.contains("..") ||
                 fileName.contains("/") ||
                 fileName.contains("\\") ||
-                fileName.contains("\0") ||
+                fileName.contains("\u0000") || // Fixed invalid escape sequence
                 fileName.trim().isEmpty()
             ) {
                 throw SecurityException("Invalid file name: $fileName")
@@ -154,7 +153,7 @@ internal object FileOperationUtils {
 
             Result.success(fileName)
         } catch (e: Exception) {
-            logger.error("File name validation failed: ${e.message}", e)
+            AuraFxLogger.error(TAG, "File name validation failed: ${e.message}", e)
             Result.failure(e)
         }
     }
