@@ -5,7 +5,6 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import dev.aurakai.auraframefx.models.AiRequest
-import dev.aurakai.auraframefx.models.InteractionResponse
 import java.io.Serializable
 
 /**
@@ -123,11 +122,6 @@ abstract class BaseAgent(agentName: String) {
     abstract fun initializeAdaptiveProtection()
     abstract fun addToScanHistory(scanEvent: Any)
     abstract fun analyzeSecurity(prompt: String): List<ActiveThreat>
-    abstract fun InteractionResponse(
-        content: String,
-        timestamp: Long,
-        metadata: Map<String, Any>
-    ): InteractionResponse
 
     abstract val contextManager: ContextManager
 }
