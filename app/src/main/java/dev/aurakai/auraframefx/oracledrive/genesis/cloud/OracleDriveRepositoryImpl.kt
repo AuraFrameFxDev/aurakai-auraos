@@ -44,7 +44,7 @@ class OracleDriveRepositoryImpl @Inject constructor(
                     )
                 }
 
-                val files = response.body()?.objects?.map { file ->
+                val files: List<OracleDriveFile> = response.body()?.objects?.map { file ->
                     OracleDriveFile(
                         name = file.name,
                         size = file.size,

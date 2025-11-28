@@ -74,29 +74,29 @@ class DefaultSecurityContext @Inject constructor(
         try {
             // Check if the app is debuggable (should be false in release)
             val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
-            
+
             // Check if the app is installed from a trusted source (e.g., Google Play Store)
             val installer = context.packageManager.getInstallerPackageName(context.packageName)
-            val isInstalledFromTrustedSource = installer?.startsWith("com.android.vending") == true || 
+            val isInstalledFromTrustedSource = installer?.startsWith("com.android.vending") == true ||
                                              installer?.startsWith("com.google.android.feedback") == true
-            
+
             // Check if the app is running in an emulator (could indicate testing environment)
-            val isEmulator = (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) || 
-                           Build.FINGERPRINT.startsWith("generic") || 
-                           Build.FINGERPRINT.startsWith("unknown") || 
-                           Build.HARDWARE.contains("goldfish") || 
-                           Build.HARDWARE.contains("ranchu") || 
-                           Build.MODEL.contains("google_sdk") || 
-                           Build.MODEL.contains("Emulator") || 
-                           Build.MODEL.contains("Android SDK") || 
+            val isEmulator = (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+                           Build.FINGERPRINT.startsWith("generic") ||
+                           Build.FINGERPRINT.startsWith("unknown") ||
+                           Build.HARDWARE.contains("goldfish") ||
+                           Build.HARDWARE.contains("ranchu") ||
+                           Build.MODEL.contains("google_sdk") ||
+                           Build.MODEL.contains("Emulator") ||
+                           Build.MODEL.contains("Android SDK") ||
                            Build.MANUFACTURER.contains("Genymotion") ||
-                           (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) || 
+                           (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
                            "google_sdk" == Build.PRODUCT
-            
+
             // Return true only if all checks pass
             val isValid = !isDebuggable && isInstalledFromTrustedSource && !isEmulator
             return ApplicationIntegrity(signatureHash = "unknown", isValid = isValid)
-            
+
         } catch (e: Exception) {
             // Log the error and return false if any check fails
             UnifiedLoggingSystem.e("Application integrity check failed", e)
@@ -109,20 +109,20 @@ class DefaultSecurityContext @Inject constructor(
         try {
             val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
             val isDeviceSecure = keyguardManager?.isDeviceSecure ?: false
-            
+
             // Check if the device has a screen lock enabled
             val isScreenLockEnabled = keyguardManager?.isKeyguardSecure ?: false
-            
+
             // Check if the device is encrypted
             val devicePolicyManager = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as? DevicePolicyManager
-            val isEncrypted = devicePolicyManager?.storageEncryptionStatus == 
+            val isEncrypted = devicePolicyManager?.storageEncryptionStatus ==
                             DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE ||
-                            devicePolicyManager?.storageEncryptionStatus == 
+                            devicePolicyManager?.storageEncryptionStatus ==
                             DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
-            
+
             // Return true only if all security measures are in place
             return isDeviceSecure && isScreenLockEnabled && isEncrypted
-            
+
         } catch (e: Exception) {
             // Log the error and return false if any check fails
             UnifiedLoggingSystem.e("Secure mode check failed", e)
@@ -130,7 +130,7 @@ class DefaultSecurityContext @Inject constructor(
         }
     }
 
-    override suspend fun logSecurityEvent(event: SecurityEvent) {
+    override suspend fun logSecurityEvent(event: String, string: String) {
         UnifiedLoggingSystem.i("Security Event: ${event.type} - ${event.details}")
     }
 }

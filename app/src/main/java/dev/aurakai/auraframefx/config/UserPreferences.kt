@@ -135,7 +135,7 @@ class UserPreferences(private val context: Context) {
             id = userId ?: "",
             name = userName ?: "",
             email = userEmail ?: "",
-            apiKey = apiKey
+            apiKey = apiKey,
         )
     }
 

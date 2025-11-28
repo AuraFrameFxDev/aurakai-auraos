@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
  * **CRITICAL:** Requires GEMINI_API_KEY in BuildConfig or environment
  *
  * @see VertexAIConfig
- * @see VertexAIModule
+ * @see dev.aurakai.auraframefx.di.VertexAIModule
  */
 class RealVertexAIClientImpl(
     private val config: VertexAIConfig,

@@ -24,6 +24,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 /**
  * Genesis Protocol Subscription Screen

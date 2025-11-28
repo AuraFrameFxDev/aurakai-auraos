@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.billing
 
 import androidx.compose.runtime.*
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 
 /**

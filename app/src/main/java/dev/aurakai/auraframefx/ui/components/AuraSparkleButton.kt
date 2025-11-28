@@ -39,7 +39,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonTeal
 fun AuraSparkleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: @Composable () -> Unit = "Sparkle",
+    content: @Composable () -> Unit = { Text("Sparkle") },
 ) {
     // Infinite pulsing animation for glow effect
     val infiniteTransition = rememberInfiniteTransition(label = "sparkle_glow")
