@@ -117,17 +117,21 @@ abstract class OracleDriveModule { // Changed to abstract class
         }
 
         /**
-         * Creates an OracleDriveApi using the application shared OkHttpClient but adding a security interceptor on top.
+         * Creates an OracleDriveApi using an internal OkHttpClient configured with a security interceptor.
+         *
+         * Note: building a private client here avoids relying on an unqualified shared OkHttpClient
+         * provider (there are multiple OkHttpClient providers across modules which caused
+         * Dagger duplicate-binding errors). Keeping this client internal is the minimal change
+         * to unblock Hilt compilation while preserving security headers.
          */
         @Provides
         @Singleton
         fun provideOracleDriveApi(
-            sharedClient: OkHttpClient,
             securityContext: SecurityContext,
             cryptoManager: CryptographyManager,
         ): OracleDriveApi {
-            // Build a client derived from sharedClient with an extra interceptor for security headers
-            val clientBuilder = sharedClient.newBuilder()
+            // Build a dedicated client with security interceptor (isolated from other modules)
+            val clientBuilder = OkHttpClient.Builder()
                 .addInterceptor(securityInterceptor(securityContext, cryptoManager))
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)

@@ -1,10 +1,9 @@
 package dev.aurakai.auraframefx.ui.recovery
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
-import timber.log.Timber
 
 /**
  * Error boundary for Compose screens
@@ -34,7 +33,7 @@ fun ComposableErrorBoundary(
 ) {
     val errorHandler = remember {
         ErrorHandler { error ->
-            Timber.e(error, "Error in $screenName")
+            Log.e("ComposableErrorBoundary", "Error in $screenName", error)
             onError?.invoke(error) ?: run {
                 // Trigger recovery system if manager is available
                 recoveryManager?.triggerRecovery(
@@ -57,12 +56,13 @@ fun ComposableErrorBoundary(
 /**
  * Error handler for Compose errors
  */
-private class ErrorHandler(
+internal class ErrorHandler(
     private val onError: (Throwable) -> Unit
 ) {
     fun install() {
         // Set up error handling for this scope
         // In production, you'd integrate with Compose error handling
+        // Optionally hook into Thread default uncaught handler or other mechanisms here.
     }
 
     fun handleError(error: Throwable) {
