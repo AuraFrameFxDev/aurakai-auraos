@@ -35,6 +35,8 @@ android {
         versionCode = 1
         versionName = "0.1.0"
 
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         // Genesis Protocol: Gemini 2.0 Flash API Key
         // Add to local.properties: GEMINI_API_KEY=your_key_here
         // Get key from: https://aistudio.google.com/app/apikey
