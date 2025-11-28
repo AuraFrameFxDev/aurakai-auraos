@@ -31,7 +31,12 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    // AI Agent operations
+    /**
+     * Fetches the status for the specified AI agent type and returns it as a domain AgentStatus.
+     *
+     * @param agentType Identifier of the AI agent whose status should be retrieved.
+     * @return A Flow that emits a `Result` containing the mapped `AgentStatus` on success, or a failure `Result` with the exception on error.
+     */
     fun getAgentStatus(agentType: String) = flow {
         try {
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
