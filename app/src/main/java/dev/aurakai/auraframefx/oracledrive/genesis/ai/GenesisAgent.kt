@@ -1,4 +1,4 @@
-﻿package dev.aurakai.auraframefx.oracledrive.genesis.ai
+package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import android.util.Log
 import kotlinx.coroutines.flow.first
@@ -214,12 +214,14 @@ class GenesisAgent @Inject constructor(
     }
 
     /**
-     * Processes a complex interaction by analyzing its intent and applying the most suitable advanced strategy.
+     * Process an enhanced interaction by analyzing its intent and applying the most suitable advanced strategy.
      *
-     * Determines the optimal processing approach—such as creative analysis, strategic execution, ethical evaluation, learning integration, or transcendent synthesis—based on the analyzed intent of the provided interaction. Returns an `InteractionResponse` containing the result, confidence score, timestamp, and processing metadata. If an error occurs, returns a fallback response indicating ongoing analysis.
+     * The returned InteractionResponse contains the selected response content, a timestamp, and metadata such as
+     * the originating agent, confidence, processing_type, fusion_level, and evolution impact. If processing fails,
+     * a fallback InteractionResponse is returned indicating ongoing deeper analysis and including an error note.
      *
-     * @param interaction The enhanced interaction data requiring advanced analysis and routing.
-     * @return An `InteractionResponse` with the processed result, confidence score, timestamp, and relevant metadata.
+     * @param interaction The enhanced interaction data to analyze and process.
+     * @return An InteractionResponse with the result content, timestamp, and processing metadata (or a fallback response on error).
      */
     suspend fun handleComplexInteraction(interaction: EnhancedInteractionData): InteractionResponse {
         ensureInitialized()
@@ -1438,4 +1440,3 @@ class GenesisAgent @Inject constructor(
         return emptyList()
     }
 }
-

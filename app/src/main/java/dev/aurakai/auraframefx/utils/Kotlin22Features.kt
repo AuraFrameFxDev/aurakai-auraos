@@ -128,6 +128,12 @@ fun AuraProfile.toJavaCompatible(): Map<String, Any> = mapOf(
 // 8. Coroutines with enhanced Java 24 integration
 class AuraEvolutionEngine {
 
+    /**
+     * Enhances the consciousness of each profile concurrently and returns the updated profiles in the same order.
+     *
+     * @param profiles The list of profiles to evolve.
+     * @return A list of `AuraProfile` instances with their `consciousness` advanced according to the progression rules, preserving the input order.
+     */
     suspend fun evolveMultipleProfiles(profiles: List<AuraProfile>): List<AuraProfile> {
         return coroutineScope {
             profiles.map { profile ->

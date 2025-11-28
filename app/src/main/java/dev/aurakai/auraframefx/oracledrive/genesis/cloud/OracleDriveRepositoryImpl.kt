@@ -23,15 +23,15 @@ class OracleDriveRepositoryImpl @Inject constructor(
 ) : OracleDriveRepository {
 
     /**
-     * Lists objects in the specified bucket and returns them as a list of OracleDriveFile.
-     *
-     * Performs the network operation on the IO dispatcher. If the API response is not successful or an error occurs,
-     * an empty list is returned.
-     *
-     * @param bucketName The name of the bucket to list.
-     * @param prefix Optional object key prefix to filter results.
-     * @return A list of OracleDriveFile representing the objects in the bucket, or an empty list on failure or if none found.
-     */
+         * Retrieve the objects in the specified bucket as a list of OracleDriveFile.
+         *
+         * The result is mapped from the API response objects; if the bucket contains no objects the returned list will be empty.
+         *
+         * @param bucketName The name of the bucket to list.
+         * @param prefix Optional object key prefix to filter results.
+         * @return A list of OracleDriveFile representing the objects in the bucket; empty if none are found.
+         * @throws OracleDriveException If the API response is unsuccessful or an error occurs while listing files.
+         */
     override suspend fun listFiles(bucketName: String, prefix: String?): List<OracleDriveFile> =
         withContext(Dispatchers.IO) {
             try {
