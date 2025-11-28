@@ -306,3 +306,4 @@ Unresolved reference 'viewModelStoreOwner'.
 Unresolved reference 'key'.
 Unresolved reference 'viewModelStoreOwner'.
 Unresolved reference 'key'.
+Kotlin build report is written to file:///C:/Users/Wehtt/AndroidStudioProjects/A.u.r.a.K.a.i-Emergence_IdentityModel/build/reports/kotlin-build/aurakai-reactive-intelligence-build-2025-11-27-23-29-11-0.txt
