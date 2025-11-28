@@ -38,7 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionScreen(
-    viewModel: SubscriptionViewModel = hiltViewModel(viewModelStoreOwner, key),
+    viewModel: SubscriptionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
