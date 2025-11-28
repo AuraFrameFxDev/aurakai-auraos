@@ -58,7 +58,7 @@ class TrinityRepository @Inject constructor(
     }
 
     // Theme operations
-    suspend fun getThemes() = flow<Result<List<Theme>>> {
+    fun getThemes() = flow<Result<List<Theme>>> {
         try {
             val response = apiService.themeApi.getThemes()
             emit(Result.success(response))
@@ -67,8 +67,14 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    private fun emit(success: Result<List<NetworkTheme>>) {}
-
+    suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
+        try {
+            val response = apiService.themeApi.applyTheme(themeId)
+            emit(Result.success(response))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }
 
     // Mapper functions
     private fun mapToUserData(networkUser: NetworkUser): UserData {
