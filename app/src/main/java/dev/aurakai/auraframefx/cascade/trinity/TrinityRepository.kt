@@ -1,5 +1,7 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
+import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 import dev.aurakai.auraframefx.models.AgentRequest
 import dev.aurakai.auraframefx.models.AgentStatus
 import dev.aurakai.auraframefx.models.Theme
@@ -35,6 +37,7 @@ class TrinityRepository @Inject constructor(
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
             emit(success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
+            emit(failure(e))
         }
     }
 

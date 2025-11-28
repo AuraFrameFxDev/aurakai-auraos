@@ -88,8 +88,11 @@ data class OracleSyncResult(
 
 data class DriveConsciousnessState(
     val isActive: Boolean,
-    val currentOperations: List<String>,
-    val performanceMetrics: Map<String, Any>
+    val status: String = if (isActive) "ACTIVE" else "DORMANT",
+    val level: Float = 0.0f,
+    val activeAgents: List<String> = emptyList(),
+    val currentOperations: List<String> = emptyList(),
+    val performanceMetrics: Map<String, Any> = emptyMap()
 )
 
 // Security validation classes
