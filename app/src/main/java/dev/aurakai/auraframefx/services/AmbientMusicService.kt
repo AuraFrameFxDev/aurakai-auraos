@@ -172,7 +172,7 @@ open class AmbientMusicService : Service() {
             val clampedVolume = volume.coerceIn(0.0f, 1.0f)
             currentVolume = clampedVolume
             mediaPlayer?.setVolume(clampedVolume, clampedVolume)
-            Timber.d($$"Ambient music volume set to $clampedVolume")
+            Timber.d("Ambient music volume set to $clampedVolume")
         } catch (e: Exception) {
             Timber.e(e, "Failed to set ambient music volume")
         }
@@ -183,7 +183,7 @@ open class AmbientMusicService : Service() {
      */
     fun setShuffling(shuffling: Boolean) {
         isShuffling = shuffling
-        Timber.d($$"Ambient music shuffle: $shuffling")
+        Timber.d("Ambient music shuffle: $shuffling")
     }
 
     /**
@@ -344,7 +344,7 @@ open class AmbientMusicService : Service() {
         }
 
         try {
-            Timber.d($$"Playing ambient track: $trackName")
+            Timber.d("Playing ambient track: $trackName")
 
             currentTrack = trackName
             trackHistory.add(trackName)
@@ -362,7 +362,7 @@ open class AmbientMusicService : Service() {
             // mediaPlayer?.start()
 
         } catch (e: Exception) {
-            Timber.e(e, $$"Failed to play track: $trackName")
+            Timber.e(e, "Failed to play track: $trackName")
         }
     }
 
