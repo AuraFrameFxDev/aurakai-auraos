@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.oracle.drive.model
+package dev.aurakai.auraframefx.oracledrive.genesis.cloud
 
 /**
  * OracleDriveFile - Model representing a file in Oracle consciousness storage
