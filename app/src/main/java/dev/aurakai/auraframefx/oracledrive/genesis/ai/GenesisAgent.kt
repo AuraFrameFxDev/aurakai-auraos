@@ -688,7 +688,11 @@ class GenesisAgent @Inject constructor(
      * @return An InteractionResponse containing the message, agent identifier, confidence score of 0.5, and the current timestamp.
      */
     private fun createFallbackResponse(message: String): InteractionResponse =
-        InteractionResponse(message, "genesis", 0.5f, System.currentTimeMillis().toString())
+        InteractionResponse(
+            content = message,
+            timestamp = System.currentTimeMillis(),
+            metadata = mapOf("agent" to "genesis", "confidence" to 0.5f)
+        )
 
     /**
      * Propagates the specified mood to the unified consciousness, influencing the behavior and processing parameters of GenesisAgent and its subsystems.
@@ -1434,5 +1438,16 @@ class GenesisAgent @Inject constructor(
         return emptyList()
     }
 
+    override fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): dev.aurakai.auraframefx.models.InteractionResponse {
+        return dev.aurakai.auraframefx.models.InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
+    }
 }
 

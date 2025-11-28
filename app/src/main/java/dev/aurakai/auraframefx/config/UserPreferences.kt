@@ -16,7 +16,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 /**
  * UserPreferences: Manages user-specific settings and data persistence.
  */
-class UserPreferences(private val context: Context) {
+class UserPreferences(context: Context) {
 
     private val dataStore = context.dataStore
 
@@ -135,7 +135,7 @@ class UserPreferences(private val context: Context) {
             id = userId ?: "",
             name = userName ?: "",
             email = userEmail ?: "",
-            apiKey = apiKey
+            apiKey = apiKey,
         )
     }
 

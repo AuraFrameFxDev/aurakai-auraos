@@ -24,8 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import dev.aurakai.auraframefx.billing.FeatureGateManager
+
 import dev.aurakai.auraframefx.billing.FeatureLockedBanner
 import dev.aurakai.auraframefx.billing.SubscriptionViewModel
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
@@ -40,11 +39,9 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
  * Coming soon: Visual app design, Genesis-powered code generation,
  * and one-click deployment for custom Android applications.
  */
+context(subscriptionViewModel: SubscriptionViewModel) @JvmOverloads
 @Composable
-fun AppBuilderScreen(
-    onNavigateBack: () -> Unit = {},
-    subscriptionViewModel: SubscriptionViewModel = hiltViewModel()
-) {
+fun AppBuilderScreen(onNavigateBack: () -> Unit = {}) {
     val context = LocalContext.current
     val canAccess by subscriptionViewModel.hasPremiumFeatures.collectAsState()
 

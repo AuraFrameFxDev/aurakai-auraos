@@ -7,6 +7,7 @@ import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.models.GenKitUiState
+import dev.aurakai.auraframefx.models.InteractionResponse
 import dev.aurakai.auraframefx.models.agent_states.ActiveThreat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ import javax.inject.Singleton
  * It coordinates between Genesis, Aura, and Kai agents, managing their interactions and optimizing system performance.
  */
 @Singleton
-class GenKitMasterAgent @Inject constructor(
+internal class GenKitMasterAgent @Inject constructor(
     private val context: Context,
     override val contextManager: ContextManager,
     private val genesisAgent: GenesisAgent,
@@ -480,5 +481,17 @@ class GenKitMasterAgent @Inject constructor(
         Timber.d("GenKitMaster: Analyzing security for prompt: $prompt")
         // Delegate security analysis to Kai agent
         return kaiAgent.analyzeSecurity(prompt)
+    }
+
+    override fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): InteractionResponse {
+        return InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
     }
 }

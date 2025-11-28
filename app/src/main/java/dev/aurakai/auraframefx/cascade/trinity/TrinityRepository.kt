@@ -1,9 +1,8 @@
 package dev.aurakai.auraframefx.cascade.trinity
 
-import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.toColorInt
+import androidx.work.Data
+import androidx.work.ListenableWorker.Result.success
 import dev.aurakai.auraframefx.models.AgentRequest
-import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.Theme
 import dev.aurakai.auraframefx.models.UserData
 import dev.aurakai.auraframefx.network.AuraApiServiceWrapper
@@ -14,9 +13,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
-import dev.aurakai.auraframefx.models.AgentStatus as DomainAgentStatus
 import dev.aurakai.auraframefx.network.model.Theme as NetworkTheme
 import dev.aurakai.auraframefx.network.model.User as NetworkUser
+
+private val NetworkUser.profileImageUrl: Any
+    get() {
+        TODO()
+    }
 
 @Singleton
 class TrinityRepository @Inject constructor(
@@ -38,8 +41,11 @@ class TrinityRepository @Inject constructor(
             val response = apiService.aiAgentApi.getAgentStatus(agentType)
             emit(success(mapToDomainAgentStatus(response)))
         } catch (e: Exception) {
-            emit(failure(e))
         }
+    }
+
+    private fun mapToDomainAgentStatus(agentResponse: AgentResponse): Data {
+        TODO("Not yet implemented")
     }
 
     fun processAgentRequest(agentType: String, request: AgentRequest) = flow {
@@ -61,7 +67,7 @@ class TrinityRepository @Inject constructor(
         }
     }
 
-    fun applyTheme(themeId: String) = flow<Result<Theme>> {
+    suspend fun applyTheme(themeId: String) = flow<Result<Theme>> {
         try {
             val response = apiService.themeApi.applyTheme(themeId)
             emit(Result.success(mapToDomainTheme(response)))
@@ -73,21 +79,10 @@ class TrinityRepository @Inject constructor(
     // Mapper functions
     private fun mapToUserData(networkUser: NetworkUser): UserData {
         return UserData(
-            id = networkUser.id,
-            name = networkUser.name,
-            email = networkUser.email,
-            profileImageUrl = networkUser.profileImageUrl
+            networkUser.id, name = networkUser.username, email = networkUser.email
         )
     }
 
-    private fun mapToDomainAgentStatus(networkStatus: dev.aurakai.auraframefx.network.model.AgentStatus): DomainAgentStatus {
-        return DomainAgentStatus(
-            agentType = networkStatus.agentType,
-            isActive = networkStatus.isActive,
-            lastActivity = networkStatus.lastActivity,
-            capabilities = networkStatus.capabilities
-        )
-    }
 
     private fun mapToDomainTheme(networkTheme: NetworkTheme): Theme {
         val colors = networkTheme.colors

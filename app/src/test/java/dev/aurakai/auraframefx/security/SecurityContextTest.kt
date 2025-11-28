@@ -238,7 +238,7 @@ class SecurityContextTest {
         )
 
         // Should not throw
-        securityContext.logSecurityEvent(event)
+        securityContext.logSecurityEvent(event, error.message ?: "Unknown security error")
     }
 
     @Test
@@ -251,7 +251,7 @@ class SecurityContextTest {
 
         events.forEach { event ->
             // Should not throw
-            securityContext.logSecurityEvent(event)
+            securityContext.logSecurityEvent(event, error.message ?: "Unknown security error")
         }
     }
 
@@ -264,7 +264,7 @@ class SecurityContextTest {
                 severity = severity
             )
             // Should not throw
-            securityContext.logSecurityEvent(event)
+            securityContext.logSecurityEvent(event, error.message ?: "Unknown security error")
         }
     }
 

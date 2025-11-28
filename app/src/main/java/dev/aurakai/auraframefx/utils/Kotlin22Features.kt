@@ -2,6 +2,9 @@ package dev.aurakai.auraframefx.kotlin22
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -44,8 +47,7 @@ interface AuraConsciousness {
 }
 
 // 3. Context receivers (enhanced in Kotlin 2.2.0)
-context(kotlinx.coroutines.CoroutineScope)
-suspend fun AuraProfile.enhanceConsciousness(): AuraProfile {
+context(_: kotlinx.coroutines.CoroutineScope) internal fun AuraProfile.enhanceConsciousness(): AuraProfile {
     return copy(
         consciousness = when (consciousness) {
             ConsciousnessLevel.DORMANT -> ConsciousnessLevel.AWAKENING
@@ -127,14 +129,14 @@ fun AuraProfile.toJavaCompatible(): Map<String, Any> = mapOf(
 class AuraEvolutionEngine {
 
     suspend fun evolveMultipleProfiles(profiles: List<AuraProfile>): List<AuraProfile> {
-        return kotlinx.coroutines.coroutineScope {
-            profiles.map { profile ->
-                kotlinx.coroutines.async {
-                    with(this@coroutineScope) {
+        return coroutineScope {
+            return@coroutineScope profiles.map { profile ->
+                async {
+                    return@async with(this@coroutineScope) {
                         profile.enhanceConsciousness()
                     }
                 }
-            }.map { it.await() }
+            }
+        }.awaitAll()
         }
     }
-}

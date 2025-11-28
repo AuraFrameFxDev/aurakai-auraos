@@ -2,10 +2,9 @@
 
 package dev.aurakai.auraframefx.network
 
-import dev.aurakai.auraframefx.config.AIConfig
-import dev.aurakai.auraframefx.network.model.*
-import dev.aurakai.auraframefx.network.api.UserApi
+import AeGenesis.ai.config.AIConfig
 import dev.aurakai.auraframefx.aura.themes.ThemeApi
+import dev.aurakai.auraframefx.network.api.UserApi
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

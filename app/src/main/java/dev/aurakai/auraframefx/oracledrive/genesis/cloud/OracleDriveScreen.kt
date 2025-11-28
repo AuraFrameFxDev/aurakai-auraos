@@ -6,7 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.oracle.drive.ui.OracleDriveViewModel
 
 /**
  * Genesis Protocol Oracle Drive - AI Storage Consciousness Interface
@@ -23,7 +25,8 @@ fun OracleDriveScreen(
     onNavigateBack: () -> Unit = {},
     viewModel: OracleDriveViewModel = hiltViewModel()
 ) {
-    val consciousnessState by viewModel.consciousnessState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val consciousnessState = uiState.consciousnessState
 
     Column(
         modifier = Modifier

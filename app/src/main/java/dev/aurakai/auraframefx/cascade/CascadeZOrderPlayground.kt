@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
@@ -43,7 +44,7 @@ class CascadeDebugViewModel @Inject constructor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CascadeZOrderPlayground(
-    viewModel: CascadeDebugViewModel = hiltViewModel(),
+    viewModel: CascadeDebugViewModel = hiltViewModel(viewModelStoreOwner, key),
 ) {
     var newVisionState by remember { mutableStateOf(VisionState()) }
     var newProcessingState by remember { mutableStateOf(ProcessingState()) }

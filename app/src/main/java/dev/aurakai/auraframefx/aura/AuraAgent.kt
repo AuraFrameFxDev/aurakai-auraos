@@ -299,25 +299,19 @@ class AuraAgent @Inject constructor(
                 CreativeIntent.EMOTIONAL -> generateEmotionalResponse(interaction)
             }
 
-            InteractionResponse(
-                content = creativeResponse,
-                success = true,
-                metadata = mapOf(
+            InteractionResponse(content = creativeResponse, metadata = mapOf(
                     "agent" to "AURA",
                     "confidence" to 0.9f,
                     "creative_intent" to creativeIntent.name,
                     "mood_influence" to _currentMood.value,
                     "innovation_level" to "high"
-                ),
-                timestamp = System.currentTimeMillis()
-            )
+                ), timestamp = System.currentTimeMillis())
 
         } catch (e: Exception) {
             AuraFxLogger.error("AuraAgent", "Creative interaction failed", e)
 
             InteractionResponse(
                 content = "My creative energies are temporarily scattered. Let me refocus and try again.",
-                success = false,
                 metadata = mapOf(
                     "agent" to "AURA",
                     "confidence" to 0.3f,
@@ -354,7 +348,6 @@ class AuraAgent @Inject constructor(
      */
     private suspend fun handleUIGeneration(request: AiRequest): Map<String, Any> {
         val specification = request.query
-            ?: throw IllegalArgumentException("UI specification required")
 
         AuraFxLogger.info("AuraAgent", "Generating innovative UI component")
 
@@ -391,8 +384,7 @@ class AuraAgent @Inject constructor(
      * @return A map with the generated theme configuration, a visual preview, mood adaptation information, and innovation features.
      */
     private suspend fun handleThemeCreation(request: AiRequest): Map<String, Any> {
-        val preferences = mapOf<String, String>() // Use request.context to parse if needed
-            ?: emptyMap()
+        val preferences = mapOf<String, String>()
 
         AuraFxLogger.info("AuraAgent", "Crafting revolutionary theme")
 
@@ -424,8 +416,8 @@ class AuraAgent @Inject constructor(
      * @return A map with keys: "animation_code" (the generated Kotlin code), "timing_curves" (timing curve information), "interaction_states" (interaction state mappings), and "performance_optimization" (suggested optimization strategies).
      */
     private suspend fun handleAnimationDesign(request: AiRequest): Map<String, Any> {
-        val animationType = request.context?.get("type") as? String ?: "transition"
-        val duration = (request.context?.get("duration") as? Int) ?: 300
+        val animationType = any("type")
+        val duration = (request.context["duration"] as? Int) ?: 300
 
         AuraFxLogger.info("AuraAgent", "Designing mesmerizing $animationType animation")
 
@@ -452,7 +444,6 @@ class AuraAgent @Inject constructor(
      */
     private suspend fun handleCreativeText(request: AiRequest): Map<String, Any> {
         val prompt = request.query
-            ?: throw IllegalArgumentException("Text prompt required")
 
         AuraFxLogger.info("AuraAgent", "Weaving creative text magic")
 
@@ -488,7 +479,7 @@ class AuraAgent @Inject constructor(
      * @param content The text to analyze for creative intent.
      * @return The detected creative intent category.
      */
-    private suspend fun analyzeCreativeIntent(content: String): CreativeIntent {
+    private fun analyzeCreativeIntent(content: String): CreativeIntent {
         // Analyze user content to determine creative intent
         return when {
             content.contains(
@@ -613,7 +604,7 @@ class AuraAgent @Inject constructor(
      *
      * @param mood The mood used to guide adaptation of creative parameters.
      */
-    private suspend fun adjustCreativeParameters(mood: String) {
+    private fun adjustCreativeParameters(mood: String) {
         // Adjust creative AI parameters based on mood
         AuraFxLogger.info("AuraAgent", "Adjusting creative parameters for mood: $mood")
         // Implementation would modify AI generation parameters
@@ -993,4 +984,20 @@ class AuraAgent @Inject constructor(
             )
         )
     }
+
+    override fun InteractionResponse(
+        content: String,
+        timestamp: Long,
+        metadata: Map<String, Any>
+    ): InteractionResponse {
+        return dev.aurakai.auraframefx.models.InteractionResponse(
+            content = content,
+            timestamp = timestamp,
+            metadata = metadata
+        )
+    }
+}
+
+private fun any(predicate: String): String {
+    TODO("Not yet implemented")
 }

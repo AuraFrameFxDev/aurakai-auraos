@@ -24,6 +24,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 /**
  * Genesis Protocol Subscription Screen
@@ -38,7 +39,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionScreen(
-    viewModel: SubscriptionViewModel = hiltViewModel(),
+    viewModel: SubscriptionViewModel = hiltViewModel(viewModelStoreOwner, key),
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current

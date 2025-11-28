@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.billing
 
 import androidx.compose.runtime.*
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
@@ -12,7 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
  */
 @Composable
 fun BillingWrapper(
-    viewModel: SubscriptionViewModel = hiltViewModel(),
+    viewModel: SubscriptionViewModel = hiltViewModel(viewModelStoreOwner, key),
     content: @Composable () -> Unit
 ) {
     val subscriptionState by viewModel.subscriptionState.collectAsState()

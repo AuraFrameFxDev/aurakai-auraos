@@ -31,7 +31,7 @@ interface SecurityContext {
     fun isSecureMode(): Boolean
 
     /** Logs a security event */
-    suspend fun logSecurityEvent(event: SecurityEvent)
+    suspend fun logSecurityEvent(event: String, string: String)
 
     /** Starts threat detection monitoring */
     fun startThreatDetection()

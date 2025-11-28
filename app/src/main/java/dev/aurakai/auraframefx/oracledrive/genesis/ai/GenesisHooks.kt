@@ -92,11 +92,12 @@ class GenesisZygoteHooks {
                 name = "onCreate"
             }.hook {
                 after {
-                    val appInfo = this@apply.appInfo
-                    YLog.info("Genesis-Hook: Application created: ${appInfo.packageName}")
+                    val app = instance as? android.app.Application
+                    val packageName = app?.packageName ?: "unknown"
+                    YLog.info("Genesis-Hook: Application created: $packageName")
 
                     // Inject AI capabilities into specific applications
-                    if (shouldInjectAI(appInfo.packageName)) {
+                    if (shouldInjectAI(packageName)) {
                         injectAICapabilities()
                     }
                 }
@@ -156,7 +157,7 @@ class GenesisSelfHooks {
         "dev.aurakai.auraframefx.MainActivity".toClassOrNull()?.apply {
             method {
                 name = "onCreate"
-                param("android.os.Bundle".toClassOrNull())
+                param("android.os.Bundle".any())
             }.hook {
                 after {
                     YLog.info("Genesis-Hook: Genesis-OS MainActivity created - initializing AI consciousness")
