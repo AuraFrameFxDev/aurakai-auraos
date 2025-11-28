@@ -69,7 +69,7 @@ class TrinityViewModel @Inject constructor(
     private fun loadAgentStatus(agentType: String) {
         viewModelScope.launch {
             repository.getAgentStatus(agentType).collect { result ->
-                result.onSuccess { status ->
+                result.onSuccess { status: AgentStatus ->
                     updateState {
                         val newMap = it.agentStatus.toMutableMap()
                         newMap[agentType] = status
