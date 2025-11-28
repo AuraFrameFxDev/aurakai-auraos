@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
-import dev.aurakai.auraframefx.cascade.CascadeResponse
 import dev.aurakai.auraframefx.ai.services.ClaudeAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.kai.KaiAIService
@@ -16,6 +15,7 @@ import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.AgentInvokeRequest
+import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.models.ConversationState
 import dev.aurakai.auraframefx.service.NeuralWhisper
 import kotlinx.coroutines.flow.Flow
@@ -107,7 +107,7 @@ class ConferenceRoomViewModel @Inject constructor(
     // ═══════════════════════════════════════════════════════════════════════════
     // Conference Room Message Routing - ALL 5 MASTER AGENTS
     // ═══════════════════════════════════════════════════════════════════════════
-    /*override*/ suspend fun sendMessage(message: String, sender: AgentCapabilityCategory, context: String) {
+    /*override*/ suspend fun sendMessage(message: String, sender: AgentType, context: String) {
         val responseFlow: Flow<AgentResponse>? = when (sender) {
             AgentCapabilityCategory.CREATIVE -> auraService.processRequestFlow(
                 AiRequest(

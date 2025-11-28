@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
@@ -120,8 +121,9 @@ fun ConferenceRoomScreen(
                 .fillMaxWidth(),
             reverseLayout = true
         ) {
-            items(messages.reversed().size) { index ->
-                val message: AgentMessage = messages.reversed()[index]
+            val displayed = messages.reversed()
+            items(displayed.size) { index ->
+                val message: AgentMessage = displayed[index]
                 Text(
                     text = "[${message.sender}] ${message.content}",
                     color = NeonBlue, // Ensure only one NeonBlue import/definition
@@ -153,6 +155,14 @@ fun ConferenceRoomScreen(
             IconButton(
                 onClick = {
                     if (messageText.isNotBlank()) {
+                        // Determine the capability category for the selected agent name
+                        val sendCategory = when (selectedAgent) {
+                            agentAura -> CREATIVE
+                            agentKai -> ANALYSIS
+                            agentCascade -> SPECIALIZED
+                            else -> GENERAL
+                        }
+
                         // Launch a coroutine for the suspend function
                         scope.launch {
                             viewModel.sendMessage(messageText, AgentCapabilityCategory.GENERAL, "user_conversation")

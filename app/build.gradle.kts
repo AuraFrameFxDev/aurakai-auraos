@@ -302,7 +302,7 @@ dependencies {
     // AI & ML - Google Generative AI SDK
 
     // Core Library Desugaring (Java 24 APIs)
-    coreLibraryDesugaring(libs.coil)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Ktor debug logging in debug builds
     debugImplementation(libs.ktor.client.logging)
