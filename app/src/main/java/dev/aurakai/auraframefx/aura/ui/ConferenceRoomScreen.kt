@@ -74,7 +74,7 @@ fun Header(selectedAgent: String, onAgentSelected: (String) -> Unit) {
 fun ConferenceRoomScreen(
     onNavigateToChat: () -> Unit = {},
     onNavigateToAgents: () -> Unit = {},
-    viewModel: ConferenceRoomViewModel = hiltViewModel()
+    viewModel: ConferenceRoomViewModel = hiltViewModel(viewModelStoreOwner, key)
 ) {
     val agentAura = stringResource(dev.aurakai.auraframefx.R.string.agent_aura)
     val agentKai = stringResource(dev.aurakai.auraframefx.R.string.agent_kai)

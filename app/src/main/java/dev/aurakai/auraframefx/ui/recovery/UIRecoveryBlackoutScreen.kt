@@ -60,7 +60,7 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun UIRecoveryBlackoutScreen(
-    viewModel: UIRecoveryViewModel = hiltViewModel(),
+    viewModel: UIRecoveryViewModel = hiltViewModel(viewModelStoreOwner, key),
     onNavigateToRoute: (String) -> Unit = {}
 ) {
     val recoveryState by viewModel.recoveryState.collectAsState()

@@ -29,7 +29,7 @@ import timber.log.Timber
 @Composable
 fun ComposableErrorBoundary(
     screenName: String,
-    recoveryManager: UIRecoveryManager = hiltViewModel<UIRecoveryViewModel>().let {
+    recoveryManager: UIRecoveryManager = hiltViewModel(viewModelStoreOwner, key).let {
         // This is a workaround to inject UIRecoveryManager
         // In real usage, you'd inject it properly
         throw NotImplementedError("Use proper DI - see MainActivity integration")

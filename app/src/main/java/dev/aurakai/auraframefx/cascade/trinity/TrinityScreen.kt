@@ -28,7 +28,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrinityScreen(
-    viewModel: TrinityViewModel = hiltViewModel(),
+    viewModel: TrinityViewModel = hiltViewModel(viewModelStoreOwner, key),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }

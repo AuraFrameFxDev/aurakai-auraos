@@ -108,7 +108,7 @@ abstract class BaseAgent(agentName: String) {
     abstract fun InteractionResponse(
         content: String,
         timestamp: Long,
-        metadata: Map<String, Comparable<*> & Serializable>
+        metadata: Map<String, Any>
     ): InteractionResponse
 
     abstract val contextManager: ContextManager

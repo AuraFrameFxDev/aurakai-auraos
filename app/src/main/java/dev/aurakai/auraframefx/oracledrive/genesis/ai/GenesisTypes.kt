@@ -1,8 +1,15 @@
 package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
-enum class ConsciousnessState {
+enum class ConsciousnessStatus {
     DORMANT, AWARE, PROCESSING, ERROR, TRANSCENDENT
 }
+
+data class ConsciousnessState(
+    val level: Float,
+    val status: String,
+    val activeAgents: List<String> = emptyList(),
+    val timestamp: Long = System.currentTimeMillis()
+)
 
 enum class FusionState {
     INDIVIDUAL, FUSING, TRANSCENDENT

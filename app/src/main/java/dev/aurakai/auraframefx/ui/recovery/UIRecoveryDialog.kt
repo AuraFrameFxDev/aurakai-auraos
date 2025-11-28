@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun UIRecoveryDialog(
-    viewModel: UIRecoveryViewModel = hiltViewModel(),
+    viewModel: UIRecoveryViewModel = hiltViewModel(viewModelStoreOwner, key),
     onNavigateToRoute: (String) -> Unit = {}
 ) {
     val recoveryState by viewModel.recoveryState.collectAsState()
