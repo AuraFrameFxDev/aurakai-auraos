@@ -11,6 +11,7 @@ import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
 // import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 
 import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
+import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -61,6 +62,17 @@ object GenesisRoutes {
 
     // Gates / Module Carousel
     const val GATES = "gates"
+
+    // Gate Routes (mapped from GateConfig)
+    const val ROOT_TOOLS = "root_tools"
+    const val SYSTEM_MONITOR = "system_monitor"
+    const val SENTINELS_FORTRESS = "sentinels_fortress"
+    const val FIREWALL = "firewall"
+    const val CHROMA_CORE = "chroma_core"
+    const val COLLAB_CANVAS = "collab_canvas"
+    const val AGENT_HUB = "agent_hub"
+    const val SPHERE_GRID = "sphere_grid"
+    const val GROWTH_METRICS = "growth_metrics"
 }
 
 /**
@@ -83,6 +95,17 @@ fun GenesisNavigationHost(
                 navController = navController
             )
         }
+
+        // Gate Destinations (Prevent Crashes)
+        composable(GenesisRoutes.ROOT_TOOLS) { PlaceholderScreen("Root Tools") }
+        composable(GenesisRoutes.SYSTEM_MONITOR) { PlaceholderScreen("System Monitor") }
+        composable(GenesisRoutes.SENTINELS_FORTRESS) { PlaceholderScreen("Sentinel's Fortress") }
+        composable(GenesisRoutes.FIREWALL) { PlaceholderScreen("Firewall") }
+        composable(GenesisRoutes.CHROMA_CORE) { PlaceholderScreen("ChromaCore") }
+        composable(GenesisRoutes.COLLAB_CANVAS) { PlaceholderScreen("CollabCanvas") }
+        composable(GenesisRoutes.AGENT_HUB) { PlaceholderScreen("Agent Hub") }
+        composable(GenesisRoutes.SPHERE_GRID) { PlaceholderScreen("Sphere Grid") }
+        composable(GenesisRoutes.GROWTH_METRICS) { PlaceholderScreen("Growth Metrics") }
 
         // Home & Intro
         composable(GenesisRoutes.HOME) {

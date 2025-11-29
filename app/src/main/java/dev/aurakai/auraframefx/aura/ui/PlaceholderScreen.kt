@@ -100,7 +100,7 @@ data class DiagnosticResult(
 )
 
 @Composable
-fun PlaceholderScreen() {
+fun PlaceholderScreen(title: String = "GENESIS-OS DIAGNOSTICS") {
     var isScanning by remember { mutableStateOf(false) }
     var scanProgress by remember { mutableStateOf(0f) }
     var lastScanTime by remember { mutableStateOf(System.currentTimeMillis()) }
@@ -214,6 +214,7 @@ fun PlaceholderScreen() {
             // Header with system status
             item {
                 SystemStatusHeader(
+                    title = title,
                     isScanning = isScanning,
                     scanProgress = scanProgress,
                     lastScanTime = lastScanTime,
@@ -352,6 +353,7 @@ private fun DrawScope.drawPulseWaves() {
 
 @Composable
 fun SystemStatusHeader(
+    title: String,
     isScanning: Boolean,
     scanProgress: Float,
     lastScanTime: Long,
@@ -374,7 +376,7 @@ fun SystemStatusHeader(
             ) {
                 Column {
                     Text(
-                        text = "GENESIS-OS DIAGNOSTICS",
+                        text = title.uppercase(),
                         style = TextStyle(
                             color = primaryCyan,
                             fontSize = 22.sp,
