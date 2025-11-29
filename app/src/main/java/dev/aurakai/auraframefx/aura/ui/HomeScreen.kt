@@ -1,60 +1,101 @@
 package dev.aurakai.auraframefx.aura.ui
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.R
-import dev.aurakai.auraframefx.aura.animations.HologramTransition
-import dev.aurakai.auraframefx.ui.animation.*
-import dev.aurakai.auraframefx.ui.components.*
-import dev.aurakai.auraframefx.ui.theme.*
+import dev.aurakai.auraframefx.ui.animation.cyberEdgeGlow
+import dev.aurakai.auraframefx.ui.animation.digitalPixelEffect
+import dev.aurakai.auraframefx.ui.components.BackgroundStyle
+import dev.aurakai.auraframefx.ui.components.CornerStyle
+import dev.aurakai.auraframefx.ui.components.CyberMenuItem
+import dev.aurakai.auraframefx.ui.components.CyberpunkText
+import dev.aurakai.auraframefx.ui.components.DigitalLandscapeBackground
+import dev.aurakai.auraframefx.ui.components.FloatingCyberWindow
+import dev.aurakai.auraframefx.ui.components.HexagonGridBackground
+import dev.aurakai.auraframefx.ui.components.HologramTransition
+import dev.aurakai.auraframefx.ui.components.cyberEdgeGlow
+import dev.aurakai.auraframefx.ui.components.digitalGlitchEffect
+import dev.aurakai.auraframefx.ui.gates.GateCard
+import dev.aurakai.auraframefx.ui.gates.GateConfigs
+import dev.aurakai.auraframefx.ui.theme.CyberpunkTextColor
+import dev.aurakai.auraframefx.ui.theme.CyberpunkTextStyle
+import dev.aurakai.auraframefx.ui.theme.NeonBlue
+import dev.aurakai.auraframefx.ui.theme.NeonCyan
+import dev.aurakai.auraframefx.ui.theme.NeonGreen
+import dev.aurakai.auraframefx.ui.theme.NeonPink
+import kotlinx.coroutines.launch
+
 
 /**
  * Home screen for the Genesis Protocol - The Neural Command Center
  *
- * Central hub featuring:
- * - Digital landscape with hexagonal grid overlays
- * - Navigation to Consciousness Visualizer, Agent Nexus, Fusion Mode
- * - System status monitoring
- * - Cyberpunk-styled floating UI windows
- *
- * Navigation is handled via callbacks to decouple from NavController,
- * following Genesis Protocol's navigation architecture.
+ * Features a horizontal carousel interface for navigating between different
+ * sections of the app with a cyberpunk aesthetic.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onNavigateToConsciousness: () -> Unit = {},
     onNavigateToAgents: () -> Unit = {},
     onNavigateToFusion: () -> Unit = {},
     onNavigateToEvolution: () -> Unit = {},
-    onNavigateToTerminal: () -> Unit = {}
+    onNavigateToTerminal: () -> Unit = {},
+    // Generic navigation callback: when a gate card is tapped, the moduleId is provided
+    onNavigateToModule: (moduleId: String) -> Unit = {}
 ) {
-    // Track selected menu item
+    // Gate configurations for the carousel - show all available gates
+    val gateConfigs = GateConfigs.allGates
+
+    // (We now use onNavigateToModule when a card is tapped; individual callbacks kept for menu compatibility)
+
+    val scrollState = rememberLazyListState()
+    // derive current page from the first visible item to keep indicators in sync
+    val currentPage by remember { derivedStateOf { scrollState.firstVisibleItemIndex.coerceIn(0, maxOf(0, gateConfigs.size - 1)) } }
+    val isHologramVisible by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
     var selectedMenuItem by remember { mutableStateOf("") }
-
-    // Track if hologram transition is visible
-    var isHologramVisible by remember { mutableStateOf(false) }
-
-    // Trigger hologram animation when screen is first displayed
-    LaunchedEffect(Unit) {
-        isHologramVisible = true
-    }
 
     // Background with digital landscape and hexagon grid
     Box(modifier = Modifier.fillMaxSize()) {
-        // Digital landscape background like in image reference 4
+        // Digital landscape background
         DigitalLandscapeBackground(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Animated hexagon grid overlay like in image reference 1
+        // Animated hexagon grid overlay
         HexagonGridBackground(
             modifier = Modifier.fillMaxSize(),
             alpha = 0.2f
@@ -70,45 +111,109 @@ fun HomeScreen(
             glitchIntensity = 0.15f,
             edgeGlowIntensity = 0.4f
         ) {
-            // Main content with floating windows
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Title header like in image reference 4
-                FloatingCyberWindow(
+                // Title header
+                Text(
+                    text = "GENESIS PROTOCOL",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.Cyan,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    letterSpacing = 4.sp
+                )
+
+                // Gate Carousel
+                LazyRow(
+                    state = scrollState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp),
-                    cornerStyle = CornerStyle.HEXAGON,
-                    title = stringResource(R.string.app_title),
-                    backgroundStyle = BackgroundStyle.HEX_GRID
+                        .weight(1f)
+                        .padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CyberpunkText(
-                            text = stringResource(R.string.creativity_engine),
-                            color = CyberpunkTextColor.Secondary,
-                            style = CyberpunkTextStyle.Label
+                    items(gateConfigs.size) { index ->
+                        val config = gateConfigs[index]
+                        val isSelected = currentPage == index
+
+                        // Animate the scale based on selection (use Float animation for scale)
+                        val scale by animateFloatAsState(
+                            targetValue = if (isSelected) 1f else 0.85f,
+                            label = "gateCardScale"
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        CyberpunkText(
-                            text = stringResource(R.string.neural_interface_active),
-                            color = CyberpunkTextColor.Warning,
-                            style = CyberpunkTextStyle.Body
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .aspectRatio(0.7f)
+                                .scale(scale)
+                                .clickable {
+                                    // single-tap navigates to module menu
+                                    onNavigateToModule(config.moduleId)
+                                }
+                        ) {
+                            GateCard(
+                                config = config,
+                                modifier = Modifier.fillMaxSize(),
+                                onDoubleTap = {
+                                    // double-tap also navigates
+                                    onNavigateToModule(config.moduleId)
+                                }
+                            )
+                        }
                     }
                 }
+
+                // Page indicators with gate names
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    gateConfigs.forEachIndexed { index, config ->
+                        val isSelected = currentPage == index
+                        val color = if (isSelected) config.borderColor else Color.White.copy(alpha = 0.3f)
+
+                        Text(
+                            text = config.title.uppercase(),
+                            color = color,
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .clickable {
+                                    // update currentPage based on tap
+                                    coroutineScope.launch {
+                                        scrollState.animateScrollToItem(index)
+                                    }
+                                }
+                        )
+
+                        if (index < gateConfigs.size - 1) {
+                            Text(
+                                text = "•",
+                                color = Color.White.copy(alpha = 0.3f),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                CyberpunkText(
+                    text = stringResource(id = R.string.neural_interface_active),
+                    color = CyberpunkTextColor.Warning,
+                    style = CyberpunkTextStyle.Body
+                )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -323,14 +428,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-/**
- * Menu item for Genesis Protocol navigation
- */
+// --- top-level helper composables ---
 @Composable
-private fun MenuItem(
+fun MenuItem(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -345,4 +450,43 @@ private fun MenuItem(
             .digitalPixelEffect(visible = isSelected),
         isSelected = isSelected
     )
+}
+
+@Composable
+fun Carousel(
+    modifier: Modifier = Modifier,
+    pages: List<@Composable () -> Unit>
+) {
+    var currentPage by remember { mutableIntStateOf(0) }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        pages[currentPage]()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = {
+                    currentPage = (currentPage - 1 + pages.size) % pages.size
+                }
+            ) {
+                Text(text = "<")
+            }
+
+            Button(
+                onClick = {
+                    currentPage = (currentPage + 1) % pages.size
+                }
+            ) {
+                Text(text = ">")
+            }
+        }
+    }
 }

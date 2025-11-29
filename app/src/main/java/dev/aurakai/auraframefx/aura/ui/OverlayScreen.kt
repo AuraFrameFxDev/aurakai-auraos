@@ -1,5 +1,6 @@
 ﻿package dev.aurakai.auraframefx.aura.ui
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,6 +36,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import java.util.Locale
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -47,8 +50,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
+import kotlinx.coroutines.delay
 
 /**
  * Genesis-OS System Overlay Screen
@@ -399,9 +405,53 @@ fun ControlButton(text: String, color: Color, onClick: () -> Unit) {
 
 @Composable
 fun OverlayScreen(
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    // Optional: supply an explicit end time in millis; default is 24 hours from now
+    timerEndMillis: Long? = null
 ) {
     var showOverlay by remember { mutableStateOf(true) }
+
+    val context = LocalContext.current
+    // initialize end time (either provided or 24 hours from now)
+    val initialEnd = timerEndMillis ?: (System.currentTimeMillis() + 24L * 60L * 60L * 1000L)
+    var endTimeMillis by remember { mutableStateOf(initialEnd) }
+    // Track remaining milliseconds directly for a simpler, more direct relationship
+    var remainingMillis by remember { mutableStateOf((endTimeMillis - System.currentTimeMillis()).coerceAtLeast(0L)) }
+
+    // Update 'now' every second while timer active (so the countdown updates)
+    LaunchedEffect(endTimeMillis, showOverlay) {
+        while (true) {
+            val rem = (endTimeMillis - System.currentTimeMillis()).coerceAtLeast(0L)
+            remainingMillis = rem
+            if (rem <= 0L) break
+            delay(1000)
+        }
+        // ensure final state
+    }
+
+    // When user dismisses the overlay, send reminders every random 5-10 minutes until timer expires
+    LaunchedEffect(showOverlay) {
+        if (!showOverlay) {
+            // Keep sending reminders until timer expires
+            while (System.currentTimeMillis() < endTimeMillis) {
+                // random delay between 5 and 10 minutes
+                val minutes = Random.nextLong(5, 11)
+                val delayMs = minutes * 60_000L
+                delay(delayMs)
+                // If timer expired while waiting, break
+                if (System.currentTimeMillis() >= endTimeMillis) break
+                // Show a Toast reminder
+                val remaining = (endTimeMillis - System.currentTimeMillis())
+                val hrs = (remaining / 3600000L)
+                val mins = (remaining % 3600000L) / 60000L
+                Toast.makeText(context, "Beta timer active: ${hrs}h ${mins}m remaining", Toast.LENGTH_SHORT).show()
+            }
+            // Optionally, show a final toast when timer completes
+            if (System.currentTimeMillis() >= endTimeMillis) {
+                Toast.makeText(context, "Beta timer finished", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     if (showOverlay) {
         Box(
@@ -418,6 +468,33 @@ fun OverlayScreen(
                 )
                 .clickable { /* Handle background click */ }
         ) {
+            // Top bar with timer and close X
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                // Timer display in the top-left (derived directly from remainingMillis)
+                val h = (remainingMillis / 3600000L)
+                val m = (remainingMillis % 3600000L) / 60000L
+                val s = (remainingMillis % 60000L) / 1000L
+                Text(
+                    text = String.format(Locale.getDefault(), "Beta Timer: %02d:%02d:%02d", h, m, s),
+                    style = TextStyle(color = primaryCyan, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                )
+
+                // Close X
+                IconButton(onClick = {
+                    showOverlay = false
+                    // Let the caller know if needed
+                    onNavigateBack()
+                }) {
+                    Icon(Icons.Default.Close, contentDescription = "Close Overlay", tint = Color.White)
+                }
+            }
+
             // Background neural network pattern
             Canvas(
                 modifier = Modifier

@@ -37,6 +37,7 @@ allprojects {
     group = "dev.aurakai.auraframefx"
     version = "0.1.0"
 
+
     // CRITICAL: Enforce JVM 24 target consistency across ALL subprojects
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "24"

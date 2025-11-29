@@ -1,97 +1,359 @@
 package dev.aurakai.auraframefx.ui.gates
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
+import kotlin.math.min
 
 /**
- * Main gate navigation screen with horizontal pager
- * Swipe between module gates and double-tap to enter
+ * Main gate navigation screen with horizontal pager and magical teleportation effects
+ * Swipe between module gates and double-tap to enter with a magical transition
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GateNavigationScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val gates = GateConfigs.allGates
-    val pagerState = rememberPagerState(pageCount = { gates.size })
-
+    // Categorize gates
+    val auraLabGates = GateConfigs.auraGates
+    val mainModuleGates = GateConfigs.genesisCoreGates + GateConfigs.kaiGates + GateConfigs.agentNexusGates
+    val allGates = auraLabGates + mainModuleGates
+    
+    val pagerState = rememberPagerState(pageCount = { allGates.size })
+    val scope = rememberCoroutineScope()
+    var isTransitioning by remember { mutableStateOf(false) }
+    
+    // Teleportation animation values
+    val infiniteTransition = rememberInfiniteTransition(label = "gate_glow")
+    val glowIntensity by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_intensity"
+    )
+    
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Horizontal pager for gate cards
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            val config = gates[page]
-
-            GateCard(
-                config = config,
-                onDoubleTap = {
-                    // Navigate to the module
-                    navController.navigate(config.route)
+        // Magical particle background
+        MagicalParticleField()
+        
+        // Category tabs
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+        ) {
+            // Category tabs
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                GateCategoryTab(
+                    label = "AURA'S LAB",
+                    isSelected = pagerState.currentPage < auraLabGates.size,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    }
+                )
+                
+                GateCategoryTab(
+                    label = "MAIN MODULES",
+                    isSelected = pagerState.currentPage >= auraLabGates.size,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(auraLabGates.size)
+                        }
+                    }
+                )
+            }
+            
+            // Horizontal pager for gate cards
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                val config = allGates[page]
+                val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            // Parallax effect
+                            translationX = pageOffset * 100
+                            alpha = 1f - (0.3f * pageOffset.absoluteValue)
+                            scaleX = 0.9f + (0.1f * (1 - pageOffset.absoluteValue))
+                            scaleY = 0.9f + (0.1f * (1 - pageOffset.absoluteValue))
+                        }
+                ) {
+                    // Gate card with teleportation effect
+                    TeleportingGateCard(
+                        config = config,
+                        isActive = pagerState.currentPage == page,
+                        glowIntensity = glowIntensity,
+                        onDoubleTap = {
+                            if (!isTransitioning) {
+                                isTransitioning = true
+                                scope.launch {
+                                    // Trigger teleportation animation
+                                    delay(800) // Time for animation to complete
+                                    navController.navigate(config.route) {
+                                        // Clear back stack to prevent returning to transition
+                                        popUpTo("main_gate") { inclusive = true }
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
+            }
+            
+            // Enhanced page indicator with gate names
+            GatePageIndicator(
+                gates = allGates,
+                currentPage = pagerState.currentPage,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             )
         }
-
-        // Page indicator dots
-        GatePageIndicator(
-            pageCount = gates.size,
-            currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp)
-        )
-
-        // Current gate name overlay
-        Text(
-            text = gates[pagerState.currentPage].title.uppercase(),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = gates[pagerState.currentPage].borderColor.copy(alpha = 0.6f),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 24.dp)
-        )
+        
+        // Category overlay (shows when scrolling between categories)
+        if (pagerState.currentPageOffsetFraction.absoluteValue > 0.3f) {
+            val category = if (pagerState.currentPage < auraLabGates.size) {
+                "AURA'S LAB"
+            } else {
+                "MAIN MODULES"
+            }
+            
+            Text(
+                text = category,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = Color.White.copy(alpha = 0.2f),
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 4.sp
+                ),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .graphicsLayer {
+                        scaleX = 1.5f
+                        scaleY = 1.5f
+                        alpha = 0.1f
+                    }
+            )
+        }
     }
 }
 
+@Composable
+private fun GateCategoryTab(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = label,
+        color = if (isSelected) Color.Cyan else Color.White.copy(alpha = 0.6f),
+        style = MaterialTheme.typography.labelLarge.copy(
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp
+        ),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable(onClick = onClick)
+    )
+}
+
+@Composable
+private fun TeleportingGateCard(
+    config: GateConfig,
+    isActive: Boolean,
+    glowIntensity: Float,
+    onDoubleTap: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isHovering by remember { mutableStateOf(false) }
+    val hoverScale by animateFloatAsState(
+        targetValue = if (isHovering) 1.02f else 1f,
+        label = "hover_scale"
+    )
+    
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .graphicsLayer {
+                scaleX = hoverScale
+                scaleY = hoverScale
+            }
+    ) {
+        // Glow effect behind card
+        if (isActive) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                config.glowColor.copy(alpha = 0.3f * glowIntensity),
+                                Color.Transparent
+                            ),
+                            radius = 500f
+                        )
+                    )
+            )
+        }
+        
+        // Main gate card
+        GateCard(
+            config = config,
+            onDoubleTap = onDoubleTap,
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    // Add hover detection
+                    // TODO: Implement hover detection for desktop
+                }
+        )
+        
+        // Teleportation effect overlay (visible during transition)
+        if (isActive && isHovering) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                config.glowColor.copy(alpha = 0.5f),
+                                config.glowColor.copy(alpha = 0f)
+                            ),
+                            radius = 300f
+                        )
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun MagicalParticleField() {
+    // TODO: Implement magical particle field animation
+    // This would be a canvas-based animation of floating particles
+    // that react to user interaction and gate selection
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.8f))
+    )
+}
+
 /**
- * Page indicator dots showing which gate is active
+ * Enhanced page indicator showing gate names and categories
  */
 @Composable
 private fun GatePageIndicator(
-    pageCount: Int,
+    gates: List<GateConfig>,
     currentPage: Int,
     modifier: Modifier = Modifier
 ) {
+    val visibleGates = 3 // Number of gates to show in the indicator
+    val startIndex = (currentPage - visibleGates / 2).coerceAtLeast(0)
+    val endIndex = (startIndex + visibleGates).coerceAtMost(gates.size)
+    
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        repeat(pageCount) { index ->
-            val isActive = index == currentPage
-            val color = if (isActive) Color.Cyan else Color.Gray
-            val size = if (isActive) 12.dp else 8.dp
-
-            Box(
-                modifier = Modifier
-                    .size(size)
-                    .background(color.copy(alpha = if (isActive) 1f else 0.4f), shape = androidx.compose.foundation.shape.CircleShape)
+        // Show ellipsis if there are more gates before
+        if (startIndex > 0) {
+            Text(
+                text = "...",
+                color = Color.White.copy(alpha = 0.5f),
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+        }
+        
+        // Show visible gates
+        for (i in startIndex until endIndex) {
+            val isActive = i == currentPage
+            val gate = gates[i]
+            
+            // Active gate indicator (larger and colored)
+            if (isActive) {
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .background(
+                            color = gate.borderColor.copy(alpha = 0.3f),
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = gate.title.uppercase(),
+                        color = gate.borderColor,
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+                    )
+                }
+            } else {
+                // Inactive gate indicator (smaller and dimmer)
+                Text(
+                    text = "•",
+                    color = gate.borderColor.copy(alpha = 0.3f),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .clickable {
+                            // TODO: Handle click to navigate to gate
+                        }
+                )
+            }
+        }
+        
+        // Show ellipsis if there are more gates after
+        if (endIndex < gates.size) {
+            Text(
+                text = "...",
+                color = Color.White.copy(alpha = 0.5f),
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
         }
     }

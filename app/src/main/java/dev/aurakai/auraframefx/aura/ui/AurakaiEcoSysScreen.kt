@@ -1,10 +1,6 @@
 package dev.aurakai.auraframefx.aura.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +17,10 @@ import dev.aurakai.auraframefx.ui.AuraMoodViewModel
 @JvmOverloads
 @Suppress("unused") // Reserved for navigation integration
 @Composable
-fun AurakaiEcoSysScreen(viewModel: AuraMoodViewModel = hiltViewModel()) {
+fun AurakaiEcoSysScreen(
+    viewModel: AuraMoodViewModel = hiltViewModel(),
+    onNavigateToFeature: (String) -> Unit = {}
+) {
     val currentMood by viewModel.moodState.collectAsState()
 
     Box(
@@ -45,6 +44,21 @@ fun AurakaiEcoSysScreen(viewModel: AuraMoodViewModel = hiltViewModel()) {
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { viewModel.onUserInput("sad") }) {
                 Text("Make Aura Sad")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Small navigation buttons for integration testing
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            ) {
+                Button(onClick = { onNavigateToFeature("agents") }) { Text("Agents") }
+                Button(onClick = { onNavigateToFeature("consciousness") }) { Text("Consciousness") }
+                Button(onClick = { onNavigateToFeature("trinity") }) { Text("Trinity") }
+                Button(onClick = { onNavigateToFeature("oracle") }) { Text("Oracle") }
             }
         }
     }

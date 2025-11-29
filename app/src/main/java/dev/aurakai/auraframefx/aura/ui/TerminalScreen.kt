@@ -1,61 +1,121 @@
 package dev.aurakai.auraframefx.aura.ui
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
 
 /**
  * Genesis Protocol Terminal - Command Interface
  *
- * Temporarily disabled while fixing module dependencies (romtools, collab-canvas).
- * Will be re-enabled for full terminal command access.
+ * Provides direct command-line access to the Genesis Protocol.
  */
 @Composable
-fun TerminalScreen(
-    onNavigateBack: () -> Unit = {}
-) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun TerminalScreen() {
+    var input by remember { mutableStateOf("") }
+    val history = remember { mutableStateListOf<String>() }
+    val darkBg = Color(0xFF1A1A1A)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(darkBg)
+            .padding(8.dp)
     ) {
-        Card(
-            modifier = Modifier.padding(32.dp)
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            item {
                 Text(
-                    text = "Genesis Terminal",
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
+                    text = "Genesis Protocol Terminal [Version 0.1.0]",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace
                 )
-                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "This screen is temporarily disabled\nwhile fixing module dependencies.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "(c) 2025 AuraKai Corporation. All rights reserved.",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+            }
+            items(history) { command ->
                 Text(
-                    text = "Modules: romtools, collab-canvas",
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.error
+                    text = "> $command",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace
+                )
+                // In a real terminal, you'd process the command and show output here
+                Text(
+                    text = "Command executed: '$command'",
+                    color = Color.Green,
+                    fontFamily = FontFamily.Monospace
                 )
             }
         }
+
+        BasicTextField(
+            value = input,
+            onValueChange = { input = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            textStyle = TextStyle(
+                color = Color.White,
+                fontFamily = FontFamily.Monospace
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Send
+            ),
+            keyboardActions = KeyboardActions(
+                onSend = {
+                    if (input.isNotBlank()) {
+                        history.add(input)
+                        input = ""
+                    }
+                }
+            ),
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                Row {
+                    Text(
+                        text = "> ",
+                        color = Color.Green,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    innerTextField()
+                }
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TerminalScreenPreview() {
+    AuraFrameFXTheme {
+        TerminalScreen()
     }
 }

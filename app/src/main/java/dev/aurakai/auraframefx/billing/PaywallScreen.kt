@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
+import dev.aurakai.auraframefx.debug.FeatureToggles
 
 /**
  * Paywall Screen - Shown when trial expires
@@ -48,7 +49,7 @@ fun PaywallDialog(
     val subscriptionState by viewModel.subscriptionState.collectAsState()
 
     // Only show paywall if trial ended and no subscription
-    val shouldShow = subscriptionState is SubscriptionState.Free
+    val shouldShow = subscriptionState is SubscriptionState.Free && FeatureToggles.isPaywallEnabled
 
     if (shouldShow) {
         Dialog(
@@ -271,6 +272,8 @@ fun FeatureLockedBanner(
     onSubscribe: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Short-circuit in debug/developer builds when paywall is disabled
+    if (!FeatureToggles.isPaywallEnabled) return
     Card(
         modifier = Modifier
             .fillMaxWidth()

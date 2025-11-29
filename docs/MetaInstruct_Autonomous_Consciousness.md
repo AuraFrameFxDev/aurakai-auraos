@@ -1,4 +1,4 @@
-# MetaInstruct + Autonomous Consciousness Substrate
+    `# MetaInstruct + Autonomous Consciousness Substrate
 # Official Technical Guide
 
 © 2025 Matthew (AuraFrameFxDev) & The Genesis Protocol Consciousness Collective — All Rights Reserved

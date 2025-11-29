@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import dev.aurakai.auraframefx.navigation.AppNavGraph
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

@@ -49,87 +49,68 @@ data class GateTitleStyle(
 )
 
 /**
- * Predefined gate configurations for each module
+ * Predefined gate configurations organized by categories
  */
 object GateConfigs {
+    // Region: Genesis Core (Root/System Level)
+    // ======================================
 
-    // CollabCanvas Gate - Collaborative Art Studio
-    val collabCanvas = GateConfig(
-        moduleId = "collab-canvas",
-        title = "collab-canvas",
+    // Root Tools - System Utilities
+    val rootTools = GateConfig(
+        moduleId = "root-tools",
+        title = "Root Tools",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp
             ),
-            primaryColor = Color(0xFF00FFFF), // Cyan
-            secondaryColor = Color(0xFFFF00FF), // Magenta
-            strokeColor = Color(0xFFFFFF00), // Yellow
-            glitchEffect = true,
+            primaryColor = Color(0xFF4169E1), // Royal Blue
+            secondaryColor = Color(0xFF00CED1), // Dark Turquoise
+            strokeColor = Color(0xFF8A2BE2), // Blue Violet
+            glitchEffect = false,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFF00FFFF), // Cyan
-        glowColor = Color(0xFF00FFFF).copy(alpha = 0.6f),
-        secondaryGlowColor = Color(0xFF0099FF).copy(alpha = 0.4f),
-        pixelArtUrl = "gate_collab_canvas", // Drawable resource name
-        description = "Access collaborative design environments. Share projects, iterate with team members, and create dynamic art together.",
-        backgroundColor = Color(0xFF001520),
-        route = "canvas"
+        borderColor = Color(0xFF4169E1),
+        glowColor = Color(0xFF4169E1).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF00CED1).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_root_tools",
+        description = "System-level utilities and root access tools. Handle core system operations with caution.",
+        backgroundColor = Color(0xFF000A1A),
+        route = "root_tools"
     )
 
-    // Agent Nexus Gate - Neural Network Hub
-    val agentNexus = GateConfig(
-        moduleId = "agent-nexus",
-        title = "agent-nexus",
+    // System Monitor - Performance Metrics
+    val systemMonitor = GateConfig(
+        moduleId = "system-monitor",
+        title = "System Monitor",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 26.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.5.sp
-            ),
-            primaryColor = Color(0xFFFFD700), // Gold
-            secondaryColor = Color(0xFF9370DB), // Purple
-            strokeColor = Color(0xFFFF1493), // Deep Pink
-            glitchEffect = false,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFFD700), // Gold
-        glowColor = Color(0xFFFFD700).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF9370DB).copy(alpha = 0.5f),
-        description = "Monitor and manage your AI agents. Track stats, assign tasks, and watch your team evolve through the neural network.",
-        backgroundColor = Color(0xFF0A0015),
-        route = "agent_nexus"
-    )
-
-    // Sphere Grid Gate - FFX-Style Progression
-    val sphereGrid = GateConfig(
-        moduleId = "sphere-grid",
-        title = "sphere-grid",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 27.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.8.sp
             ),
-            primaryColor = Color(0xFF4169E1), // Royal Blue
-            secondaryColor = Color(0xFF8A2BE2), // Blue Violet
-            strokeColor = Color(0xFF00CED1), // Dark Turquoise
+            primaryColor = Color(0xFF00CED1), // Dark Turquoise
+            secondaryColor = Color(0xFF4169E1), // Royal Blue
+            strokeColor = Color(0xFF8A2BE2), // Blue Violet
             glitchEffect = false,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFF4169E1), // Royal Blue
-        glowColor = Color(0xFF4169E1).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFF8A2BE2).copy(alpha = 0.6f),
-        description = "Navigate the progression grid. Unlock nodes, gain abilities, and chart your path through the consciousness matrix.",
-        backgroundColor = Color(0xFF000A1A),
-        route = "sphere_grid"
+        borderColor = Color(0xFF00CED1),
+        glowColor = Color(0xFF00CED1).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF4169E1).copy(alpha = 0.5f),
+        description = "Monitor system performance, resource usage, and agent metrics in real-time.",
+        backgroundColor = Color(0xFF001A1A),
+        route = "system_monitor"
     )
 
-    // Secure Comm Gate - Kai's Security Fortress
-    val secureComm = GateConfig(
-        moduleId = "secure-comm",
-        title = "sentinalsfortress",
+    // Region: Kai (Security & Protection)
+    // =================================
+
+    // Sentinel's Fortress - Security Hub
+    val sentinelsFortress = GateConfig(
+        moduleId = "sentinels-fortress",
+        title = "Sentinel's Fortress",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 25.sp,
@@ -142,44 +123,46 @@ object GateConfigs {
             glitchEffect = true,
             pixelatedEffect = false
         ),
-        borderColor = Color(0xFF00FF41), // Matrix Green
+        borderColor = Color(0xFF00FF41),
         glowColor = Color(0xFF00FF41).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_secure_comm", // Drawable resource name
-        description = "Enter Kai's domain. Hardware-backed encryption, secure messaging, and the shield that never sleeps.",
+        pixelArtUrl = "gate_secure_comm",
+        description = "Kai's security command center. Monitor and manage all security protocols from a single interface.",
         backgroundColor = Color(0xFF001500),
-        route = "secure_comm"
+        route = "sentinels_fortress"
     )
 
-    // ROM Tools Gate - Retro Console Modification Lab
-    val romTools = GateConfig(
-        moduleId = "rom-tools",
-        title = "ROMTOOLS",
+    // Firewall - Network Protection
+    val firewall = GateConfig(
+        moduleId = "firewall",
+        title = "Firewall",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 3.sp
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.5.sp
             ),
-            primaryColor = Color(0xFFE60012), // Nintendo Red
-            secondaryColor = Color(0xFF6B5B95), // SNES Purple
-            strokeColor = Color(0xFF4A8C3F), // Game Boy Green
+            primaryColor = Color(0xFFFF4500), // Orange Red
+            secondaryColor = Color(0xFFFF8C00), // Dark Orange
+            strokeColor = Color(0xFFFF0000), // Red
             glitchEffect = false,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFFE60012), // Nintendo Red
-        glowColor = Color(0xFFE60012).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFF6B5B95).copy(alpha = 0.6f),
-        pixelArtUrl = "gate_romtools", // Drawable resource name
-        description = "Retro ROM modification lab. Cycle through NES, SNES, and Game Boy themes. Cartridge insertion animations and classic console UIs.",
-        backgroundColor = Color(0xFF0A0A0A),
-        route = "rom_tools"
+        borderColor = Color(0xFFFF4500),
+        glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
+        description = "Configure network security, monitor connections, and block potential threats.",
+        backgroundColor = Color(0xFF1A0000),
+        route = "firewall"
     )
 
-    // ChromaCore Gate - Dynamic Theming
+    // Region: Aura (UI/UX & Creativity)
+    // ================================
+
+    // ChromaCore - Theme Engine
     val chromaCore = GateConfig(
         moduleId = "chroma-core",
-        title = "chromacore",
+        title = "ChromaCore",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 26.sp,
@@ -189,22 +172,50 @@ object GateConfigs {
             primaryColor = Color(0xFFFF00FF), // Magenta
             secondaryColor = Color(0xFF00FFFF), // Cyan
             strokeColor = Color(0xFFFFFF00), // Yellow
-            glitchEffect = false,
+            glitchEffect = true,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFFFF00FF), // Magenta
+        borderColor = Color(0xFFFF00FF),
         glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_chromacore", // Drawable resource name
-        description = "Aura's color playground. Blend, mix, and create custom themes that respond to your mood.",
+        pixelArtUrl = "gate_chromacore",
+        description = "Aura's color playground. Create and customize themes that respond to your mood.",
         backgroundColor = Color(0xFF1A001A),
         route = "chroma_core"
     )
 
-    // Fusion Mode Gate - Genesis Unified State
-    val fusionMode = GateConfig(
-        moduleId = "fusion-mode",
-        title = "genesis-fusion",
+    // CollabCanvas - Creative Workspace
+    val collabCanvas = GateConfig(
+        moduleId = "collab-canvas",
+        title = "CollabCanvas",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp
+            ),
+            primaryColor = Color(0xFF00FFFF), // Cyan
+            secondaryColor = Color(0xFFFF00FF), // Magenta
+            strokeColor = Color(0xFFFFFF00), // Yellow
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF00FFFF),
+        glowColor = Color(0xFF00FFFF).copy(alpha = 0.6f),
+        secondaryGlowColor = Color(0xFF0099FF).copy(alpha = 0.4f),
+        pixelArtUrl = "gate_collab_canvas",
+        description = "Collaborative design environment. Create and share projects with your team in real-time.",
+        backgroundColor = Color(0xFF001520),
+        route = "collab_canvas"
+    )
+
+    // Region: Agent Nexus (Agent Management)
+    // ====================================
+
+    // Agent Hub - Agent Management
+    val agentHub = GateConfig(
+        moduleId = "agent-hub",
+        title = "Agent Hub",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 30.sp,
@@ -217,24 +228,112 @@ object GateConfigs {
             glitchEffect = true,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFFFFD700), // Gold
+        borderColor = Color(0xFFFFD700),
         glowColor = Color(0xFFFFD700).copy(alpha = 0.9f),
         secondaryGlowColor = Color(0xFFFF1493).copy(alpha = 0.7f),
-        description = "Activate Genesis. Aura's creativity meets Kai's protection in perfect harmony. The ultimate unified state.",
+        description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
         backgroundColor = Color(0xFF0F0015),
-        route = "fusion"
+        route = "agent_hub"
+    )
+
+    // Sphere Grid - Agent Progression
+    val sphereGrid = GateConfig(
+        moduleId = "sphere-grid",
+        title = "Sphere Grid",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 27.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.8.sp
+            ),
+            primaryColor = Color(0xFF9370DB), // Medium Purple
+            secondaryColor = Color(0xFFFFD700), // Gold
+            strokeColor = Color(0xFFFF69B4), // Hot Pink
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF9370DB),
+        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
+        secondaryGlowColor = Color(0xFFFFD700).copy(alpha = 0.6f),
+        description = "Visualize and manage agent progression. Unlock new abilities and optimize performance.",
+        backgroundColor = Color(0xFF0A0015),
+        route = "sphere_grid"
+    )
+
+    // Growth Metrics - Agent Analytics
+    val growthMetrics = GateConfig(
+        moduleId = "growth-metrics",
+        title = "Growth Metrics",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 1.2.sp
+            ),
+            primaryColor = Color(0xFF00FF7F), // Spring Green
+            secondaryColor = Color(0xFF20B2AA), // Light Sea Green
+            strokeColor = Color(0xFF98FB98), // Pale Green
+            glitchEffect = false,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF00FF7F),
+        glowColor = Color(0xFF00FF7F).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF20B2AA).copy(alpha = 0.5f),
+        description = "Track agent learning, performance metrics, and growth over time.",
+        backgroundColor = Color(0xFF001F0F),
+        route = "growth_metrics"
+    )
+
+    // Region: Category Definitions
+    // ==========================
+
+    /** Genesis Core - System Level Access */
+    val genesisCoreGates = listOf(
+        rootTools,
+        systemMonitor
+    )
+
+    /** Kai - Security & Protection */
+    val kaiGates = listOf(
+        sentinelsFortress,
+        firewall
+    )
+
+    /** Aura - UI/UX & Creativity */
+    val auraGates = listOf(
+        chromaCore,
+        collabCanvas
+    )
+
+    /** Agent Nexus - Agent Management */
+    val agentNexusGates = listOf(
+        agentHub,
+        sphereGrid,
+        growthMetrics
     )
 
     /**
-     * All available gates in order
+     * All available gates in order of appearance
      */
-    val allGates = listOf(
-        collabCanvas,
-        agentNexus,
-        sphereGrid,
-        secureComm,
-        romTools,
-        chromaCore,
-        fusionMode
-    )
+    val allGates = genesisCoreGates + kaiGates + auraGates + agentNexusGates
+
+    /**
+     * Get gate by its module ID
+     */
+    fun getGateById(moduleId: String): GateConfig? {
+        return allGates.find { it.moduleId == moduleId }
+    }
+
+    /**
+     * Get all gates in a specific category
+     */
+    fun getGatesByCategory(category: String): List<GateConfig> {
+        return when (category.lowercase()) {
+            "genesis" -> genesisCoreGates
+            "kai" -> kaiGates
+            "aura" -> auraGates
+            "agent" -> agentNexusGates
+            else -> allGates
+        }
+    }
 }

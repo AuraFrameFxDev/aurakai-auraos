@@ -71,6 +71,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Debug builds should not show the paywall so developers can iterate without subscribing
+            buildConfigField("Boolean", "ENABLE_PAYWALL", "false")
         }
         release {
             isMinifyEnabled = true
@@ -79,6 +81,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Release builds enable the paywall by default
+            buildConfigField("Boolean", "ENABLE_PAYWALL", "true")
         }
     }
 

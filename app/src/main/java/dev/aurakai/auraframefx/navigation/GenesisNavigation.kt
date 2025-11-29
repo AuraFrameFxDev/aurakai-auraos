@@ -79,7 +79,17 @@ fun GenesisNavigationHost(
                 onNavigateToAgents = { navController.navigate(GenesisRoutes.AGENT_NEXUS) },
                 onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) },
                 onNavigateToEvolution = { navController.navigate(GenesisRoutes.EVOLUTION_TREE) },
-                onNavigateToTerminal = { navController.navigate(GenesisRoutes.TERMINAL) }
+                onNavigateToTerminal = { navController.navigate(GenesisRoutes.TERMINAL) },
+                onNavigateToModule = { moduleId ->
+                    when (moduleId) {
+                        "agent-hub" -> navController.navigateToGenesis(GenesisRoutes.AGENT_NEXUS)
+                        "sphere-grid" -> navController.navigateToGenesis(GenesisRoutes.CONSCIOUSNESS_VISUALIZER)
+                        "sentinels-fortress" -> navController.navigateToGenesis(GenesisRoutes.TERMINAL)
+                        "collab-canvas" -> navController.navigateToGenesis(GenesisRoutes.EVOLUTION_TREE)
+                        "chroma-core" -> navController.navigateToGenesis(GenesisRoutes.FUSION_MODE)
+                        else -> navController.navigateToGenesis(GenesisRoutes.ECOSYSTEM)
+                    }
+                }
             )
         }
 

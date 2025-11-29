@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.navigation
+package dev.aurakai.auraframefx.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush

@@ -2,11 +2,12 @@ package dev.aurakai.auraframefx.billing
 
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.debug.FeatureToggles
 
 /**
  * App-level billing wrapper
  *
- * Wraps entire app to enforce subscription rules:
+ * Wraps entire app to enforce subscription rules:`
  * - Shows paywall when trial expires
  * - Manages feature access throughout app
  */
@@ -26,7 +27,7 @@ fun BillingWrapper(
     content()
 
     // Overlay paywall when trial expires
-    if (subscriptionState is SubscriptionState.Free) {
+    if (subscriptionState is SubscriptionState.Free && FeatureToggles.isPaywallEnabled) {
         PaywallDialog(viewModel = viewModel)
     }
 }
