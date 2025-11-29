@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.initializers
+package dev.aurakai.auraframefx.core.initialization
 
 import android.content.Context
 import android.os.StrictMode

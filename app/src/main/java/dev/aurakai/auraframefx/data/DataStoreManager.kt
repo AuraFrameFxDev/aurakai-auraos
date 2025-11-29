@@ -26,7 +26,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class DataStoreManager @Inject constructor(
-    @get:ApplicationContext internal val context: Context
+    @ApplicationContext internal val context: Context
 ) {
     private val json: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 

@@ -24,7 +24,7 @@ class KaiAIService @Inject constructor(
     private val memoryManager: MemoryManager,
     private val errorHandler: ErrorHandler,
     private val contextManager: ContextManager,
-    private val applicationContext: Context,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val applicationContext: Context,
     private val cloudStatusMonitor: CloudStatusMonitor,
 ) : Agent {
     /**

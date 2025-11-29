@@ -3,10 +3,12 @@ package dev.aurakai.auraframefx.oracledrive
 import dev.aurakai.auraframefx.genesis.security.CryptographyManager
 import java.util.UUID
 
+import javax.inject.Inject
+
 /**
  * Implementation of CryptographyManager for Oracle Drive
  */
-class EncryptionManager : CryptographyManager {
+class EncryptionManager @Inject constructor() : CryptographyManager {
     
     override fun encrypt(data: ByteArray, keyAlias: String): ByteArray {
         // TODO: Implement actual encryption with Android Keystore

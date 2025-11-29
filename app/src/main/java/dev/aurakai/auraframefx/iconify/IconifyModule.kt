@@ -32,7 +32,7 @@ object IconifyModule {
     @Provides
     @Singleton
     fun provideIconifyService(
-        okHttpClient: OkHttpClient,
+        @dev.aurakai.auraframefx.di.AuraNetwork okHttpClient: OkHttpClient,
         iconCacheManager: IconCacheManager
     ): IconifyService {
         return IconifyService(okHttpClient, iconCacheManager)

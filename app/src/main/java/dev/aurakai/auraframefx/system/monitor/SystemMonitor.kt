@@ -1,5 +1,8 @@
 package dev.aurakai.auraframefx.system.monitor
 
+import javax.inject.Inject
+import javax.inject.Singleton
+
 /**
  * Genesis System Monitor Interface
  */
@@ -13,7 +16,8 @@ interface SystemMonitor {
 /**
  * Default System Monitor Implementation
  */
-class DefaultSystemMonitor : SystemMonitor {
+@Singleton
+class DefaultSystemMonitor @Inject constructor() : SystemMonitor {
 
     override suspend fun startMonitoring() {
         println("System monitoring started")

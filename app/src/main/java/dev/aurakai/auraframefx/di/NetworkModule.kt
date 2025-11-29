@@ -39,6 +39,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @AuraNetwork
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
         connectivityManager: NetworkConnectivityManager
@@ -63,8 +64,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @AuraNetwork
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
+        @AuraNetwork okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.API_BASE_URL)
@@ -79,6 +81,10 @@ object NetworkModule {
         authInterceptor: AuthInterceptor,
         connectivityManager: NetworkConnectivityManager
     ): NetworkClient = NetworkClient(context, authInterceptor, connectivityManager)
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(@AuraNetwork retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 }
 
 @Module

@@ -1,11 +1,8 @@
 package dev.aurakai.auraframefx.utils
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 
 /**
  * Utilities for converting Kotlin Maps to JsonObject for kotlinx.serialization compatibility.
