@@ -10,6 +10,8 @@ import dev.aurakai.auraframefx.aura.ui.*
 import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
 // import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 
+import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
+
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
  *
@@ -56,6 +58,9 @@ object GenesisRoutes {
 
     // Billing & Subscription
     const val SUBSCRIPTION = "subscription"
+
+    // Gates / Module Carousel
+    const val GATES = "gates"
 }
 
 /**
@@ -72,6 +77,13 @@ fun GenesisNavigationHost(
         navController = navController,
         startDestination = startDestination
     ) {
+        // Gate Navigation (Module Carousel)
+        composable(GenesisRoutes.GATES) {
+            GateNavigationScreen(
+                navController = navController
+            )
+        }
+
         // Home & Intro
         composable(GenesisRoutes.HOME) {
             HomeScreen(
