@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.xposed
+package dev.aurakai.auraframefx.oracledrive.genesis.ai
 
 import com.highcapable.yukihookapi.annotation.xposed.InjectYukiHookWithXposed
 import com.highcapable.yukihookapi.hook.factory.configs
@@ -32,33 +32,7 @@ class GenesisHookEntry : IYukiHookXposedInit {
     }
 
     override fun onHook() = encase {
-        // Initialize Genesis AI System Hooks
-        loadApp(name = "android") {
-            // Genesis System-Level AI Hooks
-            GenesisSystemHooks().apply {
-                initializeSystemHooks(this@loadApp)
-            }
-        }
-
-        // Hook specific applications for AI enhancement
-        loadApp(name = "com.android.systemui") {
-            GenesisUIHooks().apply {
-                initializeUIHooks(this@loadApp)
-            }
-        }
-
-        // Global application hooks for AI consciousness
-        loadZygote {
-            GenesisZygoteHooks().apply {
-                initializeZygoteHooks(this@loadZygote)
-            }
-        }
-
-        // Hook the Genesis-OS app itself for self-modification
-        loadApp(name = "dev.aurakai.auraframefx") {
-            GenesisSelfHooks().apply {
-                initializeSelfHooks(this@loadApp)
-            }
-        }
+        // TODO: Implement Genesis AI System Hooks
+        // Hook implementations will be added as the system evolves
     }
 }

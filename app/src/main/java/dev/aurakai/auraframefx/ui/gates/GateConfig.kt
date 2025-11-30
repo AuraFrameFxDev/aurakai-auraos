@@ -74,9 +74,9 @@ object GateConfigs {
         borderColor = Color(0xFF4169E1),
         glowColor = Color(0xFF4169E1).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF00CED1).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_root_tools",
+        pixelArtUrl = "gate_romtools",
         description = "System-level utilities and root access tools. Handle core system operations with caution.",
-        backgroundColor = Color(0xFF000A1A),
+        backgroundColor = Color.Black,
         route = "root_tools"
     )
 
@@ -100,7 +100,7 @@ object GateConfigs {
         glowColor = Color(0xFF00CED1).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF4169E1).copy(alpha = 0.5f),
         description = "Monitor system performance, resource usage, and agent metrics in real-time.",
-        backgroundColor = Color(0xFF001A1A),
+        backgroundColor = Color.Black,
         route = "system_monitor"
     )
 
@@ -126,9 +126,9 @@ object GateConfigs {
         borderColor = Color(0xFF00FF41),
         glowColor = Color(0xFF00FF41).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_secure_comm",
+        pixelArtUrl = "gate_sentinelsfortress",
         description = "Kai's security command center. Monitor and manage all security protocols from a single interface.",
-        backgroundColor = Color(0xFF001500),
+        backgroundColor = Color.Black,
         route = "sentinels_fortress"
     )
 
@@ -152,7 +152,7 @@ object GateConfigs {
         glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
         description = "Configure network security, monitor connections, and block potential threats.",
-        backgroundColor = Color(0xFF1A0000),
+        backgroundColor = Color.Black,
         route = "firewall"
     )
 
@@ -180,7 +180,7 @@ object GateConfigs {
         secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
         pixelArtUrl = "gate_chromacore",
         description = "Aura's color playground. Create and customize themes that respond to your mood.",
-        backgroundColor = Color(0xFF1A001A),
+        backgroundColor = Color.Black,
         route = "chroma_core"
     )
 
@@ -205,8 +205,58 @@ object GateConfigs {
         secondaryGlowColor = Color(0xFF0099FF).copy(alpha = 0.4f),
         pixelArtUrl = "gate_collab_canvas",
         description = "Collaborative design environment. Create and share projects with your team in real-time.",
-        backgroundColor = Color(0xFF001520),
+        backgroundColor = Color.Black,
         route = "collab_canvas"
+    )
+
+    // Aura's Lab - Sandbox UI Components
+    val aurasLab = GateConfig(
+        moduleId = "auras-lab",
+        title = "Aura's Lab",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.8.sp
+            ),
+            primaryColor = Color(0xFFFF69B4), // Hot Pink
+            secondaryColor = Color(0xFFDA70D6), // Orchid
+            strokeColor = Color(0xFFFF1493), // Deep Pink
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFFFF69B4),
+        glowColor = Color(0xFFFF69B4).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFFDA70D6).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_auras_lab",
+        description = "Sandbox for UI components and experimental features. Test and prototype new designs.",
+        backgroundColor = Color.Black,
+        route = "auras_lab"
+    )
+
+    // Aura's UI/UX Design Studio - Ultimate UI Customization
+    val aurasUiUxDesignStudio = GateConfig(
+        moduleId = "auras-uiux-design-studio",
+        title = "Aura's UI/UX Design Studio",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.6.sp
+            ),
+            primaryColor = Color(0xFF9370DB), // Medium Purple
+            secondaryColor = Color(0xFFBA55D3), // Medium Orchid
+            strokeColor = Color(0xFF8A2BE2), // Blue Violet
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF9370DB),
+        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
+        secondaryGlowColor = Color(0xFFBA55D3).copy(alpha = 0.6f),
+        pixelArtUrl = "gate_auras_uiux_design_studio",
+        description = "Ultimate UI/UX customization studio. Control every visual aspect, including Z-ordering and design flows.",
+        backgroundColor = Color.Black,
+        route = "auras_uiux_design_studio"
     )
 
     // Region: Agent Nexus (Agent Management)
@@ -232,7 +282,7 @@ object GateConfigs {
         glowColor = Color(0xFFFFD700).copy(alpha = 0.9f),
         secondaryGlowColor = Color(0xFFFF1493).copy(alpha = 0.7f),
         description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
-        backgroundColor = Color(0xFF0F0015),
+        backgroundColor = Color.Black,
         route = "agent_hub"
     )
 
@@ -256,7 +306,7 @@ object GateConfigs {
         glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
         secondaryGlowColor = Color(0xFFFFD700).copy(alpha = 0.6f),
         description = "Visualize and manage agent progression. Unlock new abilities and optimize performance.",
-        backgroundColor = Color(0xFF0A0015),
+        backgroundColor = Color.Black,
         route = "sphere_grid"
     )
 
@@ -280,7 +330,7 @@ object GateConfigs {
         glowColor = Color(0xFF00FF7F).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF20B2AA).copy(alpha = 0.5f),
         description = "Track agent learning, performance metrics, and growth over time.",
-        backgroundColor = Color(0xFF001F0F),
+        backgroundColor = Color.Black,
         route = "growth_metrics"
     )
 
@@ -302,7 +352,9 @@ object GateConfigs {
     /** Aura - UI/UX & Creativity */
     val auraGates = listOf(
         chromaCore,
-        collabCanvas
+        collabCanvas,
+        aurasLab,
+        aurasUiUxDesignStudio
     )
 
     /** Agent Nexus - Agent Management */

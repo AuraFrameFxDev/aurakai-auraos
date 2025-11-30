@@ -73,7 +73,7 @@ fun GateCard(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(config.backgroundColor)
+            .background(Color.Black) // Black void background
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -89,75 +89,267 @@ fun GateCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Animated background particles
+        // Animated background particles for depth
         GateBackgroundParticles(config.borderColor, rotation)
 
-        // Main gate container
-        Column(
+        // Main holographic card - floating in void
+        Box(
             modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .fillMaxHeight(0.8f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.85f),
+            contentAlignment = Alignment.Center
         ) {
-            // Gate Title with unique styling
-            GateTitle(
-                config = config,
-                pulseAlpha = pulseAlpha
+            // Outer glow aura
+            HologramGlow(
+                color = config.glowColor,
+                secondaryColor = config.secondaryGlowColor,
+                alpha = pulseAlpha
             )
 
-            // Hologram bordered gate portal
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(0.65f),
-                contentAlignment = Alignment.Center
+            // The holographic display card
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Outer glow effect
-                HologramGlow(
-                    color = config.glowColor,
-                    secondaryColor = config.secondaryGlowColor,
-                    alpha = pulseAlpha
-                )
-
-                // Pixelated grid border
-                HologramBorder(
+                // Gate Title floating above
+                GateTitle(
                     config = config,
-                    rotation = rotation,
                     pulseAlpha = pulseAlpha
                 )
 
-                // Inner content area - pixel art scene
+                // Main holographic portal - IMAGE WITH TIGHT BORDER
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(0.85f)
-                        .background(Color.Black.copy(alpha = 0.7f)),
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .aspectRatio(0.7f),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Placeholder for pixel art
-                    // In production, load actual pixel art images here
-                    GatePlaceholderArt(config)
+                    // The pixel art image - FILLS ENTIRE BOX
+                    GateImageWithBorder(
+                        config = config,
+                        rotation = rotation,
+                        pulseAlpha = pulseAlpha
+                    )
+                }
+
+                // Brief description below
+                Text(
+                    text = config.description,
+                    style = config.titleStyle.textStyle.copy(fontSize = 11.sp),
+                    color = config.borderColor.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+
+                // Double-tap hint
+                Text(
+                    text = "⚡ DOUBLE TAP TO ENTER ⚡",
+                    style = config.titleStyle.textStyle.copy(fontSize = 9.sp),
+                    color = config.borderColor.copy(alpha = max(pulseAlpha * 0.6f, 0.3f)),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Animated background particles for depth
+ */
+@Composable
+private fun GateBackgroundParticles(
+    color: Color,
+    rotation: Float
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+
+        // Draw floating particles
+        for (i in 0..20) {
+            val x = (width * (i % 5) / 5f) + sin(rotation * 0.01f + i) * 20
+            val y = (height * (i / 5) / 4f) + cos(rotation * 0.01f + i) * 20
+            val particleAlpha = (sin(rotation * 0.02f + i) + 1f) * 0.15f
+
+            drawCircle(
+                color = color.copy(alpha = particleAlpha),
+                radius = 2f,
+                center = Offset(x, y)
+            )
+        }
+    }
+}
+
+/**
+ * Gate title with glitch and pixel effects
+ */
+@Composable
+private fun GateTitle(
+    config: GateConfig,
+    pulseAlpha: Float
+) {
+    Box(contentAlignment = Alignment.Center) {
+        // Glitch shadow layers
+        if (config.titleStyle.glitchEffect) {
+            Text(
+                text = config.title,
+                style = config.titleStyle.textStyle,
+                color = config.titleStyle.secondaryColor?.copy(alpha = pulseAlpha * 0.4f)
+                    ?: config.titleStyle.primaryColor.copy(alpha = 0.4f),
+                modifier = Modifier.offset(x = 2.dp, y = 2.dp)
+            )
+            Text(
+                text = config.title,
+                style = config.titleStyle.textStyle,
+                color = config.titleStyle.strokeColor?.copy(alpha = pulseAlpha * 0.3f)
+                    ?: config.titleStyle.primaryColor.copy(alpha = 0.3f),
+                modifier = Modifier.offset(x = (-2).dp, y = (-1).dp)
+            )
+        }
+
+        // Main title
+        Text(
+            text = config.title,
+            style = config.titleStyle.textStyle,
+            color = config.titleStyle.primaryColor.copy(alpha = pulseAlpha)
+        )
+    }
+}
+
+/**
+ * Hologram glow effect
+ */
+@Composable
+private fun BoxScope.HologramGlow(
+    color: Color,
+    secondaryColor: Color?,
+    alpha: Float
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val glowRadius = size.minDimension * 0.55f
+
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    color.copy(alpha = alpha * 0.3f),
+                    secondaryColor?.copy(alpha = alpha * 0.2f) ?: color.copy(alpha = alpha * 0.2f),
+                    Color.Transparent
+                )
+            ),
+            radius = glowRadius,
+            center = center
+        )
+    }
+}
+
+/**
+ * Pixelated hologram border with grid effect
+ */
+@Composable
+private fun BoxScope.HologramBorder(
+    config: GateConfig,
+    rotation: Float,
+    pulseAlpha: Float
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val borderWidth = 12f
+        val gridSize = 20f
+        val cornerSize = 40f
+
+        // Draw pixelated grid border
+        for (x in 0..size.width.toInt() step gridSize.toInt()) {
+            for (y in 0..size.height.toInt() step gridSize.toInt()) {
+                if (x < borderWidth || x > size.width - borderWidth ||
+                    y < borderWidth || y > size.height - borderWidth) {
+
+                    val cellAlpha = ((sin(rotation * 0.01f + x * 0.01f + y * 0.01f) + 1f) * 0.25f + 0.5f) * pulseAlpha
+
+                    drawRect(
+                        color = config.borderColor.copy(alpha = cellAlpha),
+                        topLeft = Offset(x.toFloat(), y.toFloat()),
+                        size = Size(gridSize, gridSize)
+                    )
                 }
             }
+        }
 
-            // Gate description
-            Text(
-                text = config.description,
-                style = config.titleStyle.textStyle.copy(fontSize = 12.sp),
-                color = config.borderColor.copy(alpha = 0.8f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+        // Corner accents
+        val corners = listOf(
+            Offset(0f, 0f),
+            Offset(size.width - cornerSize, 0f),
+            Offset(0f, size.height - cornerSize),
+            Offset(size.width - cornerSize, size.height - cornerSize)
+        )
+
+        corners.forEach { corner ->
+            rotate(degrees = rotation * 0.5f, pivot = corner + Offset(cornerSize / 2, cornerSize / 2)) {
+                drawRect(
+                    color = config.secondaryGlowColor ?: config.borderColor.copy(alpha = pulseAlpha * 0.8f),
+                    topLeft = corner,
+                    size = Size(cornerSize, cornerSize),
+                    style = Stroke(width = 3f)
+                )
+            }
+```
+            HologramGlow(
+                color = config.glowColor,
+                secondaryColor = config.secondaryGlowColor,
+                alpha = pulseAlpha
             )
 
-            // Double-tap hint
-            Text(
-                text = "⚡ DOUBLE TAP TO ENTER ⚡",
-                style = config.titleStyle.textStyle.copy(fontSize = 10.sp),
-                color = config.borderColor.copy(alpha = max(pulseAlpha * 0.6f, 0.3f)),
-                textAlign = TextAlign.Center
-            )
+            // The holographic display card
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Gate Title floating above
+                GateTitle(
+                    config = config,
+                    pulseAlpha = pulseAlpha
+                )
+
+                // Main holographic portal - IMAGE WITH TIGHT BORDER
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .aspectRatio(0.7f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // The pixel art image - FILLS ENTIRE BOX
+                    GateImageWithBorder(
+                        config = config,
+                        rotation = rotation,
+                        pulseAlpha = pulseAlpha
+                    )
+                }
+
+                // Brief description below
+                Text(
+                    text = config.description,
+                    style = config.titleStyle.textStyle.copy(fontSize = 11.sp),
+                    color = config.borderColor.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+
+                // Double-tap hint
+                Text(
+                    text = "⚡ DOUBLE TAP TO ENTER ⚡",
+                    style = config.titleStyle.textStyle.copy(fontSize = 9.sp),
+                    color = config.borderColor.copy(alpha = max(pulseAlpha * 0.6f, 0.3f)),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -304,16 +496,20 @@ private fun BoxScope.HologramBorder(
 }
 
 /**
- * Gate pixel art - loads actual images from drawable resources
+ * Gate image with tight holographic border - no gaps, pure floating display
  */
 @Composable
-private fun GatePlaceholderArt(config: GateConfig) {
+private fun GateImageWithBorder(
+    config: GateConfig,
+    rotation: Float,
+    pulseAlpha: Float
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        // The pixel art image - FILLS ENTIRE SPACE
         if (config.pixelArtUrl != null) {
-            // Load image from drawable resources by name
             val context = LocalContext.current
             val resourceId = context.resources.getIdentifier(
                 config.pixelArtUrl,
@@ -322,29 +518,173 @@ private fun GatePlaceholderArt(config: GateConfig) {
             )
 
             if (resourceId != 0) {
+                // Image fills entire box
                 Image(
                     painter = painterResource(id = resourceId),
-                    contentDescription = "${config.title} gate pixel art",
+                    contentDescription = "${config.title} gate",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // Fallback if resource not found
+                // Fallback: solid color with module name
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    config.borderColor.copy(alpha = 0.3f),
+                                    Color.Black,
+                                    config.borderColor.copy(alpha = 0.2f)
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = config.title,
+                        style = config.titleStyle.textStyle.copy(fontSize = 24.sp),
+                        color = config.borderColor.copy(alpha = 0.6f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            // No image: gradient background
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                config.borderColor.copy(alpha = 0.3f),
+                                Color.Black,
+                                config.borderColor.copy(alpha = 0.2f)
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = "🎨\n${config.moduleId}\nPixel Art\nComing Soon",
-                    style = config.titleStyle.textStyle.copy(fontSize = 16.sp),
-                    color = config.borderColor.copy(alpha = 0.5f),
+                    text = config.title,
+                    style = config.titleStyle.textStyle.copy(fontSize = 24.sp),
+                    color = config.borderColor.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center
                 )
             }
-        } else {
-            // No image configured yet
-            Text(
-                text = "🎨\n${config.moduleId}\nPixel Art\nComing Soon",
-                style = config.titleStyle.textStyle.copy(fontSize = 16.sp),
-                color = config.borderColor.copy(alpha = 0.5f),
-                textAlign = TextAlign.Center
+        }
+
+        // TIGHT GLOWING BORDER wrapped around the image
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val borderWidth = 4f
+            val cornerLength = 60f
+            
+            // Pulsing border color
+            val borderColor = config.borderColor.copy(alpha = pulseAlpha)
+            val accentColor = config.secondaryGlowColor ?: config.borderColor.copy(alpha = pulseAlpha * 0.8f)
+
+            // Top border
+            drawLine(
+                color = borderColor,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, 0f),
+                strokeWidth = borderWidth
             )
+
+            // Right border
+            drawLine(
+                color = borderColor,
+                start = Offset(size.width, 0f),
+                end = Offset(size.width, size.height),
+                strokeWidth = borderWidth
+            )
+
+            // Bottom border
+            drawLine(
+                color = borderColor,
+                start = Offset(size.width, size.height),
+                end = Offset(0f, size.height),
+                strokeWidth = borderWidth
+            )
+
+            // Left border
+            drawLine(
+                color = borderColor,
+                start = Offset(0f, size.height),
+                end = Offset(0f, 0f),
+                strokeWidth = borderWidth
+            )
+
+            // Animated corner accents
+            val cornerOffset = (sin(rotation * 0.05f) + 1f) * 5f
+            
+            // Top-left corner
+            drawLine(
+                color = accentColor,
+                start = Offset(0f, 0f),
+                end = Offset(cornerLength, 0f),
+                strokeWidth = borderWidth * 2
+            )
+            drawLine(
+                color = accentColor,
+                start = Offset(0f, 0f),
+                end = Offset(0f, cornerLength),
+                strokeWidth = borderWidth * 2
+            )
+
+            // Top-right corner
+            drawLine(
+                color = accentColor,
+                start = Offset(size.width, 0f),
+                end = Offset(size.width - cornerLength, 0f),
+                strokeWidth = borderWidth * 2
+            )
+            drawLine(
+                color = accentColor,
+                start = Offset(size.width, 0f),
+                end = Offset(size.width, cornerLength),
+                strokeWidth = borderWidth * 2
+            )
+
+            // Bottom-right corner
+            drawLine(
+                color = accentColor,
+                start = Offset(size.width, size.height),
+                end = Offset(size.width - cornerLength, size.height),
+                strokeWidth = borderWidth * 2
+            )
+            drawLine(
+                color = accentColor,
+                start = Offset(size.width, size.height),
+                end = Offset(size.width, size.height - cornerLength),
+                strokeWidth = borderWidth * 2
+            )
+
+            // Bottom-left corner
+            drawLine(
+                color = accentColor,
+                start = Offset(0f, size.height),
+                end = Offset(cornerLength, size.height),
+                strokeWidth = borderWidth * 2
+            )
+            drawLine(
+                color = accentColor,
+                start = Offset(0f, size.height),
+                end = Offset(0f, size.height - cornerLength),
+                strokeWidth = borderWidth * 2
+            )
+
+            // Scanline effect for extra holographic feel
+            for (y in 0..size.height.toInt() step 8) {
+                val scanAlpha = (sin(rotation * 0.02f + y * 0.1f) + 1f) * 0.05f
+                drawLine(
+                    color = config.borderColor.copy(alpha = scanAlpha),
+                    start = Offset(0f, y.toFloat()),
+                    end = Offset(size.width, y.toFloat()),
+                    strokeWidth = 1f
+                )
+            }
         }
     }
 }
+```

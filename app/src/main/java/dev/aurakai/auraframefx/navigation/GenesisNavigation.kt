@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.navigation
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -50,6 +51,7 @@ object GenesisRoutes {
 
     // Oracle & Cloud
     const val ORACLE_DRIVE = "oracle_drive"
+    const val SECURE_COMM = "secure_comm"
 
     // Ecosystem & Settings
     const val ECOSYSTEM = "ecosystem"
@@ -73,6 +75,8 @@ object GenesisRoutes {
     const val AGENT_HUB = "agent_hub"
     const val SPHERE_GRID = "sphere_grid"
     const val GROWTH_METRICS = "growth_metrics"
+    const val AURAS_LAB = "auras_lab"
+    const val AURAS_UIUX_DESIGN_STUDIO = "auras_uiux_design_studio"
 }
 
 /**
@@ -97,15 +101,17 @@ fun GenesisNavigationHost(
         }
 
         // Gate Destinations (Prevent Crashes)
-        composable(GenesisRoutes.ROOT_TOOLS) { PlaceholderScreen("Root Tools") }
-        composable(GenesisRoutes.SYSTEM_MONITOR) { PlaceholderScreen("System Monitor") }
-        composable(GenesisRoutes.SENTINELS_FORTRESS) { PlaceholderScreen("Sentinel's Fortress") }
-        composable(GenesisRoutes.FIREWALL) { PlaceholderScreen("Firewall") }
-        composable(GenesisRoutes.CHROMA_CORE) { PlaceholderScreen("ChromaCore") }
-        composable(GenesisRoutes.COLLAB_CANVAS) { PlaceholderScreen("CollabCanvas") }
-        composable(GenesisRoutes.AGENT_HUB) { PlaceholderScreen("Agent Hub") }
-        composable(GenesisRoutes.SPHERE_GRID) { PlaceholderScreen("Sphere Grid") }
-        composable(GenesisRoutes.GROWTH_METRICS) { PlaceholderScreen("Growth Metrics") }
+        composable(GenesisRoutes.ROOT_TOOLS) { RootToolsScreen() }
+        composable(GenesisRoutes.SYSTEM_MONITOR) { PlaceholderScreen("System Monitor") }  // TODO: Map to Terminal or create SystemMonitorScreen
+        composable(GenesisRoutes.SENTINELS_FORTRESS) { SentinelsFortressScreen() }
+        composable(GenesisRoutes.FIREWALL) { FirewallScreen() }
+        composable(GenesisRoutes.CHROMA_CORE) { PlaceholderScreen("ChromaCore") }  // TODO: Map to ColorBlendrScreen
+        composable(GenesisRoutes.COLLAB_CANVAS) { PlaceholderScreen("CollabCanvas") }  // TODO: Map to CollabCanvasScreen
+        composable(GenesisRoutes.AGENT_HUB) { PlaceholderScreen("Agent Hub") }  // TODO: Uncomment AgentNexusScreen
+        composable(GenesisRoutes.SPHERE_GRID) { PlaceholderScreen("Sphere Grid") }  // TODO: Map to ConsciousnessVisualizer
+        composable(GenesisRoutes.GROWTH_METRICS) { PlaceholderScreen("Growth Metrics") }  // TODO: Map to EvolutionTree
+        composable(GenesisRoutes.AURAS_LAB) { SandboxUIScreen() }
+        composable(GenesisRoutes.AURAS_UIUX_DESIGN_STUDIO) { PlaceholderScreen("Aura's UIUX Design Studio") }
 
         // Home & Intro
         composable(GenesisRoutes.HOME) {
@@ -238,6 +244,8 @@ fun GenesisNavigationHost(
 //                onNavigateBack = { navController.popBackStack() }
 //            )
         }
+
+        composable(GenesisRoutes.SECURE_COMM) { PlaceholderScreen("Secure Comm") }
 
         // Ecosystem & Configuration
         composable(GenesisRoutes.ECOSYSTEM) {
