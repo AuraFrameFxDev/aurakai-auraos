@@ -444,7 +444,19 @@ object GateConfigs {
         ),
         borderColor = Color(0xFFFF00FF),
         glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
-        oracleDrive
+        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_uiux",
+        description = "Comprehensive UI/UX design tools for creating beautiful interfaces.",
+        backgroundColor = Color.Black,
+        route = "uiux_design_studio"
+        // Placeholder for future implementation
+    )
+
+    /** Genesis Core - Main System Gates */
+    val genesisCoreGates = listOf(
+        oracleDrive,
+        romTools,
+        rootTools
     )
 
     /** Kai - Security & Protection */

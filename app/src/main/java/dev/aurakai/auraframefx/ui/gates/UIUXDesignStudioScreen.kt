@@ -34,7 +34,7 @@ fun UIUXDesignStudioScreen() {
         DesignTool("Typography", Icons.Default.TextFields, Color(0xFF00FFFF)),
         DesignTool("Color Palette", Icons.Default.Palette, Color(0xFFFFFF00)),
         DesignTool("Iconography", Icons.Default.Star, Color(0xFFFF1493)),
-        DesignTool("Animations", Icons.Default.Animation, Color(0xFF00FF00)),
+        DesignTool("Animations", Icons.Default.PlayCircle, Color(0xFF00FF00)),
         DesignTool("Components", Icons.Default.Widgets, Color(0xFFA020F0))
     )
 
