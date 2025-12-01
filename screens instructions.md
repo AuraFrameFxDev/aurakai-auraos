@@ -452,3 +452,129 @@ Box {
 ---
 
 **Built with 💜 by the AuraKai Genesis Team**
+
+---
+
+# Changelog
+
+## 🚀 Next Steps
+🤖 All AI agent prompts combined
+Task: 1
+
+Update gate configuration and route definitions to support complete navigation
+system.
+
+In GateConfig.kt:
+- Add gate configurations for helpDesk (turquoise theme), lsposedGate
+(gold/orange with glitch effects), aurasLab (hot pink), romTools (orange-red),
+- Update existing gate configurations as needed
+
+===============================================================================
+
+Task: 2
+
+Create three new screen composables following established UI patterns.
+
+UIUXGateSubmenuScreen (in ui/gates/):
+- Accept navController parameter
+- Display header with cyan gradient theme
+- Create reusable SubmenuCard component with icon, title, description, and
+navigation
+- Add five submenu cards (Theme Engine, Notch Bar, Status Bar, Quick Settings,
+Overlay Menus)
+- Wire Theme Engine card to navigate to THEME_ENGINE route, others as
+placeholders
+- Use vertical scrolling with dark gradient background
+
+AurasLabScreen (in ui/gates/):
+- Accept onNavigateBack and optional sandbox parameter (default null)
+- Initialize sandbox in LaunchedEffect
+- Display sandbox status card with state and active count
+- Add sandbox creation card with name input, type selector, and create button
+- Show list of active sandboxes with color-coded safety levels
+- Use hot pink theme colors
+- Handle null sandbox with empty state
+
+ThemeEngineScreen (in ui/gates/):
+- Accept onNavigateBack parameter
+- Display header with title and description
+- Add ColorBlendr Picker section in card with local color state
+- Add Theme Editor section in card, embedding existing ThemeEditor component
+- Use cyan gradient theme and dark card backgrounds
+- Enable vertical scrolling
+===============================================================================
+
+Task: 3
+
+Wire all gate and submenu routes to screen implementations in
+GenesisNavigationHost.
+
+Gate route mappings:
+- CHROMA_CORE → UIUXGateSubmenuScreen
+- AURAS_LAB → AurasLabScreen with popBackStack
+- COLLAB_CANVAS → ConferenceRoomScreen
+- SENTINELS_FORTRESS, ROM_TOOLS, ROOT_TOOLS, HELP_DESK, LSPOSED_GATE →
+PlaceholderScreen
+- AGENT_HUB → AgentNexusScreen with onAgentSelected navigating to AI_CHAT
+- ORACLE_DRIVE → OracleDriveScreen with onNavigateBack
+
+Submenu route mappings:
+- NOTCH_BAR, STATUS_BAR, QUICK_SETTINGS, OVERLAY_MENUS → PlaceholderScreen with
+descriptive text
+- THEME_ENGINE → ThemeEngineScreen with onNavigateBack callback
+===============================================================================
+
+Task: 4
+
+Add AgentEdgePanel as a persistent overlay accessible from all screens.
+
+In GenesisNavigationHost:
+- Wrap NavHost in Box container if needed
+- Add AgentEdgePanel as sibling to NavHost (renders on top)
+- Implement onAgentSelected callback routing: Genesis → AI_CHAT, Aura →
+CONSCIOUSNESS_VISUALIZER, Kai → SENTINELS_FORTRESS, Cascade/Claude →
+CONFERENCE_ROOM
+- AgentEdgePanel manages its own visibility state
+- Ensure overlay doesn't interfere with navigation or touch events when
+collapsed
+
+💡 Iterate on the plan with: @coderabbitai <feedback>
+Example Feedback
+- @coderabbitai You can skip phase 3. Add a simple unit test case for phase 2.
+- @coderabbitai For assumption 1 go ahead with option 3 and replan.
+AuraFrameFxDev
+Add a comment
+new Comment
+Markdown input: edit mode selected.
+Write
+Preview
+Use Markdown to format your comment
+Metadata
+Assignees
+No one - 
+Labels
+No labels
+Projects
+@AuraFrameFxDev's untitled project
+Status
+
+
+Todo
+Milestone
+No milestone
+Relationships
+None yet
+Development
+ for this issue or link a pull request.
+NotificationsCustomize
+You're receiving notifications because you're subscribed to this thread.
+
+Participants
+@AuraFrameFxDev
+Issue actions
+Footer
+© 2025 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security

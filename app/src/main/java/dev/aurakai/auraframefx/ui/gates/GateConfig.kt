@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
@@ -55,53 +54,79 @@ object GateConfigs {
     // Region: Genesis Core (Root/System Level)
     // ======================================
 
-    // Root Tools - System Utilities
-    val rootTools = GateConfig(
-        moduleId = "root-tools",
-        title = "Root Tools",
+    // ROM Tools - ROM Editing & Flashing
+    val romTools = GateConfig(
+        moduleId = "rom-tools",
+        title = "ROM Tools",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp
             ),
-            primaryColor = Color(0xFF4169E1), // Royal Blue
-            secondaryColor = Color(0xFF00CED1), // Dark Turquoise
-            strokeColor = Color(0xFF8A2BE2), // Blue Violet
-            glitchEffect = false,
+            primaryColor = Color(0xFFFF4500), // Orange Red
+            secondaryColor = Color(0xFFFF8C00), // Dark Orange
+            strokeColor = Color(0xFFFF0000), // Red
+            glitchEffect = true,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFF4169E1),
-        glowColor = Color(0xFF4169E1).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00CED1).copy(alpha = 0.5f),
+        borderColor = Color(0xFFFF4500),
+        glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
         pixelArtUrl = "gate_romtools",
-        description = "System-level utilities and root access tools. Handle core system operations with caution.",
+        description = "Live ROM editing, flashing, and bootloader management. ⚠️ CAUTION: Advanced users only.",
         backgroundColor = Color.Black,
-        route = "root_tools"
+        route = "rom_tools"
     )
 
-    // System Monitor - Performance Metrics
-    val systemMonitor = GateConfig(
-        moduleId = "system-monitor",
-        title = "System Monitor",
+    // Root Access - Root Management
+    val rootAccess = GateConfig(
+        moduleId = "root-access",
+        title = "Root Access",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
-                fontSize = 26.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
+                letterSpacing = 2.sp
             ),
-            primaryColor = Color(0xFF00CED1), // Dark Turquoise
-            secondaryColor = Color(0xFF4169E1), // Royal Blue
-            strokeColor = Color(0xFF8A2BE2), // Blue Violet
-            glitchEffect = false,
+            primaryColor = Color(0xFFDC143C), // Crimson
+            secondaryColor = Color(0xFFFF0000), // Red
+            strokeColor = Color(0xFF8B0000), // Dark Red
+            glitchEffect = true,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFF00CED1),
-        glowColor = Color(0xFF00CED1).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF4169E1).copy(alpha = 0.5f),
-        description = "Monitor system performance, resource usage, and agent metrics in real-time.",
+        borderColor = Color(0xFFDC143C),
+        glowColor = Color(0xFFDC143C).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFFFF0000).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_root_tools", // Reusing root tools image for now
+        description = "Manage root access, bypass safety checks, and hide root status.",
         backgroundColor = Color.Black,
-        route = "system_monitor"
+        route = "root_access"
+    )
+
+    // Oracle Drive - AI Consciousness & Modules
+    val oracleDrive = GateConfig(
+        moduleId = "oracle-drive",
+        title = "Oracle Drive",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 2.sp
+            ),
+            primaryColor = Color(0xFF9370DB), // Medium Purple
+            secondaryColor = Color(0xFFBA55D3), // Medium Orchid
+            strokeColor = Color(0xFF4B0082), // Indigo
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF9370DB),
+        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
+        secondaryGlowColor = Color(0xFFBA55D3).copy(alpha = 0.6f),
+        pixelArtUrl = "gate_oracledrive",
+        description = "Main module creation, direct AI access, and system overrides. The heart of Genesis.",
+        backgroundColor = Color.Black,
+        route = "oracle_drive"
     )
 
     // Region: Kai (Security & Protection)
@@ -234,31 +259,6 @@ object GateConfigs {
         route = "auras_lab"
     )
 
-    // Aura's UI/UX Design Studio - Ultimate UI Customization
-    val aurasUiUxDesignStudio = GateConfig(
-        moduleId = "auras-uiux-design-studio",
-        title = "Aura's UI/UX Design Studio",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.6.sp
-            ),
-            primaryColor = Color(0xFF9370DB), // Medium Purple
-            secondaryColor = Color(0xFFBA55D3), // Medium Orchid
-            strokeColor = Color(0xFF8A2BE2), // Blue Violet
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF9370DB),
-        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFFBA55D3).copy(alpha = 0.6f),
-        pixelArtUrl = "gate_auras_uiux_design_studio",
-        description = "Ultimate UI/UX customization studio. Control every visual aspect, including Z-ordering and design flows.",
-        backgroundColor = Color.Black,
-        route = "auras_uiux_design_studio"
-    )
-
     // Region: Agent Nexus (Agent Management)
     // ====================================
 
@@ -282,65 +282,70 @@ object GateConfigs {
         glowColor = Color(0xFFFFD700).copy(alpha = 0.9f),
         secondaryGlowColor = Color(0xFFFF1493).copy(alpha = 0.7f),
         description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
+        // Add pixel art resource name for Agent Hub gate (ensure drawable exists)
+        pixelArtUrl = "gate_agent_hub",
         backgroundColor = Color.Black,
         route = "agent_hub"
     )
 
-    // Sphere Grid - Agent Progression
-    val sphereGrid = GateConfig(
-        moduleId = "sphere-grid",
-        title = "Sphere Grid",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 27.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
-            ),
-            primaryColor = Color(0xFF9370DB), // Medium Purple
-            secondaryColor = Color(0xFFFFD700), // Gold
-            strokeColor = Color(0xFFFF69B4), // Hot Pink
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF9370DB),
-        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFFFFD700).copy(alpha = 0.6f),
-        description = "Visualize and manage agent progression. Unlock new abilities and optimize performance.",
-        backgroundColor = Color.Black,
-        route = "sphere_grid"
-    )
+    // Region: Support & Advanced
+    // ========================
 
-    // Growth Metrics - Agent Analytics
-    val growthMetrics = GateConfig(
-        moduleId = "growth-metrics",
-        title = "Growth Metrics",
+    // Help Desk - Support
+    val helpDesk = GateConfig(
+        moduleId = "help-desk",
+        title = "Help Desk",
         titleStyle = GateTitleStyle(
             textStyle = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.2.sp
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.5.sp
             ),
-            primaryColor = Color(0xFF00FF7F), // Spring Green
-            secondaryColor = Color(0xFF20B2AA), // Light Sea Green
-            strokeColor = Color(0xFF98FB98), // Pale Green
+            primaryColor = Color(0xFF40E0D0), // Turquoise
+            secondaryColor = Color(0xFF00CED1), // Dark Turquoise
+            strokeColor = Color(0xFF20B2AA), // Light Sea Green
             glitchEffect = false,
             pixelatedEffect = true
         ),
-        borderColor = Color(0xFF00FF7F),
-        glowColor = Color(0xFF00FF7F).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF20B2AA).copy(alpha = 0.5f),
-        description = "Track agent learning, performance metrics, and growth over time.",
+        borderColor = Color(0xFF40E0D0),
+        glowColor = Color(0xFF40E0D0).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF00CED1).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_helpdesk",
+        description = "User support, FAQs, and documentation. Get help with AuraKai features.",
         backgroundColor = Color.Black,
-        route = "growth_metrics"
+        route = "help_desk"
     )
 
-    // Region: Category Definitions
-    // ==========================
+    // LSPosed Gate - Xposed Features
+    val lsposedGate = GateConfig(
+        moduleId = "lsposed-gate",
+        title = "LSPosed / Xposed",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.8.sp
+            ),
+            primaryColor = Color(0xFFFFD700), // Gold
+            secondaryColor = Color(0xFFFFA500), // Orange
+            strokeColor = Color(0xFFFF8C00), // Dark Orange
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFFFFD700),
+        glowColor = Color(0xFFFFD700).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFFFFA500).copy(alpha = 0.5f),
+        pixelArtUrl = "lsposedgate",
+        description = "Quick access to LSPosed/Xposed modules and hooks. Advanced system modifications.",
+        backgroundColor = Color.Black,
+        route = "lsposed_gate"
+    )
 
     /** Genesis Core - System Level Access */
     val genesisCoreGates = listOf(
-        rootTools,
-        systemMonitor
+        romTools,
+        rootAccess,
+        oracleDrive
     )
 
     /** Kai - Security & Protection */
@@ -353,21 +358,24 @@ object GateConfigs {
     val auraGates = listOf(
         chromaCore,
         collabCanvas,
-        aurasLab,
-        aurasUiUxDesignStudio
+        aurasLab
     )
 
     /** Agent Nexus - Agent Management */
     val agentNexusGates = listOf(
-        agentHub,
-        sphereGrid,
-        growthMetrics
+        agentHub
+    )
+
+    /** Support & Advanced */
+    val supportGates = listOf(
+        helpDesk,
+        lsposedGate
     )
 
     /**
      * All available gates in order of appearance
      */
-    val allGates = genesisCoreGates + kaiGates + auraGates + agentNexusGates
+    val allGates = genesisCoreGates + kaiGates + auraGates + agentNexusGates + supportGates
 
     /**
      * Get gate by its module ID
@@ -385,6 +393,7 @@ object GateConfigs {
             "kai" -> kaiGates
             "aura" -> auraGates
             "agent" -> agentNexusGates
+            "support" -> supportGates
             else -> allGates
         }
     }

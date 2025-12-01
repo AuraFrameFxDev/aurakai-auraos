@@ -39,7 +39,7 @@ fun GateNavigationScreen(
 ) {
     // Categorize gates
     val auraLabGates = GateConfigs.auraGates
-    val mainModuleGates = GateConfigs.genesisCoreGates + GateConfigs.kaiGates + GateConfigs.agentNexusGates
+    val mainModuleGates = GateConfigs.genesisCoreGates + GateConfigs.kaiGates + GateConfigs.agentNexusGates + GateConfigs.supportGates
     val allGates = auraLabGates + mainModuleGates
     
     val pagerState = rememberPagerState(pageCount = { allGates.size })
