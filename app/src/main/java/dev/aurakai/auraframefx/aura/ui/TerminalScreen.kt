@@ -92,8 +92,38 @@ fun TerminalScreen() {
             keyboardActions = KeyboardActions(
                 onSend = {
                     if (input.isNotBlank()) {
-                        history.add(input)
+                        val command = input
+                        history.add(command)
                         input = ""
+                        
+                        // Execute command in background
+                        Thread {
+                            try {
+                                val process = Runtime.getRuntime().exec(command)
+                                val reader = java.io.BufferedReader(java.io.InputStreamReader(process.inputStream))
+                                val output = StringBuilder()
+                                var line: String?
+                                while (reader.readLine().also { line = it } != null) {
+                                    output.append(line).append("\n")
+                                }
+                                val exitCode = process.waitFor()
+                                if (exitCode != 0) {
+                                    val errorReader = java.io.BufferedReader(java.io.InputStreamReader(process.errorStream))
+                                    while (errorReader.readLine().also { line = it } != null) {
+                                        output.append(line).append("\n")
+                                    }
+                                }
+                                
+                                val result = output.toString().trim()
+                                if (result.isNotEmpty()) {
+                                    history.add(result)
+                                } else {
+                                    history.add("Command executed (no output)")
+                                }
+                            } catch (e: Exception) {
+                                history.add("Error: ${e.message}")
+                            }
+                        }.start()
                     }
                 }
             ),
