@@ -13,7 +13,10 @@ import dev.aurakai.auraframefx.billing.BillingWrapper
 import dev.aurakai.auraframefx.navigation.GenesisNavigationHost
 import dev.aurakai.auraframefx.navigation.GenesisRoutes
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
+import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
+import dev.aurakai.auraframefx.ui.overlays.OverlaySettings
 import timber.log.Timber
+import androidx.compose.runtime.CompositionLocalProvider
 
 /**
  * MainActivity - Genesis Protocol Entry Point
@@ -44,13 +47,16 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController = rememberNavController()
 
-                        // Wrap navigation with billing enforcement
-                        BillingWrapper {
-                            // Launch complete Genesis navigation system
-                            GenesisNavigationHost(
-                                navController = navController,
-                                startDestination = GenesisRoutes.GATES
-                            )
+                        // Provide overlay settings at the root composable scope
+                        CompositionLocalProvider(LocalOverlaySettings provides OverlaySettings()) {
+                            // Wrap navigation with billing enforcement
+                            BillingWrapper {
+                                // Launch complete Genesis navigation system
+                                GenesisNavigationHost(
+                                    navController = navController,
+                                    startDestination = GenesisRoutes.GATES
+                                )
+                            }
                         }
                     }
                 }

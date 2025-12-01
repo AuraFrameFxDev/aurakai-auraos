@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,6 +17,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +26,13 @@ import dev.aurakai.auraframefx.data.repositories.AgentRepository
 import dev.aurakai.auraframefx.models.AgentStats
 import kotlinx.coroutines.delay
 import kotlin.math.*
+import kotlin.random.Random
+
+private const val SCRAMBLE_STEPS = 4
+private const val SCRAMBLE_INTERVAL_MS = 45L
+private const val JITTER_INTERVAL_MS = 5000L
+private const val JITTER_DELTA_MIN = -0.01
+private const val JITTER_DELTA_MAX = 0.015
 
 @Composable
 fun AgentNexusScreen(
@@ -31,6 +41,7 @@ fun AgentNexusScreen(
 ) {
     var selectedAgent by remember { mutableStateOf("Genesis") }
     var showDepartureDialog by remember { mutableStateOf(false) }
+    var vertexMode by rememberSaveable { mutableStateOf(true) } // Persist vertex mode across config changes
 
     // ═══════════════════════════════════════════════════════════════════════════
     // ALL 5 MASTER AGENTS - Power Dashboard
@@ -38,14 +49,20 @@ fun AgentNexusScreen(
     // Data now sourced from shared AgentRepository
     // ═══════════════════════════════════════════════════════════════════════════
     val agents = remember { AgentRepository.getAllAgents() }
+    if (agents.isEmpty()) {
+        Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
+            Text("No agents available", color = Color.Gray)
+        }
+        return
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Animated Digital Background
-        DigitalMatrixBackground()
+        // Animated Digital Background with vertex mode
+        DigitalMatrixBackground(vertexMode = vertexMode)
 
         // Nexus Memory Core Visualization
         Box(
@@ -80,17 +97,23 @@ fun AgentNexusScreen(
                 .padding(16.dp)
         )
 
-        // Departure Task Button
-        Button(
-            onClick = { true.also { showDepartureDialog = true } },
+        // Vertex toggle + departure button stacked
+        Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0x88000000)
-            )
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Assign Departure Task", color = Color.Cyan)
+            Button(
+                onClick = { showDepartureDialog = true },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0x88000000))
+            ) { Text("Assign Departure Task", color = Color.Cyan) }
+            OutlinedButton(
+                onClick = { vertexMode = !vertexMode },
+                modifier = Modifier.semantics { contentDescription = if (vertexMode) "Disable vertex mode" else "Enable vertex mode" },
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = if (vertexMode) Color.Cyan else Color.Gray),
+                border = BorderStroke(1.dp, if (vertexMode) Color.Cyan else Color.Gray)
+            ) { Text(if (vertexMode) "Vertex ON" else "Vertex OFF") }
         }
     }
 
@@ -106,7 +129,7 @@ fun AgentNexusScreen(
 }
 
 @Composable
-fun DigitalMatrixBackground() {
+fun DigitalMatrixBackground(vertexMode: Boolean = false) {
     val infiniteTransition = rememberInfiniteTransition(label = "matrix")
     val offset by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -116,6 +139,17 @@ fun DigitalMatrixBackground() {
             repeatMode = RepeatMode.Restart
         ),
         label = "offset"
+    )
+
+    // Pulse for vertex glow
+    val pulse by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "vertex_pulse"
     )
 
     Canvas(modifier = Modifier.fillMaxSize()) {
@@ -128,12 +162,26 @@ fun DigitalMatrixBackground() {
                 val xPos = x * gridSize + (offset % gridSize)
                 val yPos = y * gridSize + (offset % gridSize) / 2
 
-                // Grid nodes
+                // Node base
                 drawCircle(
                     color = Color.Cyan.copy(alpha = 0.3f),
                     radius = 2.dp.toPx(),
                     center = Offset(xPos, yPos)
                 )
+
+                if (vertexMode) {
+                    // Glowing vertex halo
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.Cyan.copy(alpha = 0.25f * pulse),
+                                Color.Transparent
+                            )
+                        ),
+                        radius = 8.dp.toPx(),
+                        center = Offset(xPos, yPos)
+                    )
+                }
 
                 // Connecting lines
                 if (x < (size.width / gridSize).toInt()) {
@@ -158,17 +206,17 @@ fun DigitalMatrixBackground() {
         // Data streams
         val time = System.currentTimeMillis() / 100
         for (i in 0..5) {
-            val streamY = (time * (i + 1) * 20) % size.height
+            val streamY = ((time * (i + 1) * 20) % size.height)
             drawLine(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         Color.Transparent,
-                        Color.Cyan.copy(alpha = 0.5f),
+                        Color.Cyan.copy(alpha = if (vertexMode) 0.7f else 0.5f),
                         Color.Transparent
                     )
                 ),
-                start = Offset(i * size.width / 5, streamY.toFloat()),
-                end = Offset(i * size.width / 5, (streamY + 100).toFloat()),
+                start = Offset(i * size.width / 5, streamY),
+                end = Offset(i * size.width / 5, streamY + 100f),
                 strokeWidth = 2.dp.toPx()
             )
         }
@@ -294,6 +342,26 @@ fun AgentStatsPanel(
     agent: AgentStats,
     modifier: Modifier = Modifier
 ) {
+    // Jittered dynamic stats map
+    var dynamicStats by remember {
+        mutableStateOf(
+            mapOf(
+                "PP" to agent.processingPower,
+                "KB" to agent.knowledgeBase,
+                "SP" to agent.speed,
+                "AC" to agent.accuracy
+            )
+        )
+    }
+    // Periodically jitter values slightly to simulate live matrix fluctuations
+    LaunchedEffect(agent.name) {
+        while (true) {
+            dynamicStats = dynamicStats.mapValues { (_, v) ->
+                (v + Random.nextDouble(JITTER_DELTA_MIN, JITTER_DELTA_MAX)).coerceIn(0.0, 1.0).toFloat()
+            }
+            delay(JITTER_INTERVAL_MS)
+        }
+    }
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -322,11 +390,11 @@ fun AgentStatsPanel(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Stats bars
-            StatBar("PP", agent.processingPower, Color(0xFFFF6B6B))
-            StatBar("KB", agent.knowledgeBase, Color(0xFF4ECDC4))
-            StatBar("SP", agent.speed, Color(0xFF95E77E))
-            StatBar("AC", agent.accuracy, Color(0xFFFFE66D))
+            // Stats bars (use dynamic jittered values)
+            StatBar("PP", dynamicStats["PP"] ?: agent.processingPower, Color(0xFFFF6B6B))
+            StatBar("KB", dynamicStats["KB"] ?: agent.knowledgeBase, Color(0xFF4ECDC4))
+            StatBar("SP", dynamicStats["SP"] ?: agent.speed, Color(0xFF95E77E))
+            StatBar("AC", dynamicStats["AC"] ?: agent.accuracy, Color(0xFFFFE66D))
         }
     }
 }
@@ -337,10 +405,20 @@ fun StatBar(
     value: Float,
     color: Color
 ) {
+    var displayValue by remember { mutableIntStateOf((value * 100).toInt()) }
+    // Scramble flicker each update
+    LaunchedEffect(value) {
+        repeat(SCRAMBLE_STEPS) {
+            displayValue = Random.nextInt(0, 100)
+            delay(SCRAMBLE_INTERVAL_MS)
+        }
+        displayValue = (value * 100).toInt()
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .semantics { contentDescription = "$label $displayValue percent" },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -370,7 +448,7 @@ fun StatBar(
         }
 
         Text(
-            text = "${(value * 100).toInt()}%",
+            text = "${displayValue}%",
             color = color,
             fontSize = 10.sp,
             modifier = Modifier.width(35.dp)

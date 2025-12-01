@@ -21,7 +21,8 @@ data class GateConfig(
     val popOutElements: List<PopOutElement> = emptyList(),
     val description: String,
     val backgroundColor: Color = Color.Black,
-    val route: String
+    val route: String,
+    val comingSoon: Boolean = false  // Flag for gates with incomplete features
 )
 
 /**
@@ -73,10 +74,11 @@ object GateConfigs {
         borderColor = Color(0xFFFF4500),
         glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_romtools",
+        pixelArtUrl = "romtools",
         description = "Live ROM editing, flashing, and bootloader management. ⚠️ CAUTION: Advanced users only.",
         backgroundColor = Color.Black,
         route = "rom_tools"
+        // Screen exists: ROMToolsScreen.kt
     )
 
     // Root Access - Root Management
@@ -98,10 +100,11 @@ object GateConfigs {
         borderColor = Color(0xFFDC143C),
         glowColor = Color(0xFFDC143C).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFFF0000).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_root_tools", // Reusing root tools image for now
+        pixelArtUrl = "gate_roottools",
         description = "Manage root access, bypass safety checks, and hide root status.",
         backgroundColor = Color.Black,
         route = "root_access"
+        // Screen exists: RootAccessScreen.kt
     )
 
     // Oracle Drive - AI Consciousness & Modules
@@ -155,6 +158,7 @@ object GateConfigs {
         description = "Kai's security command center. Monitor and manage all security protocols from a single interface.",
         backgroundColor = Color.Black,
         route = "sentinels_fortress"
+        // Screen exists: SentinelsFortressScreen.kt
     )
 
     // Firewall - Network Protection
@@ -176,9 +180,11 @@ object GateConfigs {
         borderColor = Color(0xFFFF4500),
         glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
+        pixelArtUrl = "sentinelsfortress",
         description = "Configure network security, monitor connections, and block potential threats.",
         backgroundColor = Color.Black,
-        route = "firewall"
+        route = "firewall",
+        comingSoon = true  // Placeholder screen
     )
 
     // Region: Aura (UI/UX & Creativity)
@@ -203,7 +209,7 @@ object GateConfigs {
         borderColor = Color(0xFFFF00FF),
         glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_chromacore",
+        pixelArtUrl = "chromacore",
         description = "Aura's color playground. Create and customize themes that respond to your mood.",
         backgroundColor = Color.Black,
         route = "chroma_core"
@@ -228,7 +234,7 @@ object GateConfigs {
         borderColor = Color(0xFF00FFFF),
         glowColor = Color(0xFF00FFFF).copy(alpha = 0.6f),
         secondaryGlowColor = Color(0xFF0099FF).copy(alpha = 0.4f),
-        pixelArtUrl = "gate_collab_canvas",
+        pixelArtUrl = "gate_collabcanvas",
         description = "Collaborative design environment. Create and share projects with your team in real-time.",
         backgroundColor = Color.Black,
         route = "collab_canvas"
@@ -253,7 +259,7 @@ object GateConfigs {
         borderColor = Color(0xFFFF69B4),
         glowColor = Color(0xFFFF69B4).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFDA70D6).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_auras_lab",
+        pixelArtUrl = "gate_auraslab",
         description = "Sandbox for UI components and experimental features. Test and prototype new designs.",
         backgroundColor = Color.Black,
         route = "auras_lab"
@@ -282,8 +288,7 @@ object GateConfigs {
         glowColor = Color(0xFFFFD700).copy(alpha = 0.9f),
         secondaryGlowColor = Color(0xFFFF1493).copy(alpha = 0.7f),
         description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
-        // Add pixel art resource name for Agent Hub gate (ensure drawable exists)
-        pixelArtUrl = "gate_agent_hub",
+        pixelArtUrl = "gate_agenthub",
         backgroundColor = Color.Black,
         route = "agent_hub"
     )
@@ -314,6 +319,7 @@ object GateConfigs {
         description = "User support, FAQs, and documentation. Get help with AuraKai features.",
         backgroundColor = Color.Black,
         route = "help_desk"
+        // Screen exists: HelpDeskScreen.kt
     )
 
     // LSPosed Gate - Xposed Features
@@ -335,10 +341,115 @@ object GateConfigs {
         borderColor = Color(0xFFFFD700),
         glowColor = Color(0xFFFFD700).copy(alpha = 0.7f),
         secondaryGlowColor = Color(0xFFFFA500).copy(alpha = 0.5f),
-        pixelArtUrl = "lsposedgate",
+        pixelArtUrl = "gate_lsposedgate",
         description = "Quick access to LSPosed/Xposed modules and hooks. Advanced system modifications.",
         backgroundColor = Color.Black,
         route = "lsposed_gate"
+        // Screen exists: LSPosedGateScreen.kt
+    )
+
+    // Code Assist - AI Coding Assistant
+    val codeAssist = GateConfig(
+        moduleId = "code-assist",
+        title = "Code Assist",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.8.sp
+            ),
+            primaryColor = Color(0xFF9370DB), // Medium Purple
+            secondaryColor = Color(0xFF00BFFF), // Deep Sky Blue
+            strokeColor = Color(0xFF4169E1), // Royal Blue
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF9370DB),
+        glowColor = Color(0xFF9370DB).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF00BFFF).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_codeassist",
+        description = "AI-powered coding assistant. Get intelligent code suggestions and automated refactoring.",
+        backgroundColor = Color.Black,
+        route = "code_assist",
+        comingSoon = true  // Features in development
+    )
+
+    // Sphere Grid - Agent Progression
+    val sphereGrid = GateConfig(
+        moduleId = "sphere-grid",
+        title = "Sphere Grid",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 2.sp
+            ),
+            primaryColor = Color(0xFFFFD700), // Gold
+            secondaryColor = Color(0xFFFFFF00), // Yellow
+            strokeColor = Color(0xFFFFA500), // Orange
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFFFFD700),
+        glowColor = Color(0xFFFFD700).copy(alpha = 0.8f),
+        secondaryGlowColor = Color(0xFFFFFF00).copy(alpha = 0.6f),
+        pixelArtUrl = "gate_spheregrid",
+        description = "Agent progression visualization. Track skill development and unlock new capabilities.",
+        backgroundColor = Color.Black,
+        route = "sphere_grid"
+        // Screen exists: SphereGridScreen.kt
+    )
+
+    // Terminal - System Terminal Access
+    val terminal = GateConfig(
+        moduleId = "terminal",
+        title = "Terminal",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp
+            ),
+            primaryColor = Color(0xFF00FF00), // Lime Green
+            secondaryColor = Color(0xFF00FF41), // Matrix Green
+            strokeColor = Color(0xFF32CD32), // Lime Green
+            glitchEffect = false,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFF00FF00),
+        glowColor = Color(0xFF00FF00).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF00FF41).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_terminal",
+        description = "Direct system terminal access. Execute commands and manage system processes.",
+        backgroundColor = Color.Black,
+        route = "terminal"
+        // Screen exists
+    )
+
+    // UI/UX Design Studio - Comprehensive Design Tools
+    val uiuxDesignStudio = GateConfig(
+        moduleId = "uiux-design-studio",
+        title = "UI/UX Design Studio",
+        titleStyle = GateTitleStyle(
+            textStyle = TextStyle(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 1.5.sp
+            ),
+            primaryColor = Color(0xFFFF00FF), // Magenta
+            secondaryColor = Color(0xFF00FFFF), // Cyan
+            strokeColor = Color(0xFFFF1493), // Deep Pink
+            glitchEffect = true,
+            pixelatedEffect = true
+        ),
+        borderColor = Color(0xFFFF00FF),
+        glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
+        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
+        pixelArtUrl = "gate_uiuxdesignstudio",
+        description = "Comprehensive UI/UX design tools. Create, prototype, and test interface designs.",
+        backgroundColor = Color.Black,
+        route = "uiux_design_studio"
+        // Screen exists
     )
 
     /** Genesis Core - System Level Access */
@@ -363,7 +474,8 @@ object GateConfigs {
 
     /** Agent Nexus - Agent Management */
     val agentNexusGates = listOf(
-        agentHub
+        agentHub,
+        sphereGrid  // Agent progression visualization
     )
 
     /** Support & Advanced */
@@ -372,10 +484,17 @@ object GateConfigs {
         lsposedGate
     )
 
+    /** Development Tools */
+    val devToolsGates = listOf(
+        codeAssist,
+        terminal,
+        uiuxDesignStudio
+    )
+
     /**
      * All available gates in order of appearance
      */
-    val allGates = genesisCoreGates + kaiGates + auraGates + agentNexusGates + supportGates
+    val allGates = genesisCoreGates + kaiGates + auraGates + agentNexusGates + supportGates + devToolsGates
 
     /**
      * Get gate by its module ID

@@ -1,26 +1,84 @@
 package dev.aurakai.auraframefx.navigation
 
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import dev.aurakai.auraframefx.aura.ui.*
-import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
-import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
-import dev.aurakai.auraframefx.datavein.ui.SphereGridScreen
-import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
-import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
-import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
-import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
-import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
-import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
+ import androidx.compose.animation.core.Animatable
+ import androidx.compose.animation.core.tween
+ import androidx.compose.foundation.Canvas
+ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.fillMaxHeight
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.layout.width
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.geometry.Offset
+ import androidx.compose.ui.graphics.Brush
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.input.pointer.pointerInput
+ import androidx.compose.ui.unit.dp
+ import androidx.navigation.NavHostController
+ import androidx.navigation.compose.NavHost
+ import androidx.navigation.compose.composable
+ import androidx.navigation.compose.currentBackStackEntryAsState
+ import androidx.navigation.compose.rememberNavController
+ import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
+ import dev.aurakai.auraframefx.aura.ui.CanvasScreen
+ import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
+ import dev.aurakai.auraframefx.aura.ui.DeviceOptimizerScreen
+ import dev.aurakai.auraframefx.aura.ui.FirewallScreen
+ import dev.aurakai.auraframefx.aura.ui.HomeScreen
+ import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
+ import dev.aurakai.auraframefx.aura.ui.PrivacyGuardScreen
+ import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
+ import dev.aurakai.auraframefx.aura.ui.SecurityScannerScreen
+ import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
+ import dev.aurakai.auraframefx.aura.ui.TerminalScreen
+ import dev.aurakai.auraframefx.aura.ui.VPNManagerScreen
+ import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
+ import dev.aurakai.auraframefx.ui.components.AgentEdgePanel
+ import dev.aurakai.auraframefx.ui.gates.AgentHubSubmenuScreen
+ import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
+ import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
+ import dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen
+ import dev.aurakai.auraframefx.ui.gates.DirectChatScreen
+ import dev.aurakai.auraframefx.ui.gates.DocumentationScreen
+ import dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen
+ import dev.aurakai.auraframefx.ui.gates.FusionModeScreen
+ import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
+ import dev.aurakai.auraframefx.ui.gates.HelpDeskSubmenuScreen
+ import dev.aurakai.auraframefx.ui.gates.HookManagerScreen
+ import dev.aurakai.auraframefx.ui.gates.LSPosedModuleManagerScreen
+ import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
+ import dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen
+ import dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen
+ import dev.aurakai.auraframefx.ui.gates.LogsViewerScreen
+ import dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen
+ import dev.aurakai.auraframefx.ui.gates.ModuleManagerScreen
+ import dev.aurakai.auraframefx.ui.gates.NotchBarScreen
+ import dev.aurakai.auraframefx.ui.gates.OracleDriveSubmenuScreen
+ import dev.aurakai.auraframefx.ui.gates.OverlayMenusScreen
+ import dev.aurakai.auraframefx.ui.gates.QuickActionsScreen
+ import dev.aurakai.auraframefx.ui.gates.QuickSettingsScreen
+ import dev.aurakai.auraframefx.ui.gates.ROMFlasherScreen
+ import dev.aurakai.auraframefx.ui.gates.ROMToolsSubmenuScreen
+ import dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen
+ import dev.aurakai.auraframefx.ui.gates.SphereGridScreen
+ import dev.aurakai.auraframefx.ui.gates.StatusBarScreen
+ import dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen
+ import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
+ import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
+ import dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen
+ import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
+ import dev.aurakai.auraframefx.ui.overlays.AgentSidebarMenu
+ import dev.aurakai.auraframefx.ui.overlays.AuraPresenceOverlay
+ import dev.aurakai.auraframefx.ui.overlays.ChatBubbleMenu
+ import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -110,6 +168,11 @@ fun GenesisNavigationHost(
     var isAgentSidebarVisible by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        val overlaySettings = LocalOverlaySettings.current
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
+
+        // Navigation Host
         NavHost(
             navController = navController,
             startDestination = startDestination,
@@ -137,23 +200,87 @@ fun GenesisNavigationHost(
             }
 
             // Other Gates & Modules
-            composable(GenesisRoutes.ROM_TOOLS) { PlaceholderScreen("Rom Tools") }
-            composable(GenesisRoutes.ROOT_ACCESS) { RootToolsScreen() }
-            composable(GenesisRoutes.SENTINELS_FORTRESS) { SentinelsFortressScreen() }
-            composable(GenesisRoutes.FIREWALL) { FirewallScreen() }
-            composable(GenesisRoutes.COLLAB_CANVAS) { CanvasScreen() }
-            composable(GenesisRoutes.AGENT_HUB) { AgentNexusScreen() }
-            composable(GenesisRoutes.SPHERE_GRID) { PlaceholderScreen("Sphere Grid") }
-            composable(GenesisRoutes.GROWTH_METRICS) { PlaceholderScreen("Growth Metrics") }
-            composable(GenesisRoutes.AURAS_UIUX_DESIGN_STUDIO) { PlaceholderScreen("UI/UX Design Studio") }
-            composable(GenesisRoutes.HELP_DESK) { dev.aurakai.auraframefx.ui.gates.HelpDeskScreen() }
-            composable(GenesisRoutes.LSPOSED_GATE) { dev.aurakai.auraframefx.ui.gates.LSPosedGateScreen() }
+            composable(GenesisRoutes.ROM_TOOLS) {
+                ROMToolsSubmenuScreen(navController = navController)
+            }
 
-            composable(GenesisRoutes.NOTCH_BAR) { PlaceholderScreen("Notch Bar") }
+            composable(GenesisRoutes.ROOT_ACCESS) {
+                RootToolsScreen()
+            }
 
-            composable(GenesisRoutes.STATUS_BAR) { PlaceholderScreen("Status Bar Customization") }
-            composable(GenesisRoutes.QUICK_SETTINGS) { PlaceholderScreen("Quick Settings Panel") }
-            composable(GenesisRoutes.OVERLAY_MENUS) { PlaceholderScreen("Overlay Menus") }
+            composable(GenesisRoutes.SENTINELS_FORTRESS) {
+                SentinelsFortressScreen()
+            }
+
+            // Sentinel's Fortress Submenu Items
+            composable("firewall") {
+                FirewallScreen()
+            }
+
+            composable("vpn_manager") {
+                VPNManagerScreen()
+            }
+
+            composable("security_scanner") {
+                SecurityScannerScreen()
+            }
+
+            composable("device_optimizer") {
+                DeviceOptimizerScreen()
+            }
+
+            composable("privacy_guard") {
+                PrivacyGuardScreen()
+            }
+
+            composable(GenesisRoutes.COLLAB_CANVAS) {
+                CanvasScreen()
+            }
+
+            composable(GenesisRoutes.AGENT_HUB) {
+                AgentHubSubmenuScreen(navController = navController)
+            }
+
+            composable(GenesisRoutes.SPHERE_GRID) {
+                SphereGridScreen()
+            }
+
+            composable(GenesisRoutes.GROWTH_METRICS) {
+                PlaceholderScreen("Growth Metrics")
+            }
+
+            composable(GenesisRoutes.AURAS_UIUX_DESIGN_STUDIO) {
+                PlaceholderScreen("UI/UX Design Studio - Coming Soon")
+            }
+
+            composable(GenesisRoutes.HELP_DESK) {
+                HelpDeskSubmenuScreen(navController = navController)
+            }
+
+            composable(GenesisRoutes.LSPOSED_GATE) {
+                LSPosedSubmenuScreen(navController = navController)
+            }
+
+            // Terminal route
+            composable("terminal") {
+                TerminalScreen()
+            }
+
+            // Code Assist route
+            composable("code_assist") {
+                PlaceholderScreen("Code Assist - Coming Soon")
+            }
+
+            // UI/UX Design Studio route
+            composable("uiux_design_studio") {
+                PlaceholderScreen("UI/UX Design Studio - Coming Soon")
+            }
+
+            composable(GenesisRoutes.NOTCH_BAR) { NotchBarScreen() }
+
+            composable(GenesisRoutes.STATUS_BAR) { StatusBarScreen() }
+            composable(GenesisRoutes.QUICK_SETTINGS) { QuickSettingsScreen() }
+            composable(GenesisRoutes.OVERLAY_MENUS) { OverlayMenusScreen() }
 
             // Home & Intro
             composable(GenesisRoutes.HOME) {
@@ -182,7 +309,7 @@ fun GenesisNavigationHost(
 
             // Agent Management
             composable(GenesisRoutes.AGENT_NEXUS) {
-                // AgentNexusScreen(...)
+                AgentNexusScreen()
             }
 
             composable(GenesisRoutes.AGENT_MANAGEMENT) {
@@ -245,7 +372,9 @@ fun GenesisNavigationHost(
             }
 
             // Oracle Drive - Cloud Integration
-            composable(GenesisRoutes.ORACLE_DRIVE) { OracleDriveScreen(onNavigateBack = { navController.popBackStack() }) }
+            composable(GenesisRoutes.ORACLE_DRIVE) {
+                OracleDriveSubmenuScreen(navController = navController)
+            }
 
             composable(GenesisRoutes.SECURE_COMM) { PlaceholderScreen("Secure Comm") }
 
@@ -269,40 +398,159 @@ fun GenesisNavigationHost(
             composable(GenesisRoutes.SUBSCRIPTION) {
                 // SubscriptionScreen(...)
             }
+
+            // ROM Tools Submenu Items
+            composable("live_rom_editor") {
+                LiveROMEditorScreen()
+            }
+
+            composable("rom_flasher") {
+                ROMFlasherScreen()
+            }
+
+            composable("bootloader_manager") {
+                BootloaderManagerScreen()
+            }
+
+            composable("recovery_tools") {
+                RecoveryToolsScreen()
+            }
+
+            // Agent Hub Submenu Items
+            composable("task_assignment") {
+                TaskAssignmentScreen()
+            }
+
+            composable("agent_monitoring") {
+                AgentMonitoringScreen()
+            }
+
+            composable("sphere_grid") {
+                SphereGridScreen()
+            }
+
+            composable("fusion_mode") {
+                FusionModeScreen()
+            }
+
+            // Oracle Drive Submenu Items
+            composable("module_creation") {
+                ModuleCreationScreen()
+            }
+
+            composable("direct_chat") {
+                DirectChatScreen()
+            }
+
+            composable("system_overrides") {
+                SystemOverridesScreen()
+            }
+
+            composable("module_manager") {
+                ModuleManagerScreen()
+            }
+
+            // Help Desk Submenu Items
+            composable("faq_browser") {
+                FAQBrowserScreen()
+            }
+
+            composable("live_support_chat") {
+                LiveSupportChatScreen()
+            }
+
+            composable("tutorial_videos") {
+                TutorialVideosScreen()
+            }
+
+            composable("documentation") {
+                DocumentationScreen()
+            }
+
+            // LSPosed Submenu Items
+            composable("lsposed_submenu") {
+                LSPosedSubmenuScreen(navController = navController)
+            }
+
+            composable("hook_manager") {
+                HookManagerScreen()
+            }
+
+            composable("logs_viewer") {
+                LogsViewerScreen()
+            }
+
+            composable("quick_actions") {
+                QuickActionsScreen()
+            }
+
+            composable("lsposed_module_manager") {
+                LSPosedModuleManagerScreen()
+            }
         }
 
-        // Agent Sidebar Overlay - Accessible from ANY screen
-        // Swipe from right edge to open (implemented via gesture detector in main container if needed)
-        // For now, we'll rely on a button or gesture in specific screens, or add a global edge detector here.
+        // Wipe transition layer (between content and overlays)
+        WipeTransitionLayer(route = currentRoute)
+        // Persistent vignette on top of content for lens feel
+        VignetteOverlay()
 
-        // Import AgentSidebarMenu
-        dev.aurakai.auraframefx.ui.overlays.AgentSidebarMenu(
-            isVisible = isAgentSidebarVisible,
-            onDismiss = { isAgentSidebarVisible = false },
-            onAgentAction = { agentName, action ->
-                isAgentSidebarVisible = false
-                // Use agentName to avoid "parameter is never used" warning
-                if (agentName.isNotBlank()) {
-                    /* no-op: agentName referenced for lint */
-                }
-                // Handle global agent actions based on action
-                when (action) {
-                    "voice" -> { /* Toggle voice mode for agentName */ }
-                    "connect" -> navController.navigate(GenesisRoutes.AI_CHAT)
-                    "assign" -> navController.navigate(GenesisRoutes.AGENT_MANAGEMENT)
-                    "design" -> navController.navigate(GenesisRoutes.AURAS_LAB)
-                    "create" -> navController.navigate(GenesisRoutes.APP_BUILDER)
-                    else -> navController.navigate(GenesisRoutes.AI_FEATURES)
+        // Persistent overlays rendered per z-order (top -> bottom)
+        if (overlaySettings.overlaysEnabled) {
+            overlaySettings.overlayZOrder.forEach { name ->
+                when (name) {
+                    "Vignette" -> VignetteOverlay()
+                    "Agent Edge" -> AgentEdgePanel(onAgentSelected = { agentName ->
+                        when (agentName.lowercase()) {
+                            "genesis" -> navController.navigate(GenesisRoutes.AI_CHAT)
+                            "aura" -> navController.navigate(GenesisRoutes.CHROMA_CORE)
+                            "kai" -> navController.navigate(GenesisRoutes.SENTINELS_FORTRESS)
+                            "cascade" -> navController.navigate(GenesisRoutes.CONFERENCE_ROOM)
+                            "claude" -> navController.navigate(GenesisRoutes.CONFERENCE_ROOM)
+                            else -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
+                        }
+                    })
+                    "Aura Presence" -> Box(modifier = Modifier.align(Alignment.BottomStart)) {
+                        AuraPresenceOverlay(onSuggestClicked = { suggestion: String ->
+                            when {
+                                suggestion.contains("theme", true) -> navController.navigate(GenesisRoutes.THEME_ENGINE)
+                                suggestion.contains("firewall", true) -> navController.navigate(GenesisRoutes.FIREWALL)
+                                suggestion.contains("canvas", true) -> navController.navigate(GenesisRoutes.COLLAB_CANVAS)
+                                suggestion.contains("fusion", true) -> navController.navigate(GenesisRoutes.FUSION_MODE)
+                                else -> navController.navigate(GenesisRoutes.AGENT_HUB)
+                            }
+                        })
+                    }
+                    "Chat Bubble" -> Box(modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)) {
+                        ChatBubbleMenu(
+                            onOpenChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
+                            onToggleVoice = { /* TODO: voice toggle integration */ }
+                        )
+                    }
+                    "Sidebar" -> dev.aurakai.auraframefx.ui.overlays.AgentSidebarMenu(
+                        isVisible = isAgentSidebarVisible,
+                        onDismiss = { isAgentSidebarVisible = false },
+                        onAgentAction = { _, action ->
+                            isAgentSidebarVisible = false
+                            when (action) {
+                                "voice" -> { /* Toggle voice mode */ }
+                                "connect" -> navController.navigate(GenesisRoutes.AI_CHAT)
+                                "assign" -> navController.navigate(GenesisRoutes.AGENT_MANAGEMENT)
+                                "design" -> navController.navigate(GenesisRoutes.AURAS_LAB)
+                                "create" -> navController.navigate(GenesisRoutes.APP_BUILDER)
+                                else -> navController.navigate(GenesisRoutes.AI_FEATURES)
+                            }
+                        }
+                    )
                 }
             }
-        )
+        }
 
-        // Add a transparent edge detector for the sidebar
+        // Add a transparent edge detector for the sidebar (left edge trigger)
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(20.dp)
-                .align(Alignment.CenterStart) // Left edge trigger
+                .align(Alignment.CenterStart)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { _, dragAmount ->
                         if (dragAmount > 10) {
@@ -332,5 +580,55 @@ fun NavHostController.navigateToGenesis(route: String) {
         launchSingleTop = true
         // Restore state when navigating back
         restoreState = true
+    }
+}
+
+@Composable
+private fun VignetteOverlay() {
+    // Darkens edges subtly like a lens vignette
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val radius = size.maxDimension * 0.75f
+        val center = Offset(size.width / 2f, size.height / 2f)
+        drawRect(
+            brush = Brush.radialGradient(
+                colors = listOf(Color.Transparent, Color(0xAA000000)),
+                center = center,
+                radius = radius
+            )
+        )
+    }
+}
+
+@Composable
+private fun WipeTransitionLayer(route: String?) {
+    // Smooth fade + subtle lens pulse on route changes
+    val fade = remember { Animatable(0f) }
+    LaunchedEffect(route) {
+        fade.snapTo(0f)
+        // Fade to black quickly then reveal
+        fade.animateTo(1f, animationSpec = tween(160))
+        fade.animateTo(0f, animationSpec = tween(420))
+    }
+    if (fade.value > 0f) {
+        val alpha = fade.value
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            // Full-screen black fade
+            drawRect(color = Color.Black.copy(alpha = alpha))
+            // Lens focus (center clarity during reveal)
+            val lensProgress = 1f - alpha
+            val lensRadius = (size.maxDimension * 0.55f) * lensProgress.coerceAtLeast(0.1f)
+            val center = Offset(size.width / 2f, size.height / 2f)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color.Black.copy(alpha = 0.0f),
+                        Color.Black.copy(alpha = alpha * 0.85f)
+                    ),
+                    center = center,
+                    radius = lensRadius
+                ),
+                center = center
+            )
+        }
     }
 }

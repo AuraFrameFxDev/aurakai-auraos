@@ -1,11 +1,17 @@
 package dev.aurakai.auraframefx.ui.gates
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.ui.components.colorpicker.ColorBlendrPicker
 import dev.aurakai.auraframefx.aura.themes.ThemeEditor
+import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
 
 /**
  * Theme Engine Screen
@@ -28,6 +35,26 @@ fun ThemeEngineScreen(
 ) {
     var selectedColor by remember { mutableStateOf(Color.Magenta) }
     val scrollState = rememberScrollState()
+    val overlaySettings = LocalOverlaySettings.current
+    var overlaysEnabled by remember { mutableStateOf(overlaySettings.overlaysEnabled) }
+    var overlayZOrder by remember { mutableStateOf(overlaySettings.overlayZOrder) }
+    var editMode by remember { mutableStateOf(false) }
+    val scaleAnim = remember { Animatable(1f) }
+    val wigglePhase = remember { Animatable(0f) }
+
+    LaunchedEffect(editMode) {
+        if (editMode) {
+            scaleAnim.animateTo(0.92f, animationSpec = tween(200))
+            // loop wiggle
+            while (true) {
+                wigglePhase.animateTo(1f, animationSpec = tween(600))
+                wigglePhase.snapTo(0f)
+            }
+        } else {
+            scaleAnim.animateTo(1f, animationSpec = tween(200))
+            wigglePhase.snapTo(0f)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -61,7 +88,7 @@ fun ThemeEngineScreen(
             ) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         tint = Color.White
                     )
@@ -90,7 +117,7 @@ fun ThemeEngineScreen(
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
-            
+
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
                 modifier = Modifier.fillMaxWidth()
@@ -117,8 +144,121 @@ fun ThemeEngineScreen(
             // Note: ThemeEditor might handle its own state, passing selectedColor as a seed
             ThemeEditor(
                 onColorsChanged = { /* Handle theme updates */ }
-            ) 
-            
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Overlay Managers & Z-Order
+            Text(
+                text = "Overlay Managers",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = { editMode = true },
+                            onTap = { if (editMode) editMode = false }
+                        )
+                    }
+            )
+
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)), modifier = Modifier.fillMaxWidth().graphicsLayer {
+                scaleX = scaleAnim.value
+                scaleY = scaleAnim.value
+            }) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = {
+                            overlaysEnabled = !overlaysEnabled
+                            overlaySettings.overlaysEnabled = overlaysEnabled
+                        }) {
+                            Icon(
+                                imageVector = if (overlaysEnabled) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (overlaysEnabled) "Disable overlays" else "Enable overlays",
+                                tint = if (overlaysEnabled) Color(0xFF00FF41) else Color(0xFFFF4500)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (overlaysEnabled) "Overlays Enabled" else "Overlays Disabled",
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Z‑Order (Top → Bottom)", color = Color.White.copy(alpha = 0.8f))
+                    overlayZOrder.forEachIndexed { index, name ->
+                        val phase = wigglePhase.value
+                        val rotation = if (editMode) (kotlin.math.sin(phase * 2f * Math.PI).toFloat() * 2.0f) else 0f
+                        val translateY = if (editMode) (kotlin.math.sin((phase + index * 0.1f) * 2f * Math.PI).toFloat() * 2f) else 0f
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                                .graphicsLayer {
+                                    rotationZ = rotation
+                                    translationY = translateY
+                                }
+                                .pointerInput(index, overlayZOrder, editMode) {
+                                    if (editMode) {
+                                        detectDragGestures(
+                                            onDragEnd = {
+                                                // snap back visuals handled by wiggle
+                                            }
+                                        ) { change, dragAmount ->
+                                            change.consume()
+                                            // Calculate target index based on drag direction
+                                            val targetIndex = when {
+                                                dragAmount.y < -4 -> (index - 1).coerceAtLeast(0)
+                                                dragAmount.y > 4 -> (index + 1).coerceAtMost(overlayZOrder.lastIndex)
+                                                else -> index
+                                            }
+                                            if (targetIndex != index) {
+                                                val m = overlayZOrder.toMutableList()
+                                                val item = m.removeAt(index)
+                                                m.add(targetIndex, item)
+                                                overlayZOrder = m
+                                                overlaySettings.overlayZOrder = m
+                                            }
+                                        }
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "${index + 1}. $name", color = Color.White)
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (!editMode) {
+                                OutlinedButton(onClick = {
+                                    if (index > 0) {
+                                        val m = overlayZOrder.toMutableList()
+                                        val tmp = m[index - 1]; m[index - 1] = m[index]; m[index] = tmp
+                                        overlayZOrder = m
+                                        overlaySettings.overlayZOrder = m
+                                    }
+                                }) { Text("Up") }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                OutlinedButton(onClick = {
+                                    if (index < overlayZOrder.lastIndex) {
+                                        val m = overlayZOrder.toMutableList()
+                                        val tmp = m[index + 1]; m[index + 1] = m[index]; m[index] = tmp
+                                        overlayZOrder = m
+                                        overlaySettings.overlayZOrder = m
+                                    }
+                                }) { Text("Down") }
+                            } else {
+                                AssistChip(onClick = { /* no-op in edit mode */ }, label = { Text("Drag") })
+                            }
+                        }
+                    }
+                    Text(
+                        text = "Note: Changes apply immediately to overlay layering.",
+                        color = Color.White.copy(alpha = 0.6f),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(100.dp)) // Bottom padding
         }
     }
