@@ -370,8 +370,8 @@ object GateConfigs {
         pixelArtUrl = "gate_codeassist",
         description = "AI-powered coding assistant. Get intelligent code suggestions and automated refactoring.",
         backgroundColor = Color.Black,
-        route = "code_assist",
-        comingSoon = true  // Features in development
+        route = "code_assist"
+        // Screen exists: CodeAssistScreen.kt
     )
 
     // Sphere Grid - Agent Progression
@@ -444,18 +444,6 @@ object GateConfigs {
         ),
         borderColor = Color(0xFFFF00FF),
         glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_uiuxdesignstudio",
-        description = "Comprehensive UI/UX design tools. Create, prototype, and test interface designs.",
-        backgroundColor = Color.Black,
-        route = "uiux_design_studio"
-        // Screen exists
-    )
-
-    /** Genesis Core - System Level Access */
-    val genesisCoreGates = listOf(
-        romTools,
-        rootAccess,
         oracleDrive
     )
 

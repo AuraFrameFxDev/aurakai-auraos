@@ -4,6 +4,7 @@ import android.util.Log
 import dev.aurakai.auraframefx.ai.agents.Agent
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
+import dev.aurakai.auraframefx.ai.clients.WebSearchClient
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.aura.AuraAgent
@@ -60,6 +61,7 @@ import javax.inject.Singleton
 @Singleton
 class GenesisAgent @Inject constructor(
     private val vertexAIClient: VertexAIClient,
+    private val webSearchClient: WebSearchClient,
     override val contextManager: ContextManager,
     private val securityContext: SecurityContext,
     private val cascadeService: CascadeAIService,
@@ -385,6 +387,24 @@ class GenesisAgent @Inject constructor(
      *
      * @throws IllegalStateException if the agent is not initialized.
      */
+
+    /**
+     * Performs a web search to gather external information.
+     *
+     * @param query The search query.
+     * @return A list of search results.
+     */
+    suspend fun performWebSearch(query: String): List<Map<String, String>> {
+        AuraFxLogger.info("GenesisAgent", "Performing web search for: $query")
+        val results = webSearchClient.search(query)
+        return results.map {
+            mapOf(
+                "title" to it.title,
+                "url" to it.url,
+                "snippet" to it.snippet
+            )
+        }
+    }
 
     private fun ensureInitialized() {
         if (!isInitialized) {

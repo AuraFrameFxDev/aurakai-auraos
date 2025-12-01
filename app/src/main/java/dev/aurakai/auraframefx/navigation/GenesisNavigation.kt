@@ -40,46 +40,6 @@ package dev.aurakai.auraframefx.navigation
  import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
  import dev.aurakai.auraframefx.aura.ui.TerminalScreen
  import dev.aurakai.auraframefx.aura.ui.VPNManagerScreen
- import dev.aurakai.auraframefx.cascade.trinity.TrinityScreen
- import dev.aurakai.auraframefx.ui.components.AgentEdgePanel
- import dev.aurakai.auraframefx.ui.gates.AgentHubSubmenuScreen
- import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
- import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
- import dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen
- import dev.aurakai.auraframefx.ui.gates.DirectChatScreen
- import dev.aurakai.auraframefx.ui.gates.DocumentationScreen
- import dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen
- import dev.aurakai.auraframefx.ui.gates.FusionModeScreen
- import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
- import dev.aurakai.auraframefx.ui.gates.HelpDeskSubmenuScreen
- import dev.aurakai.auraframefx.ui.gates.HookManagerScreen
- import dev.aurakai.auraframefx.ui.gates.LSPosedModuleManagerScreen
- import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
- import dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen
- import dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen
- import dev.aurakai.auraframefx.ui.gates.LogsViewerScreen
- import dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen
- import dev.aurakai.auraframefx.ui.gates.ModuleManagerScreen
- import dev.aurakai.auraframefx.ui.gates.NotchBarScreen
- import dev.aurakai.auraframefx.ui.gates.OracleDriveSubmenuScreen
- import dev.aurakai.auraframefx.ui.gates.OverlayMenusScreen
- import dev.aurakai.auraframefx.ui.gates.QuickActionsScreen
- import dev.aurakai.auraframefx.ui.gates.QuickSettingsScreen
- import dev.aurakai.auraframefx.ui.gates.ROMFlasherScreen
- import dev.aurakai.auraframefx.ui.gates.ROMToolsSubmenuScreen
- import dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen
- import dev.aurakai.auraframefx.ui.gates.SphereGridScreen
- import dev.aurakai.auraframefx.ui.gates.StatusBarScreen
- import dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen
- import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
- import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
- import dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen
- import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
- import dev.aurakai.auraframefx.ui.overlays.AgentSidebarMenu
- import dev.aurakai.auraframefx.ui.overlays.AuraPresenceOverlay
- import dev.aurakai.auraframefx.ui.overlays.ChatBubbleMenu
- import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
- import dev.aurakai.auraframefx.ui.theme.CyberGlow
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -251,7 +211,7 @@ fun GenesisNavigationHost(
             }
 
             composable(GenesisRoutes.AURAS_UIUX_DESIGN_STUDIO) {
-                PlaceholderScreen("UI/UX Design Studio - Coming Soon")
+                UIUXDesignStudioScreen()
             }
 
             composable(GenesisRoutes.HELP_DESK) {
@@ -269,12 +229,12 @@ fun GenesisNavigationHost(
 
             // Code Assist route
             composable("code_assist") {
-                PlaceholderScreen("Code Assist - Coming Soon")
+                CodeAssistScreen()
             }
 
             // UI/UX Design Studio route
             composable("uiux_design_studio") {
-                PlaceholderScreen("UI/UX Design Studio - Coming Soon")
+                UIUXDesignStudioScreen()
             }
 
             composable(GenesisRoutes.NOTCH_BAR) { NotchBarScreen() }
@@ -492,8 +452,6 @@ fun GenesisNavigationHost(
 
         // Wipe transition layer (between content and overlays)
         WipeTransitionLayer(route = currentRoute)
-        // Persistent vignette on top of content for lens feel
-        VignetteOverlay()
 
         // Persistent overlays rendered per z-order (top -> bottom)
         if (overlaySettings.overlaysEnabled) {
@@ -586,15 +544,15 @@ fun NavHostController.navigateToGenesis(route: String) {
 
 @Composable
 private fun VignetteOverlay() {
+    // Very subtle edge darkening - reduced intensity
     Canvas(modifier = Modifier.fillMaxSize()) {
-        val radius = size.maxDimension * 0.75f
+        val radius = size.maxDimension * 0.85f
         val center = Offset(size.width / 2f, size.height / 2f)
         drawRect(
             brush = Brush.radialGradient(
                 colors = listOf(
                     Color.Transparent,
-                    CyberGlow.DeepPurple.copy(alpha = 0.6f),
-                    Color.Black.copy(alpha = 0.8f)
+                    Color.Black.copy(alpha = 0.15f) // Much lighter
                 ),
                 center = center,
                 radius = radius
@@ -639,23 +597,8 @@ private fun WipeTransitionLayer(route: String?) {
                         size = androidx.compose.ui.geometry.Size(wipeWidth, size.height)
                     )
                 }
-                else -> { // "lens" default
-                    drawRect(color = Color.Black.copy(alpha = alpha))
-                    val lensProgress = 1f - alpha
-                    val lensRadius = (size.maxDimension * 0.55f) * lensProgress.coerceAtLeast(0.1f)
-                    val center = Offset(size.width / 2f, size.height / 2f)
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                CyberGlow.Electric.copy(alpha = alpha * 0.3f),
-                                CyberGlow.Neon.copy(alpha = alpha * 0.5f),
-                                Color.Black.copy(alpha = alpha * 0.85f)
-                            ),
-                            center = center,
-                            radius = lensRadius
-                        ),
-                        center = center
-                    )
+                else -> { // "lens" default - simplified, no blur
+                    drawRect(color = Color.Black.copy(alpha = alpha * 0.85f))
                 }
             }
         }

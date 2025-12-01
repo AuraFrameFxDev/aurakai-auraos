@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.ui.components.colorpicker.ColorBlendrPicker
 import dev.aurakai.auraframefx.aura.themes.ThemeEditor
+import dev.aurakai.auraframefx.aura.themes.ThemeColors
 import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
 import dev.aurakai.auraframefx.ui.theme.CyberGlow
 import androidx.compose.ui.input.pointer.pointerInput
@@ -138,9 +139,14 @@ fun ThemeEngineScreen(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            // Embedding ThemeEditor
-            // Note: ThemeEditor might handle its own state, passing selectedColor as a seed
+            // Embedding ThemeEditor with CyberGlow colors
             ThemeEditor(
+                initialColors = ThemeColors(
+                    primary = CyberGlow.Electric,
+                    secondary = CyberGlow.Neon,
+                    background = CyberGlow.DeepPurple,
+                    surface = CyberGlow.cardBackground
+                ),
                 onColorsChanged = { /* Handle theme updates */ }
             )
 
