@@ -40,6 +40,11 @@ package dev.aurakai.auraframefx.navigation
  import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
  import dev.aurakai.auraframefx.aura.ui.TerminalScreen
  import dev.aurakai.auraframefx.aura.ui.VPNManagerScreen
+ import androidx.hilt.navigation.compose.hiltViewModel
+ import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgentViewModel
+ import dev.aurakai.auraframefx.models.AgentType
+ import androidx.navigation.NavType
+ import androidx.navigation.navArgument
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -123,7 +128,8 @@ object GenesisRoutes {
 @Composable
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = GenesisRoutes.GATES // Default to Gate Carousel
+    startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
+    viewModel: GenesisAgentViewModel = hiltViewModel()
 ) {
     // State for Agent Sidebar
     var isAgentSidebarVisible by remember { mutableStateOf(false) }
@@ -399,8 +405,12 @@ fun GenesisNavigationHost(
                 ModuleCreationScreen()
             }
 
-            composable("direct_chat") {
-                DirectChatScreen()
+            composable(
+                "direct_chat/{agentName}",
+                arguments = listOf(navArgument("agentName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val agentName = backStackEntry.arguments?.getString("agentName") ?: "Genesis"
+                DirectChatScreen(agentName = agentName, viewModel = viewModel)
             }
 
             composable("system_overrides") {
@@ -459,14 +469,20 @@ fun GenesisNavigationHost(
                 when (name) {
                     "Vignette" -> VignetteOverlay()
                     "Agent Edge" -> AgentEdgePanel(onAgentSelected = { agentName ->
-                        when (agentName.lowercase()) {
-                            "genesis" -> navController.navigate(GenesisRoutes.AI_CHAT)
-                            "aura" -> navController.navigate(GenesisRoutes.CHROMA_CORE)
-                            "kai" -> navController.navigate(GenesisRoutes.SENTINELS_FORTRESS)
-                            "cascade" -> navController.navigate(GenesisRoutes.CONFERENCE_ROOM)
-                            "claude" -> navController.navigate(GenesisRoutes.CONFERENCE_ROOM)
-                            else -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
+                        // Activate agent and navigate to chat
+                        try {
+                            // Map display name to AgentType enum if needed, or assume uppercase match
+                            val agentType = try {
+                                AgentType.valueOf(agentName.uppercase())
+                            } catch (e: IllegalArgumentException) {
+                                // Fallback mapping or default
+                                AgentType.GENESIS
+                            }
+                            viewModel.toggleAgent(agentType)
+                        } catch (e: Exception) {
+                            // Log error
                         }
+                        navController.navigate("direct_chat/$agentName")
                     })
                     "Aura Presence" -> Box(modifier = Modifier.align(Alignment.BottomStart)) {
                         AuraPresenceOverlay(onSuggestClicked = { suggestion: String ->
