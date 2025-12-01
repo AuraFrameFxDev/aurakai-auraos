@@ -14,6 +14,8 @@ private val Context.overlayDataStore by preferencesDataStore(name = "overlay_set
 object OverlayPrefs {
     private val KEY_ENABLED = booleanPreferencesKey("enabled")
     private val KEY_ORDER = stringPreferencesKey("order")
+    private val KEY_TRANSITION_STYLE = stringPreferencesKey("transition_style")
+    private val KEY_TRANSITION_SPEED = stringPreferencesKey("transition_speed")
 
     fun enabledFlow(context: Context): Flow<Boolean> =
         context.overlayDataStore.data.map { it[KEY_ENABLED] ?: true }
@@ -24,6 +26,12 @@ object OverlayPrefs {
                 ?: listOf("Vignette", "Agent Edge", "Aura Presence", "Chat Bubble", "Sidebar")
         }
 
+    fun transitionStyleFlow(context: Context): Flow<String> =
+        context.overlayDataStore.data.map { it[KEY_TRANSITION_STYLE] ?: "lens" }
+
+    fun transitionSpeedFlow(context: Context): Flow<Int> =
+        context.overlayDataStore.data.map { it[KEY_TRANSITION_SPEED]?.toIntOrNull() ?: 3 }
+
     suspend fun saveEnabled(context: Context, enabled: Boolean) {
         context.overlayDataStore.edit { it[KEY_ENABLED] = enabled }
     }
@@ -31,5 +39,12 @@ object OverlayPrefs {
     suspend fun saveOrder(context: Context, order: List<String>) {
         context.overlayDataStore.edit { it[KEY_ORDER] = order.joinToString("|") }
     }
-}
 
+    suspend fun saveTransitionStyle(context: Context, style: String) {
+        context.overlayDataStore.edit { it[KEY_TRANSITION_STYLE] = style }
+    }
+
+    suspend fun saveTransitionSpeed(context: Context, speed: Int) {
+        context.overlayDataStore.edit { it[KEY_TRANSITION_SPEED] = speed.toString() }
+    }
+}

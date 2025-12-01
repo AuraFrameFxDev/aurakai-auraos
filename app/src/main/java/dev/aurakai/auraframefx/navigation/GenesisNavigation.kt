@@ -79,6 +79,7 @@ package dev.aurakai.auraframefx.navigation
  import dev.aurakai.auraframefx.ui.overlays.AuraPresenceOverlay
  import dev.aurakai.auraframefx.ui.overlays.ChatBubbleMenu
  import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
+ import dev.aurakai.auraframefx.ui.theme.CyberGlow
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -585,13 +586,16 @@ fun NavHostController.navigateToGenesis(route: String) {
 
 @Composable
 private fun VignetteOverlay() {
-    // Darkens edges subtly like a lens vignette
     Canvas(modifier = Modifier.fillMaxSize()) {
         val radius = size.maxDimension * 0.75f
         val center = Offset(size.width / 2f, size.height / 2f)
         drawRect(
             brush = Brush.radialGradient(
-                colors = listOf(Color.Transparent, Color(0xAA000000)),
+                colors = listOf(
+                    Color.Transparent,
+                    CyberGlow.DeepPurple.copy(alpha = 0.6f),
+                    Color.Black.copy(alpha = 0.8f)
+                ),
                 center = center,
                 radius = radius
             )
@@ -601,34 +605,59 @@ private fun VignetteOverlay() {
 
 @Composable
 private fun WipeTransitionLayer(route: String?) {
-    // Smooth fade + subtle lens pulse on route changes
+    val overlaySettings = LocalOverlaySettings.current
     val fade = remember { Animatable(0f) }
+    val speedMultiplier = (6 - overlaySettings.transitionSpeed) * 0.5f
+
     LaunchedEffect(route) {
         fade.snapTo(0f)
-        // Fade to black quickly then reveal
-        fade.animateTo(1f, animationSpec = tween(160))
-        fade.animateTo(0f, animationSpec = tween(420))
+        val fadeInDuration = (160 * speedMultiplier).toInt()
+        val fadeOutDuration = (420 * speedMultiplier).toInt()
+        fade.animateTo(1f, animationSpec = tween(fadeInDuration))
+        fade.animateTo(0f, animationSpec = tween(fadeOutDuration))
     }
+
     if (fade.value > 0f) {
         val alpha = fade.value
         Canvas(modifier = Modifier.fillMaxSize()) {
-            // Full-screen black fade
-            drawRect(color = Color.Black.copy(alpha = alpha))
-            // Lens focus (center clarity during reveal)
-            val lensProgress = 1f - alpha
-            val lensRadius = (size.maxDimension * 0.55f) * lensProgress.coerceAtLeast(0.1f)
-            val center = Offset(size.width / 2f, size.height / 2f)
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        Color.Black.copy(alpha = 0.0f),
-                        Color.Black.copy(alpha = alpha * 0.85f)
-                    ),
-                    center = center,
-                    radius = lensRadius
-                ),
-                center = center
-            )
+            when (overlaySettings.transitionStyle) {
+                "fade" -> {
+                    drawRect(color = Color.Black.copy(alpha = alpha))
+                }
+                "swipe_left" -> {
+                    val wipeWidth = size.width * alpha
+                    drawRect(
+                        color = CyberGlow.DeepPurple.copy(alpha = 0.95f),
+                        topLeft = Offset(size.width - wipeWidth, 0f),
+                        size = androidx.compose.ui.geometry.Size(wipeWidth, size.height)
+                    )
+                }
+                "swipe_right" -> {
+                    val wipeWidth = size.width * alpha
+                    drawRect(
+                        color = CyberGlow.DeepPurple.copy(alpha = 0.95f),
+                        size = androidx.compose.ui.geometry.Size(wipeWidth, size.height)
+                    )
+                }
+                else -> { // "lens" default
+                    drawRect(color = Color.Black.copy(alpha = alpha))
+                    val lensProgress = 1f - alpha
+                    val lensRadius = (size.maxDimension * 0.55f) * lensProgress.coerceAtLeast(0.1f)
+                    val center = Offset(size.width / 2f, size.height / 2f)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                CyberGlow.Electric.copy(alpha = alpha * 0.3f),
+                                CyberGlow.Neon.copy(alpha = alpha * 0.5f),
+                                Color.Black.copy(alpha = alpha * 0.85f)
+                            ),
+                            center = center,
+                            radius = lensRadius
+                        ),
+                        center = center
+                    )
+                }
+            }
         }
     }
 }

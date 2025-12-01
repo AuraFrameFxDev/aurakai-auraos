@@ -11,7 +11,8 @@ class OverlaySettings(
 ) {
     var overlaysEnabled by mutableStateOf(enabled)
     var overlayZOrder by mutableStateOf(order)
+    var transitionStyle by mutableStateOf("lens")
+    var transitionSpeed by mutableStateOf(3)
 }
 
 val LocalOverlaySettings = staticCompositionLocalOf { OverlaySettings() }
-

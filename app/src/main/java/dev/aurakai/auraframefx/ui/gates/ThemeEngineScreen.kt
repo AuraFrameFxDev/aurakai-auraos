@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.ui.components.colorpicker.ColorBlendrPicker
 import dev.aurakai.auraframefx.aura.themes.ThemeEditor
 import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
+import dev.aurakai.auraframefx.ui.theme.CyberGlow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.consume
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 
@@ -70,14 +70,7 @@ fun ThemeEngineScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF001A1A), // Dark Cyan
-                            Color.Black
-                        )
-                    )
-                )
+                .background(CyberGlow.verticalGradient)
         )
 
         Column(
@@ -103,7 +96,7 @@ fun ThemeEngineScreen(
                     Text(
                         text = "THEME ENGINE",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFF00FFFF),
+                        color = CyberGlow.Electric,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp
                     )
@@ -124,7 +117,7 @@ fun ThemeEngineScreen(
             )
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
+                colors = CardDefaults.cardColors(containerColor = CyberGlow.cardBackground),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -168,7 +161,7 @@ fun ThemeEngineScreen(
                     }
             )
 
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)), modifier = Modifier.fillMaxWidth().graphicsLayer {
+            Card(colors = CardDefaults.cardColors(containerColor = CyberGlow.cardBackground), modifier = Modifier.fillMaxWidth().graphicsLayer {
                 scaleX = scaleAnim.value
                 scaleY = scaleAnim.value
             }) {
@@ -191,9 +184,53 @@ fun ThemeEngineScreen(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         if (editMode) {
-                            Button(onClick = { editMode = false }) { Text("Done") }
+                            Button(
+                                onClick = { editMode = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = CyberGlow.Neon,
+                                    contentColor = Color.White
+                                )
+                            ) { Text("Done") }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Transition Style", color = CyberGlow.Electric, style = MaterialTheme.typography.titleSmall)
+                    var transitionStyle by remember { mutableStateOf(overlaySettings.transitionStyle) }
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("lens", "fade", "swipe_left", "swipe_right").forEach { style ->
+                            FilterChip(
+                                selected = transitionStyle == style,
+                                onClick = {
+                                    transitionStyle = style
+                                    overlaySettings.transitionStyle = style
+                                },
+                                label = { Text(style.replace("_", " ").uppercase()) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = CyberGlow.Neon,
+                                    selectedLabelColor = Color.White
+                                )
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Transition Speed", color = CyberGlow.Electric, style = MaterialTheme.typography.titleSmall)
+                    var transitionSpeed by remember { mutableStateOf(overlaySettings.transitionSpeed.toFloat()) }
+                    Slider(
+                        value = transitionSpeed,
+                        onValueChange = {
+                            transitionSpeed = it
+                            overlaySettings.transitionSpeed = it.toInt()
+                        },
+                        valueRange = 1f..5f,
+                        steps = 3,
+                        colors = SliderDefaults.colors(
+                            thumbColor = CyberGlow.Electric,
+                            activeTrackColor = CyberGlow.Neon
+                        )
+                    )
+                    Text("Speed: ${transitionSpeed.toInt()}", color = Color.White.copy(alpha = 0.7f))
 
                     Spacer(modifier = Modifier.height(12.dp))
                     Text("Z‑Order (Top → Bottom)", color = Color.White.copy(alpha = 0.8f))
@@ -216,7 +253,6 @@ fun ThemeEngineScreen(
                                                 // snap back visuals handled by wiggle
                                             }
                                         ) { change: PointerInputChange, dragAmount: Offset ->
-                                            change.consume()
                                             // Calculate target index based on drag direction
                                             val targetIndex = when {
                                                 dragAmount.y < -4f -> (index - 1).coerceAtLeast(0)

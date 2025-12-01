@@ -66,6 +66,16 @@ class MainActivity : ComponentActivity() {
                                     settings.overlayZOrder = order
                                 }
                             }
+                            LaunchedEffect(Unit) {
+                                OverlayPrefs.transitionStyleFlow(this@MainActivity).collectLatest { style ->
+                                    settings.transitionStyle = style
+                                }
+                            }
+                            LaunchedEffect(Unit) {
+                                OverlayPrefs.transitionSpeedFlow(this@MainActivity).collectLatest { speed ->
+                                    settings.transitionSpeed = speed
+                                }
+                            }
                             // Persist changes when settings mutate
                             LaunchedEffect(settings) {
                                 snapshotFlow { settings.overlaysEnabled }.collectLatest { enabled ->
@@ -75,6 +85,16 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(settings) {
                                 snapshotFlow { settings.overlayZOrder }.collectLatest { order ->
                                     OverlayPrefs.saveOrder(this@MainActivity, order)
+                                }
+                            }
+                            LaunchedEffect(settings) {
+                                snapshotFlow { settings.transitionStyle }.collectLatest { style ->
+                                    OverlayPrefs.saveTransitionStyle(this@MainActivity, style)
+                                }
+                            }
+                            LaunchedEffect(settings) {
+                                snapshotFlow { settings.transitionSpeed }.collectLatest { speed ->
+                                    OverlayPrefs.saveTransitionSpeed(this@MainActivity, speed)
                                 }
                             }
                             // Wrap navigation with billing enforcement
