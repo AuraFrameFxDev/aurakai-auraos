@@ -14,9 +14,14 @@ import dev.aurakai.auraframefx.navigation.GenesisNavigationHost
 import dev.aurakai.auraframefx.navigation.GenesisRoutes
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
 import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
+import dev.aurakai.auraframefx.ui.overlays.OverlayPrefs
 import dev.aurakai.auraframefx.ui.overlays.OverlaySettings
 import timber.log.Timber
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * MainActivity - Genesis Protocol Entry Point
@@ -49,6 +54,29 @@ class MainActivity : ComponentActivity() {
 
                         // Provide overlay settings at the root composable scope
                         CompositionLocalProvider(LocalOverlaySettings provides OverlaySettings()) {
+                            val settings = LocalOverlaySettings.current
+                            LaunchedEffect(Unit) {
+                                // Load initial persisted values
+                                OverlayPrefs.enabledFlow(this@MainActivity).collectLatest { enabled ->
+                                    settings.overlaysEnabled = enabled
+                                }
+                            }
+                            LaunchedEffect(Unit) {
+                                OverlayPrefs.orderFlow(this@MainActivity).collectLatest { order ->
+                                    settings.overlayZOrder = order
+                                }
+                            }
+                            // Persist changes when settings mutate
+                            LaunchedEffect(settings) {
+                                snapshotFlow { settings.overlaysEnabled }.collectLatest { enabled ->
+                                    OverlayPrefs.saveEnabled(this@MainActivity, enabled)
+                                }
+                            }
+                            LaunchedEffect(settings) {
+                                snapshotFlow { settings.overlayZOrder }.collectLatest { order ->
+                                    OverlayPrefs.saveOrder(this@MainActivity, order)
+                                }
+                            }
                             // Wrap navigation with billing enforcement
                             BillingWrapper {
                                 // Launch complete Genesis navigation system

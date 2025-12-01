@@ -24,6 +24,11 @@ import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.ui.components.colorpicker.ColorBlendrPicker
 import dev.aurakai.auraframefx.aura.themes.ThemeEditor
 import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.consume
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
 
 /**
  * Theme Engine Screen
@@ -184,6 +189,10 @@ fun ThemeEngineScreen(
                             text = if (overlaysEnabled) "Overlays Enabled" else "Overlays Disabled",
                             color = Color.White
                         )
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (editMode) {
+                            Button(onClick = { editMode = false }) { Text("Done") }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -206,12 +215,12 @@ fun ThemeEngineScreen(
                                             onDragEnd = {
                                                 // snap back visuals handled by wiggle
                                             }
-                                        ) { change, dragAmount ->
+                                        ) { change: PointerInputChange, dragAmount: Offset ->
                                             change.consume()
                                             // Calculate target index based on drag direction
                                             val targetIndex = when {
-                                                dragAmount.y < -4 -> (index - 1).coerceAtLeast(0)
-                                                dragAmount.y > 4 -> (index + 1).coerceAtMost(overlayZOrder.lastIndex)
+                                                dragAmount.y < -4f -> (index - 1).coerceAtLeast(0)
+                                                dragAmount.y > 4f -> (index + 1).coerceAtMost(overlayZOrder.lastIndex)
                                                 else -> index
                                             }
                                             if (targetIndex != index) {
