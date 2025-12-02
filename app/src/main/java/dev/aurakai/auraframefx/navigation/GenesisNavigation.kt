@@ -665,7 +665,12 @@ fun NavHostController.navigateToGenesis(route: String) {
     }
 }
 
-@Composable
+/**
+     * Renders a subtle radial vignette overlay and hosts the AI chat composable within the overlay layer.
+     *
+     * Draws a light, centered radial gradient that softly darkens the screen edges to provide depth without obscuring content, and places the AI chat screen in the overlay scope.
+     */
+    @Composable
 private fun VignetteOverlay() {
     // Very subtle edge darkening - reduced intensity
     Canvas(modifier = Modifier.fillMaxSize()) {
