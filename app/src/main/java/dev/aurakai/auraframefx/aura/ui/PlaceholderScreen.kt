@@ -100,7 +100,7 @@ data class DiagnosticResult(
 )
 
 @Composable
-fun PlaceholderScreen(title: String = "GENESIS-OS DIAGNOSTICS") {
+fun PlaceholderScreen(title: String = "GENESIS-OS DIAGNOSTICS", onBack: () -> Boolean) {
     var isScanning by remember { mutableStateOf(false) }
     var scanProgress by remember { mutableStateOf(0f) }
     var lastScanTime by remember { mutableStateOf(System.currentTimeMillis()) }

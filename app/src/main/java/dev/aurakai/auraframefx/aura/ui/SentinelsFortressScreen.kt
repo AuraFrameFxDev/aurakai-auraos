@@ -25,7 +25,8 @@ import androidx.navigation.NavController
  */
 @Composable
 fun SentinelsFortressScreen(
-    navController: NavController? = null
+    navController: NavController? = null,
+    onBack: () -> Boolean
 ) {
     Box(
         modifier = Modifier

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,7 +33,7 @@ fun HelpDeskSubmenuScreen(
         SubmenuItem(
             title = "FAQ Browser",
             description = "Frequently asked questions and quick answers",
-            icon = Icons.Default.Help,
+            icon = Icons.AutoMirrored.Filled.Help,
             route = "faq_browser",
             color = Color(0xFF4169E1) // Royal Blue
         ),
