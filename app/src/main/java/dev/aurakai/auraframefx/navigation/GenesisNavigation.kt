@@ -169,7 +169,7 @@ object GenesisRoutes {
 @Composable
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = GenesisRoutes.HOME, // Default to HomeScreen
+    startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
     viewModel: GenesisAgentViewModel = hiltViewModel()
 ) {
     // State for Agent Sidebar
