@@ -2,7 +2,6 @@ package dev.aurakai.auraframefx.ui.gates
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,13 +15,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 /**
  * Code Assist Screen
  * AI-powered coding assistant interface
  */
 @Composable
-fun CodeAssistScreen() {
+fun CodeAssistScreen(navController: NavHostController) {
     var codeInput by remember { mutableStateOf("// Ask Code Assist to generate or refactor code...\n\nfun main() {\n    println(\"Hello, Aura!\")\n}") }
     var aiResponse by remember { mutableStateOf("") }
     var isProcessing by remember { mutableStateOf(false) }

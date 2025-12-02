@@ -26,8 +26,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Palette
@@ -258,49 +256,6 @@ fun EnhancedGateCarousel(
                 floatOffset = float.value,
                 onClick = {}
             )
-        }
-
-        // Navigation Buttons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Previous Button
-            IconButton(
-                onClick = { navigate("prev") },
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF000000)) // Solid black background
-                    .border(1.dp, NeonCyan.copy(alpha = 0.5f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ChevronLeft,
-                    contentDescription = "Previous",
-                    tint = NeonCyan,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-
-            // Next Button
-            IconButton(
-                onClick = { navigate("next") },
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF000000)) // Solid black background
-                    .border(1.dp, NeonCyan.copy(alpha = 0.5f), CircleShape)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = "Next",
-                    tint = NeonCyan,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
         }
 
         // Navigation Dots

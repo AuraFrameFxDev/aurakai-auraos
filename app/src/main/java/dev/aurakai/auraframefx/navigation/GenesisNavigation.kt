@@ -5,10 +5,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
-import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
 import dev.aurakai.auraframefx.aura.ui.AIChatScreen
-import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
+import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
+import dev.aurakai.auraframefx.aura.ui.CanvasScreen
+import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
+import dev.aurakai.auraframefx.aura.ui.FirewallScreen
+import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
+import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
+import dev.aurakai.auraframefx.screens.PlaceholderScreen
+import dev.aurakai.auraframefx.ui.gates.AgentHubSubmenuScreen
+import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
+import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
+import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
+import dev.aurakai.auraframefx.ui.gates.HelpDeskScreen
+import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
+import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -119,7 +130,10 @@ fun GenesisNavigationHost(
     startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
-        composable(GenesisRoutes.GATES) { PlaceholderScreen("Gates") }
+        // ✅ MAIN GATE MENU - Use GateNavigationScreen (the actual working system)
+        composable(GenesisRoutes.GATES) {
+            GateNavigationScreen(navController = navController)
+        }
         composable(GenesisRoutes.AGENT_NEXUS) { AgentNexusScreen() }
         composable(GenesisRoutes.CONFERENCE_ROOM) {
             ConferenceRoomScreen(
@@ -129,40 +143,75 @@ fun GenesisNavigationHost(
         }
         composable(GenesisRoutes.AI_CHAT) { AIChatScreen() }
 
-        // Additional gates referenced in GateConfig
+        // Gate routes with REAL screens
         composable(GenesisRoutes.SENTINELS_FORTRESS) {
             SentinelsFortressScreen(onBack = { navController.popBackStack() })
         }
         composable(GenesisRoutes.AURAS_LAB) {
             AurasLabScreen(onNavigateBack = { navController.popBackStack() })
         }
-        // Avoid multiple copies of the same destination
-        launchSingleTop = true
-        // Restore state when navigating back
-        restoreState = true
+        composable(GenesisRoutes.ORACLE_DRIVE) {
+            OracleDriveScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(GenesisRoutes.ROM_TOOLS) {
+            RootToolsScreen(navController = navController)
+        }
+        composable("root_tools") {
+            RootToolsScreen(navController = navController)
+        }
+        composable(GenesisRoutes.ROOT_ACCESS) {
+            // There is no dedicated RootAccess screen; reuse RootTools for advanced system access
+            RootToolsScreen(navController = navController)
+        }
+        composable(GenesisRoutes.AGENT_HUB) {
+            AgentHubSubmenuScreen(navController = navController)
+        }
+        composable(GenesisRoutes.LSPOSED_GATE) {
+            LSPosedSubmenuScreen(navController = navController)
+        }
+        composable(GenesisRoutes.HELP_DESK) {
+            HelpDeskScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(GenesisRoutes.COLLAB_CANVAS) {
+            CanvasScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable("collab_canvas") {
+            CanvasScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(GenesisRoutes.CHROMA_CORE) {
+            UIUXGateSubmenuScreen(navController = navController)
+        }
+        composable("chroma_core") {
+            UIUXGateSubmenuScreen(navController = navController)
+        }
+        composable(GenesisRoutes.FIREWALL) {
+            FirewallScreen()
+        }
+        composable(GenesisRoutes.SPHERE_GRID) {
+            // Sphere Grid maps to AgentHub Submenu's sphere_grid route; reuse AgentHub's navigation target
+            AgentMonitoringScreen()
+        }
+        composable("sphere_grid") {
+            AgentMonitoringScreen()
+        }
+        composable("code_assist") {
+            // Code Assist not implemented yet; keep standardized placeholder
+            PlaceholderScreen(title = "Code Assist", onBack = { navController.popBackStack() })
+        }
+        composable(GenesisRoutes.TERMINAL) {
+            // Terminal screen not yet implemented; use placeholder
+            PlaceholderScreen(title = "Terminal", onBack = { navController.popBackStack() })
+        }
+        composable("terminal") {
+            PlaceholderScreen(title = "Terminal", onBack = { navController.popBackStack() })
+        }
+        composable("uiux_design_studio") {
+            UIUXGateSubmenuScreen(navController = navController)
+        }
     }
 }
 
-/**
-     * Renders a subtle radial vignette overlay and hosts the AI chat composable within the overlay layer.
-     *
-     * Draws a light, centered radial gradient that softly darkens the screen edges to provide depth without obscuring content, and places the AI chat screen in the overlay scope.
-     */
-    @Composable
-private fun VignetteOverlay() {
-    // Very subtle edge darkening - reduced intensity
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val radius = size.maxDimension * 0.85f
-        val center = Offset(size.width / 2f, size.height / 2f)
-        drawRect(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color.Transparent,
-                    Color.Black.copy(alpha = 0.15f) // Much lighter
-                ),
-                center = center,
-                radius = radius
-            )
-        }
-    }
+@Composable
+fun OracleDriveScreen(onNavigateBack: () -> Boolean) {
+    TODO("Not yet implemented")
 }

@@ -1,14 +1,12 @@
 package dev.aurakai.auraframefx.ui.gates
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -22,13 +20,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 /**
  * UI/UX Design Studio Screen
  * Comprehensive design tools for creating and prototyping interfaces
  */
 @Composable
-fun UIUXDesignStudioScreen() {
+fun UIUXDesignStudioScreen(navController: NavHostController) {
     val tools = listOf(
         DesignTool("Layout Builder", Icons.Default.Dashboard, Color(0xFFFF00FF)),
         DesignTool("Typography", Icons.Default.TextFields, Color(0xFF00FFFF)),
@@ -107,7 +106,7 @@ fun UIUXDesignStudioScreen() {
                         color = Color.Gray
                     )
                 }
-                
+
                 // Floating Action Button Mock
                 Box(
                     modifier = Modifier
