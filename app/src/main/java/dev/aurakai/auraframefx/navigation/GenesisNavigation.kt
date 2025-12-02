@@ -135,6 +135,14 @@ object GenesisRoutes {
     const val QUICK_SETTINGS = "quick_settings"
     const val OVERLAY_MENUS = "overlay_menus"
     const val THEME_ENGINE = "theme_engine"
+
+    // AI Chat & Support
+    const val DIRECT_CHAT = "direct_chat"
+    const val LIVE_SUPPORT_CHAT = "live_support_chat"
+
+    // Agent Management
+    const val AGENT_MONITORING = "agent_monitoring"
+    const val TASK_ASSIGNMENT = "task_assignment"
 }
 
 /**
@@ -145,7 +153,7 @@ object GenesisRoutes {
 @Composable
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
+    startDestination: String = GenesisRoutes.HOME, // Default to HomeScreen
     viewModel: GenesisAgentViewModel = hiltViewModel()
 ) {
     // State for Agent Sidebar
@@ -255,6 +263,26 @@ fun GenesisNavigationHost(
                 UIUXDesignStudioScreen()
             }
 
+            // Direct Chat - One-on-one AI conversations
+            composable("direct_chat") {
+                DirectChatScreen()
+            }
+
+            // Live Support Chat
+            composable("live_support_chat") {
+                LiveSupportChatScreen()
+            }
+
+            // Agent Monitoring
+            composable("agent_monitoring") {
+                AgentMonitoringScreen()
+            }
+
+            // Task Assignment
+            composable("task_assignment") {
+                TaskAssignmentScreen()
+            }
+
             composable(GenesisRoutes.NOTCH_BAR) { NotchBarScreen() }
 
             composable(GenesisRoutes.STATUS_BAR) { StatusBarScreen() }
@@ -342,20 +370,16 @@ fun GenesisNavigationHost(
             }
 
             // System Tools
-            composable(GenesisRoutes.TERMINAL) {
-                // TerminalScreen(...)
-            }
-
             composable(GenesisRoutes.UI_ENGINE) {
-                // UIEngineScreen(...)
+                UIEngineScreen()
             }
 
             composable(GenesisRoutes.APP_BUILDER) {
-                // AppBuilderScreen(...)
+                AppBuilderScreen()
             }
 
             composable(GenesisRoutes.XHANCEMENT) {
-                // XhancementScreen(...)
+                XhancementScreen()
             }
 
             // Trinity System

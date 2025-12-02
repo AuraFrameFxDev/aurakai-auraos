@@ -456,7 +456,7 @@ object GateConfigs {
     val genesisCoreGates = listOf(
         oracleDrive,
         romTools,
-        rootTools
+        rootAccess
     )
 
     /** Kai - Security & Protection */
