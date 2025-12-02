@@ -47,7 +47,7 @@ jobs:
       run: echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.14206865" || true
 
     - name: Gradle Build (assemble only, skip tests)
-      run: ./gradlew assembleDebug --no-daemon --stacktrace --warning-mode all
+      run: ./gradlew assembleDebug -PenableTests=false --no-daemon --stacktrace --warning-mode all
       continue-on-error: true
       id: build_step
 
