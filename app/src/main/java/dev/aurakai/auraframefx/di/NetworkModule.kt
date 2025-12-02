@@ -101,4 +101,8 @@ abstract class NetworkBindings {
     @Binds
     @Singleton
     abstract fun bindThemeApi(impl: ThemeApiImpl): ThemeApi
+
+    @Binds
+    @Singleton
+    abstract fun bindWebSearchClient(impl: dev.aurakai.auraframefx.ai.clients.DefaultWebSearchClient): dev.aurakai.auraframefx.ai.clients.WebSearchClient
 }

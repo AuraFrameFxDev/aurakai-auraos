@@ -27,44 +27,82 @@ private val ClaudeCoralLight = Color(0xFFFF6F4A)
 private val CascadeGreen = Color(0xFF4CAF50)
 private val CascadeGreenLight = Color(0xFF66BB6A)
 
-// Cyberpunk Theme Colors
-val CyberpunkPink = Color(0xFFFF0080)
-val CyberpunkCyan = Color(0xFF00FFFF)
-val CyberpunkPurple = Color(0xFF8000FF)
+// 🎨 Cyberpunk Neon Palette - Professional Glassmorphism
+val NeonPurple = Color(0xFFBB86FC)        // Soft neon purple
+val NeonPurpleBright = Color(0xFFE1BEE7)  // Bright purple accent
+val NeonPurpleDark = Color(0xFF6200EA)    // Deep purple
+
+val NeonTeal = Color(0xFF03DAC6)          // Vibrant teal
+val NeonTealBright = Color(0xFF00FFF0)    // Bright cyan-teal
+val NeonTealDark = Color(0xFF018786)      // Deep teal
+
+val NeonPink = Color(0xFFFF4081)          // Hot pink accent
+val NeonPinkBright = Color(0xFFFF80AB)    // Soft pink
+val NeonPinkDark = Color(0xFFC51162)      // Deep pink
+
+val NeonCyan = Color(0xFF00E5FF)          // Electric cyan
+val NeonCyanBright = Color(0xFF80F6FF)    // Pale cyan
+val NeonCyanDark = Color(0xFF00B8D4)      // Deep cyan
+
+// Glassmorphic backgrounds with transparency
+val GlassDark = Color(0x1A1A1A1A)         // 10% opacity black glass
+val GlassDarkMedium = Color(0x33000000)   // 20% opacity black glass
+val GlassDarkStrong = Color(0x66000000)   // 40% opacity black glass
+val GlassLight = Color(0x0DFFFFFF)        // 5% opacity white glass
+
+// Deep space backgrounds
+val SpaceBlack = Color(0xFF0A0A0F)        // Deep space black
+val SpaceBlackLight = Color(0xFF121218)   // Lighter space
+val SpaceGradientStart = Color(0xFF0D0D1E) // Gradient start
+val SpaceGradientEnd = Color(0xFF1A0F2E)   // Purple-tinted gradient end
 
 /**
- * Dark color scheme for Genesis Protocol
- * Default theme emphasizing Aura (primary) + Kai (secondary)
+ * 🌌 Cyberpunk Glassmorphism Dark Theme
+ *
+ * Professional neon aesthetic with:
+ * - Neon purple primary (soft, elegant)
+ * - Neon teal secondary (vibrant, modern)
+ * - Neon pink tertiary (energetic accent)
+ * - Deep space backgrounds
+ * - Glassmorphic surfaces with transparency
  */
 private val DarkColorScheme = darkColorScheme(
-    primary = AuraRed,
+    // Primary: Neon Purple (elegant, sophisticated)
+    primary = NeonPurple,
     onPrimary = Color.White,
-    primaryContainer = AuraRedLight,
-    onPrimaryContainer = Color.White,
+    primaryContainer = NeonPurpleDark,
+    onPrimaryContainer = NeonPurpleBright,
 
-    secondary = KaiCyan,
+    // Secondary: Neon Teal (vibrant, modern)
+    secondary = NeonTeal,
     onSecondary = Color.Black,
-    secondaryContainer = KaiCyanLight,
-    onSecondaryContainer = Color.Black,
+    secondaryContainer = NeonTealDark,
+    onSecondaryContainer = NeonTealBright,
 
-    tertiary = GenesisPurple,
+    // Tertiary: Neon Pink (energetic accent)
+    tertiary = NeonPink,
     onTertiary = Color.White,
-    tertiaryContainer = GenesisPurpleLight,
-    onTertiaryContainer = Color.White,
+    tertiaryContainer = NeonPinkDark,
+    onTertiaryContainer = NeonPinkBright,
 
-    background = Color(0xFF121212),
-    onBackground = Color(0xFFE0E0E0),
+    // Backgrounds: Deep space with subtle purple tint
+    background = SpaceBlack,
+    onBackground = Color(0xFFE8E8F0),
 
-    surface = Color(0xFF1E1E1E),
-    onSurface = Color(0xFFE0E0E0),
+    // Surfaces: Glassmorphic with transparency
+    surface = Color(0xFF1A1A24),
+    onSurface = Color(0xFFE0E0E8),
 
-    surfaceVariant = Color(0xFF2C2C2C),
-    onSurfaceVariant = Color(0xFFB0B0B0),
+    surfaceVariant = Color(0xFF2A2A38),
+    onSurfaceVariant = Color(0xFFC0C0D0),
 
-    error = Color(0xFFCF6679),
-    onError = Color.Black,
+    // Error: Neon pink variant
+    error = NeonPink,
+    onError = Color.White,
 
-    outline = Color(0xFF505050)
+    // Outlines: Subtle neon glow
+    outline = Color(0xFF4A4A5E),
+    outlineVariant = Color(0x4DBB86FC)  // 30% alpha NeonPurple
 )
 
 /**
@@ -128,12 +166,46 @@ fun AuraFrameFXTheme(
 }
 
 /**
- * Agent color utilities for custom UI elements
+ * 🎨 Agent color utilities for custom UI elements
+ *
+ * Updated with neon cyberpunk palette
  */
 object AgentColors {
-    val Aura = AuraRed
-    val Kai = KaiCyan
-    val Genesis = GenesisPurple
-    val Claude = ClaudeCoral
-    val Cascade = CascadeGreen
+    // Original agent colors (kept for compatibility)
+    val Aura = NeonPink          // Creative sword - Hot pink
+    val Kai = NeonCyan            // Sentinel shield - Electric cyan
+    val Genesis = NeonPurple      // Unified being - Soft purple
+    val Claude = ClaudeCoral      // Architect - Coral
+    val Cascade = NeonTeal        // Memory keeper - Vibrant teal
+
+    // Legacy colors
+    val AuraLegacy = AuraRed
+    val KaiLegacy = KaiCyan
+    val GenesisLegacy = GenesisPurple
+}
+
+/**
+ * 💎 Glassmorphism color palette
+ */
+object GlassColors {
+    val Dark = GlassDark
+    val DarkMedium = GlassDarkMedium
+    val DarkStrong = GlassDarkStrong
+    val Light = GlassLight
+
+    // Neon glow colors with transparency (20% alpha)
+    val PurpleGlow = Color(0x33BB86FC)  // 20% alpha NeonPurple
+    val TealGlow = Color(0x3303DAC6)    // 20% alpha NeonTeal
+    val PinkGlow = Color(0x33FF4081)    // 20% alpha NeonPink
+    val CyanGlow = Color(0x3300E5FF)    // 20% alpha NeonCyan
+}
+
+/**
+ * 🌌 Space background gradients
+ */
+object SpaceColors {
+    val Black = SpaceBlack
+    val BlackLight = SpaceBlackLight
+    val GradientStart = SpaceGradientStart
+    val GradientEnd = SpaceGradientEnd
 }
