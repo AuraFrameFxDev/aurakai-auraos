@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                 // Launch complete Genesis navigation system
                                 GenesisNavigationHost(
                                     navController = navController,
-                                    startDestination = GenesisRoutes.HOME
+                                    startDestination = GenesisRoutes.GATES
                                 )
                             }
                         }
