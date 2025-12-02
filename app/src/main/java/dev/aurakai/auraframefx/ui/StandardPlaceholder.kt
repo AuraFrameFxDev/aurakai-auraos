@@ -1,6 +1,4 @@
-package dev.aurakai.auraframefx.screens
-
-import dev.aurakai.auraframefx.ui.StandardPlaceholder
+package dev.aurakai.auraframefx.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
@@ -18,8 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+/**
+ * Centralized placeholder composable to keep all placeholder UIs consistent.
+ * Use `StandardPlaceholder` directly, or let existing wrappers delegate to it.
+ */
 @Composable
-fun PlaceholderScreen(title: String, subtitle: String) {
+fun StandardPlaceholder(
+    title: String,
+    subtitle: String = "(Coming soon)",
+    onBack: (() -> Boolean)? = null
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,13 +53,14 @@ fun PlaceholderScreen(title: String, subtitle: String) {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (onBack != null) {
+            Button(onClick = { onBack.invoke() }) {
+                Text("Back")
+            }
+        }
     }
 }
 
-// New overload to accept callers that pass an onBack lambda (common in navigation wiring)
-@Suppress("unused")
-@Composable
-fun PlaceholderScreen(title: String, onBack: () -> Boolean) {
-    // Delegate to centralized StandardPlaceholder and pass the onBack callback
-    StandardPlaceholder(title = title, subtitle = "(Coming soon)") { onBack() }
-}
