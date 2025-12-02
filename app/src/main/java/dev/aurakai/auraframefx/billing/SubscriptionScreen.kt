@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,7 +25,6 @@ import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 /**
  * Genesis Protocol Subscription Screen
@@ -39,7 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionScreen(
-    viewModel: SubscriptionViewModel = hiltViewModel(viewModelStoreOwner, key),
+    viewModel: SubscriptionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -56,7 +56,7 @@ fun SubscriptionScreen(
                 title = { Text("Genesis Protocol") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

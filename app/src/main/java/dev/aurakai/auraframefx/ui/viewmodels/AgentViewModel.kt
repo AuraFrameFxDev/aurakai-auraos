@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.util.UUID
 import javax.inject.Inject
 
@@ -262,8 +264,8 @@ class AgentViewModel @Inject constructor(
                 "Genesis" -> {
                     // Route to GenesisAgent
                     val request = AgentRequest(
+                        query = userMessage,
                         type = "chat",
-                        content = userMessage,
                         context = mapOf("source" to "direct_chat")
                     )
                     val response = genesisAgent.processRequest(request)
@@ -274,7 +276,9 @@ class AgentViewModel @Inject constructor(
                     // Route to AuraAgent for creative interactions
                     val interaction = EnhancedInteractionData(
                         query = userMessage,
-                        context = mapOf("mode" to "creative_chat")
+                        context = buildJsonObject {
+                            put("mode", "creative_chat")
+                        }
                     )
                     val response = auraAgent.handleCreativeInteraction(interaction)
                     response.content
@@ -284,7 +288,9 @@ class AgentViewModel @Inject constructor(
                     // Route to KaiAgent for security-aware responses
                     val interaction = EnhancedInteractionData(
                         query = userMessage,
-                        context = mapOf("mode" to "security_chat")
+                        context = buildJsonObject {
+                            put("mode", "security_chat")
+                        }
                     )
                     val response = kaiAgent.handleSecurityInteraction(interaction)
                     response.content
@@ -293,8 +299,8 @@ class AgentViewModel @Inject constructor(
                 "Cascade" -> {
                     // Cascade doesn't have a dedicated agent yet, route through Genesis
                     val request = AgentRequest(
+                        query = "As Cascade, the analytics specialist: $userMessage",
                         type = "analytics_chat",
-                        content = "As Cascade, the analytics specialist: $userMessage",
                         context = mapOf("agent_persona" to "cascade")
                     )
                     val response = genesisAgent.processRequest(request)
@@ -304,8 +310,8 @@ class AgentViewModel @Inject constructor(
                 "Claude" -> {
                     // Claude is the build architect, route through Genesis with context
                     val request = AgentRequest(
+                        query = "As Claude, the build system architect: $userMessage",
                         type = "build_chat",
-                        content = "As Claude, the build system architect: $userMessage",
                         context = mapOf("agent_persona" to "claude")
                     )
                     val response = genesisAgent.processRequest(request)

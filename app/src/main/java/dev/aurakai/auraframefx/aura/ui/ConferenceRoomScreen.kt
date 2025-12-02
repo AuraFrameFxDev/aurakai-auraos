@@ -21,6 +21,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,10 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
-import dev.aurakai.auraframefx.models.AgentType
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonTeal
 import dev.aurakai.auraframefx.viewmodel.ConferenceRoomViewModel
@@ -86,7 +85,7 @@ fun Header(selectedAgent: String, onAgentSelected: (String) -> Unit) {
 fun ConferenceRoomScreen(
     onNavigateToChat: () -> Unit = {},
     onNavigateToAgents: () -> Unit = {},
-    viewModel: ConferenceRoomViewModel = hiltViewModel(viewModelStoreOwner, key)
+    viewModel: ConferenceRoomViewModel = hiltViewModel()
 ) {
     val agentAura = stringResource(dev.aurakai.auraframefx.R.string.agent_aura)
     val agentKai = stringResource(dev.aurakai.auraframefx.R.string.agent_kai)

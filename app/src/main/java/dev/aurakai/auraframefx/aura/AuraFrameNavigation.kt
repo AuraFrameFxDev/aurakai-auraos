@@ -44,14 +44,7 @@ fun AuraFrameNavigation(
         }
 
         composable(Routes.AGENT_NEXUS) {
-            AgentNexusScreen(
-                onAgentSelected = { agentName ->
-                    // Handle agent selection
-                },
-                onDepartureTaskAssigned = { agent, task ->
-                    // Task will be handled by the service
-                }
-            )
+            AgentNexusScreen()
         }
 
         composable(Routes.ORACLE_DRIVE) {
