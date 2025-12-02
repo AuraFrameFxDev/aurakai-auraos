@@ -143,6 +143,22 @@ object GenesisRoutes {
     // Agent Management
     const val AGENT_MONITORING = "agent_monitoring"
     const val TASK_ASSIGNMENT = "task_assignment"
+
+    // Documentation & Help
+    const val DOCUMENTATION = "documentation"
+    const val FAQ_BROWSER = "faq_browser"
+    const val TUTORIAL_VIDEOS = "tutorial_videos"
+
+    // Module & Hook Management
+    const val MODULE_CREATION = "module_creation"
+    const val MODULE_MANAGER = "module_manager"
+    const val HOOK_MANAGER = "hook_manager"
+
+    // System Management
+    const val LOGS_VIEWER = "logs_viewer"
+    const val QUICK_ACTIONS = "quick_actions"
+    const val SYSTEM_OVERRIDES = "system_overrides"
+    const val RECOVERY_TOOLS = "recovery_tools"
 }
 
 /**
@@ -281,6 +297,49 @@ fun GenesisNavigationHost(
             // Task Assignment
             composable("task_assignment") {
                 TaskAssignmentScreen()
+            }
+
+            // Documentation & Support
+            composable("documentation") {
+                DocumentationScreen()
+            }
+
+            composable("faq_browser") {
+                FAQBrowserScreen()
+            }
+
+            composable("tutorial_videos") {
+                TutorialVideosScreen()
+            }
+
+            // Module Management
+            composable("module_creation") {
+                ModuleCreationScreen()
+            }
+
+            composable("module_manager") {
+                ModuleManagerScreen()
+            }
+
+            composable("hook_manager") {
+                HookManagerScreen()
+            }
+
+            // System Tools
+            composable("logs_viewer") {
+                LogsViewerScreen()
+            }
+
+            composable("quick_actions") {
+                QuickActionsScreen()
+            }
+
+            composable("system_overrides") {
+                SystemOverridesScreen()
+            }
+
+            composable("recovery_tools") {
+                RecoveryToolsScreen()
             }
 
             composable(GenesisRoutes.NOTCH_BAR) { NotchBarScreen() }
