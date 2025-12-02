@@ -170,7 +170,6 @@ object GenesisRoutes {
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
-    viewModel: GenesisAgentViewModel = hiltViewModel()
 ) {
     // State for Agent Sidebar
     var isAgentSidebarVisible by remember { mutableStateOf(false) }
@@ -681,50 +680,7 @@ private fun VignetteOverlay() {
                 center = center,
                 radius = radius
             )
-        )
-    }
-}
-
-@Composable
-private fun WipeTransitionLayer(route: String?) {
-    val overlaySettings = LocalOverlaySettings.current
-    val fade = remember { Animatable(0f) }
-    val speedMultiplier = (6 - overlaySettings.transitionSpeed) * 0.5f
-
-    LaunchedEffect(route) {
-        fade.snapTo(0f)
-        val fadeInDuration = (160 * speedMultiplier).toInt()
-        val fadeOutDuration = (420 * speedMultiplier).toInt()
-        fade.animateTo(1f, animationSpec = tween(fadeInDuration))
-        fade.animateTo(0f, animationSpec = tween(fadeOutDuration))
-    }
-
-    if (fade.value > 0f) {
-        val alpha = fade.value
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            when (overlaySettings.transitionStyle) {
-                "fade" -> {
-                    drawRect(color = Color.Black.copy(alpha = alpha))
-                }
-                "swipe_left" -> {
-                    val wipeWidth = size.width * alpha
-                    drawRect(
-                        color = CyberGlow.DeepPurple.copy(alpha = 0.95f),
-                        topLeft = Offset(size.width - wipeWidth, 0f),
-                        size = androidx.compose.ui.geometry.Size(wipeWidth, size.height)
-                    )
-                }
-                "swipe_right" -> {
-                    val wipeWidth = size.width * alpha
-                    drawRect(
-                        color = CyberGlow.DeepPurple.copy(alpha = 0.95f),
-                        size = androidx.compose.ui.geometry.Size(wipeWidth, size.height)
-                    )
-                }
-                else -> { // "lens" default - simplified, no blur
-                    drawRect(color = Color.Black.copy(alpha = alpha * 0.85f))
-                }
-            }
         }
+        composable(GenesisRoutes.AI_CHAT) { AIChatScreen() }
     }
 }

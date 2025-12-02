@@ -55,7 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.aurakai.auraframefx.romtools.backdrop.BackdropState
 import dev.aurakai.auraframefx.romtools.backdrop.CardExplosionEffect
@@ -78,7 +78,7 @@ import timber.log.Timber
 @Composable
 fun RomToolsScreen(
     modifier: Modifier = Modifier,
-    romToolsViewModel: dev.aurakai.auraframefx.romtools.RomToolsViewModel = hiltViewModel()
+    romToolsViewModel: dev.aurakai.auraframefx.romtools.RomToolsViewModel = hiltViewModel(),
 ) {
     val romToolsState by romToolsViewModel.romToolsState.collectAsStateWithLifecycle()
     val operationProgressState by romToolsViewModel.operationProgress.collectAsStateWithLifecycle()

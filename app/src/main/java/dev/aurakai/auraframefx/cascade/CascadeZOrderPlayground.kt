@@ -7,17 +7,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.models.agent_states.ProcessingState
 import dev.aurakai.auraframefx.models.agent_states.VisionState
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@HiltViewModel
 class CascadeDebugViewModel @Inject constructor(
     private val cascadeAgent: CascadeAgent,
-) {
+) : ViewModel() {
     val visionState: StateFlow<VisionState> = cascadeAgent.visionState
     val processingState: StateFlow<ProcessingState> = cascadeAgent.processingState
 

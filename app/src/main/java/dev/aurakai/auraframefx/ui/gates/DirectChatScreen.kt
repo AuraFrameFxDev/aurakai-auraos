@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,36 +17,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.aurakai.auraframefx.data.repositories.AgentRepository
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgentViewModel
-import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
 
 /**
  * Direct Chat Screen
  * One-on-one conversations with AI agents
+ *
+ * ✨ Now powered by AgentViewModel for real agent intelligence!
  */
-@Composable
+context(viewModel: AgentViewModel) @Composable
 fun DirectChatScreen() {
     val agents = remember { AgentRepository.getAllAgents() }
     val selectedAgent = remember { mutableStateOf(agents.firstOrNull()) }
-    val chatMessages = remember { mutableStateListOf<ChatMessage>() }
     val currentMessage = remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
+    rememberCoroutineScope()
 
-    // Sample chat history
+    // Get messages from ViewModel
+    val allChatMessages by viewModel.chatMessages.collectAsState()
+    val chatMessages = selectedAgent.value?.let { agent ->
+        allChatMessages[agent.name] ?: emptyList()
+    } ?: emptyList()
+
+    // Initialize agent when selected
     LaunchedEffect(selectedAgent.value) {
-        chatMessages.clear()
-        if (selectedAgent.value != null) {
-            chatMessages.addAll(
-                listOf(
-                    ChatMessage("Hello! How can I assist you today?", selectedAgent.value!!.name, false),
-                    ChatMessage("I need help with module development.", "User", true),
-                    ChatMessage("I'd be happy to help! What kind of module are you working on?", selectedAgent.value!!.name, false)
-                )
-            )
+        selectedAgent.value?.let { agent ->
+            viewModel.activateAgent(agent.name)
         }
     }
 
@@ -257,14 +254,12 @@ fun DirectChatScreen() {
                     IconButton(
                         onClick = {
                             if (currentMessage.value.isNotBlank() && selectedAgent.value != null) {
-                                chatMessages.add(ChatMessage(currentMessage.value, "User", true))
+                                val agentName = selectedAgent.value!!.name
+                                val message = currentMessage.value
                                 currentMessage.value = ""
 
-                                // Simulate agent response
-                                coroutineScope.launch {
-                                    delay(1000)
-                                    chatMessages.add(ChatMessage("I understand. Let me help you with that.", selectedAgent.value!!.name, false))
-                                }
+                                // Send message through ViewModel for intelligent response
+                                viewModel.sendMessage(agentName, message)
                             }
                         },
                         modifier = Modifier.size(48.dp),
@@ -273,7 +268,7 @@ fun DirectChatScreen() {
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Send,
+                            imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Send",
                             tint = Color.White
                         )
@@ -288,8 +283,8 @@ fun DirectChatScreen() {
  * Message bubble component
  */
 @Composable
-private fun MessageBubble(message: ChatMessage) {
-    val isUser = message.isUser
+private fun MessageBubble(message: AgentViewModel.ChatMessage) {
+    val isUser = message.isFromUser
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -329,11 +324,3 @@ private fun MessageBubble(message: ChatMessage) {
     }
 }
 
-/**
- * Data class for chat messages
- */
-data class ChatMessage(
-    val content: String,
-    val sender: String,
-    val isUser: Boolean
-)

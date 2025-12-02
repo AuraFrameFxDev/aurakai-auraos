@@ -47,24 +47,11 @@ fun AgentChatBubble(
         isVisible = true
         delay(5000) // Auto-dismiss after 5 seconds
         isVisible = false
-        delay(300)
+        delay(150)
         onDismiss()
     }
 
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = slideInHorizontally(
-            initialOffsetX = { it },
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            )
-        ) + fadeIn(),
-        exit = slideOutHorizontally(
-            targetOffsetX = { it },
-            animationSpec = tween(300)
-        ) + fadeOut()
-    ) {
+    if (isVisible) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -78,7 +65,7 @@ fun AgentChatBubble(
                     onClick()
                     scope.launch {
                         isVisible = false
-                        delay(300)
+                        delay(150)
                         onDismiss()
                     }
                 }

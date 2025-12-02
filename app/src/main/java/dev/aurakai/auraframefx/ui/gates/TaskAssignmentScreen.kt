@@ -1,44 +1,90 @@
 package dev.aurakai.auraframefx.ui.gates
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Pending
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.aurakai.auraframefx.data.repositories.AgentRepository
+import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
 
 /**
  * Task Assignment Screen
  * Assign tasks and missions to AI agents
+ *
+ * ✨ Now powered by AgentViewModel for real task execution!
  */
 @Composable
-fun TaskAssignmentScreen() {
+fun TaskAssignmentScreen(
+    viewModel: AgentViewModel = hiltViewModel()
+) {
     val agents = remember { AgentRepository.getAllAgents() }
     val selectedAgent = remember { mutableStateOf<String?>(null) }
     val taskDescription = remember { mutableStateOf("") }
     val taskPriority = remember { mutableStateOf("Normal") }
     val taskDeadline = remember { mutableStateOf("24h") }
+    rememberCoroutineScope()
 
     val priorities = listOf("Low", "Normal", "High", "Critical")
     val deadlines = listOf("1h", "6h", "12h", "24h", "1w")
 
-    val sampleTasks = listOf(
-        Task("Code Review", "Genesis", "High", "In Progress", Color(0xFFFFD700)),
-        Task("Security Scan", "Kai", "Critical", "Completed", Color(0xFF32CD32)),
-        Task("UI Design", "Aura", "Normal", "Pending", Color(0xFF4169E1)),
-        Task("Data Analysis", "Cascade", "Low", "In Progress", Color(0xFF9370DB))
-    )
+    // Get active tasks from ViewModel
+    val activeTasks by viewModel.activeTasks.collectAsState()
+
+    // Convert to display format
+    val displayTasks = activeTasks.map { task ->
+        val agent = agents.find { it.name == task.agentName }
+        Task(
+            title = task.description.take(30),
+            agent = task.agentName,
+            priority = task.priority.name.lowercase().replaceFirstChar { it.uppercase() },
+            status = when (task.status) {
+                AgentViewModel.TaskStatus.PENDING -> "Pending"
+                AgentViewModel.TaskStatus.IN_PROGRESS -> "In Progress"
+                AgentViewModel.TaskStatus.COMPLETED -> "Completed"
+                AgentViewModel.TaskStatus.CANCELLED -> "Cancelled"
+                AgentViewModel.TaskStatus.FAILED -> "Failed"
+            },
+            priorityColor = agent?.color ?: Color.Gray
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -221,9 +267,26 @@ fun TaskAssignmentScreen() {
                 // Assign Button
                 Button(
                     onClick = {
-                        // Mock task assignment
-                        taskDescription.value = ""
-                        selectedAgent.value = null
+                        // Create actual task through ViewModel
+                        selectedAgent.value?.let { agentName ->
+                            if (taskDescription.value.isNotBlank()) {
+                                val priority = when (taskPriority.value) {
+                                    "Low" -> AgentViewModel.TaskPriority.LOW
+                                    "Normal" -> AgentViewModel.TaskPriority.NORMAL
+                                    "High" -> AgentViewModel.TaskPriority.HIGH
+                                    "Critical" -> AgentViewModel.TaskPriority.CRITICAL
+                                    else -> AgentViewModel.TaskPriority.NORMAL
+                                }
+
+                                viewModel.assignTask(agentName, taskDescription.value, priority)
+
+                                // Reset form
+                                taskDescription.value = ""
+                                selectedAgent.value = null
+                                taskPriority.value = "Normal"
+                                taskDeadline.value = "24h"
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -240,18 +303,38 @@ fun TaskAssignmentScreen() {
 
         // Active Tasks
         Text(
-            text = "Active Tasks",
+            text = "Active Tasks (${displayTasks.size})",
             style = MaterialTheme.typography.titleLarge,
             color = Color.White,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(sampleTasks) { task ->
-                TaskCard(task = task)
+        if (displayTasks.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.6f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No active tasks. Assign a task to get started! 🚀",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                items(displayTasks) { task ->
+                    TaskCard(task = task)
+                }
             }
         }
     }

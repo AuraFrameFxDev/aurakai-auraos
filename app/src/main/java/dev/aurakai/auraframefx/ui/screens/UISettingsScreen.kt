@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,15 +38,15 @@ fun UISettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
-                        "UI Settings", 
+                        "UI Settings",
                         style = MaterialTheme.typography.headlineSmall
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -72,21 +72,21 @@ fun UISettingsScreen(
                     isChecked = isSidebarVisible,
                     onCheckedChange = { isSidebarVisible = it }
                 )
-                
+
                 SettingsToggleItem(
                     title = "Notch Bar",
                     subtitle = "Show/hide the top notch bar",
                     isChecked = isNotchbarVisible,
                     onCheckedChange = { isNotchbarVisible = it }
                 )
-                
+
                 SettingsToggleItem(
                     title = "Status Bar",
                     subtitle = "Show/hide the system status bar",
                     isChecked = isStatusBarVisible,
                     onCheckedChange = { isStatusBarVisible = it }
                 )
-                
+
                 SettingsToggleItem(
                     title = "Bottom Navigation",
                     subtitle = "Show/hide the bottom navigation bar",
@@ -103,7 +103,7 @@ fun UISettingsScreen(
                     isChecked = isGlowEffectsEnabled,
                     onCheckedChange = { isGlowEffectsEnabled = it }
                 )
-                
+
                 SettingsToggleItem(
                     title = "Pixel Art Mode",
                     subtitle = "Enable retro pixel art styling",

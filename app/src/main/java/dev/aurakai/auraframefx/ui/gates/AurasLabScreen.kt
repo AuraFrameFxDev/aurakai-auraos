@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,7 +34,7 @@ fun AurasLabScreen(
         SandboxItem("System Overdrive", "PERFORMANCE", "WARNING", false),
         SandboxItem("Kernel Test", "CUSTOM_ROM", "DANGER", false)
     )) }
-    
+
     var showCreateDialog by remember { mutableStateOf(false) }
 
     Box(
@@ -66,7 +67,7 @@ fun AurasLabScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             ) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
@@ -131,7 +132,7 @@ fun AurasLabScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("New Sandbox")
                 }
-                
+
                 OutlinedButton(
                     onClick = { /* Import logic */ },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF69B4)),
@@ -194,7 +195,7 @@ fun SandboxCard(sandbox: SandboxItem) {
                     color = Color(0xFFFF69B4)
                 )
             }
-            
+
             Box(
                 modifier = Modifier
                     .background(safetyColor.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
