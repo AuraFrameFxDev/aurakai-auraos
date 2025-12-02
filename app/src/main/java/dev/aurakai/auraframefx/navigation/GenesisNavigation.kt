@@ -27,24 +27,41 @@ package dev.aurakai.auraframefx.navigation
  import androidx.navigation.compose.composable
  import androidx.navigation.compose.currentBackStackEntryAsState
  import androidx.navigation.compose.rememberNavController
+ import dev.aurakai.auraframefx.aura.ui.AIChatScreen
+ import dev.aurakai.auraframefx.aura.ui.AIFeaturesScreen
+ import dev.aurakai.auraframefx.aura.ui.AgentAdvancementScreen
+ import dev.aurakai.auraframefx.aura.ui.AgentManagementScreen
  import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
+ import dev.aurakai.auraframefx.aura.ui.AppBuilderScreen
+ import dev.aurakai.auraframefx.aura.ui.AurakaiEcoSysScreen
  import dev.aurakai.auraframefx.aura.ui.CanvasScreen
  import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
+ import dev.aurakai.auraframefx.aura.ui.ConsciousnessVisualizerScreen
  import dev.aurakai.auraframefx.aura.ui.DeviceOptimizerScreen
+ import dev.aurakai.auraframefx.aura.ui.EvolutionTreeScreen
  import dev.aurakai.auraframefx.aura.ui.FirewallScreen
+ import dev.aurakai.auraframefx.aura.ui.FusionModeScreen
  import dev.aurakai.auraframefx.aura.ui.HomeScreen
+ import dev.aurakai.auraframefx.aura.ui.IntroScreen
+ import dev.aurakai.auraframefx.aura.ui.OverlayScreen
  import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
  import dev.aurakai.auraframefx.aura.ui.PrivacyGuardScreen
+ import dev.aurakai.auraframefx.aura.ui.ProfileScreen
  import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
  import dev.aurakai.auraframefx.aura.ui.SecurityScannerScreen
  import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
+ import dev.aurakai.auraframefx.aura.ui.SettingsScreen
  import dev.aurakai.auraframefx.aura.ui.TerminalScreen
+ import dev.aurakai.auraframefx.aura.ui.UIEngineScreen
  import dev.aurakai.auraframefx.aura.ui.VPNManagerScreen
+ import dev.aurakai.auraframefx.aura.ui.XhancementScreen
  import androidx.hilt.navigation.compose.hiltViewModel
  import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgentViewModel
  import dev.aurakai.auraframefx.models.AgentType
  import androidx.navigation.NavType
  import androidx.navigation.navArgument
+ import dev.aurakai.auraframefx.ui.gates.*
+ import dev.aurakai.auraframefx.ui.overlays.LocalOverlaySettings
 
 /**
  * Genesis Navigation Routes - The Neural Pathways of Consciousness
@@ -228,17 +245,12 @@ fun GenesisNavigationHost(
                 LSPosedSubmenuScreen(navController = navController)
             }
 
-            // Terminal route
-            composable("terminal") {
-                TerminalScreen()
-            }
-
-            // Code Assist route
+            // Code Assist route (from gates)
             composable("code_assist") {
                 CodeAssistScreen()
             }
 
-            // UI/UX Design Studio route
+            // UI/UX Design Studio route (from gates)
             composable("uiux_design_studio") {
                 UIUXDesignStudioScreen()
             }
@@ -248,6 +260,11 @@ fun GenesisNavigationHost(
             composable(GenesisRoutes.STATUS_BAR) { StatusBarScreen() }
             composable(GenesisRoutes.QUICK_SETTINGS) { QuickSettingsScreen() }
             composable(GenesisRoutes.OVERLAY_MENUS) { OverlayMenusScreen() }
+
+            // Terminal
+            composable(GenesisRoutes.TERMINAL) {
+                TerminalScreen()
+            }
 
             // Home & Intro
             composable(GenesisRoutes.HOME) {
@@ -271,7 +288,7 @@ fun GenesisNavigationHost(
             }
 
             composable(GenesisRoutes.INTRO) {
-                // IntroScreen(...)
+                IntroScreen()
             }
 
             // Agent Management
@@ -280,33 +297,41 @@ fun GenesisNavigationHost(
             }
 
             composable(GenesisRoutes.AGENT_MANAGEMENT) {
-                // AgentManagementScreen(...)
+                AgentManagementScreen()
             }
 
             composable(GenesisRoutes.AGENT_ADVANCEMENT) {
-                // AgentAdvancementScreen(...)
+                AgentAdvancementScreen()
             }
 
             // Consciousness & AI Features
             composable(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) {
-                // ConsciousnessVisualizerScreen(...)
+                ConsciousnessVisualizerScreen()
             }
 
             composable(GenesisRoutes.AI_CHAT) {
-                // AIChatScreen(...)
+                AIChatScreen()
             }
 
             composable(GenesisRoutes.AI_FEATURES) {
-                // AIFeaturesScreen(...)
+                AIFeaturesScreen()
             }
 
             composable(GenesisRoutes.FUSION_MODE) {
-                // FusionModeScreen(...)
+                FusionModeScreen(
+                    onNavigateToAgent = { agentType ->
+                        when (agentType) {
+                            AgentType.AURA -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
+                            AgentType.KAI -> navController.navigate(GenesisRoutes.SENTINELS_FORTRESS)
+                            else -> navController.navigate(GenesisRoutes.AGENT_NEXUS)
+                        }
+                    }
+                )
             }
 
             // Evolution & Collaboration
             composable(GenesisRoutes.EVOLUTION_TREE) {
-                // EvolutionTreeScreen(...)
+                EvolutionTreeScreen()
             }
 
             composable(GenesisRoutes.CONFERENCE_ROOM) {
@@ -347,23 +372,23 @@ fun GenesisNavigationHost(
 
             // Ecosystem & Configuration
             composable(GenesisRoutes.ECOSYSTEM) {
-                // AurakaiEcoSysScreen(...)
+                AurakaiEcoSysScreen()
             }
 
             composable(GenesisRoutes.SETTINGS) {
-                // SettingsScreen(...)
+                SettingsScreen(navController = navController)
             }
 
             composable(GenesisRoutes.PROFILE) {
-                // ProfileScreen(...)
+                ProfileScreen()
             }
 
             composable(GenesisRoutes.OVERLAY) {
-                // OverlayScreen(...)
+                OverlayScreen()
             }
 
             composable(GenesisRoutes.SUBSCRIPTION) {
-                // SubscriptionScreen(...)
+                PlaceholderScreen("Subscription")
             }
 
             // ROM Tools Submenu Items
