@@ -23,14 +23,14 @@ object OverlayPrefs {
     fun orderFlow(context: Context): Flow<List<String>> =
         context.overlayDataStore.data.map { prefs ->
             prefs[KEY_ORDER]?.split('|')?.filter { it.isNotBlank() }
-                ?: listOf("Vignette", "Agent Edge", "Aura Presence", "Chat Bubble", "Sidebar")
+                ?: listOf("Agent Edge", "Aura Presence", "Chat Bubble", "Sidebar")
         }
 
     fun transitionStyleFlow(context: Context): Flow<String> =
-        context.overlayDataStore.data.map { it[KEY_TRANSITION_STYLE] ?: "lens" }
+        context.overlayDataStore.data.map { it[KEY_TRANSITION_STYLE] ?: "none" }
 
     fun transitionSpeedFlow(context: Context): Flow<Int> =
-        context.overlayDataStore.data.map { it[KEY_TRANSITION_SPEED]?.toIntOrNull() ?: 3 }
+        context.overlayDataStore.data.map { it[KEY_TRANSITION_SPEED]?.toIntOrNull() ?: 0 }
 
     suspend fun saveEnabled(context: Context, enabled: Boolean) {
         context.overlayDataStore.edit { it[KEY_ENABLED] = enabled }

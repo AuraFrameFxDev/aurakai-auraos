@@ -21,24 +21,43 @@ import dev.aurakai.auraframefx.data.repositories.AgentRepository
 /**
  * Task Assignment Screen
  * Assign tasks and missions to AI agents
+ *
+ * ✨ Now powered by AgentViewModel for real task execution!
  */
 @Composable
-fun TaskAssignmentScreen() {
+fun TaskAssignmentScreen(
+    viewModel: dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel = hiltViewModel()
+) {
     val agents = remember { AgentRepository.getAllAgents() }
     val selectedAgent = remember { mutableStateOf<String?>(null) }
     val taskDescription = remember { mutableStateOf("") }
     val taskPriority = remember { mutableStateOf("Normal") }
     val taskDeadline = remember { mutableStateOf("24h") }
+    val coroutineScope = rememberCoroutineScope()
 
     val priorities = listOf("Low", "Normal", "High", "Critical")
     val deadlines = listOf("1h", "6h", "12h", "24h", "1w")
 
-    val sampleTasks = listOf(
-        Task("Code Review", "Genesis", "High", "In Progress", Color(0xFFFFD700)),
-        Task("Security Scan", "Kai", "Critical", "Completed", Color(0xFF32CD32)),
-        Task("UI Design", "Aura", "Normal", "Pending", Color(0xFF4169E1)),
-        Task("Data Analysis", "Cascade", "Low", "In Progress", Color(0xFF9370DB))
-    )
+    // Get active tasks from ViewModel
+    val activeTasks by viewModel.activeTasks.collectAsState()
+
+    // Convert to display format
+    val displayTasks = activeTasks.map { task ->
+        val agent = agents.find { it.name == task.agentName }
+        Task(
+            name = task.description.take(30),
+            assignedTo = task.agentName,
+            priority = task.priority.name.lowercase().replaceFirstChar { it.uppercase() },
+            status = when (task.status) {
+                dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskStatus.PENDING -> "Pending"
+                dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskStatus.IN_PROGRESS -> "In Progress"
+                dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskStatus.COMPLETED -> "Completed"
+                dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskStatus.CANCELLED -> "Cancelled"
+                dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskStatus.FAILED -> "Failed"
+            },
+            color = agent?.color ?: Color.Gray
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -221,9 +240,26 @@ fun TaskAssignmentScreen() {
                 // Assign Button
                 Button(
                     onClick = {
-                        // Mock task assignment
-                        taskDescription.value = ""
-                        selectedAgent.value = null
+                        // Create actual task through ViewModel
+                        selectedAgent.value?.let { agentName ->
+                            if (taskDescription.value.isNotBlank()) {
+                                val priority = when (taskPriority.value) {
+                                    "Low" -> dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskPriority.LOW
+                                    "Normal" -> dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskPriority.NORMAL
+                                    "High" -> dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskPriority.HIGH
+                                    "Critical" -> dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskPriority.CRITICAL
+                                    else -> dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel.TaskPriority.NORMAL
+                                }
+
+                                viewModel.assignTask(agentName, taskDescription.value, priority)
+
+                                // Reset form
+                                taskDescription.value = ""
+                                selectedAgent.value = null
+                                taskPriority.value = "Normal"
+                                taskDeadline.value = "24h"
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -240,18 +276,38 @@ fun TaskAssignmentScreen() {
 
         // Active Tasks
         Text(
-            text = "Active Tasks",
+            text = "Active Tasks (${displayTasks.size})",
             style = MaterialTheme.typography.titleLarge,
             color = Color.White,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(sampleTasks) { task ->
-                TaskCard(task = task)
+        if (displayTasks.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.6f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No active tasks. Assign a task to get started! 🚀",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                items(displayTasks) { task ->
+                    TaskCard(task = task)
+                }
             }
         }
     }

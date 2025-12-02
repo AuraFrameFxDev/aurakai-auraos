@@ -22,8 +22,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.aurakai.auraframefx.data.repositories.AgentRepository
 import dev.aurakai.auraframefx.models.AgentStats
+import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
 import kotlinx.coroutines.delay
 import kotlin.math.*
 import kotlin.random.Random
@@ -36,8 +39,7 @@ private const val JITTER_DELTA_MAX = 0.015
 
 @Composable
 fun AgentNexusScreen(
-    onAgentSelected: (String) -> Unit = {},
-    onDepartureTaskAssigned: (String, String) -> Unit = { _, _ -> }
+    viewModel: AgentViewModel = hiltViewModel(viewModelStoreOwner, key)
 ) {
     var selectedAgent by remember { mutableStateOf("Genesis") }
     var showDepartureDialog by remember { mutableStateOf(false) }
@@ -74,7 +76,7 @@ fun AgentNexusScreen(
                 selectedAgent = selectedAgent,
                 onAgentSelected = {
                     selectedAgent = it
-                    onAgentSelected(it)
+                    viewModel.activateAgent(it)
                 }
             )
 
@@ -121,9 +123,14 @@ fun AgentNexusScreen(
         DepartureTaskDialog(
             agentName = selectedAgent,
             onTaskAssigned = { task ->
-                onDepartureTaskAssigned(selectedAgent, task)
+                viewModel.assignTask(
+                    agentName = selectedAgent,
+                    taskDescription = task,
+                    priority = AgentViewModel.TaskPriority.NORMAL
+                )
+                showDepartureDialog = false
             },
-            onDismiss = { }
+            onDismiss = { showDepartureDialog = false }
         )
     }
 }

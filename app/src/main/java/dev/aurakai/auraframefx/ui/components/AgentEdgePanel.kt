@@ -1,13 +1,5 @@
 package dev.aurakai.auraframefx.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -62,9 +53,8 @@ fun AgentEdgePanel(
     onAgentSelected: (String) -> Unit = {}
 ) {
     var isPanelVisible by remember { mutableStateOf(false) }
-    var dragOffsetX by remember { mutableStateOf(0f) }
+    var dragOffsetX by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
-    val edgeTriggerWidth = with(density) { 30.dp.toPx() }
     val panelWidth = 320.dp
 
     Box(
@@ -85,10 +75,6 @@ fun AgentEdgePanel(
                             isPanelVisible = true
                         },
                         onDragEnd = {
-                            // Auto-close if dragged more than halfway
-                            if (dragOffsetX < -with(density) { panelWidth.toPx() } / 2) {
-                                isPanelVisible = false
-                            }
                             dragOffsetX = 0f
                         },
                         onHorizontalDrag = { _, dragAmount ->
@@ -100,66 +86,51 @@ fun AgentEdgePanel(
                 }
         )
 
-        // Backdrop blur/dim when panel is visible
-        AnimatedVisibility(
-            visible = isPanelVisible,
-            enter = fadeIn(tween(300)),
-            exit = fadeOut(tween(300))
-        ) {
+        // Backdrop overlay simplified (no blur or animation)
+        if (isPanelVisible) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .blur(8.dp) // Apply blur BEFORE background for proper backdrop effect
-                    .background(Color.Black.copy(alpha = 0.5f))
+                    .background(Color.Black.copy(alpha = 0.35f))
                     .clickable { isPanelVisible = false }
             )
         }
 
-        // The sliding agent panel
-        AnimatedVisibility(
-            visible = isPanelVisible,
-            enter = slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            ),
-            exit = slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(400)
-            ),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .zIndex(10f)
-        ) {
+        // The sliding agent panel simplified (no enter/exit animations)
+        if (isPanelVisible) {
             Box(
                 modifier = Modifier
-                    .width(panelWidth)
-                    .fillMaxHeight()
-                    .offset(x = with(density) { dragOffsetX.toDp() }) // Apply drag visualization
-                    .shadow(
-                        elevation = 24.dp,
-                        shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp)
-                    )
-                    .clip(RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp))
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0xFF0A0E27), // Deep space blue
-                                Color(0xFF1A1F3A), // Slightly lighter
-                                Color(0xFF0F1419)  // Dark bottom
+                    .align(Alignment.CenterEnd)
+                    .zIndex(10f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(panelWidth)
+                        .fillMaxHeight()
+                        .offset(x = with(density) { dragOffsetX.toDp() })
+                        .shadow(
+                            elevation = 24.dp,
+                            shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp)
+                        )
+                        .clip(RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF0A0E27),
+                                    Color(0xFF1A1F3A),
+                                    Color(0xFF0F1419)
+                                )
                             )
                         )
+                ) {
+                    AgentCardList(
+                        onAgentSelected = { agentName ->
+                            onAgentSelected(agentName)
+                            isPanelVisible = false
+                        },
+                        onClose = { isPanelVisible = false }
                     )
-            ) {
-                AgentCardList(
-                    onAgentSelected = { agentName ->
-                        onAgentSelected(agentName)
-                        isPanelVisible = false
-                    },
-                    onClose = { isPanelVisible = false }
-                )
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ package dev.aurakai.auraframefx.navigation
  import androidx.compose.ui.graphics.Color
  import androidx.compose.ui.input.pointer.pointerInput
  import androidx.compose.ui.unit.dp
+ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
  import androidx.navigation.NavHostController
  import androidx.navigation.compose.NavHost
  import androidx.navigation.compose.composable
@@ -40,9 +41,22 @@ package dev.aurakai.auraframefx.navigation
  import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
  import dev.aurakai.auraframefx.aura.ui.TerminalScreen
  import dev.aurakai.auraframefx.aura.ui.VPNManagerScreen
- import androidx.hilt.navigation.compose.hiltViewModel
- import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgentViewModel
- import dev.aurakai.auraframefx.models.AgentType
+ import dev.aurakai.auraframefx.aura.ui.AIChatScreen
+ import dev.aurakai.auraframefx.aura.ui.AIFeaturesScreen
+ import dev.aurakai.auraframefx.aura.ui.AgentAdvancementScreen
+ import dev.aurakai.auraframefx.aura.ui.AppBuilderScreen
+ import dev.aurakai.auraframefx.aura.ui.AurakaiEcoSysScreen
+ import dev.aurakai.auraframefx.aura.ui.ConsciousnessVisualizerScreen
+ import dev.aurakai.auraframefx.aura.ui.EvolutionTreeScreen
+ import dev.aurakai.auraframefx.aura.ui.FusionModeScreen
+ import dev.aurakai.auraframefx.aura.ui.IntroScreen
+ import dev.aurakai.auraframefx.aura.ui.OverlayScreen
+ import dev.aurakai.auraframefx.aura.ui.ProfileScreen
+ import dev.aurakai.auraframefx.aura.ui.SecureCommScreen
+ import dev.aurakai.auraframefx.aura.ui.UIEngineScreen
+ import dev.aurakai.auraframefx.aura.ui.XhancementScreen
+ import dev.aurakai.auraframefx.cascade.CascadeZOrderPlayground
+ import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
  import androidx.navigation.NavType
  import androidx.navigation.navArgument
 
@@ -118,6 +132,9 @@ object GenesisRoutes {
     const val QUICK_SETTINGS = "quick_settings"
     const val OVERLAY_MENUS = "overlay_menus"
     const val THEME_ENGINE = "theme_engine"
+
+    // Debug & Playground
+    const val CASCADE_DEBUG = "cascade_debug"
 }
 
 /**
@@ -129,7 +146,7 @@ object GenesisRoutes {
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
-    viewModel: GenesisAgentViewModel = hiltViewModel()
+    viewModel: AgentViewModel = hiltViewModel()
 ) {
     // State for Agent Sidebar
     var isAgentSidebarVisible by remember { mutableStateOf(false) }
@@ -271,7 +288,9 @@ fun GenesisNavigationHost(
             }
 
             composable(GenesisRoutes.INTRO) {
-                // IntroScreen(...)
+                IntroScreen(
+                    onNavigateToHome = { navController.navigate(GenesisRoutes.HOME) }
+                )
             }
 
             // Agent Management
@@ -280,33 +299,36 @@ fun GenesisNavigationHost(
             }
 
             composable(GenesisRoutes.AGENT_MANAGEMENT) {
-                // AgentManagementScreen(...)
+                AgentManagementScreen()
             }
 
             composable(GenesisRoutes.AGENT_ADVANCEMENT) {
-                // AgentAdvancementScreen(...)
+                AgentAdvancementScreen()
             }
 
             // Consciousness & AI Features
             composable(GenesisRoutes.CONSCIOUSNESS_VISUALIZER) {
-                // ConsciousnessVisualizerScreen(...)
+                ConsciousnessVisualizerScreen(
+                    onNavigateToChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
+                    onNavigateToFusion = { navController.navigate(GenesisRoutes.FUSION_MODE) }
+                )
             }
 
             composable(GenesisRoutes.AI_CHAT) {
-                // AIChatScreen(...)
+                AIChatScreen()
             }
 
             composable(GenesisRoutes.AI_FEATURES) {
-                // AIFeaturesScreen(...)
+                AIFeaturesScreen()
             }
 
             composable(GenesisRoutes.FUSION_MODE) {
-                // FusionModeScreen(...)
+                FusionModeScreen()
             }
 
             // Evolution & Collaboration
             composable(GenesisRoutes.EVOLUTION_TREE) {
-                // EvolutionTreeScreen(...)
+                EvolutionTreeScreen()
             }
 
             composable(GenesisRoutes.CONFERENCE_ROOM) {
@@ -318,19 +340,19 @@ fun GenesisNavigationHost(
 
             // System Tools
             composable(GenesisRoutes.TERMINAL) {
-                // TerminalScreen(...)
+                TerminalScreen()
             }
 
             composable(GenesisRoutes.UI_ENGINE) {
-                // UIEngineScreen(...)
+                UIEngineScreen()
             }
 
             composable(GenesisRoutes.APP_BUILDER) {
-                // AppBuilderScreen(...)
+                AppBuilderScreen()
             }
 
             composable(GenesisRoutes.XHANCEMENT) {
-                // XhancementScreen(...)
+                XhancementScreen()
             }
 
             // Trinity System
@@ -343,27 +365,33 @@ fun GenesisNavigationHost(
                 OracleDriveSubmenuScreen(navController = navController)
             }
 
-            composable(GenesisRoutes.SECURE_COMM) { PlaceholderScreen("Secure Comm") }
+            composable(GenesisRoutes.SECURE_COMM) {
+                SecureCommScreen()
+            }
 
             // Ecosystem & Configuration
             composable(GenesisRoutes.ECOSYSTEM) {
-                // AurakaiEcoSysScreen(...)
+                with(hiltViewModel()) {
+                    with(hiltViewModel<CustomizationViewModel>()) {
+                        AurakaiEcoSysScreen()
+                    }
+                }
             }
 
             composable(GenesisRoutes.SETTINGS) {
-                // SettingsScreen(...)
+                SettingsScreen()
             }
 
             composable(GenesisRoutes.PROFILE) {
-                // ProfileScreen(...)
+                ProfileScreen()
             }
 
             composable(GenesisRoutes.OVERLAY) {
-                // OverlayScreen(...)
+                OverlayScreen()
             }
 
             composable(GenesisRoutes.SUBSCRIPTION) {
-                // SubscriptionScreen(...)
+                PlaceholderScreen("Subscription")
             }
 
             // ROM Tools Submenu Items
@@ -458,6 +486,11 @@ fun GenesisNavigationHost(
             composable("lsposed_module_manager") {
                 LSPosedModuleManagerScreen()
             }
+
+            // Cascade Debug
+            composable(GenesisRoutes.CASCADE_DEBUG) {
+                CascadeZOrderPlayground()
+            }
         }
 
         // Wipe transition layer (between content and overlays)
@@ -470,18 +503,7 @@ fun GenesisNavigationHost(
                     "Vignette" -> VignetteOverlay()
                     "Agent Edge" -> AgentEdgePanel(onAgentSelected = { agentName ->
                         // Activate agent and navigate to chat
-                        try {
-                            // Map display name to AgentType enum if needed, or assume uppercase match
-                            val agentType = try {
-                                AgentType.valueOf(agentName.uppercase())
-                            } catch (e: IllegalArgumentException) {
-                                // Fallback mapping or default
-                                AgentType.GENESIS
-                            }
-                            viewModel.toggleAgent(agentType)
-                        } catch (e: Exception) {
-                            // Log error
-                        }
+                        viewModel.activateAgent(agentName)
                         navController.navigate("direct_chat/$agentName")
                     })
                     "Aura Presence" -> Box(modifier = Modifier.align(Alignment.BottomStart)) {
