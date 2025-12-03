@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * Comprehensive user guides and API reference
  */
 @Composable
-fun DocumentationScreen() {
+fun DocumentationScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedSection = remember { mutableStateOf("All") }
     val sections = listOf("All", "User Guide", "API Reference", "Developer", "Troubleshooting")

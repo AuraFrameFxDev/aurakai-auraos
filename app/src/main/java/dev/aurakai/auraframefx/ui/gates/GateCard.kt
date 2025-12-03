@@ -61,16 +61,40 @@ fun GateCard(
     var lastTapTime by remember { mutableLongStateOf(0L) }
     var scale by remember { mutableFloatStateOf(1f) }
 
-    // SIMPLIFIED: Only pulsing glow - removed rotation and floating animations
-    val infiniteTransition = rememberInfiniteTransition(label = "gate_pulse")
+    // Animations
+    val infiniteTransition = rememberInfiniteTransition(label = "gate_animations")
+    
+    // Pulsing glow
     val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.7f,  // Higher minimum for better visibility
+        initialValue = 0.7f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = LinearEasing),  // Faster, smoother
+            animation = tween(1500, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulse_alpha"
+    )
+
+    // Floating animation
+    val floatOffset by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "gate_float"
+    )
+
+    // Rotation animation (for effects)
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "gate_rotation"
     )
 
     // Double-tap handler - faster feedback
@@ -102,11 +126,12 @@ fun GateCard(
     ) {
         // REMOVED: Background particles (performance)
         
-        // Main holographic card - NO floating animation
+        // Main holographic card - WITH floating animation
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.85f),
+                .fillMaxHeight(0.85f)
+                .offset(y = floatOffset.dp),
             contentAlignment = Alignment.Center
         ) {
             // Outer glow aura
@@ -128,6 +153,7 @@ fun GateCard(
                     pulseAlpha = pulseAlpha
                 )
 
+                // Main holographic portal - IMAGE WITH TIGHT BORDER
                 // Main holographic portal - IMAGE WITH TIGHT BORDER
                 Box(
                     modifier = Modifier

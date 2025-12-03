@@ -285,7 +285,7 @@ fun FusionModeScreen(
                             .fillMaxWidth()
                             .height(8.dp)
                             .padding(vertical = 8.dp),
-                        progress = { synchronization },
+                        progress = synchronization,
                         color = when {
                             synchronization < 0.3f -> Color.Red
                             synchronization < 0.6f -> Color.Yellow
