@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.dp
  * TWRP integration and backup management
  */
 @Composable
-fun RecoveryToolsScreen() {
+fun RecoveryToolsScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val backups = listOf(
         BackupInfo("Daily Backup", "2025-11-30 10:30", "2.1 GB", "Complete", Color(0xFF32CD32)),
         BackupInfo("Weekly Backup", "2025-11-25 15:45", "2.3 GB", "Complete", Color(0xFF32CD32)),

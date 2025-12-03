@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.sp
  * Unlock/lock bootloader and manage partitions
  */
 @Composable
-fun BootloaderManagerScreen() {
+fun BootloaderManagerScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val bootloaderStatus = remember { mutableStateOf("Locked") }
     val isProcessing = remember { mutableStateOf(false) }
     val processProgress = remember { mutableStateOf(0f) }

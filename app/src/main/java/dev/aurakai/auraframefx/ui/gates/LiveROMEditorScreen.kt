@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * Real-time system file editing with safety checks
  */
 @Composable
-fun LiveROMEditorScreen() {
+fun LiveROMEditorScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val systemFiles = listOf(
         SystemFile("/system/build.prop", "Build properties", "Modified", Color(0xFFFF4500)),
         SystemFile("/system/etc/hosts", "Hosts file", "Clean", Color(0xFF32CD32)),
