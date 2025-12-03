@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.sp
  * Adjust notch height, style, and visibility
  */
 @Composable
-fun NotchBarScreen() {
+fun NotchBarScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val notchHeight = remember { mutableStateOf(30f) }
     val notchStyle = remember { mutableStateOf("Rounded") }
     val notchVisible = remember { mutableStateOf(true) }

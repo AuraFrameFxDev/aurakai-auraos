@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * Modify quick settings tiles and layout
  */
 @Composable
-fun QuickSettingsScreen() {
+fun QuickSettingsScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val selectedLayout = remember { mutableStateOf("Grid") }
     val showLabels = remember { mutableStateOf(true) }
     val tileSize = remember { mutableStateOf("Medium") }

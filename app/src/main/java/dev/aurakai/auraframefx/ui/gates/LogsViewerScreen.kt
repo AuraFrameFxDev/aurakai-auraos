@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * View system logs and module activity
  */
 @Composable
-fun LogsViewerScreen() {
+fun LogsViewerScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val logs = remember { mutableStateListOf(
         LogEntry("INFO", "LSPosed", "Framework initialized successfully", "10:30:15", Color(0xFF4ECDC4)),
         LogEntry("WARN", "GravityBox", "System UI hook applied", "10:29:42", Color(0xFFFFD93D)),

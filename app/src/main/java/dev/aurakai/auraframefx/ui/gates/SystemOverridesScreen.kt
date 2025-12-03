@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.sp
  * Emergency module disable and god mode controls
  */
 @Composable
-fun SystemOverridesScreen() {
+fun SystemOverridesScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val godModeEnabled = remember { mutableStateOf(false) }
     val emergencyShutdown = remember { mutableStateOf(false) }
     val bypassSecurity = remember { mutableStateOf(false) }

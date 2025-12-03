@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * AI-assisted module generation and template selection
  */
 @Composable
-fun ModuleCreationScreen() {
+fun ModuleCreationScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val moduleName = remember { mutableStateOf("") }
     val moduleType = remember { mutableStateOf("UI Component") }
     val selectedTemplate = remember { mutableStateOf<String?>(null) }

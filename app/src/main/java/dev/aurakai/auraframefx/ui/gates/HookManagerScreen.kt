@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * Monitor and manage active method hooks
  */
 @Composable
-fun HookManagerScreen() {
+fun HookManagerScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val hooks = remember { mutableStateListOf(
         MethodHook("SystemUI", "com.android.systemui.statusbar.StatusBarIconView", "setVisible", "Status bar icon visibility", true, "UI"),
         MethodHook("Settings", "com.android.settings.DisplaySettings", "onCreate", "Display settings initialization", true, "System"),
