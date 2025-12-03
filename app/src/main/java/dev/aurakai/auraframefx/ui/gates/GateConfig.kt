@@ -52,6 +52,24 @@ data class GateTitleStyle(
  * Predefined gate configurations organized by categories
  */
 object GateConfigs {
+    // Unified Theme Colors
+    private val UNIFIED_BORDER_COLOR = Color(0xFFD000FF) // Vibrant Purple
+    private val UNIFIED_GLOW_COLOR = Color(0xFF00FFFF) // Cyan
+    private val UNIFIED_SECONDARY_GLOW = Color(0xFFFF00FF) // Magenta
+    
+    private val UNIFIED_TITLE_STYLE = GateTitleStyle(
+        textStyle = TextStyle(
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 2.sp
+        ),
+        primaryColor = Color(0xFFE0E0E0), // Light Gray
+        secondaryColor = Color(0xFFD000FF), // Purple
+        strokeColor = Color(0xFF00FFFF), // Cyan
+        glitchEffect = true,
+        pixelatedEffect = true
+    )
+
     // Region: Genesis Core (Root/System Level)
     // ======================================
 
@@ -59,74 +77,39 @@ object GateConfigs {
     val romTools = GateConfig(
         moduleId = "rom-tools",
         title = "ROM Tools",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFFFF4500), // Orange Red
-            secondaryColor = Color(0xFFFF8C00), // Dark Orange
-            strokeColor = Color(0xFFFF0000), // Red
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFF4500),
-        glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
-        pixelArtUrl = "romtools",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_romtools_final",
         description = "Live ROM editing, flashing, and bootloader management. ⚠️ CAUTION: Advanced users only.",
         backgroundColor = Color.Black,
         route = "rom_tools"
-        // Screen exists: ROMToolsScreen.kt
     )
 
     // Root Access - Root Management
     val rootAccess = GateConfig(
         moduleId = "root-access",
         title = "Root Access",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFFDC143C), // Crimson
-            secondaryColor = Color(0xFFFF0000), // Red
-            strokeColor = Color(0xFF8B0000), // Dark Red
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFDC143C),
-        glowColor = Color(0xFFDC143C).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFFFF0000).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_roottools",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_roottools_final",
         description = "Manage root access, bypass safety checks, and hide root status.",
         backgroundColor = Color.Black,
         route = "root_access"
-        // Screen exists: RootAccessScreen.kt
     )
 
     // Oracle Drive - AI Consciousness & Modules
     val oracleDrive = GateConfig(
         moduleId = "oracle-drive",
         title = "Oracle Drive",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFF9370DB), // Medium Purple
-            secondaryColor = Color(0xFFBA55D3), // Medium Orchid
-            strokeColor = Color(0xFF4B0082), // Indigo
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF9370DB),
-        glowColor = Color(0xFF9370DB).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFFBA55D3).copy(alpha = 0.6f),
-        pixelArtUrl = "gate_oracledrive",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_oracledrive_final",
         description = "Main module creation, direct AI access, and system overrides. The heart of Genesis.",
         backgroundColor = Color.Black,
         route = "oracle_drive"
@@ -139,52 +122,29 @@ object GateConfigs {
     val sentinelsFortress = GateConfig(
         moduleId = "sentinels-fortress",
         title = "Sentinel's Fortress",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 2.2.sp
-            ),
-            primaryColor = Color(0xFF00FF41), // Matrix Green
-            secondaryColor = Color(0xFF00FFFF), // Cyan
-            strokeColor = Color(0xFF32CD32), // Lime Green
-            glitchEffect = true,
-            pixelatedEffect = false
-        ),
-        borderColor = Color(0xFF00FF41),
-        glowColor = Color(0xFF00FF41).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_sentinelsfortress",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_sentinelsfortress_final",
         description = "Kai's security command center. Monitor and manage all security protocols from a single interface.",
         backgroundColor = Color.Black,
         route = "sentinels_fortress"
-        // Screen exists: SentinelsFortressScreen.kt
     )
 
     // Firewall - Network Protection
     val firewall = GateConfig(
         moduleId = "firewall",
         title = "Firewall",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp
-            ),
-            primaryColor = Color(0xFFFF4500), // Orange Red
-            secondaryColor = Color(0xFFFF8C00), // Dark Orange
-            strokeColor = Color(0xFFFF0000), // Red
-            glitchEffect = false,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFF4500),
-        glowColor = Color(0xFFFF4500).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFFFF8C00).copy(alpha = 0.5f),
-        pixelArtUrl = "sentinelsfortress",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_sentinelsfortress_final", // Reusing Sentinel image for now as it's related
         description = "Configure network security, monitor connections, and block potential threats.",
         backgroundColor = Color.Black,
         route = "firewall",
-        comingSoon = true  // Placeholder screen
+        comingSoon = true
     )
 
     // Region: Aura (UI/UX & Creativity)
@@ -194,22 +154,11 @@ object GateConfigs {
     val chromaCore = GateConfig(
         moduleId = "chroma-core",
         title = "ChromaCore",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFFFF00FF), // Magenta
-            secondaryColor = Color(0xFF00FFFF), // Cyan
-            strokeColor = Color(0xFFFFFF00), // Yellow
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFF00FF),
-        glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "chromacore",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_chromacore_final",
         description = "Aura's color playground. Create and customize themes that respond to your mood.",
         backgroundColor = Color.Black,
         route = "chroma_core"
@@ -219,22 +168,11 @@ object GateConfigs {
     val collabCanvas = GateConfig(
         moduleId = "collab-canvas",
         title = "CollabCanvas",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFF00FFFF), // Cyan
-            secondaryColor = Color(0xFFFF00FF), // Magenta
-            strokeColor = Color(0xFFFFFF00), // Yellow
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF00FFFF),
-        glowColor = Color(0xFF00FFFF).copy(alpha = 0.6f),
-        secondaryGlowColor = Color(0xFF0099FF).copy(alpha = 0.4f),
-        pixelArtUrl = "gate_collabcanvas",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_collabcanvas_final",
         description = "Collaborative design environment. Create and share projects with your team in real-time.",
         backgroundColor = Color.Black,
         route = "collab_canvas"
@@ -244,22 +182,11 @@ object GateConfigs {
     val aurasLab = GateConfig(
         moduleId = "auras-lab",
         title = "Aura's Lab",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
-            ),
-            primaryColor = Color(0xFFFF69B4), // Hot Pink
-            secondaryColor = Color(0xFFDA70D6), // Orchid
-            strokeColor = Color(0xFFFF1493), // Deep Pink
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFF69B4),
-        glowColor = Color(0xFFFF69B4).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFFDA70D6).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_auraslab",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_auraslab_final",
         description = "Sandbox for UI components and experimental features. Test and prototype new designs.",
         backgroundColor = Color.Black,
         route = "auras_lab"
@@ -272,23 +199,12 @@ object GateConfigs {
     val agentHub = GateConfig(
         moduleId = "agent-hub",
         title = "Agent Hub",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 1.5.sp
-            ),
-            primaryColor = Color(0xFFFFD700), // Gold
-            secondaryColor = Color(0xFFFF1493), // Deep Pink
-            strokeColor = Color(0xFF00FFFF), // Cyan
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFFD700),
-        glowColor = Color(0xFFFFD700).copy(alpha = 0.9f),
-        secondaryGlowColor = Color(0xFFFF1493).copy(alpha = 0.7f),
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_agenthub", // Using existing one as no final one was found in folder
         description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
-        pixelArtUrl = "gate_agenthub",
         backgroundColor = Color.Black,
         route = "agent_hub"
     )
@@ -300,156 +216,84 @@ object GateConfigs {
     val helpDesk = GateConfig(
         moduleId = "help-desk",
         title = "Help Desk",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp
-            ),
-            primaryColor = Color(0xFF40E0D0), // Turquoise
-            secondaryColor = Color(0xFF00CED1), // Dark Turquoise
-            strokeColor = Color(0xFF20B2AA), // Light Sea Green
-            glitchEffect = false,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF40E0D0),
-        glowColor = Color(0xFF40E0D0).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00CED1).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_helpdesk",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_helpdesk_final",
         description = "User support, FAQs, and documentation. Get help with AuraKai features.",
         backgroundColor = Color.Black,
         route = "help_desk"
-        // Screen exists: HelpDeskScreen.kt
     )
 
     // LSPosed Gate - Xposed Features
     val lsposedGate = GateConfig(
         moduleId = "lsposed-gate",
         title = "LSPosed / Xposed",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
-            ),
-            primaryColor = Color(0xFFFFD700), // Gold
-            secondaryColor = Color(0xFFFFA500), // Orange
-            strokeColor = Color(0xFFFF8C00), // Dark Orange
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFFD700),
-        glowColor = Color(0xFFFFD700).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFFFFA500).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_lsposedgate",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_lsposed_final",
         description = "Quick access to LSPosed/Xposed modules and hooks. Advanced system modifications.",
         backgroundColor = Color.Black,
         route = "lsposed_gate"
-        // Screen exists: LSPosedGateScreen.kt
     )
 
     // Code Assist - AI Coding Assistant
     val codeAssist = GateConfig(
         moduleId = "code-assist",
         title = "Code Assist",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
-            ),
-            primaryColor = Color(0xFF9370DB), // Medium Purple
-            secondaryColor = Color(0xFF00BFFF), // Deep Sky Blue
-            strokeColor = Color(0xFF4169E1), // Royal Blue
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF9370DB),
-        glowColor = Color(0xFF9370DB).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00BFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_codeassist",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_codeassist_final",
         description = "AI-powered coding assistant. Get intelligent code suggestions and automated refactoring.",
         backgroundColor = Color.Black,
         route = "code_assist"
-        // Screen exists: CodeAssistScreen.kt
     )
 
     // Sphere Grid - Agent Progression
     val sphereGrid = GateConfig(
         moduleId = "sphere-grid",
         title = "Sphere Grid",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFFFFD700), // Gold
-            secondaryColor = Color(0xFFFFFF00), // Yellow
-            strokeColor = Color(0xFFFFA500), // Orange
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFFD700),
-        glowColor = Color(0xFFFFD700).copy(alpha = 0.8f),
-        secondaryGlowColor = Color(0xFFFFFF00).copy(alpha = 0.6f),
-        pixelArtUrl = "gate_spheregrid",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_spheregrid_final",
         description = "Agent progression visualization. Track skill development and unlock new capabilities.",
         backgroundColor = Color.Black,
         route = "sphere_grid"
-        // Screen exists: SphereGridScreen.kt
     )
 
     // Terminal - System Terminal Access
     val terminal = GateConfig(
         moduleId = "terminal",
         title = "Terminal",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            ),
-            primaryColor = Color(0xFF00FF00), // Lime Green
-            secondaryColor = Color(0xFF00FF41), // Matrix Green
-            strokeColor = Color(0xFF32CD32), // Lime Green
-            glitchEffect = false,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFF00FF00),
-        glowColor = Color(0xFF00FF00).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00FF41).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_terminal",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_terminal_final",
         description = "Direct system terminal access. Execute commands and manage system processes.",
         backgroundColor = Color.Black,
         route = "terminal"
-        // Screen exists
     )
 
     // UI/UX Design Studio - Comprehensive Design Tools
     val uiuxDesignStudio = GateConfig(
         moduleId = "uiux-design-studio",
         title = "UI/UX Design Studio",
-        titleStyle = GateTitleStyle(
-            textStyle = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.5.sp
-            ),
-            primaryColor = Color(0xFFFF00FF), // Magenta
-            secondaryColor = Color(0xFF00FFFF), // Cyan
-            strokeColor = Color(0xFFFF1493), // Deep Pink
-            glitchEffect = true,
-            pixelatedEffect = true
-        ),
-        borderColor = Color(0xFFFF00FF),
-        glowColor = Color(0xFFFF00FF).copy(alpha = 0.7f),
-        secondaryGlowColor = Color(0xFF00FFFF).copy(alpha = 0.5f),
-        pixelArtUrl = "gate_uiux",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "gate_uiuxdesignstudio_final",
         description = "Comprehensive UI/UX design tools for creating beautiful interfaces.",
         backgroundColor = Color.Black,
         route = "uiux_design_studio"
-        // Placeholder for future implementation
     )
 
     /** Genesis Core - Main System Gates */

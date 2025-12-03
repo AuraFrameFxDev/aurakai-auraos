@@ -10,15 +10,28 @@ import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
 import dev.aurakai.auraframefx.aura.ui.CanvasScreen
 import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
 import dev.aurakai.auraframefx.aura.ui.FirewallScreen
+import dev.aurakai.auraframefx.aura.ui.FusionModeScreen
+import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
 import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
 import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
-import dev.aurakai.auraframefx.screens.PlaceholderScreen
+import dev.aurakai.auraframefx.aura.ui.TerminalScreen
+import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 import dev.aurakai.auraframefx.ui.gates.AgentHubSubmenuScreen
 import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
 import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
+import dev.aurakai.auraframefx.ui.gates.CodeAssistScreen
 import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
 import dev.aurakai.auraframefx.ui.gates.HelpDeskScreen
 import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
+import dev.aurakai.auraframefx.ui.gates.LSPosedModuleManagerScreen
+import dev.aurakai.auraframefx.ui.gates.NotchBarScreen
+import dev.aurakai.auraframefx.ui.gates.OverlayMenusScreen
+import dev.aurakai.auraframefx.ui.gates.QuickActionsScreen
+import dev.aurakai.auraframefx.ui.gates.QuickSettingsScreen
+import dev.aurakai.auraframefx.ui.gates.ROMFlasherScreen
+import dev.aurakai.auraframefx.ui.gates.StatusBarScreen
+import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
+import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
 import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
 
 /**
@@ -195,23 +208,122 @@ fun GenesisNavigationHost(
             AgentMonitoringScreen()
         }
         composable("code_assist") {
-            // Code Assist not implemented yet; keep standardized placeholder
-            PlaceholderScreen(title = "Code Assist", onBack = { navController.popBackStack() })
+            CodeAssistScreen(navController = navController)
         }
         composable(GenesisRoutes.TERMINAL) {
-            // Terminal screen not yet implemented; use placeholder
-            PlaceholderScreen(title = "Terminal", onBack = { navController.popBackStack() })
+            TerminalScreen()
         }
         composable("terminal") {
-            PlaceholderScreen(title = "Terminal", onBack = { navController.popBackStack() })
+            TerminalScreen()
         }
         composable("uiux_design_studio") {
             UIUXGateSubmenuScreen(navController = navController)
         }
-    }
-}
 
-@Composable
-fun OracleDriveScreen(onNavigateBack: () -> Boolean) {
-    TODO("Not yet implemented")
+        // Missing routes from submenu screens
+        composable("agent_nexus") {
+            AgentNexusScreen()
+        }
+        composable("task_assignment") {
+            TaskAssignmentScreen()
+        }
+        composable("agent_monitoring") {
+            AgentMonitoringScreen()
+        }
+        composable("fusion_mode") {
+            FusionModeScreen()
+        }
+
+        // Additional missing routes from submenu screens - using real implementations
+        composable("theme_engine") {
+            ThemeEngineScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable("quick_settings") {
+            QuickSettingsScreen()
+        }
+        composable("notch_bar") {
+            NotchBarScreen()
+        }
+        composable("overlay_menus") {
+            OverlayMenusScreen()
+        }
+        composable("status_bar") {
+            StatusBarScreen()
+        }
+        composable("rom_flasher") {
+            ROMFlasherScreen()
+        }
+        composable("module_manager_lsposed") {
+            LSPosedModuleManagerScreen()
+        }
+        composable("quick_actions") {
+            QuickActionsScreen()
+        }
+        
+        // DOCUMENTATION & HELP ROUTES (for HelpDesk submenu)
+        composable("documentation") {
+            dev.aurakai.auraframefx.ui.gates.DocumentationScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("faq_browser") {
+            dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("tutorial_videos") {
+            dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("live_support_chat") {
+            dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("direct_chat") {
+            dev.aurakai.auraframefx.ui.gates.DirectChatScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        
+        // ROM TOOLS SUBMENU ROUTES
+        composable("recovery_tools") {
+            dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("bootloader_manager") {
+            dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("live_rom_editor") {
+            dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        
+        // LSPOSED SUBMENU ROUTES
+        composable("hook_manager") {
+            dev.aurakai.auraframefx.ui.gates.HookManagerScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("module_creation") {
+            dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("system_overrides") {
+            dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("logs_viewer") {
+            dev.aurakai.auraframefx.ui.gates.LogsViewerScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+    }
 }

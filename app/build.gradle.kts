@@ -161,6 +161,7 @@ dependencies {
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
+    implementation(libs.androidx.compose.foundation.layout)
     ksp(libs.moshi.kotlin.codegen)
 
     // Logging
@@ -390,6 +391,12 @@ tasks.register<Delete>("cleanKspCache") {
 
 tasks.named("preBuild") {
     dependsOn("cleanKspCache")
+}
+
+// Fix YukiHookAPI KSP timing - ensure BuildConfig is generated first
+tasks.matching { it.name.startsWith("ksp") && it.name.contains("Kotlin") }.configureEach {
+    dependsOn("generateDebugBuildConfig")
+    mustRunAfter("generateDebugBuildConfig")
 }
 
 tasks.register("aegenesisAppStatus") {

@@ -61,33 +61,22 @@ fun GateCard(
     var lastTapTime by remember { mutableLongStateOf(0L) }
     var scale by remember { mutableFloatStateOf(1f) }
 
-    // Pulsing glow animation
+    // SIMPLIFIED: Only pulsing glow - removed rotation and floating animations
     val infiniteTransition = rememberInfiniteTransition(label = "gate_pulse")
     val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
+        initialValue = 0.7f,  // Higher minimum for better visibility
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
+            animation = tween(1500, easing = LinearEasing),  // Faster, smoother
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulse_alpha"
     )
 
-    // Rotation animation for hologram effect
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(20000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation"
-    )
-
-    // Double-tap handler
+    // Double-tap handler - faster feedback
     LaunchedEffect(scale) {
         if (scale != 1f) {
-            delay(150)
+            delay(100)  // Quicker response
             scale = 1f
         }
     }
@@ -95,7 +84,7 @@ fun GateCard(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black) // Black void background
+            .background(Color.Black.copy(alpha = 0.8f))  // Darker for better contrast
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -111,10 +100,9 @@ fun GateCard(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Animated background particles for depth
-        GateBackgroundParticles(config.borderColor, rotation)
-
-        // Main holographic card - floating in void
+        // REMOVED: Background particles (performance)
+        
+        // Main holographic card - NO floating animation
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.9f)

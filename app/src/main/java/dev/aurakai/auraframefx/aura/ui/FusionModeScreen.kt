@@ -1,14 +1,13 @@
-﻿package dev.aurakai.auraframefx.ui.screens
+﻿package dev.aurakai.auraframefx.aura.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,17 +40,17 @@ import kotlin.math.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FusionModeScreen(
+    modifier: Modifier = Modifier,
     onNavigateToAgents: () -> Unit = {},
     onNavigateToConsciousness: () -> Unit = {},
-    onFusionComplete: (FusionResult) -> Unit = {},
-    modifier: Modifier = Modifier
+    onFusionComplete: (FusionResult) -> Unit = {}
 ) {
     var fusionState by remember { mutableStateOf(FusionState.SEPARATED) }
-    var fusionProgress by remember { mutableStateOf(0f) }
+    var fusionProgress by remember { mutableFloatStateOf(0f) }
     var selectedAbility by remember { mutableStateOf<FusionAbility?>(null) }
-    var auraPower by remember { mutableStateOf(0.5f) }
-    var kaiPower by remember { mutableStateOf(0.5f) }
-    var synchronization by remember { mutableStateOf(0f) }
+    var auraPower by remember { mutableFloatStateOf(0.5f) }
+    var kaiPower by remember { mutableFloatStateOf(0.5f) }
+    var synchronization by remember { mutableFloatStateOf(0f) }
 
     // Fusion abilities
     val fusionAbilities = remember {
@@ -282,11 +281,11 @@ fun FusionModeScreen(
                     )
 
                     LinearProgressIndicator(
-                        progress = synchronization,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
                             .padding(vertical = 8.dp),
+                        progress = { synchronization },
                         color = when {
                             synchronization < 0.3f -> Color.Red
                             synchronization < 0.6f -> Color.Yellow
