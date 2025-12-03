@@ -165,7 +165,6 @@ fun GateCard(
                     // The pixel art image - FILLS ENTIRE BOX
                     GateImageWithBorder(
                         config = config,
-                        rotation = rotation,
                         pulseAlpha = pulseAlpha
                     )
 
@@ -326,7 +325,6 @@ private fun BoxScope.HologramGlow(
 @Composable
 private fun GateImageWithBorder(
     config: GateConfig,
-    rotation: Float,
     pulseAlpha: Float
 ) {
     Box(

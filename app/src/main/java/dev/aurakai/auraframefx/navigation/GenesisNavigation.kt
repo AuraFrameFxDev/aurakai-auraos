@@ -262,68 +262,44 @@ fun GenesisNavigationHost(
         
         // DOCUMENTATION & HELP ROUTES (for HelpDesk submenu)
         composable("documentation") {
-            dev.aurakai.auraframefx.ui.gates.DocumentationScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.DocumentationScreen { navController.popBackStack() }
         }
         composable("faq_browser") {
-            dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen { navController.popBackStack() }
         }
         composable("tutorial_videos") {
-            dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen { navController.popBackStack() }
         }
         composable("live_support_chat") {
-            dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen { navController.popBackStack() }
         }
         composable("direct_chat") {
-            dev.aurakai.auraframefx.ui.gates.DirectChatScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.DirectChatScreen { navController.popBackStack() }
         }
         
         // ROM TOOLS SUBMENU ROUTES
         composable("recovery_tools") {
-            dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen { navController.popBackStack() }
         }
         composable("bootloader_manager") {
-            dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen { navController.popBackStack() }
         }
         composable("live_rom_editor") {
-            dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen { navController.popBackStack() }
         }
         
         // LSPOSED SUBMENU ROUTES
         composable("hook_manager") {
-            dev.aurakai.auraframefx.ui.gates.HookManagerScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.HookManagerScreen { navController.popBackStack() }
         }
         composable("module_creation") {
-            dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen { navController.popBackStack() }
         }
         composable("system_overrides") {
-            dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen { navController.popBackStack() }
         }
         composable("logs_viewer") {
-            dev.aurakai.auraframefx.ui.gates.LogsViewerScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            dev.aurakai.auraframefx.ui.gates.LogsViewerScreen { navController.popBackStack() }
         }
     }
 }
