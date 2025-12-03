@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.sp
  * Step-by-step guides and feature walkthroughs
  */
 @Composable
-fun TutorialVideosScreen() {
+fun TutorialVideosScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val selectedCategory = remember { mutableStateOf("All") }
     val categories = listOf("All", "Getting Started", "Features", "Advanced", "Troubleshooting")
 

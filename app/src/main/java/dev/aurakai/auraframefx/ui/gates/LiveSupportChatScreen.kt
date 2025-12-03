@@ -24,7 +24,9 @@ import kotlinx.coroutines.launch
  * Real-time assistance from support agents
  */
 @Composable
-fun LiveSupportChatScreen() {
+fun LiveSupportChatScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val chatMessages = remember { mutableStateListOf<SupportMessage>() }
     val currentMessage = remember { mutableStateOf("") }
     val isTyping = remember { mutableStateOf(false) }

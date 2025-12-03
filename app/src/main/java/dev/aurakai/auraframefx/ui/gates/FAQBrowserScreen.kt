@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.sp
  * Frequently asked questions and quick answers
  */
 @Composable
-fun FAQBrowserScreen() {
+fun FAQBrowserScreen(
+    onNavigateBack: () -> Unit = {}
+) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedCategory = remember { mutableStateOf("All") }
     val categories = listOf("All", "Getting Started", "Features", "Troubleshooting", "Security", "Advanced")
