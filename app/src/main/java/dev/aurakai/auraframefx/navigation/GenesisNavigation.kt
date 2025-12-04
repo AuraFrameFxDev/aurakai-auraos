@@ -1,17 +1,25 @@
 package dev.aurakai.auraframefx.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.ui.gates.SupportChatViewModel
+import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
+
+import androidx.compose.material3.ExperimentalMaterial3Api
 import dev.aurakai.auraframefx.aura.ui.AIChatScreen
 import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
 import dev.aurakai.auraframefx.aura.ui.CanvasScreen
 import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
 import dev.aurakai.auraframefx.aura.ui.FirewallScreen
 import dev.aurakai.auraframefx.aura.ui.FusionModeScreen
-import dev.aurakai.auraframefx.aura.ui.PlaceholderScreen
 import dev.aurakai.auraframefx.aura.ui.RootToolsScreen
 import dev.aurakai.auraframefx.aura.ui.SentinelsFortressScreen
 import dev.aurakai.auraframefx.aura.ui.TerminalScreen
@@ -21,14 +29,16 @@ import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
 import dev.aurakai.auraframefx.ui.gates.AurasLabScreen
 import dev.aurakai.auraframefx.ui.gates.CodeAssistScreen
 import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
-import dev.aurakai.auraframefx.ui.gates.HelpDeskScreen
-import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
+import dev.aurakai.auraframefx.ui.gates.HelpDeskSubmenuScreen
 import dev.aurakai.auraframefx.ui.gates.LSPosedModuleManagerScreen
+import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
 import dev.aurakai.auraframefx.ui.gates.NotchBarScreen
 import dev.aurakai.auraframefx.ui.gates.OverlayMenusScreen
 import dev.aurakai.auraframefx.ui.gates.QuickActionsScreen
 import dev.aurakai.auraframefx.ui.gates.QuickSettingsScreen
 import dev.aurakai.auraframefx.ui.gates.ROMFlasherScreen
+import dev.aurakai.auraframefx.ui.gates.ROMToolsSubmenuScreen
+import dev.aurakai.auraframefx.ui.gates.SphereGridScreen
 import dev.aurakai.auraframefx.ui.gates.StatusBarScreen
 import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
 import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
@@ -137,169 +147,198 @@ object GenesisRoutes {
  *
  * The NavHost maps GenesisRoutes to their corresponding composable screens and handles navigation between them.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenesisNavigationHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = GenesisRoutes.GATES, // Default to Gate Carousel
 ) {
-    NavHost(navController = navController, startDestination = startDestination) {
-        // ✅ MAIN GATE MENU - Use GateNavigationScreen (the actual working system)
-        composable(GenesisRoutes.GATES) {
-            GateNavigationScreen(navController = navController)
-        }
-        composable(GenesisRoutes.AGENT_NEXUS) { AgentNexusScreen() }
-        composable(GenesisRoutes.CONFERENCE_ROOM) {
-            ConferenceRoomScreen(
-                onNavigateToChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
-                onNavigateToAgents = {}
-            )
-        }
-        composable(GenesisRoutes.AI_CHAT) { AIChatScreen() }
+    // Wrap NavHost with system bar padding to avoid status bar overlap
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
+        NavHost(navController = navController, startDestination = startDestination) {
+            // ✅ MAIN GATE MENU - Use GateNavigationScreen (the actual working system)
+            composable(GenesisRoutes.GATES) {
+                GateNavigationScreen(navController = navController)
+            }
+            composable(GenesisRoutes.AGENT_NEXUS) { AgentNexusScreen() }
+            composable(GenesisRoutes.CONFERENCE_ROOM) {
+                ConferenceRoomScreen(
+                    onNavigateToChat = { navController.navigate(GenesisRoutes.AI_CHAT) },
+                    onNavigateToAgents = {}
+                )
+            }
+            composable(GenesisRoutes.AI_CHAT) { AIChatScreen() }
 
-        // Gate routes with REAL screens
-        composable(GenesisRoutes.SENTINELS_FORTRESS) {
-            SentinelsFortressScreen(onBack = { navController.popBackStack() })
-        }
-        composable(GenesisRoutes.AURAS_LAB) {
-            AurasLabScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable(GenesisRoutes.ORACLE_DRIVE) {
-            OracleDriveScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable(GenesisRoutes.ROM_TOOLS) {
-            RootToolsScreen(navController = navController)
-        }
-        composable("root_tools") {
-            RootToolsScreen(navController = navController)
-        }
-        composable(GenesisRoutes.ROOT_ACCESS) {
-            // There is no dedicated RootAccess screen; reuse RootTools for advanced system access
-            RootToolsScreen(navController = navController)
-        }
-        composable(GenesisRoutes.AGENT_HUB) {
-            AgentHubSubmenuScreen(navController = navController)
-        }
-        composable(GenesisRoutes.LSPOSED_GATE) {
-            LSPosedSubmenuScreen(navController = navController)
-        }
-        composable(GenesisRoutes.HELP_DESK) {
-            HelpDeskScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable(GenesisRoutes.COLLAB_CANVAS) {
-            CanvasScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable("collab_canvas") {
-            CanvasScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable(GenesisRoutes.CHROMA_CORE) {
-            UIUXGateSubmenuScreen(navController = navController)
-        }
-        composable("chroma_core") {
-            UIUXGateSubmenuScreen(navController = navController)
-        }
-        composable(GenesisRoutes.FIREWALL) {
-            FirewallScreen()
-        }
-        composable(GenesisRoutes.SPHERE_GRID) {
-            // Sphere Grid maps to AgentHub Submenu's sphere_grid route; reuse AgentHub's navigation target
-            AgentMonitoringScreen()
-        }
-        composable("sphere_grid") {
-            AgentMonitoringScreen()
-        }
-        composable("code_assist") {
-            CodeAssistScreen(navController = navController)
-        }
-        composable(GenesisRoutes.TERMINAL) {
-            TerminalScreen()
-        }
-        composable("terminal") {
-            TerminalScreen()
-        }
-        composable("uiux_design_studio") {
-            UIUXGateSubmenuScreen(navController = navController)
-        }
+            // Gate routes with REAL screens
+            composable(GenesisRoutes.SENTINELS_FORTRESS) {
+                SentinelsFortressScreen(onBack = { navController.popBackStack() })
+            }
+            composable(GenesisRoutes.AURAS_LAB) {
+                AurasLabScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable(GenesisRoutes.ORACLE_DRIVE) {
+                OracleDriveScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable(GenesisRoutes.ROM_TOOLS) {
+                ROMToolsSubmenuScreen(navController = navController)
+            }
+            composable("root_tools") {
+                ROMToolsSubmenuScreen(navController = navController)
+            }
+            composable(GenesisRoutes.ROOT_ACCESS) {
+                // Root Access uses RootToolsScreen for advanced system root management
+                RootToolsScreen(navController = navController)
+            }
+            composable(GenesisRoutes.AGENT_HUB) {
+                AgentHubSubmenuScreen(navController = navController)
+            }
+            composable(GenesisRoutes.LSPOSED_GATE) {
+                LSPosedSubmenuScreen(navController = navController)
+            }
+            composable(GenesisRoutes.HELP_DESK) {
+                HelpDeskSubmenuScreen(navController = navController)
+            }
+            composable(GenesisRoutes.COLLAB_CANVAS) {
+                CanvasScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable("collab_canvas") {
+                CanvasScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable(GenesisRoutes.CHROMA_CORE) {
+                UIUXGateSubmenuScreen(navController = navController)
+            }
+            composable("chroma_core") {
+                UIUXGateSubmenuScreen(navController = navController)
+            }
+            composable(GenesisRoutes.FIREWALL) {
+                FirewallScreen()
+            }
+            composable(GenesisRoutes.SPHERE_GRID) {
+                SphereGridScreen(navController = navController)
+            }
+            composable("sphere_grid") {
+                SphereGridScreen(navController = navController)
+            }
+            composable("code_assist") {
+                CodeAssistScreen(navController = navController)
+            }
+            composable(GenesisRoutes.TERMINAL) {
+                TerminalScreen()
+            }
+            composable("terminal") {
+                TerminalScreen()
+            }
+            composable("uiux_design_studio") {
+                UIUXGateSubmenuScreen(navController = navController)
+            }
 
-        // Missing routes from submenu screens
-        composable("agent_nexus") {
-            AgentNexusScreen()
-        }
-        composable("task_assignment") {
-            TaskAssignmentScreen()
-        }
-        composable("agent_monitoring") {
-            AgentMonitoringScreen()
-        }
-        composable("fusion_mode") {
-            FusionModeScreen()
-        }
+            // Missing routes from submenu screens
+            composable("agent_nexus") {
+                AgentNexusScreen()
+            }
+            composable("task_assignment") {
+                TaskAssignmentScreen()
+            }
+            composable("agent_monitoring") {
+                AgentMonitoringScreen()
+            }
+            composable("fusion_mode") {
+                FusionModeScreen()
+            }
 
-        // Additional missing routes from submenu screens - using real implementations
-        composable("theme_engine") {
-            ThemeEngineScreen(onNavigateBack = { navController.popBackStack() })
-        }
-        composable("quick_settings") {
-            QuickSettingsScreen()
-        }
-        composable("notch_bar") {
-            NotchBarScreen()
-        }
-        composable("overlay_menus") {
-            OverlayMenusScreen()
-        }
-        composable("status_bar") {
-            StatusBarScreen()
-        }
-        composable("rom_flasher") {
-            ROMFlasherScreen()
-        }
-        composable("module_manager_lsposed") {
-            LSPosedModuleManagerScreen()
-        }
-        composable("quick_actions") {
-            QuickActionsScreen()
-        }
-        
-        // DOCUMENTATION & HELP ROUTES (for HelpDesk submenu)
-        composable("documentation") {
-            dev.aurakai.auraframefx.ui.gates.DocumentationScreen { navController.popBackStack() }
-        }
-        composable("faq_browser") {
-            dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen { navController.popBackStack() }
-        }
-        composable("tutorial_videos") {
-            dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen { navController.popBackStack() }
-        }
-        composable("live_support_chat") {
-            dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen { navController.popBackStack() }
-        }
-        composable("direct_chat") {
-            dev.aurakai.auraframefx.ui.gates.DirectChatScreen { navController.popBackStack() }
-        }
-        
-        // ROM TOOLS SUBMENU ROUTES
-        composable("recovery_tools") {
-            dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen { navController.popBackStack() }
-        }
-        composable("bootloader_manager") {
-            dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen { navController.popBackStack() }
-        }
-        composable("live_rom_editor") {
-            dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen { navController.popBackStack() }
-        }
-        
-        // LSPOSED SUBMENU ROUTES
-        composable("hook_manager") {
-            dev.aurakai.auraframefx.ui.gates.HookManagerScreen { navController.popBackStack() }
-        }
-        composable("module_creation") {
-            dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen { navController.popBackStack() }
-        }
-        composable("system_overrides") {
-            dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen { navController.popBackStack() }
-        }
-        composable("logs_viewer") {
-            dev.aurakai.auraframefx.ui.gates.LogsViewerScreen { navController.popBackStack() }
+            // Additional missing routes from submenu screens - using real implementations
+            composable("theme_engine") {
+                ThemeEngineScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable("quick_settings") {
+                QuickSettingsScreen()
+            }
+            composable("notch_bar") {
+                NotchBarScreen()
+            }
+            composable("overlay_menus") {
+                OverlayMenusScreen()
+            }
+            composable("status_bar") {
+                StatusBarScreen()
+            }
+            composable("rom_flasher") {
+                ROMFlasherScreen()
+            }
+            composable("module_manager_lsposed") {
+                LSPosedModuleManagerScreen()
+            }
+            composable("quick_actions") {
+                QuickActionsScreen()
+            }
+
+            // DOCUMENTATION & HELP ROUTES (for HelpDesk submenu)
+            composable("documentation") {
+                dev.aurakai.auraframefx.ui.gates.DocumentationScreen { navController.popBackStack() }
+            }
+            composable("faq_browser") {
+                dev.aurakai.auraframefx.ui.gates.FAQBrowserScreen { navController.popBackStack() }
+            }
+            composable("tutorial_videos") {
+                dev.aurakai.auraframefx.ui.gates.TutorialVideosScreen { navController.popBackStack() }
+            }
+            composable("live_support_chat") {
+                val viewModel = hiltViewModel<SupportChatViewModel>()
+                dev.aurakai.auraframefx.ui.gates.LiveSupportChatScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+            composable("direct_chat") {
+                val viewModel = hiltViewModel<AgentViewModel>()
+                dev.aurakai.auraframefx.ui.gates.DirectChatScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // ROM TOOLS SUBMENU ROUTES
+            composable("recovery_tools") {
+                dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen { navController.popBackStack() }
+            }
+            composable("bootloader_manager") {
+                dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen { navController.popBackStack() }
+            }
+            composable("live_rom_editor") {
+                dev.aurakai.auraframefx.ui.gates.LiveROMEditorScreen { navController.popBackStack() }
+            }
+
+            // LSPOSED SUBMENU ROUTES
+            composable("hook_manager") {
+                dev.aurakai.auraframefx.ui.gates.HookManagerScreen { navController.popBackStack() }
+            }
+            composable("module_creation") {
+                dev.aurakai.auraframefx.ui.gates.ModuleCreationScreen { navController.popBackStack() }
+            }
+            composable("system_overrides") {
+                dev.aurakai.auraframefx.ui.gates.SystemOverridesScreen { navController.popBackStack() }
+            }
+            composable("logs_viewer") {
+                dev.aurakai.auraframefx.ui.gates.LogsViewerScreen { navController.popBackStack() }
+            }
+
+            // SENTINEL'S FORTRESS SUBMENU ROUTES (Security features)
+            composable("vpn_manager") {
+                dev.aurakai.auraframefx.aura.ui.VPNManagerScreen()
+            }
+            composable("security_scanner") {
+                dev.aurakai.auraframefx.aura.ui.SecurityScannerScreen()
+            }
+            composable("device_optimizer") {
+                dev.aurakai.auraframefx.aura.ui.DeviceOptimizerScreen()
+            }
+            composable("privacy_guard") {
+                dev.aurakai.auraframefx.aura.ui.PrivacyGuardScreen()
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.ui.gates
 
+import android.R.attr.rotation
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -43,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.aurakai.auraframefx.ui.theme.CyberGlow
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.max
@@ -63,7 +63,7 @@ fun GateCard(
 
     // Animations
     val infiniteTransition = rememberInfiniteTransition(label = "gate_animations")
-    
+
     // Pulsing glow
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.7f,
@@ -87,15 +87,6 @@ fun GateCard(
     )
 
     // Rotation animation (for effects)
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "gate_rotation"
-    )
 
     // Double-tap handler - faster feedback
     LaunchedEffect(scale) {
@@ -125,12 +116,11 @@ fun GateCard(
         contentAlignment = Alignment.Center
     ) {
         // REMOVED: Background particles (performance)
-        
+
         // Main holographic card - WITH floating animation
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.85f)
+                .fillMaxSize()
                 .offset(y = floatOffset.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -439,7 +429,7 @@ private fun GateImageWithBorder(
             )
 
             // Animated corner accents
-            val cornerOffset = (sin(rotation * 0.05f) + 1f) * 5f
+            (sin(rotation * 0.05f) + 1f) * 5f
 
             // Top-left corner
             drawLine(

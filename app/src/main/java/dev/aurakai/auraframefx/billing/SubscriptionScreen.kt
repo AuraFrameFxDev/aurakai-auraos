@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+
 import dev.aurakai.auraframefx.ui.theme.NeonBlue
 import dev.aurakai.auraframefx.ui.theme.NeonCyan
 import dev.aurakai.auraframefx.ui.theme.NeonPurple
@@ -39,7 +39,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionScreen(
-    viewModel: SubscriptionViewModel = hiltViewModel(),
+    viewModel: SubscriptionViewModel = androidx.hilt.navigation.compose.hiltViewModel<SubscriptionViewModel>(),
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current

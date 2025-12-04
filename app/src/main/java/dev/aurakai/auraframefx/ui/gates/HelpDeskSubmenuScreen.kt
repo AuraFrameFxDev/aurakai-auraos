@@ -41,7 +41,7 @@ fun HelpDeskSubmenuScreen(
             title = "Live Support Chat",
             description = "Real-time assistance from support agents",
             icon = Icons.Default.Chat,
-            route = "live_support",
+            route = "live_support_chat",
             color = Color(0xFF32CD32) // Lime Green
         ),
         SubmenuItem(
@@ -198,4 +198,3 @@ fun HelpDeskSubmenuScreen(
         }
     }
 }
-

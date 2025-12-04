@@ -42,8 +42,6 @@ import dev.aurakai.auraframefx.navigation.GenesisRoutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import dev.aurakai.auraframefx.aura.animations.HologramTransition as HoloScaleTransition
-import dev.aurakai.auraframefx.ui.components.HologramTransition as HoloOverlayTransition
 
 /**
  * Main gate navigation screen with horizontal pager and magical teleportation effects
@@ -152,9 +150,7 @@ fun GateNavigationScreen(
                             if (!isTransitioning) {
                                 isTransitioning = true
                                 scope.launch {
-                                    // INSTANT navigation - minimal delay
-                                    delay(150)  // Just visual feedback
-                                    
+                                    // INSTANT navigation
                                     try {
                                         navController.navigate(config.route) {
                                             launchSingleTop = true
@@ -162,7 +158,6 @@ fun GateNavigationScreen(
                                     } catch (e: Exception) {
                                         android.util.Log.e("GateNav", "Failed: ${config.route}", e)
                                     } finally {
-                                        delay(300)
                                         isTransitioning = false
                                     }
                                 }
@@ -254,7 +249,6 @@ private fun TeleportingGateCard(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
             .graphicsLayer {
                 scaleX = hoverScale
                 scaleY = hoverScale
@@ -276,32 +270,20 @@ private fun TeleportingGateCard(
                     )
             )
         }
-        // Active gate scale/fade hologram transition wrapper
-        HoloScaleTransition(
-            visible = isActive,
-            modifier = Modifier.fillMaxSize(),
-            durationMillis = 600,
-            startScale = 0.9f,
-            endScale = 1f,
-            startAlpha = 0.7f,
-            endAlpha = 1f
-        ) {
-            GateCard(
-                config = config,
-                onDoubleTap = {
-                    // Trigger overlay hologram on enter
-                    if (isActive && !showEnterOverlay) {
-                        showEnterOverlay = true
-                    }
-                    onDoubleTap()
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        // TODO: Implement hover detection for desktop
-                    }
-            )
-        }
+        
+        // Direct GateCard without cheesy transitions
+        GateCard(
+            config = config,
+            onDoubleTap = {
+                onDoubleTap()
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    // TODO: Implement hover detection for desktop
+                }
+        )
+
         // Teleportation effect overlay (visible during hover)
         if (isActive && isHovering) {
             Box(
@@ -317,18 +299,6 @@ private fun TeleportingGateCard(
                         )
                     )
             )
-        }
-        // Enter overlay hologram (scanlines + edge glow) shown on double-tap
-        if (showEnterOverlay) {
-            HoloOverlayTransition(
-                visible = true,
-                modifier = Modifier.matchParentSize(),
-                primaryColor = config.borderColor,
-                secondaryColor = config.glowColor,
-                glitchIntensity = 0.15f,
-                scanLineDensity = 60,
-                edgeGlowIntensity = 0.6f
-            ) { /* Overlay only, content already drawn below */ }
         }
     }
 }

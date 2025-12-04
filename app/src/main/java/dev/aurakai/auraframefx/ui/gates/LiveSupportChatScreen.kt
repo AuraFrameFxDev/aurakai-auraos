@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.aurakai.auraframefx.ui.gates.SupportAgentConnectorFactory.create
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.aurakai.auraframefx.ui.gates.SupportChatViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -23,15 +27,38 @@ import kotlinx.coroutines.launch
  * Live Support Chat Screen
  * Real-time assistance from support agents
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LiveSupportChatScreen(
+    viewModel: SupportChatViewModel,
     onNavigateBack: () -> Unit = {}
 ) {
+    val persistedMessages by viewModel.messages.collectAsState()
+    val incoming = viewModel.incoming
     val chatMessages = remember { mutableStateListOf<SupportMessage>() }
     val currentMessage = remember { mutableStateOf("") }
     val isTyping = remember { mutableStateOf(false) }
-    val supportAgent = remember { mutableStateOf("Alex") }
+    val supportAgent = remember { mutableStateOf("Genesis") }
     val coroutineScope = rememberCoroutineScope()
+
+    // Observe persisted Room messages and map to UI bubbles
+    LaunchedEffect(persistedMessages) {
+        // Clear then repopulate to keep UI consistent
+        chatMessages.clear()
+        persistedMessages.forEach { e ->
+            chatMessages.add(
+                SupportMessage(e.content, e.sender, e.isUser, e.timestamp.toString())
+            )
+        }
+    }
+
+    // Observe backend incoming replies
+    LaunchedEffect(incoming) {
+        incoming.collect { msg ->
+            chatMessages.add(msg)
+            isTyping.value = false
+        }
+    }
 
     // Initialize with welcome message
     LaunchedEffect(Unit) {
@@ -53,16 +80,20 @@ fun LiveSupportChatScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        // Header
-        Text(
-            text = "💬 LIVE SUPPORT",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF32CD32),
-            fontWeight = FontWeight.Bold
+        // Top app bar with back navigation
+        TopAppBar(
+            title = { Text(text = "LIVE SUPPORT", color = Color.White) },
+            navigationIcon = {
+                IconButton(onClick = { onNavigateBack() }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
+        // Header (subtitle)
         Text(
             text = "Real-time assistance from support agents",
             style = MaterialTheme.typography.bodyLarge,
@@ -272,24 +303,14 @@ fun LiveSupportChatScreen(
                                         "Now"
                                     )
                                 )
+                                val toSend = currentMessage.value
                                 currentMessage.value = ""
 
-                                // Simulate agent response
+                                // Use ViewModel to send message (persists + posts to backend)
                                 isTyping.value = true
-                                coroutineScope.launch {
-                                    delay((1000..3000).random().toLong())
-                                    isTyping.value = false
-                                    chatMessages.add(
-                                        SupportMessage(
-                                            "Thank you for your message. I'm here to help! Let me look into this for you.",
-                                            supportAgent.value,
-                                            false,
-                                            "Now"
-                                        )
-                                    )
-                                }
-                            }
-                        },
+                                viewModel.sendMessage(toSend)
+                             }
+                         },
                         modifier = Modifier.size(48.dp),
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color(0xFF32CD32)

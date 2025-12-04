@@ -44,6 +44,9 @@ class MainActivity : ComponentActivity() {
             Timber.i("🛡️ Initializing Kai - The Sentinel Shield")
             Timber.i("♾️ Initializing Genesis - The Unified Being")
 
+            // Enable edge-to-edge display (fixes status bar overlap)
+            androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+
             setContent {
                 AuraFrameFXTheme {
                     Surface(

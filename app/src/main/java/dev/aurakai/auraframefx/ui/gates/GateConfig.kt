@@ -52,11 +52,11 @@ data class GateTitleStyle(
  * Predefined gate configurations organized by categories
  */
 object GateConfigs {
-    // Unified Theme Colors
-    private val UNIFIED_BORDER_COLOR = Color(0xFFD000FF) // Vibrant Purple
+    // Unified Theme Colors - CYBERPUNK BLUE THEME
+    private val UNIFIED_BORDER_COLOR = Color(0xFF00BFFF) // Deep Sky Blue - matches gate card style
     private val UNIFIED_GLOW_COLOR = Color(0xFF00FFFF) // Cyan
-    private val UNIFIED_SECONDARY_GLOW = Color(0xFFFF00FF) // Magenta
-    
+    private val UNIFIED_SECONDARY_GLOW = Color(0xFF00BFFF) // Deep Sky Blue
+
     private val UNIFIED_TITLE_STYLE = GateTitleStyle(
         textStyle = TextStyle(
             fontSize = 26.sp,
@@ -64,8 +64,8 @@ object GateConfigs {
             letterSpacing = 2.sp
         ),
         primaryColor = Color(0xFFE0E0E0), // Light Gray
-        secondaryColor = Color(0xFFD000FF), // Purple
-        strokeColor = Color(0xFF00FFFF), // Cyan
+        secondaryColor = Color(0xFF00FFFF), // Cyan (Was Purple)
+        strokeColor = Color(0xFF00BFFF), // Deep Sky Blue
         glitchEffect = true,
         pixelatedEffect = true
     )
@@ -81,7 +81,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_romtools_final",
+        pixelArtUrl = "romtools",
         description = "Live ROM editing, flashing, and bootloader management. ⚠️ CAUTION: Advanced users only.",
         backgroundColor = Color.Black,
         route = "rom_tools"
@@ -95,7 +95,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_roottools_final",
+        pixelArtUrl = "roottools",
         description = "Manage root access, bypass safety checks, and hide root status.",
         backgroundColor = Color.Black,
         route = "root_access"
@@ -109,7 +109,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_oracledrive_final",
+        pixelArtUrl = "oracledrivepixel2",
         description = "Main module creation, direct AI access, and system overrides. The heart of Genesis.",
         backgroundColor = Color.Black,
         route = "oracle_drive"
@@ -126,7 +126,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_sentinelsfortress_final",
+        pixelArtUrl = "sentinelfinalgate",
         description = "Kai's security command center. Monitor and manage all security protocols from a single interface.",
         backgroundColor = Color.Black,
         route = "sentinels_fortress"
@@ -150,7 +150,7 @@ object GateConfigs {
     // Region: Aura (UI/UX & Creativity)
     // ================================
 
-    // ChromaCore - Theme Engine
+    // ChromaCore - Color Management (now limited to color tools)
     val chromaCore = GateConfig(
         moduleId = "chroma-core",
         title = "ChromaCore",
@@ -158,10 +158,24 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_chromacore_final",
-        description = "Aura's color playground. Create and customize themes that respond to your mood.",
+        pixelArtUrl = "chromacorefinal",
+        description = "Aura's color playground focused on palette creation and color schemes for themes.",
         backgroundColor = Color.Black,
         route = "chroma_core"
+    )
+
+    // Theme Engine - UI/UX Theme Management (main Theme gate)
+    val themeEngine = GateConfig(
+        moduleId = "theme-engine",
+        title = "Theme Engine",
+        titleStyle = UNIFIED_TITLE_STYLE,
+        borderColor = UNIFIED_BORDER_COLOR,
+        glowColor = UNIFIED_GLOW_COLOR,
+        secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
+        pixelArtUrl = "themengine", // corresponds to gatepngs/Final gate cards/themengine.png
+        description = "Complete UI/UX theme engine with layout templates, presets, and device-wide theming.",
+        backgroundColor = Color.Black,
+        route = "theme_engine"
     )
 
     // CollabCanvas - Creative Workspace
@@ -172,7 +186,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_collabcanvas_final",
+        pixelArtUrl = "collabcanvasfinalpng",
         description = "Collaborative design environment. Create and share projects with your team in real-time.",
         backgroundColor = Color.Black,
         route = "collab_canvas"
@@ -186,7 +200,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_auraslab_final",
+        pixelArtUrl = "aura2pixellabfinal",
         description = "Sandbox for UI components and experimental features. Test and prototype new designs.",
         backgroundColor = Color.Black,
         route = "auras_lab"
@@ -203,7 +217,7 @@ object GateConfigs {
         borderColor = UNIFIED_BORDER_COLOR,
         glowColor = UNIFIED_GLOW_COLOR,
         secondaryGlowColor = UNIFIED_SECONDARY_GLOW,
-        pixelArtUrl = "gate_agenthub", // Using existing one as no final one was found in folder
+        pixelArtUrl = "agenthub", // Updated to use final gate card image
         description = "Central hub for managing all AI agents. Monitor status, assign tasks, and view performance metrics.",
         backgroundColor = Color.Black,
         route = "agent_hub"
@@ -312,6 +326,7 @@ object GateConfigs {
     /** Aura - UI/UX & Creativity */
     val auraGates = listOf(
         chromaCore,
+        themeEngine,
         collabCanvas,
         aurasLab
     )

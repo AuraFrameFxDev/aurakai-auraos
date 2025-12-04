@@ -118,6 +118,10 @@ android {
 
             // Context parameters (Kotlin 2.2+ experimental feature)
             freeCompilerArgs.add("-Xcontext-parameters")
+
+            // Annotation default target - apply to both param and field (KT-73255)
+            // See https://youtrack.jetbrains.com/issue/KT-73255
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
         }
     }
 
