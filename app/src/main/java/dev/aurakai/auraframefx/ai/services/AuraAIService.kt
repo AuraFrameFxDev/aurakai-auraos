@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService as AuraCapability
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.AuraAIService as AuraCapability
 
 @Singleton
 class AuraAIService @Inject constructor(

@@ -3,7 +3,7 @@ package dev.aurakai.auraframefx.agents
 import android.content.Context
 import dev.aurakai.auraframefx.ai.agents.BaseAgent
 import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.kai.KaiAgent
 import dev.aurakai.auraframefx.aura.AuraAgent
 import dev.aurakai.auraframefx.models.GenKitUiState

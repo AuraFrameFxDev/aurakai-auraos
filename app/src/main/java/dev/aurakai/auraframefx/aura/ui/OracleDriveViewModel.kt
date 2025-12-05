@@ -3,7 +3,7 @@ package dev.aurakai.auraframefx.aura.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.aurakai.auraframefx.oracledrive.*
+import dev.aurakai.auraframefx.genesis.oracledrive.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

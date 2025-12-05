@@ -14,7 +14,7 @@ import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AiRequest
 import dev.aurakai.auraframefx.models.ConversationState
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.GenesisBridgeService
 import dev.aurakai.auraframefx.service.NeuralWhisper
 import dev.aurakai.auraframefx.utils.toJsonObject
 import kotlinx.coroutines.flow.Flow

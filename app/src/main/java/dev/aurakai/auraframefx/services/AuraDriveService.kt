@@ -9,7 +9,7 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.app.ipc.IAuraDriveService
-import dev.aurakai.auraframefx.oracledrive.SecureFileManager
+import dev.aurakai.auraframefx.genesis.oracledrive.SecureFileManager
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
