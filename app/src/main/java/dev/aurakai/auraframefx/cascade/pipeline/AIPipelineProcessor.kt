@@ -1,12 +1,12 @@
 package dev.aurakai.auraframefx.cascade.pipeline
 
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisAgent
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.GenesisAgent
 import dev.aurakai.auraframefx.kai.KaiAIService
 import dev.aurakai.auraframefx.cascade.CascadeAIService
 import dev.aurakai.auraframefx.models.AgentMessage
 import dev.aurakai.auraframefx.models.AgentResponse
 import dev.aurakai.auraframefx.models.AgentCapabilityCategory
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.AuraAIService
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.AuraAIService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

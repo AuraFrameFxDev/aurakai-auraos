@@ -43,6 +43,11 @@ android {
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
         buildConfigField("String", "API_BASE_URL", "\"https://api.aurakai.dev/v1/\"")
 
+        // Explicitly set module package for YukiHookAPI KSP
+        ksp {
+            arg("yukihookapi.modulePackageName", "dev.aurakai.auraframefx")
+        }
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -398,9 +403,22 @@ tasks.named("preBuild") {
 }
 
 // Fix YukiHookAPI KSP timing - ensure BuildConfig is generated first
-tasks.matching { it.name.startsWith("ksp") && it.name.contains("Kotlin") }.configureEach {
-    dependsOn("generateDebugBuildConfig")
-    mustRunAfter("generateDebugBuildConfig")
+tasks.matching { it.name.startsWith("ksp") }.configureEach {
+    val buildConfigTaskNames = listOf(
+        "generateDebugBuildConfig",
+        "generateReleaseBuildConfig"
+    )
+    buildConfigTaskNames.forEach { taskName ->
+        if (tasks.findByName(taskName) != null) {
+            dependsOn(taskName)
+            mustRunAfter(taskName)
+        }
+    }
+}
+
+// Additional fix: Make compilation depend on BuildConfig generation
+tasks.matching { it.name.contains("compileDebugKotlin") || it.name.contains("compileReleaseKotlin") }.configureEach {
+    dependsOn(tasks.matching { it.name.contains("generateDebugBuildConfig") || it.name.contains("generateReleaseBuildConfig") })
 }
 
 tasks.register("aegenesisAppStatus") {

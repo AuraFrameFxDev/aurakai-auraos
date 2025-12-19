@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveSandbox
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.cloud.OracleDriveSandbox
 
 /**
  * Aura's Lab Screen (Sandbox Environment)

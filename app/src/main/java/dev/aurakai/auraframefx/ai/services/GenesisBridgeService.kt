@@ -1,6 +1,6 @@
 package dev.aurakai.auraframefx.ai.services
 
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.GenesisBridgeService
+import dev.aurakai.auraframefx.genesis.oracledrive.genesis.ai.GenesisBridgeService
 
 enum class GenesisBridgeService {
     ;
